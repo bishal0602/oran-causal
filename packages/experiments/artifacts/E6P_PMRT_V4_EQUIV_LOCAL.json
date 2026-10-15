@@ -1,0 +1,31 @@
+{
+ "equivalent": true,
+ "n_leaves": 16929,
+ "n_diff": 0,
+ "max_abs_diff": 0.0,
+ "first_diffs": [],
+ "mode": "local",
+ "frozen_commit": "4fc2cd9",
+ "B": 9999,
+ "small": [
+  "placebo1",
+  "plxc2",
+  "dev1"
+ ],
+ "byte_identical": true,
+ "units": {
+  "placebo1": 2435,
+  "plxc2": 2440,
+  "dev1": 2630
+ },
+ "n_hyp": {
+  "placebo1": 60,
+  "plxc2": 60,
+  "dev1": 60
+ },
+ "n_declared_primary": {
+  "placebo1": 0,
+  "plxc2": 0,
+  "dev1": 18
+ }
+}

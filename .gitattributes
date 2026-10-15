@@ -1,0 +1,5 @@
+packages/experiments/protocols/** -text
+packages/experiments/specs/** -text
+packages/experiments/artifacts/** -text
+packages/experiments/manifests/seeds.json -text
+data/manifests/** -text

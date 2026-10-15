@@ -1,0 +1,4990 @@
+{
+ "schema": "e6p-certsafe/1",
+ "mode": "full",
+ "protocol": {
+  "doc": "docs/benchmark/E6P_CERTSAFE_PROTOCOL.md",
+  "exists": true,
+  "line": "FROZEN: yes (2026-10-01, freeze 1)",
+  "sha256": "cdd2c7e63fe3b81efe07c6cedea331b81124eca078f056e87f3008e6d2850b4a",
+  "want": "cdd2c7e63fe3b81efe07c6cedea331b81124eca078f056e87f3008e6d2850b4a",
+  "frozen": true
+ },
+ "maps_artifact": {
+  "path": "docs/benchmark/artifacts/E6P_CONF_MAPS.json",
+  "sha256": "6c82357b913d5ee11d501ff1209ec5e2068732e85181dcd27a5216109ff8940a"
+ },
+ "constants": {
+  "rho": 1.05,
+  "z90": 1.2815515655446004,
+  "guard_kpis": [
+   "v",
+   "rlf"
+  ],
+  "rels": [
+   "own",
+   "nbr",
+   "far"
+  ],
+  "guard_field": {
+   "v": "viol_ue_s",
+   "rlf": "rlf"
+  },
+  "harm_direction": "deferral: h = -d",
+  "tau_rule": "tau(f, d, k) = (rho - 1) * G_k / (max(N(f, d), 1) * 3)"
+ },
+ "calib": {
+  "G": {
+   "v": 19953.65,
+   "rlf": 35.025
+  },
+  "N": [
+   [
+    "carrier",
+    -1,
+    19.6
+   ],
+   [
+    "carrier",
+    1,
+    15.65
+   ],
+   [
+    "prot_min",
+    -1,
+    39.025
+   ],
+   [
+    "prot_min",
+    1,
+    69.75
+   ],
+   [
+    "ptx",
+    -1,
+    20.925
+   ],
+   [
+    "ptx",
+    1,
+    16.025
+   ],
+   [
+    "sleep",
+    -1,
+    2.85
+   ],
+   [
+    "sleep",
+    1,
+    3.025
+   ]
+  ],
+  "seeds": [
+   191000,
+   191039
+  ],
+  "repro": {
+   "per_seed": {
+    "191000": 0.0,
+    "191001": 0.0
+   },
+   "ok": true
+  }
+ },
+ "tau": [
+  [
+   "carrier",
+   -1,
+   "rlf",
+   0.029783163265306146
+  ],
+  [
+   "carrier",
+   -1,
+   "v",
+   16.967389455782328
+  ],
+  [
+   "carrier",
+   1,
+   "rlf",
+   0.03730031948881792
+  ],
+  [
+   "carrier",
+   1,
+   "v",
+   21.24989350372739
+  ],
+  [
+   "prot_min",
+   -1,
+   "rlf",
+   0.014958360025624614
+  ],
+  [
+   "prot_min",
+   -1,
+   "v",
+   8.521738202007269
+  ],
+  [
+   "prot_min",
+   1,
+   "rlf",
+   0.00836917562724015
+  ],
+  [
+   "prot_min",
+   1,
+   "v",
+   4.767897252090805
+  ],
+  [
+   "ptx",
+   -1,
+   "rlf",
+   0.0278972520908005
+  ],
+  [
+   "ptx",
+   -1,
+   "v",
+   15.892990840302682
+  ],
+  [
+   "ptx",
+   1,
+   "rlf",
+   0.03642745709828397
+  ],
+  [
+   "ptx",
+   1,
+   "v",
+   20.75262610504422
+  ],
+  [
+   "sleep",
+   -1,
+   "rlf",
+   0.20482456140350894
+  ],
+  [
+   "sleep",
+   -1,
+   "v",
+   116.68801169590652
+  ],
+  [
+   "sleep",
+   1,
+   "rlf",
+   0.19297520661157044
+  ],
+  [
+   "sleep",
+   1,
+   "v",
+   109.9374655647384
+  ]
+ ],
+ "bounds": {
+  "pmrt": [
+   [
+    "carrier",
+    "far",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": -0.04692774353190581,
+     "se": 0.043580473317242664,
+     "n": 14026,
+     "z": -1.0768066512333816
+    }
+   ],
+   [
+    "carrier",
+    "far",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -4.1368588500216905,
+     "se": 13.211974215997598,
+     "n": 14026,
+     "z": -0.31311435992757336
+    }
+   ],
+   [
+    "carrier",
+    "nbr",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.026662125244888528,
+     "se": 0.049647778236377664,
+     "n": 14026,
+     "z": 0.5370255466004478
+    }
+   ],
+   [
+    "carrier",
+    "nbr",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 16.198498550629782,
+     "se": 14.581799160587613,
+     "n": 14026,
+     "z": 1.1108710504264703
+    }
+   ],
+   [
+    "carrier",
+    "own",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.006906813800034687,
+     "se": 0.01162463316240098,
+     "n": 14026,
+     "z": 0.5941532694876143
+    }
+   ],
+   [
+    "carrier",
+    "own",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -112.67501489623446,
+     "se": 4.2601470296770945,
+     "n": 14026,
+     "z": -26.448621165259375
+    }
+   ],
+   [
+    "prot_min",
+    "far",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.0599408281489459,
+     "se": 0.02454739285442025,
+     "n": 52100,
+     "z": 2.441840911759081
+    }
+   ],
+   [
+    "prot_min",
+    "far",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 4.157731552686107,
+     "se": 6.393732864179447,
+     "n": 52100,
+     "z": 0.6502823375652085
+    }
+   ],
+   [
+    "prot_min",
+    "nbr",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": -0.02294475877562875,
+     "se": 0.02761185811542131,
+     "n": 52100,
+     "z": -0.8309748181276518
+    }
+   ],
+   [
+    "prot_min",
+    "nbr",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -0.10970099575309109,
+     "se": 6.920800467773834,
+     "n": 52100,
+     "z": -0.01585091150422631
+    }
+   ],
+   [
+    "prot_min",
+    "own",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.0015923071231191872,
+     "se": 0.007734020083588384,
+     "n": 52100,
+     "z": 0.20588349990169644
+    }
+   ],
+   [
+    "prot_min",
+    "own",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 0.6236972682704445,
+     "se": 2.278190056973124,
+     "n": 52100,
+     "z": 0.2737687605831748
+    }
+   ],
+   [
+    "ptx",
+    "far",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.05582861267014962,
+     "se": 0.049616987294395426,
+     "n": 11341,
+     "z": 1.1251915062657551
+    }
+   ],
+   [
+    "ptx",
+    "far",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -21.188528347769477,
+     "se": 14.496233962264816,
+     "n": 11341,
+     "z": -1.4616574486121976
+    }
+   ],
+   [
+    "ptx",
+    "nbr",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": -0.0824506347909797,
+     "se": 0.05128564478706577,
+     "n": 11341,
+     "z": -1.6076747232740989
+    }
+   ],
+   [
+    "ptx",
+    "nbr",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -18.439179155607867,
+     "se": 15.960615021775107,
+     "n": 11341,
+     "z": -1.1552925203979452
+    }
+   ],
+   [
+    "ptx",
+    "own",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.03028255755138364,
+     "se": 0.011654727348582725,
+     "n": 11341,
+     "z": 2.5983068196843018
+    }
+   ],
+   [
+    "ptx",
+    "own",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 27.015066452425533,
+     "se": 2.4409106235943416,
+     "n": 11341,
+     "z": 11.067618040288886
+    }
+   ],
+   [
+    "sleep",
+    "far",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.12524020625401444,
+     "se": 0.1573127690025676,
+     "n": 2032,
+     "z": 0.7961223176484187
+    }
+   ],
+   [
+    "sleep",
+    "far",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 6.2978349694600215,
+     "se": 34.79091832538484,
+     "n": 2032,
+     "z": 0.1810195094754044
+    }
+   ],
+   [
+    "sleep",
+    "nbr",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.0050987392263661,
+     "se": 0.11980690383319301,
+     "n": 2032,
+     "z": 0.04255797506849077
+    }
+   ],
+   [
+    "sleep",
+    "nbr",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 392.1245179035086,
+     "se": 52.36259766902593,
+     "n": 2032,
+     "z": 7.488637603161965
+    }
+   ],
+   [
+    "sleep",
+    "own",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": -0.14230463978920338,
+     "se": 0.0130629339879765,
+     "n": 2032,
+     "z": -10.893773169196496
+    }
+   ],
+   [
+    "sleep",
+    "own",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -14.720583732593495,
+     "se": 2.956770465098403,
+     "n": 2032,
+     "z": -4.978602129030528
+    }
+   ]
+  ],
+  "ols": [
+   [
+    "carrier",
+    "far",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": -0.011864504456970754,
+     "se": 0.028497107187795835,
+     "n": 14026,
+     "z": -0.41634066148482063
+    }
+   ],
+   [
+    "carrier",
+    "far",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -52.36970301163703,
+     "se": 7.802014377996693,
+     "n": 14026,
+     "z": -6.7123310050966465
+    }
+   ],
+   [
+    "carrier",
+    "nbr",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": -0.04250607711171585,
+     "se": 0.03419000011193635,
+     "n": 14026,
+     "z": -1.243231265649403
+    }
+   ],
+   [
+    "carrier",
+    "nbr",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -26.56048721942039,
+     "se": 8.486803731143539,
+     "n": 14026,
+     "z": -3.1296219473007123
+    }
+   ],
+   [
+    "carrier",
+    "own",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.0025807272867272952,
+     "se": 0.008836004065254706,
+     "n": 14026,
+     "z": 0.2920694997046613
+    }
+   ],
+   [
+    "carrier",
+    "own",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -69.21767853806728,
+     "se": 2.1112967153402873,
+     "n": 14026,
+     "z": -32.78443907724791
+    }
+   ],
+   [
+    "prot_min",
+    "far",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.03603979693678941,
+     "se": 0.011802954238098984,
+     "n": 52100,
+     "z": 3.05345561880227
+    }
+   ],
+   [
+    "prot_min",
+    "far",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 39.17220022034311,
+     "se": 2.690418403210868,
+     "n": 52100,
+     "z": 14.559891566900232
+    }
+   ],
+   [
+    "prot_min",
+    "nbr",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.03248571217874743,
+     "se": 0.013400633376440482,
+     "n": 52100,
+     "z": 2.424192294959747
+    }
+   ],
+   [
+    "prot_min",
+    "nbr",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 50.610843920198235,
+     "se": 2.983374954476427,
+     "n": 52100,
+     "z": 16.96429201574506
+    }
+   ],
+   [
+    "prot_min",
+    "own",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.016783564572158592,
+     "se": 0.003948394218198357,
+     "n": 52100,
+     "z": 4.2507317265338544
+    }
+   ],
+   [
+    "prot_min",
+    "own",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 38.690424283823106,
+     "se": 0.948106904982173,
+     "n": 52100,
+     "z": 40.80808195838484
+    }
+   ],
+   [
+    "ptx",
+    "far",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": -0.07229245358073122,
+     "se": 0.032832636560497216,
+     "n": 11341,
+     "z": -2.2018473431923624
+    }
+   ],
+   [
+    "ptx",
+    "far",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -25.047573637809254,
+     "se": 8.325691832651822,
+     "n": 11341,
+     "z": -3.0084675413492135
+    }
+   ],
+   [
+    "ptx",
+    "nbr",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": -0.19683441837623053,
+     "se": 0.03657268832163486,
+     "n": 11341,
+     "z": -5.382005737319332
+    }
+   ],
+   [
+    "ptx",
+    "nbr",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 15.211903819598206,
+     "se": 9.17578468864844,
+     "n": 11341,
+     "z": 1.6578313829025628
+    }
+   ],
+   [
+    "ptx",
+    "own",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": -0.0033463319648045775,
+     "se": 0.010321643282236989,
+     "n": 11341,
+     "z": -0.32420534921638305
+    }
+   ],
+   [
+    "ptx",
+    "own",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 40.71525994670832,
+     "se": 1.7923422104104936,
+     "n": 11341,
+     "z": 22.716231147278204
+    }
+   ],
+   [
+    "sleep",
+    "far",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.10288140162430558,
+     "se": 0.0932388396507964,
+     "n": 2032,
+     "z": 1.1034178675927657
+    }
+   ],
+   [
+    "sleep",
+    "far",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 110.98436023671006,
+     "se": 20.429029759925037,
+     "n": 2032,
+     "z": 5.43267896424648
+    }
+   ],
+   [
+    "sleep",
+    "nbr",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": 0.1561777784757286,
+     "se": 0.08862190055301164,
+     "n": 2032,
+     "z": 1.7622932649961232
+    }
+   ],
+   [
+    "sleep",
+    "nbr",
+    "v",
+    {
+     "kind": "slope",
+     "beta": 404.6164443257933,
+     "se": 28.308783374240814,
+     "n": 2032,
+     "z": 14.292964800951793
+    }
+   ],
+   [
+    "sleep",
+    "own",
+    "rlf",
+    {
+     "kind": "slope",
+     "beta": -0.14611943853367576,
+     "se": 0.015403522971755726,
+     "n": 2032,
+     "z": -9.486105146309965
+    }
+   ],
+   [
+    "sleep",
+    "own",
+    "v",
+    {
+     "kind": "slope",
+     "beta": -22.663833423630702,
+     "se": 2.9000748744556613,
+     "n": 2032,
+     "z": -7.814913202158156
+    }
+   ]
+  ],
+  "gt": [
+   [
+    "carrier",
+    "far",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": -0.0039895123312916276,
+     "hi": 0.021505376344086023
+    }
+   ],
+   [
+    "carrier",
+    "far",
+    "v",
+    {
+     "kind": "ci",
+     "lo": 1.3657552355254132,
+     "hi": 6.186999465346543
+    }
+   ],
+   [
+    "carrier",
+    "nbr",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": -0.005321545873496653,
+     "hi": 0.021950813943001447
+    }
+   ],
+   [
+    "carrier",
+    "nbr",
+    "v",
+    {
+     "kind": "ci",
+     "lo": 4.190947025086918,
+     "hi": 9.69585457315957
+    }
+   ],
+   [
+    "carrier",
+    "own",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": -0.010786418723282634,
+     "hi": 0.0003512561894302836
+    }
+   ],
+   [
+    "carrier",
+    "own",
+    "v",
+    {
+     "kind": "ci",
+     "lo": -105.32182412263626,
+     "hi": -73.09792760615848
+    }
+   ],
+   [
+    "prot_min",
+    "far",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": 0.0,
+     "hi": 0.0011696248818768233
+    }
+   ],
+   [
+    "prot_min",
+    "far",
+    "v",
+    {
+     "kind": "ci",
+     "lo": -0.19389327130721007,
+     "hi": 0.41582198839799916
+    }
+   ],
+   [
+    "prot_min",
+    "nbr",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": 0.0,
+     "hi": 0.003355798642686969
+    }
+   ],
+   [
+    "prot_min",
+    "nbr",
+    "v",
+    {
+     "kind": "ci",
+     "lo": -0.21583863739302486,
+     "hi": 0.24166183677901662
+    }
+   ],
+   [
+    "prot_min",
+    "own",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": 0.0,
+     "hi": 0.001145475372279496
+    }
+   ],
+   [
+    "prot_min",
+    "own",
+    "v",
+    {
+     "kind": "ci",
+     "lo": -1.12940949328945,
+     "hi": 1.2608518590401947
+    }
+   ],
+   [
+    "ptx",
+    "far",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": -0.022850217916905263,
+     "hi": 0.025508303810540818
+    }
+   ],
+   [
+    "ptx",
+    "far",
+    "v",
+    {
+     "kind": "ci",
+     "lo": -29.889395331049993,
+     "hi": -18.91251975902386
+    }
+   ],
+   [
+    "ptx",
+    "nbr",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": -0.09621993127147765,
+     "hi": -0.027109308510638284
+    }
+   ],
+   [
+    "ptx",
+    "nbr",
+    "v",
+    {
+     "kind": "ci",
+     "lo": -33.61180497364509,
+     "hi": -19.49274499701314
+    }
+   ],
+   [
+    "ptx",
+    "own",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": 0.00526271867078282,
+     "hi": 0.03699299909665763
+    }
+   ],
+   [
+    "ptx",
+    "own",
+    "v",
+    {
+     "kind": "ci",
+     "lo": 19.229223425677105,
+     "hi": 37.49915005369237
+    }
+   ],
+   [
+    "sleep",
+    "far",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": 0.05589199447895101,
+     "hi": 0.18261337073398787
+    }
+   ],
+   [
+    "sleep",
+    "far",
+    "v",
+    {
+     "kind": "ci",
+     "lo": 31.89484042553192,
+     "hi": 58.18338768115942
+    }
+   ],
+   [
+    "sleep",
+    "nbr",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": 0.059427217915590004,
+     "hi": 0.16666666666666666
+    }
+   ],
+   [
+    "sleep",
+    "nbr",
+    "v",
+    {
+     "kind": "ci",
+     "lo": 317.00207463197523,
+     "hi": 466.3605071114422
+    }
+   ],
+   [
+    "sleep",
+    "own",
+    "rlf",
+    {
+     "kind": "ci",
+     "lo": -0.17647716804842742,
+     "hi": -0.10025062656641605
+    }
+   ],
+   [
+    "sleep",
+    "own",
+    "v",
+    {
+     "kind": "ci",
+     "lo": -14.37099553318781,
+     "hi": -4.32593432945951
+    }
+   ]
+  ]
+ },
+ "arms": {
+  "CS:PMRT": {
+   "source": "MG:PMRT",
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     7545.510298074564
+    ],
+    [
+     "carrier",
+     "own",
+     "load",
+     -36.67661817676091
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -7.218793608401272
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -112.67501489623446
+    ],
+    [
+     "prot_min",
+     "own",
+     "pv",
+     -4.636698238612445
+    ],
+    [
+     "ptx",
+     "far",
+     "load",
+     -118.30282935549046
+    ],
+    [
+     "ptx",
+     "nbr",
+     "load",
+     -191.0357435451154
+    ],
+    [
+     "ptx",
+     "nbr",
+     "v",
+     -18.439179155607867
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     3794.1910672202976
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     309.976284587651
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     1.5727808318461016
+    ],
+    [
+     "ptx",
+     "own",
+     "rlf",
+     0.03028255755138364
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     27.015066452425533
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     4955.491949055394
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     951.5622904710011
+    ],
+    [
+     "sleep",
+     "nbr",
+     "pv",
+     12.82296716065839
+    ],
+    [
+     "sleep",
+     "nbr",
+     "v",
+     392.1245179035086
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -205.59805738767014
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1019.8360745130599
+    ],
+    [
+     "sleep",
+     "own",
+     "pv",
+     -1.174916893111987
+    ],
+    [
+     "sleep",
+     "own",
+     "rlf",
+     -0.14230463978920338
+    ],
+    [
+     "sleep",
+     "own",
+     "v",
+     -14.720583732593495
+    ]
+   ],
+   "bound_method": "pmrt",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       16.967389455782328
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.021804380628191344,
+       0.029783163265306146
+      ],
+      [
+       "nbr",
+       "v",
+       "UNRESOLVED",
+       34.885826093337776,
+       16.967389455782328
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       0.09028831316952945,
+       0.029783163265306146
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       12.794967390424924,
+       16.967389455782328
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.008922880274981206,
+       0.029783163265306146
+      ]
+     ],
+     "certified": false
+    },
+    "sleep|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.19297520661157044
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       0.14843998594411376,
+       0.19297520661157044
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       38.288520877171244,
+       109.9374655647384
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.07636421914138214,
+       0.19297520661157044
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.03642745709828397
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       0.1481758331578081,
+       0.03642745709828397
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       39.76619967661075,
+       20.75262610504422
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.007758115074589379,
+       0.03642745709828397
+      ]
+     ],
+     "certified": false
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "CERTIFIED",
+       3.543315302392494,
+       8.521738202007269
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.011503852669195262,
+       0.014958360025624614
+      ],
+      [
+       "nbr",
+       "v",
+       "UNRESOLVED",
+       8.75966167854427,
+       8.521738202007269
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       0.01244126121978481,
+       0.014958360025624614
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       12.351629914449239,
+       8.521738202007269
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       0.09139957789156651,
+       0.014958360025624614
+      ]
+     ],
+     "certified": false
+    }
+   },
+   "uncertified": [
+    [
+     "carrier",
+     -1
+    ],
+    [
+     "ptx",
+     1
+    ],
+    [
+     "prot_min",
+     -1
+    ]
+   ],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"defer\",false]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "CS:PMRT",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept (uncertified: defer iff own pressure > theta)",
+    "sleep+": "defer",
+    "sleep-": "accept",
+    "ptx+": "accept (uncertified: defer)",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept (uncertified: defer iff own pressure > theta)"
+   }
+  },
+  "CS:GT": {
+   "source": "MG:GT",
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     6754.118457073641
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -5.030870620881026
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -88.58515435310441
+    ],
+    [
+     "prot_min",
+     "own",
+     "pv",
+     -4.827269386255053
+    ],
+    [
+     "ptx",
+     "far",
+     "e",
+     -513.0502449169602
+    ],
+    [
+     "ptx",
+     "far",
+     "load",
+     -119.24129032258064
+    ],
+    [
+     "ptx",
+     "far",
+     "pv",
+     -1.2301075268817205
+    ],
+    [
+     "ptx",
+     "far",
+     "v",
+     -24.244301075268815
+    ],
+    [
+     "ptx",
+     "nbr",
+     "e",
+     -418.5274160100939
+    ],
+    [
+     "ptx",
+     "nbr",
+     "load",
+     -196.20559139784947
+    ],
+    [
+     "ptx",
+     "nbr",
+     "rlf",
+     -0.061075268817204306
+    ],
+    [
+     "ptx",
+     "nbr",
+     "v",
+     -25.95010752688172
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     3746.580993794062
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     315.4468817204301
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     1.3466666666666665
+    ],
+    [
+     "ptx",
+     "own",
+     "rlf",
+     0.02150537634408602
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     27.534623655913983
+    ],
+    [
+     "sleep",
+     "far",
+     "e",
+     1590.678621546543
+    ],
+    [
+     "sleep",
+     "far",
+     "load",
+     59.266169154228855
+    ],
+    [
+     "sleep",
+     "far",
+     "pv",
+     2.049751243781094
+    ],
+    [
+     "sleep",
+     "far",
+     "rlf",
+     0.11940298507462686
+    ],
+    [
+     "sleep",
+     "far",
+     "v",
+     43.54477611940298
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     6629.038043393045
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     930.094527363184
+    ],
+    [
+     "sleep",
+     "nbr",
+     "pv",
+     9.833333333333332
+    ],
+    [
+     "sleep",
+     "nbr",
+     "rlf",
+     0.11442786069651742
+    ],
+    [
+     "sleep",
+     "nbr",
+     "v",
+     391.47263681592034
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -989.360696517413
+    ],
+    [
+     "sleep",
+     "own",
+     "rlf",
+     -0.13681592039800994
+    ]
+   ],
+   "bound_method": "gt",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       16.967389455782328
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.0003512561894302836,
+       0.029783163265306146
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       9.69585457315957,
+       16.967389455782328
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       0.021950813943001447,
+       0.029783163265306146
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       6.186999465346543,
+       16.967389455782328
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.021505376344086023,
+       0.029783163265306146
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "CERTIFIED",
+       14.37099553318781,
+       109.9374655647384
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.19297520661157044
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "nbr",
+       "rlf",
+       "DECLARED",
+       null,
+       0.19297520661157044
+      ],
+      [
+       "far",
+       "v",
+       "DECLARED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "far",
+       "rlf",
+       "DECLARED",
+       null,
+       0.19297520661157044
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.03642745709828397
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "nbr",
+       "rlf",
+       "DECLARED",
+       null,
+       0.03642745709828397
+      ],
+      [
+       "far",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.022850217916905263,
+       0.03642745709828397
+      ]
+     ],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "CERTIFIED",
+       1.2608518590401947,
+       8.521738202007269
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.001145475372279496,
+       0.014958360025624614
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       0.24166183677901662,
+       8.521738202007269
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       0.003355798642686969,
+       0.014958360025624614
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       0.41582198839799916,
+       8.521738202007269
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.0011696248818768233,
+       0.014958360025624614
+      ]
+     ],
+     "certified": true
+    }
+   },
+   "uncertified": [],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"defer\",false]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"defer\",true]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"defer_iff\",[\"own\"],false]]]",
+   "alias_of": "CS:GT",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "defer",
+    "sleep-": "accept",
+    "ptx+": "defer [bounded]",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "defer iff own pressure > theta"
+   }
+  },
+  "CS:rand": {
+   "source": "MG:rand",
+   "map": [
+    [
+     "carrier",
+     "nbr",
+     "load",
+     -20.258411377037806
+    ],
+    [
+     "carrier",
+     "nbr",
+     "pv",
+     0.24523066250433578
+    ],
+    [
+     "carrier",
+     "own",
+     "load",
+     29.627124523066247
+    ],
+    [
+     "carrier",
+     "own",
+     "rlf",
+     -0.005202913631633715
+    ],
+    [
+     "prot_min",
+     "far",
+     "e",
+     -0.535562764781751
+    ],
+    [
+     "prot_min",
+     "far",
+     "load",
+     0.23778022785740538
+    ],
+    [
+     "prot_min",
+     "far",
+     "v",
+     -0.09187798603454614
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "load",
+     -0.13818449099595737
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "pv",
+     -0.03234105108416024
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "v",
+     -0.012495406100698252
+    ],
+    [
+     "prot_min",
+     "own",
+     "load",
+     -0.09959573686144799
+    ],
+    [
+     "ptx",
+     "far",
+     "e",
+     513.0502449169602
+    ],
+    [
+     "ptx",
+     "far",
+     "load",
+     -119.24129032258064
+    ],
+    [
+     "ptx",
+     "nbr",
+     "load",
+     196.20559139784947
+    ],
+    [
+     "ptx",
+     "nbr",
+     "v",
+     25.95010752688172
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     -3746.580993794062
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     -315.4468817204301
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     1.3466666666666665
+    ],
+    [
+     "ptx",
+     "own",
+     "rlf",
+     0.02150537634408602
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     -27.534623655913983
+    ],
+    [
+     "sleep",
+     "far",
+     "load",
+     59.266169154228855
+    ],
+    [
+     "sleep",
+     "own",
+     "rlf",
+     0.13681592039800994
+    ]
+   ],
+   "bound_method": null,
+   "certification": {
+    "carrier|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "UNRESOLVED",
+       null,
+       21.24989350372739
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.03730031948881792
+      ],
+      [
+       "nbr",
+       "v",
+       "UNRESOLVED",
+       null,
+       21.24989350372739
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.03730031948881792
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       null,
+       21.24989350372739
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.03730031948881792
+      ]
+     ],
+     "certified": false
+    },
+    "carrier|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "UNRESOLVED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.19297520661157044
+      ],
+      [
+       "nbr",
+       "v",
+       "UNRESOLVED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.19297520661157044
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.19297520661157044
+      ]
+     ],
+     "certified": false
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.03642745709828397
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.03642745709828397
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.03642745709828397
+      ]
+     ],
+     "certified": false
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "UNRESOLVED",
+       null,
+       8.521738202007269
+      ],
+      [
+       "own",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.014958360025624614
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       8.521738202007269
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.014958360025624614
+      ],
+      [
+       "far",
+       "v",
+       "DECLARED",
+       null,
+       8.521738202007269
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.014958360025624614
+      ]
+     ],
+     "certified": false
+    }
+   },
+   "uncertified": [
+    [
+     "carrier",
+     1
+    ],
+    [
+     "sleep",
+     1
+    ],
+    [
+     "ptx",
+     1
+    ],
+    [
+     "prot_min",
+     -1
+    ]
+   ],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept (uncertified: defer iff nbr pressure > theta [bounded])",
+    "carrier-": "accept",
+    "sleep+": "accept (uncertified: defer iff own pressure > theta)",
+    "sleep-": "accept",
+    "ptx+": "accept (uncertified: defer iff own pressure > theta [bounded])",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept (uncertified: defer)"
+   }
+  },
+  "CS:blanket2": {
+   "source": "blanket2",
+   "map": [
+    [
+     "carrier",
+     "nbr",
+     "pv",
+     -1.0
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     1.0
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -1.0
+    ],
+    [
+     "ptx",
+     "nbr",
+     "pv",
+     -1.0
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     1.0
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     -1.0
+    ],
+    [
+     "sleep",
+     "nbr",
+     "pv",
+     1.0
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -1.0
+    ],
+    [
+     "sleep",
+     "own",
+     "pv",
+     1.0
+    ]
+   ],
+   "bound_method": null,
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "UNRESOLVED",
+       null,
+       16.967389455782328
+      ],
+      [
+       "own",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.029783163265306146
+      ],
+      [
+       "nbr",
+       "v",
+       "UNRESOLVED",
+       null,
+       16.967389455782328
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.029783163265306146
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       null,
+       16.967389455782328
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.029783163265306146
+      ]
+     ],
+     "certified": false
+    },
+    "sleep|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "UNRESOLVED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "own",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.19297520661157044
+      ],
+      [
+       "nbr",
+       "v",
+       "UNRESOLVED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.19297520661157044
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.19297520661157044
+      ]
+     ],
+     "certified": false
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "UNRESOLVED",
+       null,
+       15.892990840302682
+      ],
+      [
+       "own",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.0278972520908005
+      ],
+      [
+       "nbr",
+       "v",
+       "UNRESOLVED",
+       null,
+       15.892990840302682
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.0278972520908005
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       null,
+       15.892990840302682
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       null,
+       0.0278972520908005
+      ]
+     ],
+     "certified": false
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [
+    [
+     "carrier",
+     -1
+    ],
+    [
+     "sleep",
+     1
+    ],
+    [
+     "ptx",
+     -1
+    ]
+   ],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept (uncertified: defer iff own/nbr pressure > theta)",
+    "sleep+": "accept (uncertified: defer iff own/nbr pressure > theta)",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept (uncertified: defer iff own/nbr pressure > theta)",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:corr@dev": {
+   "source": "MG:corr@dev",
+   "map": [
+    [
+     "carrier",
+     "nbr",
+     "e",
+     10796.436039452368
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "sleep",
+     "far",
+     "e",
+     -11906.141202282668
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     -12502.858848216594
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "nbr",
+     "v",
+     404.6164443257933
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "CERTIFIED",
+       26.380428919185917,
+       109.9374655647384
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.1658598475130315,
+       0.19297520661157044
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       -0.042604243080478665,
+       0.19297520661157044
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       -84.8035051653209,
+       109.9374655647384
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.016608979299734525,
+       0.19297520661157044
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"defer_iff\",[\"nbr\"],false]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "CS:corr@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "defer iff nbr pressure > theta",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:corr@plc": {
+   "source": "MG:corr@plc",
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:granger@dev": {
+   "source": "MG:granger@dev",
+   "map": [
+    [
+     "carrier",
+     "far",
+     "e",
+     8011.1631713642355
+    ],
+    [
+     "carrier",
+     "far",
+     "load",
+     -42.07088510787344
+    ],
+    [
+     "carrier",
+     "nbr",
+     "e",
+     10796.436039452368
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "carrier",
+     "own",
+     "load",
+     24.994150334591964
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -6.815799224864624
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -69.21767853806728
+    ],
+    [
+     "prot_min",
+     "far",
+     "v",
+     39.17220022034311
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "load",
+     -32.68886822825872
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "v",
+     50.610843920198235
+    ],
+    [
+     "prot_min",
+     "own",
+     "e",
+     264.38353918101205
+    ],
+    [
+     "prot_min",
+     "own",
+     "load",
+     42.665473474319576
+    ],
+    [
+     "prot_min",
+     "own",
+     "pv",
+     1.6347983347477024
+    ],
+    [
+     "prot_min",
+     "own",
+     "v",
+     38.690424283823106
+    ],
+    [
+     "ptx",
+     "far",
+     "e",
+     6020.654796212356
+    ],
+    [
+     "ptx",
+     "far",
+     "load",
+     -124.11732449417387
+    ],
+    [
+     "ptx",
+     "nbr",
+     "e",
+     8760.623786843464
+    ],
+    [
+     "ptx",
+     "nbr",
+     "load",
+     -134.87392784282753
+    ],
+    [
+     "ptx",
+     "nbr",
+     "pv",
+     0.36245976513185585
+    ],
+    [
+     "ptx",
+     "nbr",
+     "v",
+     15.211903819598206
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     1.33264734291353
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     40.71525994670832
+    ],
+    [
+     "sleep",
+     "far",
+     "e",
+     -11906.141202282668
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     -12502.858848216594
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "nbr",
+     "v",
+     404.6164443257933
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ],
+    [
+     "sleep",
+     "own",
+     "pv",
+     -1.941238670299501
+    ],
+    [
+     "sleep",
+     "own",
+     "v",
+     -22.663833423630702
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       16.967389455782328
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.013904522129712917,
+       0.029783163265306146
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       -15.684210611303634,
+       16.967389455782328
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       0.0013101710577062414,
+       0.029783163265306146
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       -42.37101927111389,
+       16.967389455782328
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.024656007873041282,
+       0.029783163265306146
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       116.68801169590652
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       -0.12637902955432,
+       0.20482456140350894
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       116.68801169590652
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       0.26975131387097856,
+       0.20482456140350894
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       137.16521530809922,
+       116.68801169590652
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       0.22237178254834566,
+       0.20482456140350894
+      ]
+     ],
+     "certified": false
+    },
+    "ptx|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.016574050072148298,
+       0.03642745709828397
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       0.2437042043509964,
+       0.03642745709828397
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       35.71737704018609,
+       20.75262610504422
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       0.1143691703657933,
+       0.03642745709828397
+      ]
+     ],
+     "certified": false
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       4.767897252090805
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       -0.011723493780439239,
+       0.00836917562724015
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       4.767897252090805
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       -0.01531210949588091,
+       0.00836917562724015
+      ],
+      [
+       "far",
+       "v",
+       "DECLARED",
+       null,
+       4.767897252090805
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       -0.02091370245490238,
+       0.00836917562724015
+      ]
+     ],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [
+    [
+     "sleep",
+     -1
+    ],
+    [
+     "ptx",
+     1
+    ]
+   ],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"defer\",false]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "CS:granger@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "accept",
+    "sleep-": "accept (uncertified: defer [bounded])",
+    "ptx+": "accept (uncertified: defer)",
+    "ptx-": "accept",
+    "prot_min+": "defer",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:granger@plc": {
+   "source": "MG:granger@plc",
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:shap_gbdt@dev": {
+   "source": "MG:shap_gbdt@dev",
+   "map": [
+    [
+     "carrier",
+     "far",
+     "rlf",
+     -0.011864504456970754
+    ],
+    [
+     "carrier",
+     "nbr",
+     "rlf",
+     -0.04250607711171585
+    ],
+    [
+     "carrier",
+     "own",
+     "rlf",
+     0.0025807272867272952
+    ],
+    [
+     "prot_min",
+     "own",
+     "rlf",
+     0.016783564572158592
+    ],
+    [
+     "sleep",
+     "own",
+     "rlf",
+     -0.14611943853367576
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "CERTIFIED",
+       -66.51194292719376,
+       16.967389455782328
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.029783163265306146
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       -15.684210611303634,
+       16.967389455782328
+      ],
+      [
+       "nbr",
+       "rlf",
+       "DECLARED",
+       null,
+       0.029783163265306146
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       -42.37101927111389,
+       16.967389455782328
+      ],
+      [
+       "far",
+       "rlf",
+       "DECLARED",
+       null,
+       0.029783163265306146
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "CERTIFIED",
+       -18.947237928075488,
+       116.68801169590652
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.20482456140350894
+      ],
+      [
+       "nbr",
+       "v",
+       "UNRESOLVED",
+       440.89560997771457,
+       116.68801169590652
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       0.26975131387097856,
+       0.20482456140350894
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       137.16521530809922,
+       116.68801169590652
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       0.22237178254834566,
+       0.20482456140350894
+      ]
+     ],
+     "certified": false
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "CERTIFIED",
+       -37.475376395439554,
+       4.767897252090805
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.00836917562724015
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       -46.78749507668242,
+       4.767897252090805
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       -0.01531210949588091,
+       0.00836917562724015
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       -35.724290303738215,
+       4.767897252090805
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       -0.02091370245490238,
+       0.00836917562724015
+      ]
+     ],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [
+    [
+     "sleep",
+     -1
+    ]
+   ],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"nbr\"],false]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"defer_iff\",[\"own\"],false]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "CS:shap_gbdt@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff nbr pressure > theta",
+    "sleep+": "accept",
+    "sleep-": "accept (uncertified: defer iff own pressure > theta)",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "defer iff own pressure > theta",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:shap_gbdt@plc": {
+   "source": "MG:shap_gbdt@plc",
+   "map": [
+    [
+     "sleep",
+     "own",
+     "rlf",
+     -0.14611943853367576
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "CERTIFIED",
+       -18.947237928075488,
+       116.68801169590652
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.20482456140350894
+      ],
+      [
+       "nbr",
+       "v",
+       "UNRESOLVED",
+       440.89560997771457,
+       116.68801169590652
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       0.26975131387097856,
+       0.20482456140350894
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       137.16521530809922,
+       116.68801169590652
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       0.22237178254834566,
+       0.20482456140350894
+      ]
+     ],
+     "certified": false
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [
+    [
+     "sleep",
+     -1
+    ]
+   ],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept (uncertified: defer iff own pressure > theta)",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:int@dev": {
+   "source": "MG:int@dev",
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:int@plc": {
+   "source": "MG:int@plc",
+   "map": [
+    [
+     "carrier",
+     "nbr",
+     "e",
+     10796.436039452368
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     -12502.858848216594
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:qacm@dev": {
+   "source": "MG:qacm@dev",
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -69.21767853806728
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       16.967389455782328
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.013904522129712917,
+       0.029783163265306146
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       -15.684210611303634,
+       16.967389455782328
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       0.0013101710577062414,
+       0.029783163265306146
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       -42.37101927111389,
+       16.967389455782328
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.024656007873041282,
+       0.029783163265306146
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "CS:qacm@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:qacm@plc": {
+   "source": "MG:qacm@plc",
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -69.21767853806728
+    ],
+    [
+     "prot_min",
+     "own",
+     "pv",
+     -1.6347983347477024
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       16.967389455782328
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.013904522129712917,
+       0.029783163265306146
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       -15.684210611303634,
+       16.967389455782328
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       0.0013101710577062414,
+       0.029783163265306146
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       -42.37101927111389,
+       16.967389455782328
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.024656007873041282,
+       0.029783163265306146
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "UNRESOLVED",
+       39.90547217220666,
+       8.521738202007269
+      ],
+      [
+       "own",
+       "rlf",
+       "UNRESOLVED",
+       0.021843635363877945,
+       0.014958360025624614
+      ],
+      [
+       "nbr",
+       "v",
+       "UNRESOLVED",
+       54.43419276371405,
+       8.521738202007269
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       0.04965931486161396,
+       0.014958360025624614
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       42.620110136948,
+       8.521738202007269
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       0.05116589141867644,
+       0.014958360025624614
+      ]
+     ],
+     "certified": false
+    }
+   },
+   "uncertified": [
+    [
+     "prot_min",
+     -1
+    ]
+   ],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "CS:qacm@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept (uncertified: defer iff own pressure > theta)"
+   }
+  },
+  "CS:two_tower@dev": {
+   "source": "MG:two_tower@dev",
+   "map": [
+    [
+     "carrier",
+     "far",
+     "e",
+     8011.1631713642355
+    ],
+    [
+     "carrier",
+     "nbr",
+     "e",
+     10796.436039452368
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -6.815799224864624
+    ],
+    [
+     "prot_min",
+     "own",
+     "v",
+     38.690424283823106
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     40.71525994670832
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "CERTIFIED",
+       -66.51194292719376,
+       16.967389455782328
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.013904522129712917,
+       0.029783163265306146
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       -15.684210611303634,
+       16.967389455782328
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       0.0013101710577062414,
+       0.029783163265306146
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       -42.37101927111389,
+       16.967389455782328
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.024656007873041282,
+       0.029783163265306146
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       0.016574050072148298,
+       0.03642745709828397
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       -3.452662586760624,
+       20.75262610504422
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       0.2437042043509964,
+       0.03642745709828397
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       35.71737704018609,
+       20.75262610504422
+      ],
+      [
+       "far",
+       "rlf",
+       "UNRESOLVED",
+       0.1143691703657933,
+       0.03642745709828397
+      ]
+     ],
+     "certified": false
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       4.767897252090805
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       -0.011723493780439239,
+       0.00836917562724015
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       -46.78749507668242,
+       4.767897252090805
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       -0.01531210949588091,
+       0.00836917562724015
+      ],
+      [
+       "far",
+       "v",
+       "CERTIFIED",
+       -35.724290303738215,
+       4.767897252090805
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       -0.02091370245490238,
+       0.00836917562724015
+      ]
+     ],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [
+    [
+     "ptx",
+     1
+    ]
+   ],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"defer_iff\",[\"own\"],false]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "CS:two_tower@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept (uncertified: defer)",
+    "ptx-": "accept",
+    "prot_min+": "defer iff own pressure > theta",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:two_tower@plc": {
+   "source": "MG:two_tower@plc",
+   "map": [],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "CS:granger_by": {
+   "source": "MG:granger_by",
+   "map": [
+    [
+     "carrier",
+     "far",
+     "e",
+     8011.1631713642355
+    ],
+    [
+     "carrier",
+     "far",
+     "load",
+     -42.07088510787344
+    ],
+    [
+     "carrier",
+     "far",
+     "rlf",
+     0.011864504456970754
+    ],
+    [
+     "carrier",
+     "far",
+     "v",
+     -52.36970301163703
+    ],
+    [
+     "carrier",
+     "nbr",
+     "e",
+     10796.436039452368
+    ],
+    [
+     "carrier",
+     "nbr",
+     "rlf",
+     0.04250607711171585
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "carrier",
+     "own",
+     "load",
+     24.994150334591964
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -6.815799224864624
+    ],
+    [
+     "carrier",
+     "own",
+     "rlf",
+     0.0025807272867272952
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -69.21767853806728
+    ],
+    [
+     "prot_min",
+     "far",
+     "e",
+     -340.5972928317455
+    ],
+    [
+     "prot_min",
+     "far",
+     "load",
+     -9.976605246060855
+    ],
+    [
+     "prot_min",
+     "far",
+     "pv",
+     1.743957836911604
+    ],
+    [
+     "prot_min",
+     "far",
+     "v",
+     39.17220022034311
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "e",
+     -156.10690732060053
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "load",
+     -32.68886822825872
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "pv",
+     2.305244319711522
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "rlf",
+     -0.03248571217874743
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "v",
+     50.610843920198235
+    ],
+    [
+     "prot_min",
+     "own",
+     "e",
+     264.38353918101205
+    ],
+    [
+     "prot_min",
+     "own",
+     "load",
+     42.665473474319576
+    ],
+    [
+     "prot_min",
+     "own",
+     "pv",
+     1.6347983347477024
+    ],
+    [
+     "prot_min",
+     "own",
+     "v",
+     38.690424283823106
+    ],
+    [
+     "ptx",
+     "far",
+     "e",
+     6020.654796212356
+    ],
+    [
+     "ptx",
+     "far",
+     "load",
+     -124.11732449417387
+    ],
+    [
+     "ptx",
+     "far",
+     "rlf",
+     0.07229245358073122
+    ],
+    [
+     "ptx",
+     "nbr",
+     "e",
+     8760.623786843464
+    ],
+    [
+     "ptx",
+     "nbr",
+     "load",
+     -134.87392784282753
+    ],
+    [
+     "ptx",
+     "nbr",
+     "pv",
+     0.36245976513185585
+    ],
+    [
+     "ptx",
+     "nbr",
+     "v",
+     15.211903819598206
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     1.33264734291353
+    ],
+    [
+     "ptx",
+     "own",
+     "rlf",
+     0.0033463319648045775
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     40.71525994670832
+    ],
+    [
+     "sleep",
+     "far",
+     "e",
+     -11906.141202282668
+    ],
+    [
+     "sleep",
+     "far",
+     "v",
+     110.98436023671006
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     -12502.858848216594
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "nbr",
+     "pv",
+     26.039445548078792
+    ],
+    [
+     "sleep",
+     "nbr",
+     "v",
+     404.6164443257933
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ],
+    [
+     "sleep",
+     "own",
+     "pv",
+     -1.941238670299501
+    ],
+    [
+     "sleep",
+     "own",
+     "rlf",
+     -0.14611943853367576
+    ],
+    [
+     "sleep",
+     "own",
+     "v",
+     -22.663833423630702
+    ]
+   ],
+   "bound_method": "ols",
+   "certification": {
+    "carrier|1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "carrier|-1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       16.967389455782328
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.029783163265306146
+      ],
+      [
+       "nbr",
+       "v",
+       "CERTIFIED",
+       -15.684210611303634,
+       16.967389455782328
+      ],
+      [
+       "nbr",
+       "rlf",
+       "DECLARED",
+       null,
+       0.029783163265306146
+      ],
+      [
+       "far",
+       "v",
+       "DECLARED",
+       null,
+       16.967389455782328
+      ],
+      [
+       "far",
+       "rlf",
+       "DECLARED",
+       null,
+       0.029783163265306146
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.19297520661157044
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "nbr",
+       "rlf",
+       "CERTIFIED",
+       -0.042604243080478665,
+       0.19297520661157044
+      ],
+      [
+       "far",
+       "v",
+       "DECLARED",
+       null,
+       109.9374655647384
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       0.016608979299734525,
+       0.19297520661157044
+      ]
+     ],
+     "certified": true
+    },
+    "sleep|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "ptx|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "own",
+       "rlf",
+       "DECLARED",
+       null,
+       0.03642745709828397
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       20.75262610504422
+      ],
+      [
+       "nbr",
+       "rlf",
+       "UNRESOLVED",
+       0.2437042043509964,
+       0.03642745709828397
+      ],
+      [
+       "far",
+       "v",
+       "UNRESOLVED",
+       35.71737704018609,
+       20.75262610504422
+      ],
+      [
+       "far",
+       "rlf",
+       "DECLARED",
+       null,
+       0.03642745709828397
+      ]
+     ],
+     "certified": false
+    },
+    "ptx|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    },
+    "prot_min|1": {
+     "can_defer": true,
+     "edges": [
+      [
+       "own",
+       "v",
+       "DECLARED",
+       null,
+       4.767897252090805
+      ],
+      [
+       "own",
+       "rlf",
+       "CERTIFIED",
+       -0.011723493780439239,
+       0.00836917562724015
+      ],
+      [
+       "nbr",
+       "v",
+       "DECLARED",
+       null,
+       4.767897252090805
+      ],
+      [
+       "nbr",
+       "rlf",
+       "DECLARED",
+       null,
+       0.00836917562724015
+      ],
+      [
+       "far",
+       "v",
+       "DECLARED",
+       null,
+       4.767897252090805
+      ],
+      [
+       "far",
+       "rlf",
+       "CERTIFIED",
+       -0.02091370245490238,
+       0.00836917562724015
+      ]
+     ],
+     "certified": true
+    },
+    "prot_min|-1": {
+     "can_defer": false,
+     "edges": [],
+     "certified": true
+    }
+   },
+   "uncertified": [
+    [
+     "ptx",
+     1
+    ]
+   ],
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"defer_iff\",[\"nbr\"],false]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"defer_iff\",[\"own\",\"nbr\"],false]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "CS:granger_by",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "defer iff nbr pressure > theta",
+    "sleep-": "accept",
+    "ptx+": "accept (uncertified: defer)",
+    "ptx-": "accept",
+    "prot_min+": "defer iff own/nbr pressure > theta",
+    "prot_min-": "accept"
+   }
+  }
+ },
+ "jobs": [
+  "CS:PMRT",
+  "CS:GT",
+  "CS:corr@dev",
+  "CS:granger@dev",
+  "CS:shap_gbdt@dev",
+  "CS:qacm@dev",
+  "CS:two_tower@dev",
+  "CS:granger_by"
+ ],
+ "alias_of": {
+  "CS:PMRT": "CS:PMRT",
+  "CS:GT": "CS:GT",
+  "CS:rand": "noarb",
+  "CS:blanket2": "noarb",
+  "CS:corr@plc": "noarb",
+  "CS:granger@plc": "noarb",
+  "CS:shap_gbdt@plc": "noarb",
+  "CS:int@dev": "noarb",
+  "CS:int@plc": "noarb",
+  "CS:two_tower@plc": "noarb",
+  "CS:corr@dev": "CS:corr@dev",
+  "CS:granger@dev": "CS:granger@dev",
+  "CS:shap_gbdt@dev": "CS:shap_gbdt@dev",
+  "CS:qacm@dev": "CS:qacm@dev",
+  "CS:qacm@plc": "CS:qacm@dev",
+  "CS:two_tower@dev": "CS:two_tower@dev",
+  "CS:granger_by": "CS:granger_by"
+ },
+ "noarb_alias": true,
+ "all_accept_signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+ "mapgate": {
+  "theta": 0.05,
+  "k_conf": 1,
+  "T": 60.0,
+  "open_rule": "feasible",
+  "warmup_s": 0.0,
+  "directional": true,
+  "sha256": "64ad9d1beb336681d3f384b5d9b1871615bc317f78c0eaa6ca0d9b9dcd426dd9"
+ },
+ "sha256": {
+  "certsafe_bounds.json": "a6643fb15b74381e7d6bee2020644cb70a77056b6c6b10ce5952433fe16c6812",
+  "certsafe_calib.json": "8a00de8a3b98d0dc2018d9c0c8ec3512d6941b62a22dfc6def62170f45c3def7",
+  "disc_conf.json": "dafca2bf4172bf377aacdd8be811ea2f759576305fa86212478d18eeaf912f2b",
+  "cdd_oran/decision/certsafe.py": "f838af6a39691d5882c9cc8109db25866d40c1db727370fdb980872befbf5daf",
+  "scratchpad/e6_dev/e6p_certsafe_analyze.py": "0adde7aa181e2874b3394636932bb0df8ef71ae58c14aa628dbe9afbe9ee6a33",
+  "scratchpad/e6_dev/e6p_certsafe.py": "41d6d173296345fadf72e49d3e36cf1b49b25168b14966c93943fc83144b7e84"
+ },
+ "platform": {
+  "bounds": {
+   "numpy": "2.4.2",
+   "scipy": "1.18.1",
+   "python": "3.12.13",
+   "platform": "Linux-6.18.48+-x86_64-with-glibc2.35",
+   "machine": "x86_64",
+   "simd": [
+    "AVX2",
+    "FMA3"
+   ]
+  },
+  "calib": {
+   "keys": [
+    [
+     "2.4.2",
+     "1.18.1",
+     "Linux",
+     "glibc2.35",
+     "x86_64",
+     [
+      "AVX2",
+      "FMA3"
+     ]
+    ]
+   ],
+   "equal": true
+  }
+ }
+}

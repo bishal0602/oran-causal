@@ -1,0 +1,120 @@
+{
+ "schema": "xm-expb-counts/1",
+ "source": "v4 analysis",
+ "counts": {
+  "pooled": {
+   "carrier": 20276,
+   "sleep": 3072,
+   "ptx": 14988,
+   "prot_min": 50731
+  },
+  "s60_0": {
+   "carrier": 1935,
+   "sleep": 279,
+   "ptx": 1502,
+   "prot_min": 5064
+  },
+  "s60_1": {
+   "carrier": 2092,
+   "sleep": 266,
+   "ptx": 1555,
+   "prot_min": 4687
+  },
+  "s60_2": {
+   "carrier": 1972,
+   "sleep": 326,
+   "ptx": 1494,
+   "prot_min": 5266
+  },
+  "s60_3": {
+   "carrier": 2065,
+   "sleep": 327,
+   "ptx": 1531,
+   "prot_min": 5059
+  },
+  "s60_4": {
+   "carrier": 2030,
+   "sleep": 340,
+   "ptx": 1529,
+   "prot_min": 5121
+  },
+  "s60_5": {
+   "carrier": 2009,
+   "sleep": 315,
+   "ptx": 1501,
+   "prot_min": 5144
+  },
+  "s60_6": {
+   "carrier": 2077,
+   "sleep": 295,
+   "ptx": 1422,
+   "prot_min": 5032
+  },
+  "s60_7": {
+   "carrier": 1980,
+   "sleep": 331,
+   "ptx": 1498,
+   "prot_min": 5062
+  },
+  "s60_8": {
+   "carrier": 2106,
+   "sleep": 312,
+   "ptx": 1462,
+   "prot_min": 5213
+  },
+  "s60_9": {
+   "carrier": 2010,
+   "sleep": 281,
+   "ptx": 1494,
+   "prot_min": 5083
+  },
+  "s120_0": {
+   "carrier": 4027,
+   "sleep": 545,
+   "ptx": 3057,
+   "prot_min": 9751
+  },
+  "s120_1": {
+   "carrier": 4037,
+   "sleep": 653,
+   "ptx": 3025,
+   "prot_min": 10325
+  },
+  "s120_2": {
+   "carrier": 4039,
+   "sleep": 655,
+   "ptx": 3030,
+   "prot_min": 10265
+  },
+  "s120_3": {
+   "carrier": 4057,
+   "sleep": 626,
+   "ptx": 2920,
+   "prot_min": 10094
+  },
+  "s120_4": {
+   "carrier": 4116,
+   "sleep": 593,
+   "ptx": 2956,
+   "prot_min": 10296
+  },
+  "s300_0": {
+   "carrier": 10094,
+   "sleep": 1538,
+   "ptx": 7611,
+   "prot_min": 25197
+  },
+  "s300_1": {
+   "carrier": 10182,
+   "sleep": 1534,
+   "ptx": 7377,
+   "prot_min": 25534
+  },
+  "placebo": {
+   "carrier": 670,
+   "sleep": 123,
+   "ptx": 678,
+   "prot_min": 3633
+  }
+ }
+}

@@ -1,0 +1,110 @@
+{
+ "name": "dev_smoke",
+ "budget_cpu_s": 7200,
+ "arms": {
+  "pmrt_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq"
+   },
+   "declare": "by"
+  },
+  "pmrt_r3": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "r3"
+   },
+   "declare": "by"
+  },
+  "pc_eq": {
+   "ref": "cdd_oran.xmethod.methods.pc:PC",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "tau"
+  },
+  "pc_native": {
+   "ref": "cdd_oran.xmethod.methods.pc:PC",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau"
+  },
+  "granger_eq": {
+   "ref": "cdd_oran.xmethod.methods.granger:Granger",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "worlds": [
+    "E3"
+   ]
+  },
+  "granger_native": {
+   "ref": "cdd_oran.xmethod.methods.granger:Granger",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "worlds": [
+    "E3"
+   ]
+  },
+  "corr": {
+   "ref": "cdd_oran.xmethod.methods.corr:Corr",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by"
+  },
+  "notears": {
+   "ref": "cdd_oran.xmethod.methods.notears:Notears",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau"
+  },
+  "shap_dag": {
+   "ref": "cdd_oran.xmethod.methods.shap_dag:ShapDag",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau"
+  },
+  "two_tower": {
+   "ref": "cdd_oran.xmethod.methods.two_tower:TwoTowerM",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau"
+  }
+ },
+ "blocks": [
+  {
+   "role": "measure",
+   "worlds": [
+    "E2",
+    "E3",
+    "E4"
+   ],
+   "regimes": [
+    "R2",
+    "R3"
+   ],
+   "ns": [
+    500
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100
+   ],
+   "e4_lams": {
+    "R3": [
+     1.0
+    ]
+   }
+  }
+ ]
+}

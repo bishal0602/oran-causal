@@ -1,0 +1,57 @@
+{
+ "name": "dev_pmrt_nl_cost_e4",
+ "budget_cpu_s": 7200,
+ "note": "R-58(3) input: pmrt_nl_eq cost in E4 R3 (all lam) at n 24000 (2 DEV seeds) and n 8000 (1 seed); 4 parts on a 4-vCPU Kaggle session (1 process per vCPU). Cost only.",
+ "arms": {
+  "pmrt_nl_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "label": "nonlinear gbm statistic (pmrt-core-v2); primary PMRT arm (R-42)"
+  }
+ },
+ "blocks": [
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100,
+    3000101
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    8000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100,
+    3000100
+   ]
+  }
+ ]
+}

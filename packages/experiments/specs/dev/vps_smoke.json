@@ -1,0 +1,42 @@
+{
+ "name": "dev_vps_smoke",
+ "budget_cpu_s": 7200,
+ "note": "VPS dispatcher-lane live smoke (orchestrator 2026-10-04): 2 cheap arms x 2 DEV tune datasets (E1 R1 n 500, seeds 3000000-3000001), arms as specs/dev/full.json. Plumbing check only; not a DEV result.",
+ "arms": {
+  "corr": {
+   "ref": "cdd_oran.xmethod.methods.corr:Corr",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by"
+  },
+  "pc_eq": {
+   "ref": "cdd_oran.xmethod.methods.pc:PC",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "tau"
+  }
+ },
+ "blocks": [
+  {
+   "role": "tune",
+   "worlds": [
+    "E1"
+   ],
+   "regimes": [
+    "R1"
+   ],
+   "ns": [
+    500
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000000,
+    3000001
+   ]
+  }
+ ]
+}

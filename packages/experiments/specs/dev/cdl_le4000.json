@@ -1,0 +1,168 @@
+{
+ "name": "dev_cdl_le4000",
+ "budget_cpu_s": 7200,
+ "note": "R-58(7): the T1 / freeze view of specs/dev/cdl.json, n <= 4000 only (rule T1 reads n 500 / 1000 / 4000); cdl records at n 8000 / 24000 are descriptive and merged against cdl.json. Same units otherwise.",
+ "arms": {
+  "cdl": {
+   "ref": "cdd_oran.xmethod.methods.cdl:CDLMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau",
+   "analysis": "primary",
+   "fixed_threshold": 0.16
+  }
+ },
+ "blocks": [
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ]
+  },
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100,
+    3000119
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3000100,
+    3000119
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000120,
+    3000159
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000120,
+    3000159
+   ]
+  }
+ ]
+}

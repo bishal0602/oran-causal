@@ -1,0 +1,31 @@
+{
+ "name": "exp_b",
+ "status": "DRAFT (not launched; docs/xmethod/EXP_B.md)",
+ "note": "Experiment B: the final Study A method set on the frozen E6-P v4 data, descriptive. Arms, refs and configs = specs/eval/full.json (Study A) + pmrt_nl_eq gbm (R-52) + cdl CDLMethod (R-53); eq_min arms omitted (E6 has no dither design: eq_min = native); pcorr_hac (t) omitted (secondary in Study A; set-D member is fb, T8); mscr at n <= 1000 (R-54). size_factor = E6 / Study A E2 cost guess for the projection only (replaced by the pilot).",
+ "budget_cpu_s": 7200,
+ "slices": ["60", "120", "300", "pooled", "placebo"],
+ "families": ["carrier", "sleep", "ptx", "prot_min"],
+ "counts": "scratchpad/xmethod/specs/exp_b/counts_v4.json",
+ "gt": "scratchpad/xmethod/results/exp_b/gt_v4.json",
+ "arms": {
+  "pmrt_nl_eq": {"ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore", "config": {"covariates": "eq", "statistic": "gbm"}, "declare": "by", "analysis": "primary", "cost_from": "pmrt_eq", "size_factor": 9},
+  "pmrt_eq": {"ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore", "config": {"covariates": "eq"}, "declare": "by", "analysis": "secondary", "size_factor": 1},
+  "pmrt_r3": {"ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore", "config": {"covariates": "r3"}, "declare": "by", "analysis": "secondary", "size_factor": 2},
+  "pcorr_eq": {"ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod", "config": {"arm": "eq"}, "declare": "by", "analysis": "primary", "size_factor": 1},
+  "pcorr_native": {"ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod", "config": {"arm": "native"}, "declare": "by", "analysis": "secondary", "size_factor": 11},
+  "rcot2_eq": {"ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method", "config": {"arm": "eq"}, "declare": "by", "analysis": "primary", "size_factor": 2},
+  "rcot2_native": {"ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method", "config": {"arm": "native"}, "declare": "by", "analysis": "secondary", "size_factor": 5},
+  "mscr_eq": {"ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod", "config": {"arm": "eq"}, "declare": "by", "analysis": "primary", "max_n": 1000, "size_factor": 2, "label": "single-conditioner max statistic; cannot condition on the joint design set"},
+  "mscr_native": {"ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod", "config": {"arm": "native"}, "declare": "by", "analysis": "secondary", "max_n": 1000, "size_factor": 5},
+  "pcorr_hac_fb": {"ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac", "config": {"arm": "native", "inference": "fixed_b"}, "declare": "by", "analysis": "secondary", "size_factor": 5},
+  "pc_eq": {"ref": "cdd_oran.xmethod.methods.pc:PC", "config": {"arm": "eq"}, "declare": "tau", "analysis": "primary", "size_factor": 10},
+  "pc_native": {"ref": "cdd_oran.xmethod.methods.pc:PC", "config": {"arm": "native"}, "declare": "tau", "analysis": "secondary", "size_factor": 10},
+  "notears": {"ref": "cdd_oran.xmethod.methods.notears:Notears", "config": {"arm": "native"}, "declare": "tau", "analysis": "primary", "size_factor": 17},
+  "shap_dag": {"ref": "cdd_oran.xmethod.methods.shap_dag:ShapDag", "config": {"arm": "native"}, "declare": "tau", "analysis": "primary", "size_factor": 5},
+  "two_tower": {"ref": "cdd_oran.xmethod.methods.two_tower:TwoTowerM", "config": {"arm": "native"}, "declare": "tau", "analysis": "primary", "size_factor": 5},
+  "corr": {"ref": "cdd_oran.xmethod.methods.corr:Corr", "config": {"arm": "native"}, "declare": "by", "analysis": "primary", "size_factor": 1},
+  "granger_eq": {"ref": "cdd_oran.xmethod.methods.granger:Granger", "config": {"arm": "eq"}, "declare": "by", "analysis": "primary", "size_factor": 2},
+  "granger_native": {"ref": "cdd_oran.xmethod.methods.granger:Granger", "config": {"arm": "native"}, "declare": "by", "analysis": "secondary", "size_factor": 1},
+  "cdl": {"ref": "cdd_oran.xmethod.methods.cdl:CDLMethod", "config": {"arm": "native"}, "declare": "tau", "analysis": "primary", "fixed_threshold": 0.16, "size_factor": 20}
+ }
+}

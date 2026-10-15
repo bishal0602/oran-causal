@@ -1,0 +1,90 @@
+{
+ "name": "extras_x5_adj",
+ "budget_cpu_s": 7200,
+ "note": "X5 (POST HOC, EXPLORATORY; changes no frozen verdict): fresh-data re-run of the other lambdas at the same n (adjacent passing cells); frozen arms; declared in scratchpad/xmethod/EXTRAS_PROTOCOL.md (Amendments, 2026-10-05)",
+ "extras": {
+  "experiment": "X5",
+  "design": null,
+  "protocol": "scratchpad/xmethod/EXTRAS_PROTOCOL.md"
+ },
+ "arms": {
+  "pmrt_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "linear statistic (pmrt-core-v1); secondary PMRT arm (R-42)"
+  },
+  "pmrt_r3": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "r3"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  }
+ },
+ "blocks": [
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    8000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3300000,
+    3300999
+   ],
+   "arms": [
+    "pmrt_eq",
+    "pmrt_r3"
+   ],
+   "e4_lams": {
+    "R3": [
+     1.0,
+     1.5
+    ]
+   }
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3300000,
+    3300999
+   ],
+   "arms": [
+    "pmrt_eq",
+    "pmrt_r3"
+   ],
+   "e4_lams": {
+    "R3": [
+     0.0,
+     0.5,
+     1.5
+    ]
+   }
+  }
+ ]
+}

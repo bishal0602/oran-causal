@@ -1,0 +1,2934 @@
+{
+ "schema": "e6p-conf-maps/1",
+ "mode": "full",
+ "dry": false,
+ "protocol": {
+  "doc": "docs/benchmark/E6P_CONFOUNDED_PROTOCOL.md",
+  "exists": true,
+  "line": "FROZEN: yes (2026-10-01, freeze 1, after the v4 verdict PARTIAL)",
+  "sha256": "f719f43085cf1f95cf7c487e0e2c015e4377f9d83a9d4daa5484f42a996c7a1b",
+  "want": "f719f43085cf1f95cf7c487e0e2c015e4377f9d83a9d4daa5484f42a996c7a1b",
+  "frozen": true
+ },
+ "discovery_label": "DISC-PASS",
+ "K0": true,
+ "K0n": true,
+ "arms": {
+  "MG:PMRT": {
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     7545.510298074564
+    ],
+    [
+     "carrier",
+     "own",
+     "load",
+     -36.67661817676091
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -7.218793608401272
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -112.67501489623446
+    ],
+    [
+     "prot_min",
+     "own",
+     "pv",
+     -4.636698238612445
+    ],
+    [
+     "ptx",
+     "far",
+     "load",
+     -118.30282935549046
+    ],
+    [
+     "ptx",
+     "nbr",
+     "load",
+     -191.0357435451154
+    ],
+    [
+     "ptx",
+     "nbr",
+     "v",
+     -18.439179155607867
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     3794.1910672202976
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     309.976284587651
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     1.5727808318461016
+    ],
+    [
+     "ptx",
+     "own",
+     "rlf",
+     0.03028255755138364
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     27.015066452425533
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     4955.491949055394
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     951.5622904710011
+    ],
+    [
+     "sleep",
+     "nbr",
+     "pv",
+     12.82296716065839
+    ],
+    [
+     "sleep",
+     "nbr",
+     "v",
+     392.1245179035086
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -205.59805738767014
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1019.8360745130599
+    ],
+    [
+     "sleep",
+     "own",
+     "pv",
+     -1.174916893111987
+    ],
+    [
+     "sleep",
+     "own",
+     "rlf",
+     -0.14230463978920338
+    ],
+    [
+     "sleep",
+     "own",
+     "v",
+     -14.720583732593495
+    ]
+   ],
+   "provenance": {
+    "method": "PMRT loadsp_c+wby1s",
+    "declared": [
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "carrier|own|load",
+      -1
+     ],
+     [
+      "carrier|own|pv",
+      -1
+     ],
+     [
+      "carrier|own|v",
+      -1
+     ],
+     [
+      "prot_min|own|pv",
+      -1
+     ],
+     [
+      "ptx|far|load",
+      -1
+     ],
+     [
+      "ptx|nbr|load",
+      -1
+     ],
+     [
+      "ptx|nbr|v",
+      -1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "ptx|own|pv",
+      1
+     ],
+     [
+      "ptx|own|rlf",
+      1
+     ],
+     [
+      "ptx|own|v",
+      1
+     ],
+     [
+      "sleep|nbr|e",
+      1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|nbr|pv",
+      1
+     ],
+     [
+      "sleep|nbr|v",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ],
+     [
+      "sleep|own|pv",
+      -1
+     ],
+     [
+      "sleep|own|rlf",
+      -1
+     ],
+     [
+      "sleep|own|v",
+      -1
+     ]
+    ],
+    "beta": "design-based slope (section 4.3)",
+    "sign_disagreements": []
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"defer\",false]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"defer\",false]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"defer_iff\",[\"own\"],false]]]",
+   "alias_of": "MG:PMRT",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "defer",
+    "sleep-": "accept",
+    "ptx+": "defer",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "defer iff own pressure > theta"
+   }
+  },
+  "MG:GT": {
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     6754.118457073641
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -5.030870620881026
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -88.58515435310441
+    ],
+    [
+     "prot_min",
+     "own",
+     "pv",
+     -4.827269386255053
+    ],
+    [
+     "ptx",
+     "far",
+     "e",
+     -513.0502449169602
+    ],
+    [
+     "ptx",
+     "far",
+     "load",
+     -119.24129032258064
+    ],
+    [
+     "ptx",
+     "far",
+     "pv",
+     -1.2301075268817205
+    ],
+    [
+     "ptx",
+     "far",
+     "v",
+     -24.244301075268815
+    ],
+    [
+     "ptx",
+     "nbr",
+     "e",
+     -418.5274160100939
+    ],
+    [
+     "ptx",
+     "nbr",
+     "load",
+     -196.20559139784947
+    ],
+    [
+     "ptx",
+     "nbr",
+     "rlf",
+     -0.061075268817204306
+    ],
+    [
+     "ptx",
+     "nbr",
+     "v",
+     -25.95010752688172
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     3746.580993794062
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     315.4468817204301
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     1.3466666666666665
+    ],
+    [
+     "ptx",
+     "own",
+     "rlf",
+     0.02150537634408602
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     27.534623655913983
+    ],
+    [
+     "sleep",
+     "far",
+     "e",
+     1590.678621546543
+    ],
+    [
+     "sleep",
+     "far",
+     "load",
+     59.266169154228855
+    ],
+    [
+     "sleep",
+     "far",
+     "pv",
+     2.049751243781094
+    ],
+    [
+     "sleep",
+     "far",
+     "rlf",
+     0.11940298507462686
+    ],
+    [
+     "sleep",
+     "far",
+     "v",
+     43.54477611940298
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     6629.038043393045
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     930.094527363184
+    ],
+    [
+     "sleep",
+     "nbr",
+     "pv",
+     9.833333333333332
+    ],
+    [
+     "sleep",
+     "nbr",
+     "rlf",
+     0.11442786069651742
+    ],
+    [
+     "sleep",
+     "nbr",
+     "v",
+     391.47263681592034
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -989.360696517413
+    ],
+    [
+     "sleep",
+     "own",
+     "rlf",
+     -0.13681592039800994
+    ]
+   ],
+   "provenance": {
+    "method": "knockout GT, TRUE edges ('dir'), beta = the edge mean",
+    "gt_seeds": [
+     186900,
+     186901,
+     186902,
+     186903,
+     186904,
+     186905,
+     186906,
+     186907,
+     186908,
+     186909,
+     186910,
+     186911,
+     186912,
+     186913,
+     186914,
+     186915,
+     186916,
+     186917,
+     186918,
+     186919,
+     186920,
+     186921,
+     186922,
+     186923,
+     186924,
+     186925,
+     186926,
+     186927,
+     186928,
+     186929,
+     186930,
+     186931,
+     186932,
+     186933,
+     186934,
+     186935,
+     186936,
+     186937,
+     186938,
+     186939
+    ]
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"defer\",false]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"defer\",true]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"defer_iff\",[\"own\"],false]]]",
+   "alias_of": "MG:GT",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "defer",
+    "sleep-": "accept",
+    "ptx+": "defer [bounded]",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "defer iff own pressure > theta"
+   }
+  },
+  "MG:rand": {
+   "map": [
+    [
+     "carrier",
+     "nbr",
+     "load",
+     -20.258411377037806
+    ],
+    [
+     "carrier",
+     "nbr",
+     "pv",
+     0.24523066250433578
+    ],
+    [
+     "carrier",
+     "own",
+     "load",
+     29.627124523066247
+    ],
+    [
+     "carrier",
+     "own",
+     "rlf",
+     -0.005202913631633715
+    ],
+    [
+     "prot_min",
+     "far",
+     "e",
+     -0.535562764781751
+    ],
+    [
+     "prot_min",
+     "far",
+     "load",
+     0.23778022785740538
+    ],
+    [
+     "prot_min",
+     "far",
+     "v",
+     -0.09187798603454614
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "load",
+     -0.13818449099595737
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "pv",
+     -0.03234105108416024
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "v",
+     -0.012495406100698252
+    ],
+    [
+     "prot_min",
+     "own",
+     "load",
+     -0.09959573686144799
+    ],
+    [
+     "ptx",
+     "far",
+     "e",
+     513.0502449169602
+    ],
+    [
+     "ptx",
+     "far",
+     "load",
+     -119.24129032258064
+    ],
+    [
+     "ptx",
+     "nbr",
+     "load",
+     196.20559139784947
+    ],
+    [
+     "ptx",
+     "nbr",
+     "v",
+     25.95010752688172
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     -3746.580993794062
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     -315.4468817204301
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     1.3466666666666665
+    ],
+    [
+     "ptx",
+     "own",
+     "rlf",
+     0.02150537634408602
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     -27.534623655913983
+    ],
+    [
+     "sleep",
+     "far",
+     "load",
+     59.266169154228855
+    ],
+    [
+     "sleep",
+     "own",
+     "rlf",
+     0.13681592039800994
+    ]
+   ],
+   "provenance": {
+    "method": "random_sized_map(M_PMRT, gt cells, tag 6623, key 3)",
+    "n_edges": 22
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"defer_iff\",[\"nbr\"],true]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"defer_iff\",[\"own\"],true]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"defer\",false]]]",
+   "alias_of": "MG:rand",
+   "decision_table": {
+    "carrier+": "defer iff nbr pressure > theta [bounded]",
+    "carrier-": "accept",
+    "sleep+": "defer iff own pressure > theta",
+    "sleep-": "accept",
+    "ptx+": "defer iff own pressure > theta [bounded]",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "defer"
+   }
+  },
+  "blanket2": {
+   "map": [
+    [
+     "carrier",
+     "nbr",
+     "pv",
+     -1.0
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     1.0
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -1.0
+    ],
+    [
+     "ptx",
+     "nbr",
+     "pv",
+     -1.0
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     1.0
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     -1.0
+    ],
+    [
+     "sleep",
+     "nbr",
+     "pv",
+     1.0
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -1.0
+    ],
+    [
+     "sleep",
+     "own",
+     "pv",
+     1.0
+    ]
+   ],
+   "provenance": {
+    "method": "blanket_saving_map() (no-map control)"
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\",\"nbr\"],false]],[\"sleep\",1,[\"defer_iff\",[\"own\",\"nbr\"],false]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"defer_iff\",[\"own\",\"nbr\"],false]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "blanket2",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own/nbr pressure > theta",
+    "sleep+": "defer iff own/nbr pressure > theta",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "defer iff own/nbr pressure > theta",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:corr@dev": {
+   "map": [
+    [
+     "carrier",
+     "nbr",
+     "e",
+     10796.436039452368
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "sleep",
+     "far",
+     "e",
+     -11906.141202282668
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     -12502.858848216594
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "nbr",
+     "v",
+     404.6164443257933
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "provenance": {
+    "method": "corr, far-FPR tau on dev_conf",
+    "tau": {
+     "tau": 0.29241446143206967,
+     "rule": "far_fpr",
+     "max_far": 1,
+     "n_far_scorable": 20
+    },
+    "declared": [
+     [
+      "carrier|nbr|e",
+      1
+     ],
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "sleep|far|e",
+      -1
+     ],
+     [
+      "sleep|nbr|e",
+      -1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|nbr|v",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "carrier|nbr|e",
+      1
+     ],
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|nbr|v",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ]
+    ],
+    "note": null
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"defer_iff\",[\"nbr\"],false]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "MG:corr@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "defer iff nbr pressure > theta",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:corr@plc": {
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "provenance": {
+    "method": "corr, placebo-calibrated tau (MAX_FP 1)",
+    "tau": {
+     "tau": 0.6413047154729727,
+     "max_fp": 1,
+     "n_scorable": 60
+    },
+    "declared": [
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "sleep|own|e",
+      -1
+     ]
+    ]
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:granger@dev": {
+   "map": [
+    [
+     "carrier",
+     "far",
+     "e",
+     8011.1631713642355
+    ],
+    [
+     "carrier",
+     "far",
+     "load",
+     -42.07088510787344
+    ],
+    [
+     "carrier",
+     "nbr",
+     "e",
+     10796.436039452368
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "carrier",
+     "own",
+     "load",
+     24.994150334591964
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -6.815799224864624
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -69.21767853806728
+    ],
+    [
+     "prot_min",
+     "far",
+     "v",
+     39.17220022034311
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "load",
+     -32.68886822825872
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "v",
+     50.610843920198235
+    ],
+    [
+     "prot_min",
+     "own",
+     "e",
+     264.38353918101205
+    ],
+    [
+     "prot_min",
+     "own",
+     "load",
+     42.665473474319576
+    ],
+    [
+     "prot_min",
+     "own",
+     "pv",
+     1.6347983347477024
+    ],
+    [
+     "prot_min",
+     "own",
+     "v",
+     38.690424283823106
+    ],
+    [
+     "ptx",
+     "far",
+     "e",
+     6020.654796212356
+    ],
+    [
+     "ptx",
+     "far",
+     "load",
+     -124.11732449417387
+    ],
+    [
+     "ptx",
+     "nbr",
+     "e",
+     8760.623786843464
+    ],
+    [
+     "ptx",
+     "nbr",
+     "load",
+     -134.87392784282753
+    ],
+    [
+     "ptx",
+     "nbr",
+     "pv",
+     0.36245976513185585
+    ],
+    [
+     "ptx",
+     "nbr",
+     "v",
+     15.211903819598206
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     1.33264734291353
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     40.71525994670832
+    ],
+    [
+     "sleep",
+     "far",
+     "e",
+     -11906.141202282668
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     -12502.858848216594
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "nbr",
+     "v",
+     404.6164443257933
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ],
+    [
+     "sleep",
+     "own",
+     "pv",
+     -1.941238670299501
+    ],
+    [
+     "sleep",
+     "own",
+     "v",
+     -22.663833423630702
+    ]
+   ],
+   "provenance": {
+    "method": "granger, far-FPR tau on dev_conf",
+    "tau": {
+     "tau": 7.151914057428093,
+     "rule": "far_fpr",
+     "max_far": 1,
+     "n_far_scorable": 20
+    },
+    "declared": [
+     [
+      "carrier|far|e",
+      1
+     ],
+     [
+      "carrier|far|load",
+      -1
+     ],
+     [
+      "carrier|nbr|e",
+      1
+     ],
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "carrier|own|load",
+      1
+     ],
+     [
+      "carrier|own|pv",
+      -1
+     ],
+     [
+      "carrier|own|v",
+      -1
+     ],
+     [
+      "prot_min|far|v",
+      1
+     ],
+     [
+      "prot_min|nbr|load",
+      -1
+     ],
+     [
+      "prot_min|nbr|v",
+      1
+     ],
+     [
+      "prot_min|own|e",
+      1
+     ],
+     [
+      "prot_min|own|load",
+      1
+     ],
+     [
+      "prot_min|own|pv",
+      1
+     ],
+     [
+      "prot_min|own|v",
+      1
+     ],
+     [
+      "ptx|far|e",
+      1
+     ],
+     [
+      "ptx|far|load",
+      -1
+     ],
+     [
+      "ptx|nbr|e",
+      1
+     ],
+     [
+      "ptx|nbr|load",
+      -1
+     ],
+     [
+      "ptx|nbr|pv",
+      1
+     ],
+     [
+      "ptx|nbr|v",
+      1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "ptx|own|pv",
+      1
+     ],
+     [
+      "ptx|own|v",
+      1
+     ],
+     [
+      "sleep|far|e",
+      -1
+     ],
+     [
+      "sleep|nbr|e",
+      -1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|nbr|v",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ],
+     [
+      "sleep|own|pv",
+      -1
+     ],
+     [
+      "sleep|own|v",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "carrier|far|e",
+      1
+     ],
+     [
+      "carrier|nbr|e",
+      1
+     ],
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "carrier|own|load",
+      1
+     ],
+     [
+      "prot_min|far|e",
+      -1
+     ],
+     [
+      "prot_min|far|v",
+      1
+     ],
+     [
+      "prot_min|nbr|load",
+      -1
+     ],
+     [
+      "prot_min|nbr|v",
+      1
+     ],
+     [
+      "prot_min|own|load",
+      1
+     ],
+     [
+      "prot_min|own|pv",
+      1
+     ],
+     [
+      "prot_min|own|v",
+      1
+     ],
+     [
+      "ptx|far|e",
+      1
+     ],
+     [
+      "ptx|nbr|e",
+      1
+     ],
+     [
+      "ptx|nbr|load",
+      -1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "sleep|far|v",
+      1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|nbr|v",
+      1
+     ]
+    ],
+    "note": null
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"defer\",true]],[\"ptx\",1,[\"defer\",false]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"defer\",false]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "MG:granger@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "accept",
+    "sleep-": "defer [bounded]",
+    "ptx+": "defer",
+    "ptx-": "accept",
+    "prot_min+": "defer",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:granger@plc": {
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "provenance": {
+    "method": "granger, placebo-calibrated tau (MAX_FP 1)",
+    "tau": {
+     "tau_r2": 0.25589168656904376,
+     "max_fp": 1,
+     "n_scorable": 60,
+     "transfer": "n-free: partial r^2 = F / (F + df)"
+    },
+    "declared": [
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "carrier|own|e",
+      1
+     ]
+    ]
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:shap_gbdt@dev": {
+   "map": [
+    [
+     "carrier",
+     "far",
+     "rlf",
+     -0.011864504456970754
+    ],
+    [
+     "carrier",
+     "nbr",
+     "rlf",
+     -0.04250607711171585
+    ],
+    [
+     "carrier",
+     "own",
+     "rlf",
+     0.0025807272867272952
+    ],
+    [
+     "prot_min",
+     "own",
+     "rlf",
+     0.016783564572158592
+    ],
+    [
+     "sleep",
+     "own",
+     "rlf",
+     -0.14611943853367576
+    ]
+   ],
+   "provenance": {
+    "method": "shap_gbdt, far-FPR tau on dev_conf",
+    "tau": {
+     "tau": 0.01634739707545272,
+     "rule": "far_fpr",
+     "max_far": 1,
+     "n_far_scorable": 20
+    },
+    "declared": [
+     [
+      "carrier|far|rlf",
+      -1
+     ],
+     [
+      "carrier|nbr|rlf",
+      -1
+     ],
+     [
+      "carrier|own|rlf",
+      1
+     ],
+     [
+      "prot_min|own|rlf",
+      1
+     ],
+     [
+      "sleep|own|rlf",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "carrier|own|rlf",
+      1
+     ],
+     [
+      "sleep|nbr|rlf",
+      1
+     ]
+    ],
+    "note": "FALLBACK sklearn GBDT + permutation importance (shap script not importable: ImportError('Numba needs NumPy 2.0 or less. Got NumPy 2.4.'))"
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"nbr\"],false]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"defer_iff\",[\"own\"],false]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"defer_iff\",[\"own\"],false]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "MG:shap_gbdt@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff nbr pressure > theta",
+    "sleep+": "accept",
+    "sleep-": "defer iff own pressure > theta",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "defer iff own pressure > theta",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:shap_gbdt@plc": {
+   "map": [
+    [
+     "sleep",
+     "own",
+     "rlf",
+     -0.14611943853367576
+    ]
+   ],
+   "provenance": {
+    "method": "shap_gbdt, placebo-calibrated tau (MAX_FP 1)",
+    "tau": {
+     "tau": 0.0906823384361724,
+     "max_fp": 1,
+     "n_scorable": 60
+    },
+    "declared": [
+     [
+      "sleep|own|rlf",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "sleep|nbr|rlf",
+      1
+     ]
+    ]
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"defer_iff\",[\"own\"],false]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "MG:shap_gbdt@plc",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "defer iff own pressure > theta",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:int@dev": {
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "provenance": {
+    "method": "int, far-FPR tau on dev_conf",
+    "tau": {
+     "tau": 0.3544065307324905,
+     "rule": "far_fpr",
+     "max_far": 1,
+     "n_far_scorable": 20
+    },
+    "declared": [
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "sleep|nbr|e",
+      -1
+     ]
+    ],
+    "note": null
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:int@plc": {
+   "map": [
+    [
+     "carrier",
+     "nbr",
+     "e",
+     10796.436039452368
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     -12502.858848216594
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "provenance": {
+    "method": "int, placebo-calibrated tau (MAX_FP 1)",
+    "tau": {
+     "tau": 0.32363193365516085,
+     "max_fp": 1,
+     "n_scorable": 60
+    },
+    "declared": [
+     [
+      "carrier|nbr|e",
+      1
+     ],
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "sleep|nbr|e",
+      -1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "sleep|nbr|e",
+      -1
+     ]
+    ]
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:qacm@dev": {
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -69.21767853806728
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "provenance": {
+    "method": "qacm, far-FPR tau on dev_conf",
+    "tau": {
+     "tau": 0.23550341957639562,
+     "rule": "far_fpr",
+     "max_far": 1,
+     "n_far_scorable": 20
+    },
+    "declared": [
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "carrier|own|v",
+      -1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [],
+    "note": null
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "MG:qacm@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:qacm@plc": {
+   "map": [
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -69.21767853806728
+    ],
+    [
+     "prot_min",
+     "own",
+     "pv",
+     -1.6347983347477024
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ]
+   ],
+   "provenance": {
+    "method": "qacm, placebo-calibrated tau (MAX_FP 1)",
+    "tau": {
+     "tau": 0.1313127102630547,
+     "max_fp": 1,
+     "n_scorable": 20
+    },
+    "declared": [
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "carrier|own|v",
+      -1
+     ],
+     [
+      "prot_min|own|pv",
+      -1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "ptx|own|e",
+      1
+     ]
+    ]
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"defer_iff\",[\"own\"],false]]]",
+   "alias_of": "MG:qacm@plc",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "defer iff own pressure > theta"
+   }
+  },
+  "MG:two_tower@dev": {
+   "map": [
+    [
+     "carrier",
+     "far",
+     "e",
+     8011.1631713642355
+    ],
+    [
+     "carrier",
+     "nbr",
+     "e",
+     10796.436039452368
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -6.815799224864624
+    ],
+    [
+     "prot_min",
+     "own",
+     "v",
+     38.690424283823106
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     40.71525994670832
+    ]
+   ],
+   "provenance": {
+    "method": "two_tower, far-FPR tau on dev_conf",
+    "tau": {
+     "tau": 0.004647215362638235,
+     "rule": "far_fpr",
+     "max_far": 1,
+     "n_far_scorable": 20
+    },
+    "declared": [
+     [
+      "carrier|far|e",
+      1
+     ],
+     [
+      "carrier|nbr|e",
+      1
+     ],
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "carrier|own|pv",
+      -1
+     ],
+     [
+      "prot_min|own|v",
+      1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "ptx|own|v",
+      1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "carrier|far|e",
+      1
+     ],
+     [
+      "carrier|nbr|e",
+      1
+     ],
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "carrier|own|pv",
+      -1
+     ],
+     [
+      "prot_min|far|e",
+      -1
+     ],
+     [
+      "prot_min|nbr|e",
+      -1
+     ],
+     [
+      "prot_min|own|e",
+      1
+     ],
+     [
+      "prot_min|own|load",
+      1
+     ],
+     [
+      "prot_min|own|pv",
+      1
+     ],
+     [
+      "prot_min|own|v",
+      1
+     ],
+     [
+      "ptx|far|e",
+      1
+     ],
+     [
+      "ptx|nbr|e",
+      1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "ptx|own|v",
+      1
+     ],
+     [
+      "sleep|far|e",
+      -1
+     ],
+     [
+      "sleep|far|v",
+      1
+     ],
+     [
+      "sleep|nbr|e",
+      -1
+     ],
+     [
+      "sleep|nbr|v",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ],
+     [
+      "sleep|own|v",
+      -1
+     ]
+    ],
+    "note": "fit_two_tower with TwoTower sized {'d': 16, 'r': 8, 'hidden': 32, 'epochs': 400, 'lr': 0.01, 'l1': 0.5} (wrapped), pseudo-R2 0.039"
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"defer\",false]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"defer_iff\",[\"own\"],false]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "MG:two_tower@dev",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "defer",
+    "ptx-": "accept",
+    "prot_min+": "defer iff own pressure > theta",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:two_tower@plc": {
+   "map": [],
+   "provenance": {
+    "method": "two_tower, placebo-calibrated tau (MAX_FP 1)",
+    "tau": {
+     "tau": 0.026830697432160378,
+     "max_fp": 1,
+     "n_scorable": 60
+    },
+    "declared": [],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "sleep|own|load",
+      -1
+     ]
+    ]
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "noarb",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "accept",
+    "sleep+": "accept",
+    "sleep-": "accept",
+    "ptx+": "accept",
+    "ptx-": "accept",
+    "prot_min+": "accept",
+    "prot_min-": "accept"
+   }
+  },
+  "MG:granger_by": {
+   "map": [
+    [
+     "carrier",
+     "far",
+     "e",
+     8011.1631713642355
+    ],
+    [
+     "carrier",
+     "far",
+     "load",
+     -42.07088510787344
+    ],
+    [
+     "carrier",
+     "far",
+     "rlf",
+     0.011864504456970754
+    ],
+    [
+     "carrier",
+     "far",
+     "v",
+     -52.36970301163703
+    ],
+    [
+     "carrier",
+     "nbr",
+     "e",
+     10796.436039452368
+    ],
+    [
+     "carrier",
+     "nbr",
+     "rlf",
+     0.04250607711171585
+    ],
+    [
+     "carrier",
+     "own",
+     "e",
+     10411.412145242828
+    ],
+    [
+     "carrier",
+     "own",
+     "load",
+     24.994150334591964
+    ],
+    [
+     "carrier",
+     "own",
+     "pv",
+     -6.815799224864624
+    ],
+    [
+     "carrier",
+     "own",
+     "rlf",
+     0.0025807272867272952
+    ],
+    [
+     "carrier",
+     "own",
+     "v",
+     -69.21767853806728
+    ],
+    [
+     "prot_min",
+     "far",
+     "e",
+     -340.5972928317455
+    ],
+    [
+     "prot_min",
+     "far",
+     "load",
+     -9.976605246060855
+    ],
+    [
+     "prot_min",
+     "far",
+     "pv",
+     1.743957836911604
+    ],
+    [
+     "prot_min",
+     "far",
+     "v",
+     39.17220022034311
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "e",
+     -156.10690732060053
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "load",
+     -32.68886822825872
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "pv",
+     2.305244319711522
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "rlf",
+     -0.03248571217874743
+    ],
+    [
+     "prot_min",
+     "nbr",
+     "v",
+     50.610843920198235
+    ],
+    [
+     "prot_min",
+     "own",
+     "e",
+     264.38353918101205
+    ],
+    [
+     "prot_min",
+     "own",
+     "load",
+     42.665473474319576
+    ],
+    [
+     "prot_min",
+     "own",
+     "pv",
+     1.6347983347477024
+    ],
+    [
+     "prot_min",
+     "own",
+     "v",
+     38.690424283823106
+    ],
+    [
+     "ptx",
+     "far",
+     "e",
+     6020.654796212356
+    ],
+    [
+     "ptx",
+     "far",
+     "load",
+     -124.11732449417387
+    ],
+    [
+     "ptx",
+     "far",
+     "rlf",
+     0.07229245358073122
+    ],
+    [
+     "ptx",
+     "nbr",
+     "e",
+     8760.623786843464
+    ],
+    [
+     "ptx",
+     "nbr",
+     "load",
+     -134.87392784282753
+    ],
+    [
+     "ptx",
+     "nbr",
+     "pv",
+     0.36245976513185585
+    ],
+    [
+     "ptx",
+     "nbr",
+     "v",
+     15.211903819598206
+    ],
+    [
+     "ptx",
+     "own",
+     "e",
+     5516.140759529977
+    ],
+    [
+     "ptx",
+     "own",
+     "load",
+     258.99125233700136
+    ],
+    [
+     "ptx",
+     "own",
+     "pv",
+     1.33264734291353
+    ],
+    [
+     "ptx",
+     "own",
+     "rlf",
+     0.0033463319648045775
+    ],
+    [
+     "ptx",
+     "own",
+     "v",
+     40.71525994670832
+    ],
+    [
+     "sleep",
+     "far",
+     "e",
+     -11906.141202282668
+    ],
+    [
+     "sleep",
+     "far",
+     "v",
+     110.98436023671006
+    ],
+    [
+     "sleep",
+     "nbr",
+     "e",
+     -12502.858848216594
+    ],
+    [
+     "sleep",
+     "nbr",
+     "load",
+     1147.010191822987
+    ],
+    [
+     "sleep",
+     "nbr",
+     "pv",
+     26.039445548078792
+    ],
+    [
+     "sleep",
+     "nbr",
+     "v",
+     404.6164443257933
+    ],
+    [
+     "sleep",
+     "own",
+     "e",
+     -234.22853771667556
+    ],
+    [
+     "sleep",
+     "own",
+     "load",
+     -1124.7260666211264
+    ],
+    [
+     "sleep",
+     "own",
+     "pv",
+     -1.941238670299501
+    ],
+    [
+     "sleep",
+     "own",
+     "rlf",
+     -0.14611943853367576
+    ],
+    [
+     "sleep",
+     "own",
+     "v",
+     -22.663833423630702
+    ]
+   ],
+   "provenance": {
+    "method": "granger, BY q .05 (untuned)",
+    "declared": [
+     [
+      "carrier|far|e",
+      1
+     ],
+     [
+      "carrier|far|load",
+      -1
+     ],
+     [
+      "carrier|far|rlf",
+      1
+     ],
+     [
+      "carrier|far|v",
+      -1
+     ],
+     [
+      "carrier|nbr|e",
+      1
+     ],
+     [
+      "carrier|nbr|rlf",
+      1
+     ],
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "carrier|own|load",
+      1
+     ],
+     [
+      "carrier|own|pv",
+      -1
+     ],
+     [
+      "carrier|own|rlf",
+      1
+     ],
+     [
+      "carrier|own|v",
+      -1
+     ],
+     [
+      "prot_min|far|e",
+      -1
+     ],
+     [
+      "prot_min|far|load",
+      -1
+     ],
+     [
+      "prot_min|far|pv",
+      1
+     ],
+     [
+      "prot_min|far|v",
+      1
+     ],
+     [
+      "prot_min|nbr|e",
+      -1
+     ],
+     [
+      "prot_min|nbr|load",
+      -1
+     ],
+     [
+      "prot_min|nbr|pv",
+      1
+     ],
+     [
+      "prot_min|nbr|rlf",
+      -1
+     ],
+     [
+      "prot_min|nbr|v",
+      1
+     ],
+     [
+      "prot_min|own|e",
+      1
+     ],
+     [
+      "prot_min|own|load",
+      1
+     ],
+     [
+      "prot_min|own|pv",
+      1
+     ],
+     [
+      "prot_min|own|v",
+      1
+     ],
+     [
+      "ptx|far|e",
+      1
+     ],
+     [
+      "ptx|far|load",
+      -1
+     ],
+     [
+      "ptx|far|rlf",
+      1
+     ],
+     [
+      "ptx|nbr|e",
+      1
+     ],
+     [
+      "ptx|nbr|load",
+      -1
+     ],
+     [
+      "ptx|nbr|pv",
+      1
+     ],
+     [
+      "ptx|nbr|v",
+      1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "ptx|own|pv",
+      1
+     ],
+     [
+      "ptx|own|rlf",
+      1
+     ],
+     [
+      "ptx|own|v",
+      1
+     ],
+     [
+      "sleep|far|e",
+      -1
+     ],
+     [
+      "sleep|far|v",
+      1
+     ],
+     [
+      "sleep|nbr|e",
+      -1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|nbr|pv",
+      1
+     ],
+     [
+      "sleep|nbr|v",
+      1
+     ],
+     [
+      "sleep|own|e",
+      -1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ],
+     [
+      "sleep|own|pv",
+      -1
+     ],
+     [
+      "sleep|own|rlf",
+      -1
+     ],
+     [
+      "sleep|own|v",
+      -1
+     ]
+    ],
+    "dropped_sign0": 0,
+    "placebo_declared": [
+     [
+      "carrier|far|e",
+      1
+     ],
+     [
+      "carrier|nbr|e",
+      1
+     ],
+     [
+      "carrier|own|e",
+      1
+     ],
+     [
+      "carrier|own|load",
+      1
+     ],
+     [
+      "carrier|own|pv",
+      -1
+     ],
+     [
+      "carrier|own|v",
+      -1
+     ],
+     [
+      "prot_min|far|e",
+      -1
+     ],
+     [
+      "prot_min|far|v",
+      1
+     ],
+     [
+      "prot_min|nbr|e",
+      -1
+     ],
+     [
+      "prot_min|nbr|load",
+      -1
+     ],
+     [
+      "prot_min|nbr|v",
+      1
+     ],
+     [
+      "prot_min|own|e",
+      1
+     ],
+     [
+      "prot_min|own|load",
+      1
+     ],
+     [
+      "prot_min|own|pv",
+      1
+     ],
+     [
+      "prot_min|own|v",
+      1
+     ],
+     [
+      "ptx|far|e",
+      1
+     ],
+     [
+      "ptx|nbr|e",
+      1
+     ],
+     [
+      "ptx|nbr|load",
+      -1
+     ],
+     [
+      "ptx|own|e",
+      1
+     ],
+     [
+      "ptx|own|load",
+      1
+     ],
+     [
+      "ptx|own|pv",
+      1
+     ],
+     [
+      "sleep|far|e",
+      -1
+     ],
+     [
+      "sleep|far|pv",
+      1
+     ],
+     [
+      "sleep|far|v",
+      1
+     ],
+     [
+      "sleep|nbr|e",
+      -1
+     ],
+     [
+      "sleep|nbr|load",
+      1
+     ],
+     [
+      "sleep|nbr|pv",
+      1
+     ],
+     [
+      "sleep|nbr|v",
+      1
+     ],
+     [
+      "sleep|own|load",
+      -1
+     ]
+    ]
+   },
+   "signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"defer_iff\",[\"own\"],false]],[\"sleep\",1,[\"defer_iff\",[\"nbr\"],false]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"defer\",false]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"defer_iff\",[\"own\",\"nbr\"],false]],[\"prot_min\",-1,[\"accept\"]]]",
+   "alias_of": "MG:granger_by",
+   "decision_table": {
+    "carrier+": "accept",
+    "carrier-": "defer iff own pressure > theta",
+    "sleep+": "defer iff nbr pressure > theta",
+    "sleep-": "accept",
+    "ptx+": "defer",
+    "ptx-": "accept",
+    "prot_min+": "defer iff own/nbr pressure > theta",
+    "prot_min-": "accept"
+   }
+  }
+ },
+ "jobs": [
+  "MG:PMRT",
+  "MG:GT",
+  "MG:rand",
+  "blanket2",
+  "MG:corr@dev",
+  "MG:granger@dev",
+  "MG:shap_gbdt@dev",
+  "MG:shap_gbdt@plc",
+  "MG:qacm@dev",
+  "MG:qacm@plc",
+  "MG:two_tower@dev",
+  "MG:granger_by"
+ ],
+ "alias_of": {
+  "MG:PMRT": "MG:PMRT",
+  "MG:GT": "MG:GT",
+  "MG:rand": "MG:rand",
+  "blanket2": "blanket2",
+  "MG:corr@dev": "MG:corr@dev",
+  "MG:corr@plc": "noarb",
+  "MG:granger@plc": "noarb",
+  "MG:int@dev": "noarb",
+  "MG:int@plc": "noarb",
+  "MG:two_tower@plc": "noarb",
+  "MG:granger@dev": "MG:granger@dev",
+  "MG:shap_gbdt@dev": "MG:shap_gbdt@dev",
+  "MG:shap_gbdt@plc": "MG:shap_gbdt@plc",
+  "MG:qacm@dev": "MG:qacm@dev",
+  "MG:qacm@plc": "MG:qacm@plc",
+  "MG:two_tower@dev": "MG:two_tower@dev",
+  "MG:granger_by": "MG:granger_by"
+ },
+ "noarb_alias": true,
+ "repro": {
+  "incumbent_vs_logging": {
+   "per_seed": {
+    "186080": 0.0,
+    "186081": 0.0
+   },
+   "ok": true
+  },
+  "allaccept_vs_noarb": {
+   "per_seed": {
+    "186080": 0.0,
+    "186081": 0.0
+   },
+   "ok": true
+  },
+  "noarb_alias": true
+ },
+ "all_accept_signature": "[[\"theta\",0.05],[\"carrier\",1,[\"accept\"]],[\"carrier\",-1,[\"accept\"]],[\"sleep\",1,[\"accept\"]],[\"sleep\",-1,[\"accept\"]],[\"ptx\",1,[\"accept\"]],[\"ptx\",-1,[\"accept\"]],[\"prot_min\",1,[\"accept\"]],[\"prot_min\",-1,[\"accept\"]]]",
+ "mapgate": {
+  "theta": 0.05,
+  "k_conf": 1,
+  "T": 60.0,
+  "open_rule": "feasible",
+  "warmup_s": 0.0,
+  "priority": [
+   "pv",
+   "v",
+   "rlf"
+  ],
+  "guards": [
+   "v",
+   "rlf"
+  ],
+  "rels": [
+   "own",
+   "nbr",
+   "far"
+  ],
+  "directional": true,
+  "sha256": "64ad9d1beb336681d3f384b5d9b1871615bc317f78c0eaa6ca0d9b9dcd426dd9"
+ },
+ "sha256": {
+  "disc_conf.json": "dafca2bf4172bf377aacdd8be811ea2f759576305fa86212478d18eeaf912f2b",
+  "scratchpad/e6_dev/e6p_conf_analyze.py": "3d1a0965ce986889bb0dd19a228f0469c29cafd0884e23fe4ed9ffab17e8e000",
+  "scratchpad/e6_dev/e6p_conf.py": "74ae5309b9373632a03a17076ce5ba1f465be32de9b3e32d8cdb0131e786ac9d",
+  "v4_artifact": "9991c390df3a53ef12b553990da52c6adab25d4087bb029f1427e20a898e6a91",
+  "disc_code": {
+   "scratchpad/e6_dev/e6p_conf_analyze.py": "b36662a85b51731e7d54efe2494f032bb9141986a483a8d493fbae8270417140",
+   "scratchpad/e6_dev/e6p_conf.py": "fdb78ff47a4c461e4128e69049a2233fe05f54bdc2f14c18f5770e8a93aca122",
+   "cdd_oran/decision/mapgate.py": "64ad9d1beb336681d3f384b5d9b1871615bc317f78c0eaa6ca0d9b9dcd426dd9"
+  }
+ },
+ "platform": {
+  "keys": [
+   [
+    "2.4.2",
+    "1.18.1",
+    "Linux",
+    "glibc2.35",
+    "x86_64",
+    [
+     "AVX2",
+     "FMA3"
+    ]
+   ]
+  ],
+  "equal": true,
+  "linux": true
+ }
+}

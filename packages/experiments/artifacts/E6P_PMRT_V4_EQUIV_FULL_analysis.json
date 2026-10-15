@@ -1,0 +1,102 @@
+{
+ "equivalent": false,
+ "n_leaves": 44663,
+ "n_diff": 14,
+ "max_abs_diff": Infinity,
+ "first_diffs": [
+  [
+   "/desc_tau/two_tower/tau",
+   "0.0058573167771101",
+   "0.0058577535673975945"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/declared#len",
+   "9",
+   "10"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/declared[3][0]",
+   "'ptx|own|e'",
+   "'prot_min|own|pv'"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/declared[3][1]",
+   "1",
+   "-1"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/declared[4][0]",
+   "'ptx|own|load'",
+   "'ptx|own|e'"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/declared[5][0]",
+   "'sleep|own|e'",
+   "'ptx|own|load'"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/declared[5][1]",
+   "-1",
+   "1"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/declared[6][0]",
+   "'sleep|own|load'",
+   "'sleep|own|e'"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/declared[7][0]",
+   "'sleep|own|rlf'",
+   "'sleep|own|load'"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/declared[8][0]",
+   "'sleep|own|v'",
+   "'sleep|own|rlf'"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/n_declared",
+   "9",
+   "10"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/ov_f1",
+   "0.3783783783783784",
+   "0.42105263157894735"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/ov_precision",
+   "0.875",
+   "0.8888888888888888"
+  ],
+  [
+   "/slices_result/s300_1/metrics/qacm/ov_recall",
+   "0.2413793103448276",
+   "0.27586206896551724"
+  ]
+ ],
+ "mode": "reports",
+ "frozen": "/tmp/src/e6p-disc-v4an-1/out/analysis_v4.json",
+ "renamed": "/kaggle/working/out/analysis_v4.json",
+ "ignored": [
+  "argv",
+  "artifact",
+  "cache_dir",
+  "elapsed_s",
+  "generated",
+  "host",
+  "out",
+  "peak_rss_mb",
+  "protocol",
+  "rss_mb",
+  "timing",
+  "timing_s",
+  "wall_s"
+ ],
+ "labels": [
+  [
+   "MSCR+",
+   "PMRT"
+  ]
+ ]
+}

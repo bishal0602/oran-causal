@@ -1,0 +1,40 @@
+{
+ "name": "dev_pmrt_nl_cost",
+ "budget_cpu_s": 7200,
+ "note": "T3 cost pilot for pmrt_nl_eq at n 8000 / 24000 (xm-harness checklist B, freeze gate): the two dearest DEV cells at n 4000 (E2 R1 273 / E2 R2 250 CPU-s mean), 3 DEV measure seeds each; run as 4 parts on a 4-vCPU Kaggle session (1 process per vCPU, R-55). Cost only.",
+ "arms": {
+  "pmrt_nl_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "label": "nonlinear gbm statistic (pmrt-core-v2); primary PMRT arm (R-42)"
+  }
+ },
+ "blocks": [
+  {
+   "role": "measure",
+   "worlds": [
+    "E2"
+   ],
+   "regimes": [
+    "R1",
+    "R2"
+   ],
+   "ns": [
+    8000,
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100,
+    3000102
+   ]
+  }
+ ]
+}

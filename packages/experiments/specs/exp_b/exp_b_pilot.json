@@ -1,0 +1,6 @@
+{
+ "base": "scratchpad/xmethod/specs/exp_b/exp_b.json",
+ "name": "exp_b_pilot",
+ "note": "Phase P0 cost pilot: every arm on s60_0 and the placebo logs (8 datasets); records merge into exp_b",
+ "slice_names": ["s60_0", "placebo"]
+}

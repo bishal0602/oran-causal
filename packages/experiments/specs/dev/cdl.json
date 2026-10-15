@@ -1,0 +1,172 @@
+{
+ "name": "dev_cdl",
+ "budget_cpu_s": 7200,
+ "note": "R-51 (user GO 2026-10-03): cdl (feat/v2 5a811de files only) on the full DEV grid, same blocks and seeds as dev_full (tune 3000000-019, measure 3000100-119 + 3000120-159 for R-21 cells)",
+ "arms": {
+  "cdl": {
+   "ref": "cdd_oran.xmethod.methods.cdl:CDLMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau",
+   "analysis": "primary",
+   "fixed_threshold": 0.16
+  }
+ },
+ "blocks": [
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000,
+    8000,
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ]
+  },
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000,
+    8000,
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100,
+    3000119
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3000100,
+    3000119
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000120,
+    3000159
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000120,
+    3000159
+   ]
+  }
+ ]
+}

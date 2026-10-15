@@ -1,0 +1,135 @@
+{
+ "name": "dev_pilot_ci_gpu",
+ "note": "CI-test arms from specs/eval/full.json (acd3dfa); DEV seeds only; GPU pilot: n 500/1000 x 2 seeds on every cell, probes n 4000 (E2 R2, E5 R2) and n 8000 (E5 R2), 1 seed (GPU quota)",
+ "budget_cpu_s": 7200,
+ "arms": {
+  "cmi_knn_eq": {
+   "ref": "cdd_oran.xmethod.methods.cmi_knn:CMIKnnMethod",
+   "config": {
+    "arm": "eq",
+    "backend": "torch"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "cmi_knn_native",
+   "budget_cpu_s": null,
+   "budget_wall_s": 7200,
+   "device": "gpu"
+  },
+  "cmi_knn_native": {
+   "ref": "cdd_oran.xmethod.methods.cmi_knn:CMIKnnMethod",
+   "config": {
+    "arm": "native",
+    "backend": "torch"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "budget_cpu_s": null,
+   "budget_wall_s": 7200,
+   "device": "gpu"
+  },
+  "cmi_knn_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.cmi_knn:CMIKnnMethod",
+   "config": {
+    "arm": "eq_min",
+    "backend": "torch"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "cmi_knn_native",
+   "budget_cpu_s": null,
+   "budget_wall_s": 7200,
+   "device": "gpu"
+  }
+ },
+ "blocks": [
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100,
+    3000101
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3000100,
+    3000101
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E2",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    8000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100
+   ]
+  }
+ ]
+}

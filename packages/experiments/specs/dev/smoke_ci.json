@@ -1,0 +1,213 @@
+{
+ "name": "dev_smoke_ci",
+ "budget_cpu_s": 7200,
+ "arms": {
+  "mscr_eq": {
+   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "mscr_native",
+   "c2b": false,
+   "label": "single-conditioner max statistic; cannot condition on the joint design set"
+  },
+  "mscr_native": {
+   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  },
+  "pcorr_eq": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "pcorr_native"
+  },
+  "pcorr_native": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  },
+  "pcorr_hac": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "set_D": false
+  },
+  "pcorr_hac_fb": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "native",
+    "inference": "fixed_b"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "set_D": true
+  },
+  "pdcor_eq": {
+   "ref": "cdd_oran.xmethod.methods.pdcor:PDCorMethod",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "pdcor_native",
+   "label": "dependence test (pdCor = 0 is not conditional independence); not a CI test"
+  },
+  "pdcor_native": {
+   "ref": "cdd_oran.xmethod.methods.pdcor:PDCorMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "dependence test (pdCor = 0 is not conditional independence); not a CI test",
+   "set_D": false
+  },
+  "rcot2_eq": {
+   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "rcot2_native"
+  },
+  "rcot2_native": {
+   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  },
+  "cmi_knn_eq": {
+   "ref": "cdd_oran.xmethod.methods.cmi_knn:CMIKnnMethod",
+   "config": {
+    "arm": "eq",
+    "backend": "torch"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "cmi_knn_native",
+   "budget_cpu_s": null,
+   "budget_wall_s": 7200,
+   "device": "gpu"
+  },
+  "cmi_knn_native": {
+   "ref": "cdd_oran.xmethod.methods.cmi_knn:CMIKnnMethod",
+   "config": {
+    "arm": "native",
+    "backend": "torch"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "budget_cpu_s": null,
+   "budget_wall_s": 7200,
+   "device": "gpu"
+  },
+  "mscr_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "mscr_native",
+   "label": "single-conditioner max statistic; cannot condition on the joint design set"
+  },
+  "pcorr_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "pcorr_native"
+  },
+  "pdcor_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.pdcor:PDCorMethod",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "pdcor_native",
+   "label": "dependence test (pdCor = 0 is not conditional independence); not a CI test"
+  },
+  "rcot2_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "rcot2_native"
+  },
+  "cmi_knn_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.cmi_knn:CMIKnnMethod",
+   "config": {
+    "arm": "eq_min",
+    "backend": "torch"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "cmi_knn_native",
+   "budget_cpu_s": null,
+   "budget_wall_s": 7200,
+   "device": "gpu"
+  },
+  "pcorr_hac_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "pcorr_hac"
+  },
+  "pcorr_hac_fb_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "eq_min",
+    "inference": "fixed_b"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "pcorr_hac_fb"
+  }
+ },
+ "blocks": [
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    500
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100
+   ]
+  }
+ ]
+}

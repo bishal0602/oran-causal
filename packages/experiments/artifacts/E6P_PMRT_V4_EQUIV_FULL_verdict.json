@@ -1,0 +1,31 @@
+{
+ "equivalent": true,
+ "n_leaves": 269,
+ "n_diff": 0,
+ "max_abs_diff": 0.0,
+ "first_diffs": [],
+ "mode": "reports",
+ "frozen": "/tmp/src/e6p-disc-v4an-1/out/verdict_v4.json",
+ "renamed": "/kaggle/working/out/verdict_v4.json",
+ "ignored": [
+  "argv",
+  "artifact",
+  "cache_dir",
+  "elapsed_s",
+  "generated",
+  "host",
+  "out",
+  "peak_rss_mb",
+  "protocol",
+  "rss_mb",
+  "timing",
+  "timing_s",
+  "wall_s"
+ ],
+ "labels": [
+  [
+   "MSCR+",
+   "PMRT"
+  ]
+ ]
+}

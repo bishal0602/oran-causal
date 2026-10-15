@@ -1,0 +1,243 @@
+{
+ "name": "extras_x6_gbm",
+ "budget_cpu_s": 7200,
+ "note": "X6 (POST HOC, EXPLORATORY; changes no frozen verdict): PMRT-GBM told a wider dither; told-width grid (pmrt_nl_eq, pmrt_eq) + 2 x 2 centring law x redraw law at told x2 (suffix _<centre><redraw>, T = told, t = true; .w200 = TT); bias log per gbm unit; declared in scratchpad/xmethod/EXTRAS_PROTOCOL.md (Amendments)",
+ "extras": {
+  "experiment": "X6",
+  "design": null,
+  "protocol": "scratchpad/xmethod/EXTRAS_PROTOCOL.md"
+ },
+ "arms": {
+  "pmrt_nl_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary"
+  },
+  "pmrt_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "linear statistic (pmrt-core-v1); secondary PMRT arm (R-42)"
+  },
+  "pmrt_nl_eq.w050": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "base": "pmrt_nl_eq",
+   "told": {
+    "width": 0.5
+   }
+  },
+  "pmrt_eq.w050": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "linear statistic (pmrt-core-v1); secondary PMRT arm (R-42)",
+   "base": "pmrt_eq",
+   "told": {
+    "width": 0.5
+   }
+  },
+  "pmrt_nl_eq.w080": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "base": "pmrt_nl_eq",
+   "told": {
+    "width": 0.8
+   }
+  },
+  "pmrt_eq.w080": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "linear statistic (pmrt-core-v1); secondary PMRT arm (R-42)",
+   "base": "pmrt_eq",
+   "told": {
+    "width": 0.8
+   }
+  },
+  "pmrt_nl_eq.w125": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "base": "pmrt_nl_eq",
+   "told": {
+    "width": 1.25
+   }
+  },
+  "pmrt_eq.w125": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "linear statistic (pmrt-core-v1); secondary PMRT arm (R-42)",
+   "base": "pmrt_eq",
+   "told": {
+    "width": 1.25
+   }
+  },
+  "pmrt_nl_eq.w150": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "base": "pmrt_nl_eq",
+   "told": {
+    "width": 1.5
+   }
+  },
+  "pmrt_eq.w150": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "linear statistic (pmrt-core-v1); secondary PMRT arm (R-42)",
+   "base": "pmrt_eq",
+   "told": {
+    "width": 1.5
+   }
+  },
+  "pmrt_nl_eq.w200": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "base": "pmrt_nl_eq",
+   "told": {
+    "width": 2.0
+   }
+  },
+  "pmrt_eq.w200": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "linear statistic (pmrt-core-v1); secondary PMRT arm (R-42)",
+   "base": "pmrt_eq",
+   "told": {
+    "width": 2.0
+   }
+  },
+  "pmrt_nl_eq.w200_Tt": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "base": "pmrt_nl_eq",
+   "told": {
+    "width": 2.0,
+    "centre": "told",
+    "redraw": "true"
+   }
+  },
+  "pmrt_nl_eq.w200_tT": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "base": "pmrt_nl_eq",
+   "told": {
+    "width": 2.0,
+    "centre": "true",
+    "redraw": "told"
+   }
+  },
+  "pmrt_nl_eq.w200_tt": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "base": "pmrt_nl_eq",
+   "told": {
+    "width": 2.0,
+    "centre": "true",
+    "redraw": "true"
+   }
+  }
+ },
+ "blocks": [
+  {
+   "role": "measure",
+   "worlds": [
+    "E1"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3302000,
+    3302199
+   ],
+   "arms": [
+    "pmrt_nl_eq",
+    "pmrt_eq",
+    "pmrt_nl_eq.w050",
+    "pmrt_eq.w050",
+    "pmrt_nl_eq.w080",
+    "pmrt_eq.w080",
+    "pmrt_nl_eq.w125",
+    "pmrt_eq.w125",
+    "pmrt_nl_eq.w150",
+    "pmrt_eq.w150",
+    "pmrt_nl_eq.w200",
+    "pmrt_eq.w200",
+    "pmrt_nl_eq.w200_Tt",
+    "pmrt_nl_eq.w200_tT",
+    "pmrt_nl_eq.w200_tt"
+   ]
+  }
+ ]
+}

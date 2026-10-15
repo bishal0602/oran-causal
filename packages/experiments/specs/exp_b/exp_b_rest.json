@@ -1,0 +1,6 @@
+{
+ "base": "scratchpad/xmethod/specs/exp_b/exp_b.json",
+ "name": "exp_b_rest",
+ "note": "Phase P1: every unit of exp_b except the P0 pilot slices",
+ "exclude_slices": ["s60_0", "placebo"]
+}

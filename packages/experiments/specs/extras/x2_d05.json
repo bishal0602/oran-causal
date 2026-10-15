@@ -1,0 +1,144 @@
+{
+ "name": "extras_x2_d05",
+ "budget_cpu_s": 7200,
+ "note": "R-60 X2 (EXPLORATORY; does not change C1-C3): dither delta 0.05, 20 setpoint blocks; declared in scratchpad/xmethod/EXTRAS_PROTOCOL.md",
+ "extras": {
+  "experiment": "X2",
+  "design": {
+   "delta": 0.05,
+   "n_blocks": 20
+  },
+  "protocol": "scratchpad/xmethod/EXTRAS_PROTOCOL.md"
+ },
+ "arms": {
+  "corr": {
+   "ref": "cdd_oran.xmethod.methods.corr:Corr",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "primary"
+  },
+  "pc_eq": {
+   "ref": "cdd_oran.xmethod.methods.pc:PC",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "tau",
+   "analysis": "primary",
+   "native_partner": "pc_native"
+  },
+  "notears": {
+   "ref": "cdd_oran.xmethod.methods.notears:Notears",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau",
+   "analysis": "primary"
+  },
+  "shap_dag": {
+   "ref": "cdd_oran.xmethod.methods.shap_dag:ShapDag",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau",
+   "analysis": "primary"
+  },
+  "pcorr_native": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  },
+  "pcorr_eq": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "pcorr_native"
+  },
+  "pmrt_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "linear statistic (pmrt-core-v1); secondary PMRT arm (R-42)"
+  },
+  "pmrt_nl_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary"
+  }
+ },
+ "blocks": [
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3200000,
+    3200019
+   ],
+   "arms": [
+    "pc_eq",
+    "notears",
+    "shap_dag"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3200020,
+    3200059
+   ],
+   "arms": [
+    "corr",
+    "pc_eq",
+    "notears",
+    "shap_dag",
+    "pcorr_native",
+    "pcorr_eq",
+    "pmrt_eq",
+    "pmrt_nl_eq"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,493 @@
+{
+ "_about": "Seed ranges already used per world (inclusive [lo, hi]). New TEST seeds must be disjoint from their world's list; harnesses assert this and record this file's sha256. Built 2026-09-25 from a repo scan (scripts/, cdd_oran/, scratchpad/, tests/) plus frozen protocols. Sub-stream keys combined with a seed (e.g. 909090, 424242, 313131, 191919, 700002, 777001, 2999, 29990) are RNG stream tags, not env/corpus seeds, and are listed separately. A study's own TEST range is listed under its world's 'claimed_by' (and in 'used'); that study's harness excludes only its own claim when asserting disjointness. Updated 2026-09-26: Stage 0 test seeds added; E5_NOISE_DETECT claimed. Updated 2026-10-02: cross-method study DEV block 3000000-3000199 claimed for E1-E5; 3100000+ reserved for its EVAL. Updated 2026-10-04: cross-method study (Study A) EVAL block 3100000-3100299 claimed for E1-E5 at its freeze (PROTOCOL_A FROZEN; measure seeds 3100000-3100039, E4 R3 C3 readers 3100000-3100299). Updated 2026-10-05: cross-method study supplementary experiments (R-60, exploratory) block 3200000-3200199 claimed as XMETHOD_EXTRAS for E1-E4 (split: X2 tune 3200000-3200019, X2 measure 3200020-3200059, X3 measure 3200060-3200119, 3200120-3200199 unassigned; scratchpad/xmethod/EXTRAS_PROTOCOL.md). Updated 2026-10-05: post hoc diagnostics X5 / X6 (EXTRAS_PROTOCOL.md Amendments) claim XMETHOD_DIAG: E4 3300000-3301999 (X5, PMRT-Lin E4 R3 re-run), E1 3302000-3302199 (X6, PMRT-GBM told-width ablation); 3302200-3309999 not claimed.",
+ "E1": {
+  "used": [
+   [
+    0,
+    9
+   ],
+   [
+    3000000,
+    3000199
+   ],
+   [
+    3100000,
+    3100299
+   ],
+   [
+    3200000,
+    3200199
+   ],
+   [
+    3302000,
+    3302199
+   ]
+  ],
+  "note": "E1 discovery envelopes/recovery replicates; E1 is not used by Stage 0.",
+  "claimed_by": {
+   "XMETHOD_DEV": [
+    [
+     3000000,
+     3000199
+    ]
+   ],
+   "XMETHOD_EVAL": [
+    [
+     3100000,
+     3100299
+    ]
+   ],
+   "XMETHOD_EXTRAS": [
+    [
+     3200000,
+     3200199
+    ]
+   ],
+   "XMETHOD_DIAG": [
+    [
+     3302000,
+     3302199
+    ]
+   ]
+  }
+ },
+ "E2": {
+  "used": [
+   [
+    0,
+    39
+   ],
+   [
+    100000,
+    116383
+   ],
+   [
+    200000,
+    200399
+   ],
+   [
+    500000,
+    500039
+   ],
+   [
+    600000,
+    616383
+   ],
+   [
+    710000,
+    710009
+   ],
+   [
+    722000,
+    722019
+   ],
+   [
+    723000,
+    723009
+   ],
+   [
+    724000,
+    724019
+   ],
+   [
+    800000,
+    800099
+   ],
+   [
+    900000,
+    1099999
+   ],
+   [
+    3000000,
+    3000199
+   ],
+   [
+    3100000,
+    3100299
+   ],
+   [
+    3200000,
+    3200199
+   ]
+  ],
+  "note": "0-39: calibration/dev corpora + Thread-A discovery seeds; 100000-116383 Thread-A deploy states (incl. 100000-100003 anchors); 200000-200399 Thread-A sign seeds; 500000-500039 Thread-B discovery; 600000-616383 Thread-B deploy; 710000-710009 decision study D1; 800000-800099 MSCR-v2 confirmatory; 900000-1099999 Thread-A reference states. The E2 decision-gate bank pool (env seeds 0-4095) is covered by the E2 bank note below. 722000-722019 Stage 0 F-detect test; 723000-723009 Stage 0 F-graph test; 724000-724019 Stage 0 F-dither test (all delta levels). Stage 0 DEV reused 0-19 (F-detect) and 0-4 (F-graph lambda).",
+  "bank_env_seeds": [
+   [
+    0,
+    4095
+   ]
+  ],
+  "claimed_by": {
+   "XMETHOD_DEV": [
+    [
+     3000000,
+     3000199
+    ]
+   ],
+   "XMETHOD_EVAL": [
+    [
+     3100000,
+     3100299
+    ]
+   ],
+   "XMETHOD_EXTRAS": [
+    [
+     3200000,
+     3200199
+    ]
+   ]
+  }
+ },
+ "E3": {
+  "used": [
+   [
+    0,
+    0
+   ],
+   [
+    710000,
+    710009
+   ],
+   [
+    3000000,
+    3000199
+   ],
+   [
+    3100000,
+    3100299
+   ],
+   [
+    3200000,
+    3200199
+   ]
+  ],
+  "note": "corpus seed 0 (DEV probes), 710000-710009 decision study D1.",
+  "bank_env_seeds": [
+   [
+    0,
+    4095
+   ]
+  ],
+  "claimed_by": {
+   "XMETHOD_DEV": [
+    [
+     3000000,
+     3000199
+    ]
+   ],
+   "XMETHOD_EVAL": [
+    [
+     3100000,
+     3100299
+    ]
+   ],
+   "XMETHOD_EXTRAS": [
+    [
+     3200000,
+     3200199
+    ]
+   ]
+  }
+ },
+ "E5": {
+  "used": [
+   [
+    0,
+    19
+   ],
+   [
+    900000,
+    900099
+   ],
+   [
+    922000,
+    922019
+   ],
+   [
+    930000,
+    930019
+   ],
+   [
+    3000000,
+    3000199
+   ],
+   [
+    3100000,
+    3100299
+   ]
+  ],
+  "note": "0-19 DEV corpora/probes; 900000-900099 structure-gate confirmatory. 922000-922019 Stage 0 F-detect test. 930000-930019 E5_NOISE_DETECT test (both kappa levels). E5_NOISE_DETECT reuses DEV 0-19 parameter seeds with fresh noise streams (DEV only, not independent).",
+  "bank_env_seeds": [
+   [
+    0,
+    5999
+   ]
+  ],
+  "claimed_by": {
+   "E5_NOISE_DETECT": [
+    [
+     930000,
+     930019
+    ]
+   ],
+   "XMETHOD_DEV": [
+    [
+     3000000,
+     3000199
+    ]
+   ],
+   "XMETHOD_EVAL": [
+    [
+     3100000,
+     3100299
+    ]
+   ]
+  }
+ },
+ "rng_stream_tags": [
+  2999,
+  29990,
+  191919,
+  313131,
+  424242,
+  700002,
+  777001,
+  909090,
+  8808,
+  5151,
+  6262,
+  7707,
+  7708,
+  7373,
+  7019,
+  7020,
+  6612,
+  6613,
+  6614,
+  6615,
+  6616,
+  6617,
+  6622,
+  6623,
+  6624,
+  7801,
+  7802,
+  7803,
+  7800,
+  7899
+ ],
+ "rng_stream_notes": {
+  "E6-P option (a) confounded tags 6622-6624": "6622 confounded incumbent logging draws default_rng([seed, 6622, c, x_idx, int(t0)]) (decision.collect_p.IncumbentPolicy / PlaceboIncumbent); 6623 MapGate random-size map default_rng([6623, 2]) (decision.mapgate.random_sized_map, K-A2) and default_rng([6623, 3]) (option-(a) study MG:rand, E6P_CONFOUNDED_PROTOCOL.md section 4.3); 6624 option (a) analysis bootstraps default_rng([6624, ...]) (K-B: scratchpad/e6_dev/e6p_opta_kb_analyze.py [6624, 1, map_idx]; study: DISC analysis [6624, 10, ...], EVAL [6624, 20, n_seeds], scratchpad/e6_dev/e6p_conf_analyze.py). Registered 2026-09-30. 2026-10-01: the certified-safe follow-up (E6P_CERTSAFE_PROTOCOL.md) reuses the EVAL key [6624, 20, n_seeds] on its own seeds 191100-191259 (scratchpad/e6_dev/e6p_certsafe_analyze.py).",
+  "E5_NOISE_DETECT observation noise": "default_rng([seed, 5, int(round(1000*kappa))]), kappa in {0.1, 0.3} -> tags (5, 100) and (5, 300)",
+  "E6-P discovery / arbiter tags 6612-6617": "6612 pi0 draws default_rng([seed, 6612, c, x_idx, int(t0)]) (decision.collect_p); 6613 label sampling default_rng([seed, 6613, c, x_idx, int(t0)]) (decision.labels_p.sampled; also the E6-P discovery GT unit sampling); 6614 region probes default_rng([seed, 6614, c, x_idx, int(t0)]) (labels_p.region_sampled); 6615 G0c bootstrap default_rng([6615, pair_idx, stratum]) (e6p_arbiter_pilot); 6616 CRT draws (E6-P discovery crt_units); 6617 GT bootstrap default_rng([6617, family_idx, relation_idx, kpi_idx, orient_idx]) (decision.gt_p). Numeric overlap: E6-P v2 used 6612 for its descriptive bootstrap default_rng([6612, pair_idx, stratum]) (3-element key, no episode seed), a different key shape from the pi0 draws."
+ },
+ "E6": {
+  "used": [
+   [
+    0,
+    30
+   ],
+   [
+    100000,
+    100179
+   ],
+   [
+    110000,
+    110179
+   ],
+   [
+    120000,
+    120179
+   ],
+   [
+    130000,
+    130179
+   ],
+   [
+    140000,
+    140059
+   ]
+  ],
+  "note": "E6 DEV (2026-09-27): seeds 0-30 reserved for development (11-15 used by subset sweeps, baselines, headroom oracles, gate A/B). TEST seeds must be drawn from >= 960000 and registered here when the E6 protocol is frozen; none used yet. 2026-09-28: DEV policy 100000-100179 and probe 110000-110179 reserved (see dev_reserved). 2026-09-28 (b): gate calibration 120000-120179 and final-evaluation 130000-130179 episode seeds reserved (disjoint); policy seeds now for collector v3.",
+  "dev_reserved": {
+   "policy_episodes": [
+    [
+     100000,
+     100179
+    ]
+   ],
+   "probe_episodes": [
+    [
+     110000,
+     110179
+    ]
+   ],
+   "mapping": "seed = base + 30*stratum + j; base = 100000 (policy: collector v3 spaced slots, contract e6-collect-v3; v2 kept for reproducibility) | 110000 (probe) | 120000 (gate calibration episodes) | 130000 (gate final-evaluation episodes); stratum = 2*scenario_idx + load_idx with scenarios (base, surge, mistune) and loads (medium, high) -> 0 base-medium, 1 base-high, 2 surge-medium, 3 surge-high, 4 mistune-medium, 5 mistune-high; j = 0..29, j < 20 fit, j >= 20 untouched diagnostics. Implemented as cdd_oran.decision.collect.dev_seed / dev_stratum. Paired accept-all / no-probe reference episodes reuse the episode seed (same plant tape). calib/eval: j < 5 in every stratum = the POOLED design (30 + 30 episodes, min_units = 30 episode units, pooled claim); j = 5..29 reserved for the per-stratum alternative (30 + 30 per stratum = 180 + 180), not used unless predeclared.",
+   "rng_stream_tags": {
+    "7707": "decision.collect v1 collector draws default_rng([seed, 7707, epoch, region])",
+    "7708": "decision.collect v2 step collector draws default_rng([seed, 7708, epoch, region])",
+    "7709": "decision.collect v3 slot draws default_rng([seed, 7709, slot, region])",
+    "8808": "decision.probe schedule/arm draws (Worker K)",
+    "5151": "decision.crt resampling draws (Worker K)",
+    "6262": "decision.crt injected-effect calibration draws (Worker K)"
+   },
+   "note": "Reserved 2026-09-28 per SOL_DATA_DESIGN.md (c): 180 policy + 180 independently seeded probe episodes (30 per load x scenario stratum). DEV only; probes never in TEST. Numeric overlap with E2 ranges is irrelevant (registry is per world).",
+   "gate_calibration_episodes": [
+    [
+     120000,
+     120179
+    ]
+   ],
+   "gate_evaluation_episodes": [
+    [
+     130000,
+     130179
+    ]
+   ],
+   "contract": "docs/benchmark/E6_COLLECTION_CONTRACT.md (e6-collect-v3)",
+   "v1_diagnostic_episodes": [
+    [
+     140000,
+     140059
+    ]
+   ],
+   "v1_diagnostic_note": "Reserved 2026-09-28 for EXPLORATORY post-Gate-A diagnostics of the frozen E6-scn-v1 xApp stack (docs/benchmark/E6_V1_DIAGNOSTICS.md, scratchpad/e6_dev/v1_diag.py). seed = 140000 + 10*stratum + j, stratum as in 'mapping', j = 0..9. Diagnostic/development evidence only: never for Gate A/B, v2 confirmation or TEST.",
+   "e6p_screen_episodes": [
+    [
+     150000,
+     150399
+    ]
+   ],
+   "e6p_screen_note": "Reserved 2026-09-28 for the E6-P conflict screen (Gate A v2): docs/benchmark/E6P_SCREEN_PROTOCOL.md section 3 defines the sub-ranges (load calibration fit 150000-150009 / check 150010-150019, mechanism tests 150020-150059, oracle timing pilot 150060, screen seeds as listed there). DEV only; never TEST.",
+   "e6p_v2_screen_episodes": [
+    [
+     155000,
+     155199
+    ]
+   ],
+   "e6p_v2_confirmation_reserved": [
+    [
+     155200,
+     155399
+    ]
+   ],
+   "e6p_v2_note": "Reserved 2026-09-29 for the E6-P v2 O_tape falsifier (docs/benchmark/E6P_V2_OTAPE_PROTOCOL.md; single follow-up to the E6-P Gate A v2 screen, rule K4: no v3). Screen 155000-155199 with seed = 155000 + 10*stratum + j, j = 0..7 (strata 1 and 3 used: 155010-155017, 155030-155037; the rest unused); 155200-155399 reserved for a later confirmation, untouched by the v2 screen. Bootstrap tags 6611 (inherited) and 6612 (descriptive re-drawn advantage). DEV only; never TEST.",
+   "e6p_discovery_episodes": [
+    [
+     180000,
+     183999
+    ]
+   ],
+   "e6p_discovery_note": "Reserved 2026-09-29 for the E6-P MSCR causal-discovery study (scratchpad/e6_dev/decision/STEP1_MSCR_PLAN.md; driver scratchpad/e6_dev/e6p_discovery.py; protocol docs/benchmark/E6P_DISCOVERY_PROTOCOL.md to be frozen before any EVAL or GT run). Cell P3 surge-L40 (stratum 3) uses 183300 + j: j 0-19 DEV (183300-183319), 20-79 EVAL (183320-183379, fold = (j - 20) // 20), 80-99 GT knockout (183380-183399); 183400-183419 PLACEBO (j 0-19); 183420-183443 PACIFISTA profiles, seed = 183420 + 8 * profile_idx + e, profiles (ES, PowerES, SliceGuarantee), e 0-7. The rest of 180000-183999 unused (reserved for other cells / an EVAL extension). Added 2026-09-30 (after the v1 and v2 verdicts, disclosed): discovery v2 uses 183460-183519 + 183560-183979 (eval_v2, 480 eps), 183520-183539 (gt_ext), 183540-183559 (placebo_ext); discovery v3 uses 182000-183199 (eval_v3, 1200 eps, protocol docs/benchmark/E6P_DISCOVERY_PROTOCOL_V3.md). Tags 6612-6617 (see rng_stream_notes). DEV only; never TEST.",
+   "e6p_discovery_v4_episodes": [
+    [
+     188000,
+     189999
+    ]
+   ],
+   "e6p_discovery_v4_note": "Reserved 2026-09-30 for the E6-P discovery v4 re-test (frozen MSCR+ on small fresh slices; protocol docs/benchmark/E6P_DISCOVERY_PROTOCOL_V4.md, to be frozen before any eval_v4 / placebo_v4 / gt_v4 episode; driver scratchpad/e6_dev/e6p_discovery.py stages *_v4). Cell P3 surge-L40. 188000-188019 dev_v4 (records dev, sub v4), 188100-188699 eval_v4 (records eval, sub v4, j = seed - 188100, slice60 = j // 60, slice120 = fold = j // 120), 188700-188739 placebo_v4, 188800-188839 gt_v4 (knockout GT, units t0 >= 90 only), 188900-189999 reserve (unused unless a later disclosed amendment). Logging pi0 = collect_p.PI0_V4 (accept .5 / reject .5), randomized from t = 0. Tags 6612 (pi0 draws), 6613 (GT label sampling), 6616 (CRT draws), 6617 (GT bootstrap), unchanged. Checked free of 150000-150399, 155000-155399, 160000-179999, 180000-187999 and 190000-190399 (and of every registered E6 / XTRUCE block) on 2026-09-30. DEV only; never TEST."
+  },
+  "e6p_referee_episodes": [
+   [
+    184000,
+    185999
+   ]
+  ],
+  "e6p_referee_note": "Reserved 2026-09-30 for E6-P step 2 (regime referee; scratchpad/e6_dev/decision/STEP2_REFEREE_PLAN.md). 184000-184199 targeted knockouts, 184200-184239 DEV on-policy (step-2 DEV arms driver scratchpad/e6_dev/e6p_step2_dev.py), 185000-185099 EVAL (after a frozen protocol only), 185100-185159 power extension, 185200-185299 step-3 fallback. Tags 6618-6621 reserved (not yet used). DEV only; never TEST.",
+  "e6p_confounded_episodes": [
+   [
+    186000,
+    187999
+   ]
+  ],
+  "e6p_confounded_note": "Reserved 2026-09-30 for E6-P option (a): confounded incumbent logs + map-driven referee (scratchpad/e6_dev/decision/OPTION_A_PLAN.md; study protocol docs/benchmark/E6P_CONFOUNDED_PROTOCOL.md section 6, driver scratchpad/e6_dev/e6p_conf.py). Cell P3 surge-L40. 186000-186079 kill test K-B, done, never re-used (driver scratchpad/e6_dev/e6p_opta_kb.py: 186000-186039 PLACEBO (PlaceboIncumbent), 186040-186079 APPLIED (IncumbentPolicy)). Study layout (updated 2026-09-30 before freeze 1; replaces the plan's provisional layout: placebo 186700-186739, GT 186740-186759, EVAL 187000-187079 + 187080-187159): dev_conf 186080-186099 (20, IncumbentPolicy, pre-freeze; repro arms on 186080-186081), disc 186100-186699 (600, IncumbentPolicy), placebo 186700-186899 (200, PlaceboIncumbent), gt 186900-186939 (40, incumbent base + knockout labels, t0 >= 90), reserve 186940-186999 (unused unless a disclosed amendment), eval 187000-187159 (160, every arm; after freeze 2 = the maps artifact), reserve 187160-187999 (unused). disc / placebo / gt need the frozen protocol; eval also the frozen maps artifact. Tags 6622-6624 (see rng_stream_notes). Checked free of every other registered block (150000-150399, 155000-155399, 160000-179999, 180000-183999, 184000-185999, 188000-189999, 190000-190399) on 2026-09-30. DEV only; never TEST.",
+  "e6p_certsafe_episodes": [
+   [
+    191000,
+    191999
+   ]
+  ],
+  "e6p_certsafe_note": "Reserved 2026-10-01 for E6-P follow-up study 2b, the certified-safe referee (protocol docs/benchmark/E6P_CERTSAFE_PROTOCOL.md, driver scratchpad/e6_dev/e6p_certsafe.py; designed after the option (a) verdict NOT ELIGIBLE, disclosed). Cell P3 surge-L40. Layout: dev 191000-191039 (40, calibration of tau: CAL:allaccept on every seed, noarb repro on 191000-191001; needs the frozen protocol), reserve 191040-191099 (unused), eval 191100-191259 (160, every arm; after freeze 2 = the certsafe artifact), reserve 191260-191999 (unused). No new RNG tag: the EVAL bootstrap reuses default_rng([6624, 20, n_seeds]) of option (a) by design (definitions unchanged). Checked free of every registered block of every world in this file (incl. 150000-150399, 155000-155399 (155200-155399 confirmation reserve), 160000-179999, 180000-183999, 184000-185999, 186000-187999, 188000-189999, XTRUCE 190000-190399 (190200-190399 confirmation reserve)) and of the E6 TEST range >= 960000, and of every literal seed in scripts/, cdd_oran/, scratchpad/, tests/ on 2026-10-01. DEV only; never TEST, never confirmation."
+ },
+ "XTRUCE": {
+  "used": [
+   [
+    0,
+    2
+   ]
+  ],
+  "note": "xTRUCE plant (cdd_oran/envs/xtruce, arXiv:2608.28532 reimplementation). Seeds 0-2: build sanity + qos_margin tuning (disclosed). 1000-1199: floors_reachable construction check only. 2026-09-29: Gate A v2 screen block reserved (XTRUCE_SCREEN_PROTOCOL.md).",
+  "dev_reserved": {
+   "xtruce_screen_episodes": [
+    [
+     190000,
+     190199
+    ]
+   ],
+   "xtruce_confirmation_reserved": [
+    [
+     190200,
+     190399
+    ]
+   ],
+   "mapping": "seed = 190000 + 50*stratum + j; j 0..43 screen candidates (first 40 passing floors_reachable), 44..48 mechanism, 190199 oracle pilot. 190200-190399 untouched (confirmation).",
+   "rng_stream_tags": {
+    "7019": "bootstrap default_rng([7019, pair_idx, stratum])",
+    "7020": "oracle search"
+   }
+  },
+  "construction_only": [
+   [
+    1000,
+    1199
+   ]
+  ]
+ },
+ "E4": {
+  "used": [
+   [
+    3000000,
+    3000199
+   ],
+   [
+    3100000,
+    3100299
+   ],
+   [
+    3200000,
+    3200199
+   ],
+   [
+    3300000,
+    3301999
+   ]
+  ],
+  "claimed_by": {
+   "XMETHOD_DEV": [
+    [
+     3000000,
+     3000199
+    ]
+   ],
+   "XMETHOD_EVAL": [
+    [
+     3100000,
+     3100299
+    ]
+   ],
+   "XMETHOD_EXTRAS": [
+    [
+     3200000,
+     3200199
+    ]
+   ],
+   "XMETHOD_DIAG": [
+    [
+     3300000,
+     3301999
+    ]
+   ]
+  },
+  "note": "E4 first registered 2026-10-02 by the cross-method study (DEV 3000000-3000199; EVAL 3100000-3100299 claimed at the 2026-10-04 freeze). 2026-10-05: XMETHOD_DIAG 3300000-3301999 (X5, post hoc diagnostic, EXTRAS_PROTOCOL.md Amendments)."
+ }
+}
