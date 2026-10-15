@@ -1,0 +1,57 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+additionalProperties: false
+required: [version, claims]
+properties:
+  version: {const: 1}
+  claims:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, kind, statement, paper, spec]
+      properties:
+        id: {type: string, pattern: "^(DEF|ASM|THM|CIT|EMP|PRO)-[A-Z0-9]+(-[A-Z0-9]+)*$"}
+        kind: {enum: [definition, assumption, theorem-paper, theorem-lean, theorem-cited, empirical, protocol]}
+        status: {enum: [active, retracted], default: active}
+        statement: {type: string}
+        paper: {type: array, items: {type: string, pattern: "^(abstract|[a-z]+:[A-Za-z0-9_]+)$"}}
+        spec: {type: string, pattern: "^spec:[a-z0-9.]+$"}
+        depends_on: {type: array, items: {type: string}}
+        probes: {type: array, items: {type: string}}
+        code: {type: array, items: {type: string, pattern: "^oran_causal\\.[a-z0-9_.]+:[A-Za-z0-9_.]+$"}}
+        lean:
+          type: object
+          additionalProperties: false
+          required: [decl]
+          properties:
+            decl: {type: string}
+            axioms: {type: array, items: {type: string}}
+        cited:
+          type: object
+          additionalProperties: false
+          required: [bibkey, locator, verified]
+          properties:
+            bibkey: {type: string}
+            locator: {type: string}
+            verified: {type: boolean}
+        tests:
+          type: object
+          additionalProperties: false
+          properties:
+            min: {type: integer, minimum: 0}
+            tier: {enum: [unit, t0, t1, t2, t3]}
+        evidence:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [record, sha256]
+            properties:
+              record: {type: string, pattern: "^[a-z0-9_]+/.+$"}
+              sha256: {type: string, pattern: "^[0-9a-f]{64}$"}
+              pointer: {type: string}
+              expect: {}
+              derive: {type: string}
+              values: {type: array, items: {type: string}}
+        posthoc: {type: boolean, default: false}

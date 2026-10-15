@@ -1,0 +1,63 @@
+\section{Theorems}
+\label{spec:thm}
+
+\subsection{Fresh draws}
+\label{spec:thm.fresh}
+
+If xi\_u and pi\_u are G\_{u-1}-measurable and xi\_u differs from the earlier keys, then U\_{xi\_u} is Uniform(0, 1) and independent of G\_{u-1}, so Pr(W\_u = accept | G\_{u-1}) = pi\_u (Lemma 1).\claim{THM-FRESH}
+
+\subsection{Asymptotic validity of PMRT}
+\label{spec:thm.pmrt}
+
+Under (A1) to (A3), S is a martingale with predictable quadratic variation sigma\^{}2; with (A4), z converges to N(0, 1), the redraw distribution converges uniformly to Phi in probability, and limsup Pr(p $\le$ t) $\le$ floor(t (B + 1)) / (B + 1) $\le$ t (Proposition 1).\claim{THM-PMRT-ASY}
+
+The martingale central limit theorem with a random limiting variance and its self-normalised form.\claim{CIT-HH}
+
+The Lindeberg-Feller theorem and Polya's theorem on uniform convergence of distribution functions.\claim{CIT-DUR}
+
+\subsection{Exact case}
+\label{spec:thm.exact}
+
+If, in addition to (A1) and (A2), the realised units, their order, sgn\_u, pi\_u and w\_u are all G\_0-measurable, then Pr(p $\le$ t | G\_0) $\le$ t for every t, n and B, and likewise for p\_d (Lemma 2).\claim{THM-EXACT}
+
+The Monte Carlo p-value that counts ties against the observed statistic is valid for every B when the B + 1 values are exchangeable.\claim{CIT-PS}
+
+\subsection{Re-proposal counterexample}
+\label{spec:thm.counterex}
+
+In a two-unit design where a rejected unit is proposed again, Pr(p\_{+1} $\le$ 1/2) = 3/4 > 1/2, so re-proposal alone breaks finite-sample validity (Example 1).\claim{THM-COUNTEREX}
+
+\subsection{Weighted BY under arbitrary dependence (Lean)}
+\label{spec:thm.byfin}
+
+Let $c_m = \sum_{i=1}^m 1/i$ and $t_{j,i} = q\, \omega_j\, i / (m c_m)$ for $i = 1, \dots, m$, with
+$t_{j,0} = 0$. With $F_j(t) = \Pr(p_j \le t)$, whatever the joint law of the p-values,
+\begin{equation*}
+\mathbb{E}\Bigl[\frac{\mathbf{1}\{p_j \le t_{j,\rho}\}}{\max(\rho, 1)}\Bigr]
+\le \sum_{i=1}^{m-1} F_j(t_{j,i}) \Bigl(\frac{1}{i} - \frac{1}{i+1}\Bigr) + \frac{F_j(t_{j,m})}{m}.
+\end{equation*}
+
+For any rejection set S with p\_j $\le$ t\_j(|S|) for every j in S, where t\_j(k) = q w\_j k / (m c\_m), the false discovery rate is at most (q/m) sum\_{j in H0} w\_j + |H0| delta whenever every null p-value satisfies Pr(p\_j $\le$ t\_j(i)) $\le$ t\_j(i) + delta for i = 1..m, whatever the dependence between the p-values.\claim{THM-BY-FIN}
+
+The Benjamini-Yekutieli step-up controls the FDR under arbitrary dependence.\claim{CIT-BY}
+
+The weighted step-up with a reshaping function controls the FDR at q sum\_{H0} w\_j / m under arbitrary dependence when the null p-values are super-uniform.\claim{CIT-BR}
+
+\subsection{Asymptotic false discovery rate}
+\label{spec:thm.fdr}
+
+\begin{equation*}
+\limsup_{n \to \infty} \mathrm{FDR} \le \frac{q}{m} \sum_{j \in \mathcal{H}_0} \omega_j \le q
+\end{equation*}
+
+If (A1) to (A4) hold for every true sharp null and the weights and directions are fixed from independent data, then limsup FDR $\le$ (q/m) sum\_{j in H0} omega\_j $\le$ q whatever the dependence between the p-values (Corollary 1).\claim{THM-FDR-ASY}
+
+\subsection{Design slope}
+\label{spec:thm.slope}
+
+Under (A1) with the natural history, bounded outcomes and a predictable centre, beta\_hat converges to the pi\_u (1 - pi\_u)-weighted average of sgn\_u tau\_u\^{}pi; at pi\_u = 0.5 it is the Horvitz-Thompson estimator as an identity (Lemma 3).\claim{THM-SLOPE}
+
+\subsection{Scope of the guarantees}
+\label{spec:thm.scope}
+
+The FDR bound covers the declared edge, not its sign, relation or magnitude; when f affects its own cells, the neighbour and far hypotheses of f are false and declaring them is correct.\claim{THM-SCOPE}

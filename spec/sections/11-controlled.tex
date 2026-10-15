@@ -1,0 +1,25 @@
+\section{Controlled environments}
+\label{spec:env}
+
+The controlled environments are five mechanisms with known causal graphs (linear graph, rare regime, delayed harm, latent confounding, composed), logged by independent redraws, a dithered setpoint, a confounded policy or unlogged confounding, at n from 500 to 24,000.\claim{DEF-ENV}
+
+\subsection{Arms}
+\label{spec:env.arms}
+
+In the controlled environments, the design-based tests are PMRT-GBM and PMRT-Lin with plain BY at q = 0.05 and without the Huber clip; design-adjusted and design-blind tests are compared against them.\claim{DEF-ENV-ARMS}
+
+\subsection{Validity}
+\label{spec:env.validity}
+
+Tests that ignored the design were close to their nominal rate under independent logging but lost it under a dithered setpoint, with null-edge rates of 0.33 to 0.94.\claim{EMP-S4-C1}
+
+The design-based and design-adjusted tests remained near 0.05 under every logging design and all four protocol claims were supported, except that design-adjusted RCoT was invalid and PMRT-Lin exceeded its allowance of invalid conditions under the confounded policy.\claim{EMP-S4-C2C3}
+
+Under the logged confounded policy the null-edge rate of correlation was 1.00 whenever confounding was present while PMRT-GBM stayed between 0.02 and 0.06, and design-adjusted partial correlation also stayed valid.\claim{EMP-S4-E4}
+
+With its threshold calibrated on the placebo column, the discovery stage of CDD O-RAN passed the placebo check but exceeded the nominal null-edge rate in 9 of 30 conditions.\claim{EMP-S4-CDD}
+
+\subsection{Power}
+\label{spec:env.power}
+
+In the latent-confounding environment the recall of PMRT-GBM did not exceed 0.075 while design-adjusted partial correlation reached 0.90; on the randomised simulator logs pooled recalls were 0.72, 0.69 and 0.79 for design-adjusted partial correlation, context-only partial correlation and PMRT.\claim{EMP-POWER}

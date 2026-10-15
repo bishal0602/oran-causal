@@ -1,0 +1,61 @@
+\section{Assumptions}
+\label{spec:asm}
+
+\subsection{(A1) Design}
+\label{spec:asm.a1}
+
+For every unit $u$, its existence, cell, opening time, direction $\mathrm{sgn}_u$ and propensity
+$\pi_u$ are $\mathcal{G}_{u-1}$-measurable, $\Pr(W_u = \text{accept} \mid \mathcal{G}_{u-1}) = \pi_u$, and
+$\pi_{\min} \le \pi_u \le 1 - \pi_{\min}$ for a fixed $\pi_{\min} > 0$.
+
+(A1) For every unit u, its existence, cell, opening time, direction and propensity are G\_{u-1}-measurable, Pr(W\_u = accept | G\_{u-1}) = pi\_u, and pi\_min $\le$ pi\_u $\le$ 1 - pi\_min.\claim{ASM-A1-DESIGN}
+
+\subsection{(A2) Sharp null}
+\label{spec:asm.a2}
+
+(A2) The sharp null H0(f, r, k) holds; it is the hypothesis under test.\claim{ASM-A2-NULL}
+
+\subsection{(A3) Predictable weights}
+\label{spec:asm.a3}
+
+Every $w_u$ is $\mathcal{G}_{u-1}$-measurable.
+
+(A3) Every weight w\_u is G\_{u-1}-measurable.\claim{ASM-A3-PRED}
+
+\subsection{(A4) Regularity}
+\label{spec:asm.a4}
+
+As $n$, the number of episodes, grows, there are constants $s_n \to \infty$ with
+$\sigma^2 / s_n^2 \to \eta^2$ in probability and $0 < \eta^2 < \infty$ almost surely, that
+$\max_u |w_u| / s_n \to 0$ in probability, and that each $w_u$ is square integrable.
+
+(A4) As the number of episodes grows, the design variance grows without any single unit dominating S; it is the one assumption the construction leaves open.\claim{ASM-A4-REG}
+
+\subsection{Fixed weights and directions}
+\label{spec:asm.v2}
+
+The declaration weights omega\_j and directions d\_j are fixed from data independent of the evaluation data.\claim{ASM-FDR-FIXED}
+
+\subsection{Fixed orientation}
+\label{spec:asm.orient}
+
+The orientation o used by the one-sided p-values is fixed in advance.\claim{ASM-ORIENT}
+
+\subsection{Predictable outcome centre}
+\label{spec:asm.centre}
+
+The design slope and the gate bounds rest on an approximately predictable outcome centre; the implemented centre also uses earlier outcomes whose windows are still open.\claim{ASM-SLOPE-CENTRE}
+
+With a strictly predictable centre all 22 map slopes kept their sign, with relative changes of -2.9 to +6.5 \%, the gate bounds moved by a median of 3.5 \% of their tolerance and no class changed certification.\claim{EMP-X16}
+
+\subsection{Gate bound coverage}
+\label{spec:asm.gatecov}
+
+The gate's 90 \% bound is approximate; its coverage, policy-level safety and the protected slice are not covered by a guarantee.\claim{ASM-GATE-COV}
+
+\subsection{Known design}
+\label{spec:asm.known}
+
+The controlled-environment claims assume that the logged design is known and correctly specified.\claim{ASM-S4-KNOWN}
+
+PMRT-GBM and PMRT-Lin exceeded the nominal null-edge rate when the assumed dither width was 0.8 times the true width, and every PMRT variant when the assumed logging-policy strength was twice the true value.\claim{EMP-X3}

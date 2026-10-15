@@ -1,0 +1,16 @@
+\section{Ground truth}
+\label{spec:gt}
+
+\subsection{Knockout labels}
+\label{spec:gt.label}
+
+A hypothesis is labelled true, with the sign of its mean, when its 95 \% episode-cluster bootstrap interval excludes zero and the absolute mean is at least delta\_k (5 \% of the largest absolute mean of KPI k, floor 0.5 for protected-slice violations); null when the interval lies within $\pm$delta\_k; otherwise unscored, as with fewer than 10 units or 3 episodes.\claim{DEF-GT-LABEL}
+
+On the randomised logs the knockout ground truth labels 29 hypotheses true, 21 null and 10 indeterminate.\claim{EMP-GT-LABELS}
+
+With the materiality threshold halved PMRT's precision rose to 1.00 on both kinds of log, and with it doubled it fell to 0.59 and 0.73; halving or doubling delta\_k changed 10 and 16 of the 60 labels, the floor and interval level at most 2.\claim{EMP-GT-SENS}
+
+\subsection{Existence rule}
+\label{spec:gt.exist}
+
+Under the existence rule, 26 of PMRT's 28 declarations on the randomised logs and all 22 on the confounded logs were real effects with the declared sign, and its neighbour and far declarations were labelled true in 12 of 13 and 7 of 7 cases.\claim{EMP-GT-EXIST}

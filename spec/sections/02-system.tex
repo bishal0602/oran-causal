@@ -1,0 +1,22 @@
+\section{System and decision units}
+\label{spec:sys}
+
+\subsection{Decision units}
+\label{spec:sys.unit}
+
+A decision unit is identified by a cell, an xApp and an opening time; its mode W\_u, accept or reject, is drawn once at opening and holds for every request of the pair for 60 s.\claim{DEF-SYS-UNIT}
+
+\subsection{Logging policies}
+\label{spec:sys.logging}
+
+Three logging policies are considered: randomised (accept with probability 0.5), incumbent (propensity within [0.15, 0.85], depending on the request class and the cell state) and placebo (modes drawn and recorded, every request applied).\claim{DEF-SYS-LOG}
+
+\subsection{Hypotheses and outcomes}
+\label{spec:sys.hyp}
+
+A hypothesis (f, r, k) concerns a parameter family f, a relation r and a KPI k; four families, three relations and five KPIs give m = 60 hypotheses, and the outcome y\_u is the KPI summed over the cells of r in the 90 s after opening minus the same sum in the 90 s before.\claim{DEF-SYS-HYP}
+
+\subsection{Simulator constants}
+\label{spec:sys.sim}
+
+The simulator has 24 cells and 300 UEs, a 40 ms tick and 120 s warm-up plus 600 s scored time; the gate tolerances used G\_v = 19,953.65 violated UE-seconds and G\_RLF = 35.025 RLFs.\claim{DEF-SIM-CONST}

@@ -1,0 +1,22 @@
+\section{Estimands}
+\label{spec:est}
+
+\subsection{Policy-averaged assignment effect}
+\label{spec:est.taupi}
+
+\begin{equation*}
+\tau_u^{\pi} = \mathbb{E}_{\pi}\bigl[y_u \mid \mathcal{F}_{u-1}, W_u = \text{accept}\bigr]
+             - \mathbb{E}_{\pi}\bigl[y_u \mid \mathcal{F}_{u-1}, W_u = \text{reject}\bigr]
+\end{equation*}
+
+The policy-averaged assignment effect tau\_pi of hypothesis (f, r, k) is the limit of the mean of sgn\_u tau\_u\^{}pi over the units of f as the number of episodes grows (Definition 1).\claim{DEF-EST-TAUPI}
+
+\subsection{Sharp null}
+\label{spec:est.sharp}
+
+The sharp null H0(f, r, k) states that the outcome a unit of f would have at any cell and opening time is the same under any assignment of f's modes; it is stated over keys, not realised units.\claim{DEF-EST-H0}
+
+\subsection{Knockout effect}
+\label{spec:est.tauaa}
+
+The knockout effect tau\_AA is the mean of sgn\_u tau\_u\^{}AA, the accept-minus-reject difference of the 90 s post-window KPI sum in rollouts from the copied state with every other unit accepted (Definition 2).\claim{DEF-EST-TAUAA}

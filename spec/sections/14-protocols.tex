@@ -1,0 +1,34 @@
+\section{Protocols}
+\label{spec:pro}
+
+For each dataset the analysis rules, seeds and pass criteria were fixed before the evaluation data were generated, and the analysis code, fixed at the same time, was run once; one amendment changed the fixed code.\claim{PRO-FROZEN}
+
+\subsection{Seed blocks}
+\label{spec:pro.seeds}
+
+Seeds came from disjoint blocks of an internal registry.\claim{PRO-SEEDS}
+
+\subsection{Tuning data}
+\label{spec:pro.tune}
+
+All methods and baseline thresholds were tuned on development episodes separate from the evaluation data, and the gate was calibrated on 40 development episodes.\claim{PRO-TUNE}
+
+\subsection{Post hoc status}
+\label{spec:pro.status}
+
+Analyses chosen after a protocol was fixed are reported as post hoc and change no verdict; the gated referee was designed after the result of the ungated referee was known.\claim{PRO-POSTHOC}
+
+\subsection{Randomised logs}
+\label{spec:pro.study1}
+
+The protocol criterion comparing PMRT's neighbour-relation F1 with Granger + BY held on only 2 of the 10 smallest subsamples and on 4 of the 5 larger ones, so the discovery verdict on the randomised logs was partial.\claim{EMP-S1-P2}
+
+\subsection{Referee with the gate}
+\label{spec:pro.study3}
+
+With the gate, the PMRT referee met every guard but its outcomes were identical to never-sleep on every seed, so its gain over that rule was zero (R = 0.26, RLF ratio 0.96).\claim{EMP-S3-GATED}
+
+\subsection{Replication of the ungated referee}
+\label{spec:pro.x15}
+
+On the gated dataset's seeds the ungated PMRT referee no longer outperformed never-sleep (-0.06 at an RLF ratio of 1.05); pooled over both seed sets its gain was 0.10 with an interval that barely excludes zero, at an RLF ratio of 1.18.\claim{EMP-X15}

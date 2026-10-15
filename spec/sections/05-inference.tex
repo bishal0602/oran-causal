@@ -1,0 +1,24 @@
+\section{Inference}
+\label{spec:inf}
+
+\subsection{Redraw p-values}
+\label{spec:inf.pval}
+
+\begin{equation*}
+p = \frac{1 + \#\{b : |z_b| \ge |z|\}}{B + 1}, \qquad
+p_d = \frac{1 + \#\{b : d\, o\, z_b \ge d\, o\, z\}}{B + 1}
+\end{equation*}
+
+The two-sided p-value is (1 + \#{b : |z\_b| $\ge$ |z|}) / (B + 1) with B = 9999 redraws of the family's modes, with one-sided values p\_d where o is set; the code counts |z\_b| $\ge$ |z| - 1e-9 (1 + |z|).\claim{DEF-PMRT-PVAL}
+
+\subsection{Sequential stopping}
+\label{spec:inf.bc}
+
+Controlled environments: the p-value comes from at most $B = 9999$ redraws of the action's
+random part (two-sided, $|z|$) with Besag--Clifford sequential stopping: stop at 20 exceedances,
+$p = 20 / k$.
+
+\subsection{Comparison tolerance}
+\label{spec:inf.tolerance}
+
+The code counts $|z_b| \ge |z| - 10^{-9}(1 + |z|)$; the tolerance can only increase $p$.

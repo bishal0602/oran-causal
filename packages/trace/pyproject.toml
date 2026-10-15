@@ -1,0 +1,20 @@
+[project]
+name = "oran-causal-trace"
+version = "0.1.0"
+description = "Claims registry checker and pytest plugin for the oran-causal traceability chain."
+requires-python = ">=3.14"
+license = "MIT"
+dependencies = ["pyyaml"]
+
+[project.scripts]
+oran-causal-trace = "oran_causal.trace.cli:main"
+
+[project.entry-points.pytest11]
+oran_causal_trace = "oran_causal.trace.pytest_plugin"
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "oran_causal.trace"

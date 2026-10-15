@@ -1,0 +1,22 @@
+\section{Declaration}
+\label{spec:fdr}
+
+\subsection{Weighted Benjamini--Yekutieli step-up}
+\label{spec:fdr.wby}
+
+The 60 hypotheses of one analysis are declared together by a weighted Benjamini-Yekutieli step-up at q = 0.05, with Roeder-Wasserman weights (floor 0.2, cap 5, mean 1) and one-sided p-values in the prior direction where |z\_prior| $\ge$ 3.\claim{DEF-FDR-WBY}
+
+\subsection{Prior weights}
+\label{spec:fdr.weights}
+
+Roeder-Wasserman weights for weighted multiple testing.\claim{CIT-RW}
+
+\subsection{Prior directions}
+\label{spec:fdr.directions}
+
+Direction $d_j$: the sign of $z$ on the training episodes where $|z| \ge 3$.
+
+\subsection{Untested hypotheses}
+\label{spec:fdr.untested}
+
+Untested hypotheses count in $m$ and are never declared, which is conservative.

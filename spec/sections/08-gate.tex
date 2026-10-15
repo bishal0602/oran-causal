@@ -1,0 +1,18 @@
+\section{Edge-certification gate}
+\label{spec:gate}
+
+The edge-certification gate lets the referee reject a class only when every undeclared guard edge of the class has a one-sided 90 \% upper bound of h beta at most the tolerance epsilon(f, d, k) = 0.05 G\_k / (3 max{N(f, d), 1}).\claim{DEF-GATE}
+
+The gate certified only pico-sleep rejections (899 units) and withheld transmit-power-up rejections (2,579 units) because their two unresolved guard edges are true with harm above tolerance; the deciding bound was 0.148 against a tolerance of 0.036.\claim{EMP-S3-GATEDIAG}
+
+\subsection{Tolerance}
+\label{spec:gate.tol}
+
+\begin{equation*}
+\varepsilon(f, d, k) = \frac{0.05\, G_k}{3\, \max\{N(f, d), 1\}}
+\end{equation*}
+
+\subsection{First-order budget}
+\label{spec:gate.budget}
+
+If every unit of a class were rejected and each rejection moved a guard KPI by at most epsilon on each of the three relations, the guard ratio would move by at most 0.05.\claim{THM-GATE-BUDGET}

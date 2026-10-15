@@ -1,0 +1,57 @@
+\section{Metrics and validity rules}
+\label{spec:met}
+
+\subsection{Map metrics}
+\label{spec:met.map}
+
+Maps are scored over the 60 hypotheses by precision, recall, F1 and sign accuracy.\claim{DEF-MET-MAP}
+
+On the randomised logs PMRT declared 28 edges, with precision 0.92, recall 0.79 and no wrong sign.\claim{EMP-S1-MAP}
+
+On the confounded logs PMRT declared 22 edges, with precision 0.86, recall 0.62 and no wrong sign.\claim{EMP-S2-MAP}
+
+PMRT declared the four edges of the conflict chain with the ground-truth sign on both kinds of log and in every larger subsample of the randomised logs, and 9 of the 10 true neighbour-relation edges, missing only pico sleep to neighbour RLFs.\claim{EMP-S1-CHAIN}
+
+The baselines declared edges on placebo logs, up to 13 on the randomised and up to 29 on the confounded logs; Granger + BY, the strongest, reached a recall of 0.55 with six wrong signs on each kind of log, and placebo-calibrated thresholds cut recall to at most 0.21.\claim{EMP-BASE-MAPS}
+
+\subsection{Decision metrics}
+\label{spec:met.decision}
+
+\begin{equation*}
+R = (V_{\mathrm{AA}} - V) / (V_{\mathrm{AA}} - V_{\mathrm{ref}})
+\end{equation*}
+
+Referees are compared by the recovery R = (V\_AA - V) / (V\_AA - V\_ref) and eligibility, with 90 \% paired seed-bootstrap intervals (10,000 resamples) on decision metrics and 95 \% cluster-bootstrap intervals on rates; an ineligible arm scores R* = min(R, 0).\claim{DEF-MET-DEC}
+
+Without the gate, the PMRT referee reached the highest recovery of any referee, R = 0.47, but its RLF ratio of 1.31 (90 \% CI 1.10 to 1.56) breached the 1.10 guard, so it was ineligible; its gain over never-sleep was +0.25 [0.14, 0.36].\claim{EMP-S2-REFEREE}
+
+The breach came from rejected transmit-power requests: PMRT's confounded map lacked the transmit-power to neighbour RLF edge (primary p = 0.49), and its referee rejected 8,674 power-up units against the oracle map's 2,370.\claim{EMP-S2-MECH}
+
+Referees using the associational maps raised protected-slice violations to 4.5 to 5.4 times the accept-all level, and several stayed eligible.\claim{EMP-S2-ASSOC}
+
+No gated referee improved on never-sleep: the oracle map differed from it by -0.04 (90 \% CI -0.10 to 0.03) and gained only in energy retention, 1.29 against 1.15.\claim{EMP-S3-ORACLE}
+
+A referee that rejected requests at random, at the rate of the ungated referee, had negative recovery.\claim{EMP-X4}
+
+\subsection{Eligibility}
+\label{spec:met.eligible}
+
+Mitigation chooses a referee that minimises the protected-slice violations V subject to an energy retention of at least 0.90 and four guard ratios to accept-all of at most 1.10.\claim{DEF-SYS-MITIG}
+
+\subsection{Validity checks}
+\label{spec:met.validity}
+
+On the randomised placebo logs PMRT declared nothing; 7 of the 60 p-values were at or below 0.05 where 3 were expected, with a binomial tail probability of 0.03 above the protocol limit of 0.01.\claim{EMP-S1-PLACEBO}
+
+On the confounded placebo logs PMRT declared nothing, with 0 of 60 p-values at or below 0.05.\claim{EMP-S2-PLACEBO}
+
+On null outcomes PMRT declared nothing, with p-value rates at or below 0.05 of 0.053 (families 0.047-0.060) on the randomised and 0.050 (0.038-0.063) on the confounded logs, using 999 redraws.\claim{EMP-S1-NULLOUT}
+
+Repeated with 9,999 redraws on 590 null-outcome variants of the randomised logs, declarations occurred in 2 variants, within the limit of 7.5 \%, and the shares of p-values at or below 1e-3 and 2e-4 were 7.9e-4 and 1.1e-4; the evidence rests on ten logged designs.\claim{EMP-S1-STRICT}
+
+Over the 21 hypotheses that the ground truth labels null, the rate of p-values at or below 0.05 was 0.15 (0.048-0.29); over the 12 whose knockout interval also contains zero it was 0.075 (0.017-0.16).\claim{EMP-S1-SMALLNULL}
+
+\subsection{Computing cost}
+\label{spec:met.cost}
+
+Computation times per method and sample size are reported in Online Resource 1, Section S5.2.\claim{EMP-RUNTIME}

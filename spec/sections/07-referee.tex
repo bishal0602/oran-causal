@@ -1,0 +1,18 @@
+\section{Design slope and referee}
+\label{spec:ref}
+
+\subsection{Design slope}
+\label{spec:ref.slope}
+
+\begin{equation*}
+\hat\beta = \frac{\sum_u v_u e_u}{\sum_u v_u^2}
+          = \frac{1}{N} \sum_u \mathrm{sgn}_u \Bigl( \frac{\mathbf{1}\{W_u = \text{accept}\}\, e_u}{\pi_u}
+            - \frac{\mathbf{1}\{W_u = \text{reject}\}\, e_u}{1 - \pi_u} \Bigr)
+\end{equation*}
+
+The design slope regresses each unit's centred outcome on its assignment score, beta\_hat = sum\_u v\_u e\_u / sum\_u v\_u\^{}2, which at pi\_u = 0.5 is the Horvitz-Thompson estimator of tau\_pi.\claim{DEF-SLOPE}
+
+\subsection{Referee rules}
+\label{spec:ref.rules}
+
+The map-driven referee applies four rules with the same constants for every map: effects, harm, rejection (costly or pressure above 0.05) and guard conflict.\claim{DEF-REF-RULES}

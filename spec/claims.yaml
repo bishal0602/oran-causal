@@ -1,0 +1,771 @@
+version: 1
+claims:
+  - id: DEF-SYS-UNIT
+    kind: definition
+    statement: "A decision unit is identified by a cell, an xApp and an opening time; its mode W_u, accept or reject, is drawn once at opening and holds for every request of the pair for 60 s."
+    paper: [sec:units]
+    spec: spec:sys.unit
+    code: [oran_causal.sim.system.decision.units:HoldPolicy, oran_causal.sim.system.decision.units:T_UNIT]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-SYS-LOG
+    kind: definition
+    statement: "Three logging policies are considered: randomised (accept with probability 0.5), incumbent (propensity within [0.15, 0.85], depending on the request class and the cell state) and placebo (modes drawn and recorded, every request applied)."
+    paper: [sec:units]
+    spec: spec:sys.logging
+    code:
+      - oran_causal.sim.system.decision.collect:RandomizedUnitPolicy
+      - oran_causal.sim.system.decision.collect:IncumbentPolicy
+      - oran_causal.sim.system.decision.collect:PlaceboPolicy
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-SYS-HYP
+    kind: definition
+    statement: "A hypothesis (f, r, k) concerns a parameter family f, a relation r and a KPI k; four families, three relations and five KPIs give m = 60 hypotheses, and the outcome y_u is the KPI summed over the cells of r in the 90 s after opening minus the same sum in the 90 s before."
+    paper: [sec:estimand]
+    spec: spec:sys.hyp
+    code: [oran_causal.sim.system.decision.vocab:HYPOTHESES, oran_causal.core.data:UnitTable]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-EST-TAUPI
+    kind: definition
+    statement: "The policy-averaged assignment effect tau_pi of hypothesis (f, r, k) is the limit of the mean of sgn_u tau_u^pi over the units of f as the number of episodes grows (Definition 1)."
+    paper: [def:tau_pi, eq:tau_u]
+    spec: spec:est.taupi
+
+  - id: DEF-EST-H0
+    kind: definition
+    statement: "The sharp null H0(f, r, k) states that the outcome a unit of f would have at any cell and opening time is the same under any assignment of f's modes; it is stated over keys, not realised units."
+    paper: [sec:estimand, sec:inference, app:proof_setting]
+    spec: spec:est.sharp
+
+  - id: DEF-EST-TAUAA
+    kind: definition
+    statement: "The knockout effect tau_AA is the mean of sgn_u tau_u^AA, the accept-minus-reject difference of the 90 s post-window KPI sum in rollouts from the copied state with every other unit accepted (Definition 2)."
+    paper: [def:tau_aa, tab:estimands]
+    spec: spec:est.tauaa
+    code: [oran_causal.sim.system.decision.gt:unit_delta]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-SYS-MITIG
+    kind: definition
+    statement: "Mitigation chooses a referee that minimises the protected-slice violations V subject to an energy retention of at least 0.90 and four guard ratios to accept-all of at most 1.10."
+    paper: [sec:estimand, tab:arms]
+    spec: spec:met.eligible
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-PMRT-SCORE
+    kind: definition
+    statement: "The assignment score of unit u is v_u = sgn_u (L(W_u) - pi_u), with mean zero and variance pi_u (1 - pi_u) over the policy's draw."
+    paper: [eq:score]
+    spec: spec:pmrt.score
+    code: [oran_causal.core.design:v_design]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-PMRT-WEIGHT
+    kind: definition
+    statement: "The weight w_u is built in seven steps: target bins, receiver slots, ridge adjustment, matched filter psi = Sigma^-1 mu, running score centre, Huber clip at a predicted scale, and orientation set where |z_train| >= 2."
+    paper: [sec:pmrt, alg:pmrt, tab:pipeline]
+    spec: spec:pmrt.weight
+    code:
+      - oran_causal.core.pmrt.units:fit_pmrt
+      - oran_causal.core.pmrt.units:running_center
+      - oran_causal.core.pmrt.units:h_weights
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-PMRT-STAT
+    kind: definition
+    statement: "The statistic is S = sum_u v_u w_u with design variance sigma^2 = sum_u pi_u (1 - pi_u) w_u^2 and z = S / sigma; when sigma = 0 the code sets z = 0 and p = 1."
+    paper: [eq:stat, app:proof_prop]
+    spec: spec:pmrt.stat
+    code: [oran_causal.core.pmrt.units:lin_z]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-PMRT-PVAL
+    kind: definition
+    statement: "The two-sided p-value is (1 + #{b : |z_b| >= |z|}) / (B + 1) with B = 9999 redraws of the family's modes, with one-sided values p_d where o is set; the code counts |z_b| >= |z| - 1e-9 (1 + |z|)."
+    paper: [eq:pval, app:proof_prop]
+    spec: spec:inf.pval
+    code: [oran_causal.core.pmrt.engine:crt]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-PMRT-SUPPORT
+    kind: definition
+    statement: "A hypothesis is tested only when it has at least 30 units, 5 accepted, 5 rejected and 3 episodes; untested hypotheses count in m and are never declared."
+    paper: [sec:inference, alg:pmrt]
+    spec: spec:pmrt.support
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-FDR-WBY
+    kind: definition
+    statement: "The 60 hypotheses of one analysis are declared together by a weighted Benjamini-Yekutieli step-up at q = 0.05, with Roeder-Wasserman weights (floor 0.2, cap 5, mean 1) and one-sided p-values in the prior direction where |z_prior| >= 3."
+    paper: [sec:inference, tab:pipeline]
+    spec: spec:fdr.wby
+    depends_on: [CIT-RW]
+    code:
+      - oran_causal.core.multiplicity:weighted_step_up
+      - oran_causal.core.declare:prior_weights
+      - oran_causal.core.declare:prior_directions
+      - oran_causal.core.declare:declare
+    tests: {min: 2, tier: unit}
+
+  - id: DEF-SLOPE
+    kind: definition
+    statement: "The design slope regresses each unit's centred outcome on its assignment score, beta_hat = sum_u v_u e_u / sum_u v_u^2, which at pi_u = 0.5 is the Horvitz-Thompson estimator of tau_pi."
+    paper: [eq:slope_ht, sec:slope]
+    spec: spec:ref.slope
+    code: [oran_causal.core.gate:design_slope_se]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-REF-RULES
+    kind: definition
+    statement: "The map-driven referee applies four rules with the same constants for every map: effects, harm, rejection (costly or pressure above 0.05) and guard conflict."
+    paper: [sec:referee]
+    spec: spec:ref.rules
+    code: [oran_causal.methods.system.referees:MapGateV2]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-GATE
+    kind: definition
+    statement: "The edge-certification gate lets the referee reject a class only when every undeclared guard edge of the class has a one-sided 90 % upper bound of h beta at most the tolerance epsilon(f, d, k) = 0.05 G_k / (3 max{N(f, d), 1})."
+    paper: [sec:gate, eq:tol]
+    spec: spec:gate
+    code:
+      - oran_causal.core.gate:tau_table
+      - oran_causal.core.gate:bound_ub
+      - oran_causal.core.gate:classify_edge
+      - oran_causal.core.gate:certify
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-GT-LABEL
+    kind: definition
+    statement: "A hypothesis is labelled true, with the sign of its mean, when its 95 % episode-cluster bootstrap interval excludes zero and the absolute mean is at least delta_k (5 % of the largest absolute mean of KPI k, floor 0.5 for protected-slice violations); null when the interval lies within +-delta_k; otherwise unscored, as with fewer than 10 units or 3 episodes."
+    paper: [sec:gt]
+    spec: spec:gt.label
+    code: [oran_causal.sim.system.decision.gt:classify, oran_causal.sim.system.decision.gt:cluster_boot]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-MET-MAP
+    kind: definition
+    statement: "Maps are scored over the 60 hypotheses by precision, recall, F1 and sign accuracy."
+    paper: [sec:baselines_scores]
+    spec: spec:met.map
+    code: [oran_causal.core.scoring:score_method, oran_causal.core.scoring:confusion]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-MET-DEC
+    kind: definition
+    statement: "Referees are compared by the recovery R = (V_AA - V) / (V_AA - V_ref) and eligibility, with 90 % paired seed-bootstrap intervals (10,000 resamples) on decision metrics and 95 % cluster-bootstrap intervals on rates; an ineligible arm scores R* = min(R, 0)."
+    paper: [sec:baselines_scores, app:arms, tab:arms]
+    spec: spec:met.decision
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-ENV
+    kind: definition
+    statement: "The controlled environments are five mechanisms with known causal graphs (linear graph, rare regime, delayed harm, latent confounding, composed), logged by independent redraws, a dithered setpoint, a confounded policy or unlogged confounding, at n from 500 to 24,000."
+    paper: [sec:envs, app:envs, tab:study4_design]
+    spec: spec:env
+    code: [oran_causal.sim.controlled.datasets.generate:generate_dataset]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-ENV-ARMS
+    kind: definition
+    statement: "In the controlled environments, the design-based tests are PMRT-GBM and PMRT-Lin with plain BY at q = 0.05 and without the Huber clip; design-adjusted and design-blind tests are compared against them."
+    paper: [sec:envs]
+    spec: spec:env.arms
+    code: [oran_causal.core.pmrt.rows:PmrtCore]
+    tests: {min: 1, tier: unit}
+
+  - id: DEF-SIM-CONST
+    kind: definition
+    statement: "The simulator has 24 cells and 300 UEs, a 40 ms tick and 120 s warm-up plus 600 s scored time; the gate tolerances used G_v = 19,953.65 violated UE-seconds and G_RLF = 35.025 RLFs."
+    paper: [sec:scenario, app:simparams]
+    spec: spec:sys.sim
+    code: [oran_causal.core.gate:tau_table]
+    tests: {min: 1, tier: unit}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /certsafe/calib/G
+        expect: {v: 19953.65, rlf: 35.025}
+
+  - id: ASM-A1-DESIGN
+    kind: assumption
+    statement: "(A1) For every unit u, its existence, cell, opening time, direction and propensity are G_{u-1}-measurable, Pr(W_u = accept | G_{u-1}) = pi_u, and pi_min <= pi_u <= 1 - pi_min."
+    paper: [sec:inference, app:proof_setting]
+    spec: spec:asm.a1
+    probes: [EMP-X3]
+    code: [oran_causal.sim.system.decision.collect:IncumbentPolicy]
+    tests: {min: 1, tier: unit}
+
+  - id: ASM-A2-NULL
+    kind: assumption
+    statement: "(A2) The sharp null H0(f, r, k) holds; it is the hypothesis under test."
+    paper: [sec:inference]
+    spec: spec:asm.a2
+    probes: [EMP-S1-PLACEBO, EMP-S2-PLACEBO]
+
+  - id: ASM-A3-PRED
+    kind: assumption
+    statement: "(A3) Every weight w_u is G_{u-1}-measurable."
+    paper: [sec:inference, app:proof_setting]
+    spec: spec:asm.a3
+    probes: [EMP-S1-NULLOUT, EMP-S1-STRICT]
+    code: [oran_causal.core.pmrt.units:running_center, oran_causal.core.ridge:predictable_residuals]
+    tests: {min: 3, tier: unit}
+
+  - id: ASM-A4-REG
+    kind: assumption
+    statement: "(A4) As the number of episodes grows, the design variance grows without any single unit dominating S; it is the one assumption the construction leaves open."
+    paper: [sec:inference, app:assumptions, app:proof_setting]
+    spec: spec:asm.a4
+    probes: [EMP-S1-PLACEBO, EMP-S1-NULLOUT, EMP-S1-STRICT]
+    tests: {min: 1, tier: t0}
+
+  - id: ASM-FDR-FIXED
+    kind: assumption
+    statement: "The declaration weights omega_j and directions d_j are fixed from data independent of the evaluation data."
+    paper: [cor:fdr, app:proof_cor]
+    spec: spec:asm.v2
+    code: [oran_causal.core.declare:prior_weights, oran_causal.core.declare:prior_directions]
+    tests: {min: 1, tier: unit}
+
+  - id: ASM-ORIENT
+    kind: assumption
+    statement: "The orientation o used by the one-sided p-values is fixed in advance."
+    paper: [prop:pmrt]
+    spec: spec:asm.orient
+    code: [oran_causal.core.pmrt.units:fit_pmrt]
+    tests: {min: 1, tier: unit}
+
+  - id: ASM-SLOPE-CENTRE
+    kind: assumption
+    statement: "The design slope and the gate bounds rest on an approximately predictable outcome centre; the implemented centre also uses earlier outcomes whose windows are still open."
+    paper: [sec:slope, sec:disc_limits, app:gate]
+    spec: spec:asm.centre
+    probes: [EMP-X16]
+    tests: {min: 1, tier: unit}
+
+  - id: ASM-GATE-COV
+    kind: assumption
+    statement: "The gate's 90 % bound is approximate; its coverage, policy-level safety and the protected slice are not covered by a guarantee."
+    paper: [tab:guarantees, sec:gate]
+    spec: spec:asm.gatecov
+    probes: [EMP-S3-GATED]
+    code: [oran_causal.core.gate:bound_ub]
+
+  - id: ASM-S4-KNOWN
+    kind: assumption
+    statement: "The controlled-environment claims assume that the logged design is known and correctly specified."
+    paper: [sec:envs, sec:disc_deploy]
+    spec: spec:asm.known
+    probes: [EMP-X3]
+    tests: {min: 1, tier: unit}
+
+  - id: THM-FRESH
+    kind: theorem-paper
+    statement: "If xi_u and pi_u are G_{u-1}-measurable and xi_u differs from the earlier keys, then U_{xi_u} is Uniform(0, 1) and independent of G_{u-1}, so Pr(W_u = accept | G_{u-1}) = pi_u (Lemma 1)."
+    paper: [lem:fresh]
+    spec: spec:thm.fresh
+
+  - id: THM-PMRT-ASY
+    kind: theorem-paper
+    statement: "Under (A1) to (A3), S is a martingale with predictable quadratic variation sigma^2; with (A4), z converges to N(0, 1), the redraw distribution converges uniformly to Phi in probability, and limsup Pr(p <= t) <= floor(t (B + 1)) / (B + 1) <= t (Proposition 1)."
+    paper: [prop:pmrt, app:proof_prop]
+    spec: spec:thm.pmrt
+    depends_on: [ASM-A1-DESIGN, ASM-A2-NULL, ASM-A3-PRED, ASM-A4-REG, THM-FRESH, CIT-HH, CIT-DUR]
+    code: [oran_causal.core.pmrt.engine:crt]
+    tests: {min: 1, tier: unit}
+
+  - id: THM-EXACT
+    kind: theorem-paper
+    statement: "If, in addition to (A1) and (A2), the realised units, their order, sgn_u, pi_u and w_u are all G_0-measurable, then Pr(p <= t | G_0) <= t for every t, n and B, and likewise for p_d (Lemma 2)."
+    paper: [lem:exact]
+    spec: spec:thm.exact
+    depends_on: [ASM-A1-DESIGN, ASM-A2-NULL, THM-FRESH, CIT-PS]
+    code: [oran_causal.core.pmrt.engine:crt]
+    tests: {min: 1, tier: unit}
+
+  - id: THM-COUNTEREX
+    kind: theorem-paper
+    statement: "In a two-unit design where a rejected unit is proposed again, Pr(p_{+1} <= 1/2) = 3/4 > 1/2, so re-proposal alone breaks finite-sample validity (Example 1)."
+    paper: [ex:adaptive]
+    spec: spec:thm.counterex
+    depends_on: [DEF-PMRT-PVAL]
+    tests: {min: 1, tier: unit}
+
+  - id: THM-BY-FIN
+    kind: theorem-lean
+    statement: "For any rejection set S with p_j <= t_j(|S|) for every j in S, where t_j(k) = q w_j k / (m c_m), the false discovery rate is at most (q/m) sum_{j in H0} w_j + |H0| delta whenever every null p-value satisfies Pr(p_j <= t_j(i)) <= t_j(i) + delta for i = 1..m, whatever the dependence between the p-values."
+    paper: [app:proof_cor, cor:fdr]
+    spec: spec:thm.byfin
+    depends_on: [CIT-BY, CIT-BR]
+    code: [oran_causal.core.multiplicity:weighted_step_up]
+    lean: {decl: OranCausal.StepUp.fdr_le_of_selfConsistent, axioms: [propext, Classical.choice, Quot.sound]}
+    tests: {min: 2, tier: unit}
+
+  - id: THM-FDR-ASY
+    kind: theorem-paper
+    statement: "If (A1) to (A4) hold for every true sharp null and the weights and directions are fixed from independent data, then limsup FDR <= (q/m) sum_{j in H0} omega_j <= q whatever the dependence between the p-values (Corollary 1)."
+    paper: [cor:fdr, eq:fdr, app:proof_cor]
+    spec: spec:thm.fdr
+    depends_on: [THM-BY-FIN, THM-PMRT-ASY, ASM-FDR-FIXED]
+    code: [oran_causal.core.multiplicity:weighted_step_up]
+    tests: {min: 1, tier: unit}
+
+  - id: THM-SLOPE
+    kind: theorem-paper
+    statement: "Under (A1) with the natural history, bounded outcomes and a predictable centre, beta_hat converges to the pi_u (1 - pi_u)-weighted average of sgn_u tau_u^pi; at pi_u = 0.5 it is the Horvitz-Thompson estimator as an identity (Lemma 3)."
+    paper: [lem:slope, app:proof_slope]
+    spec: spec:thm.slope
+    depends_on: [ASM-A1-DESIGN, DEF-SLOPE]
+    code: [oran_causal.core.gate:design_slope_se]
+    tests: {min: 1, tier: unit}
+
+  - id: THM-GATE-BUDGET
+    kind: theorem-paper
+    statement: "If every unit of a class were rejected and each rejection moved a guard KPI by at most epsilon on each of the three relations, the guard ratio would move by at most 0.05."
+    paper: [sec:gate]
+    spec: spec:gate.budget
+    depends_on: [DEF-GATE]
+    code: [oran_causal.core.gate:tau_table]
+    tests: {min: 1, tier: unit}
+
+  - id: THM-SCOPE
+    kind: theorem-paper
+    statement: "The FDR bound covers the declared edge, not its sign, relation or magnitude; when f affects its own cells, the neighbour and far hypotheses of f are false and declaring them is correct."
+    paper: [sec:reading, tab:guarantees]
+    spec: spec:thm.scope
+    depends_on: [THM-FDR-ASY]
+
+  - id: CIT-BY
+    kind: theorem-cited
+    statement: "The Benjamini-Yekutieli step-up controls the FDR under arbitrary dependence."
+    paper: [sec:inference, app:proof_cor]
+    spec: spec:thm.byfin
+    cited: {bibkey: benjamini2001dependency, locator: "no locator in the manuscript", verified: false}
+
+  - id: CIT-BR
+    kind: theorem-cited
+    statement: "The weighted step-up with a reshaping function controls the FDR at q sum_{H0} w_j / m under arbitrary dependence when the null p-values are super-uniform."
+    paper: [app:proof_cor]
+    spec: spec:thm.byfin
+    cited: {bibkey: blanchard2008fdr, locator: "Thm. 4.2", verified: false}
+
+  - id: CIT-HH
+    kind: theorem-cited
+    statement: "The martingale central limit theorem with a random limiting variance and its self-normalised form."
+    paper: [app:proof_prop]
+    spec: spec:thm.pmrt
+    cited: {bibkey: hall1980martingale, locator: "Cor. 3.1, Cor. 3.2", verified: false}
+
+  - id: CIT-DUR
+    kind: theorem-cited
+    statement: "The Lindeberg-Feller theorem and Polya's theorem on uniform convergence of distribution functions."
+    paper: [app:proof_prop]
+    spec: spec:thm.pmrt
+    cited: {bibkey: durrett2019probability, locator: "Thm. 3.4.10; Exercise 3.2.9", verified: false}
+
+  - id: CIT-PS
+    kind: theorem-cited
+    statement: "The Monte Carlo p-value that counts ties against the observed statistic is valid for every B when the B + 1 values are exchangeable."
+    paper: [lem:exact]
+    spec: spec:thm.exact
+    cited: {bibkey: phipson2010permutation, locator: "Sect. 4", verified: false}
+
+  - id: CIT-RW
+    kind: theorem-cited
+    statement: "Roeder-Wasserman weights for weighted multiple testing."
+    paper: [sec:inference, tab:pipeline]
+    spec: spec:fdr.weights
+    code: [oran_causal.core.multiplicity:rw_weights]
+    cited: {bibkey: roeder2009weighted, locator: "no locator in the manuscript", verified: false}
+
+  - id: EMP-S1-PLACEBO
+    kind: empirical
+    statement: "On the randomised placebo logs PMRT declared nothing; 7 of the 60 p-values were at or below 0.05 where 3 were expected, with a binomial tail probability of 0.03 above the protocol limit of 0.01."
+    paper: [abstract, sec:res_validity, tab:validity, fig:placebo]
+    spec: spec:met.validity
+    depends_on: [DEF-FDR-WBY, DEF-SYS-LOG]
+    code: [oran_causal.analysis.system.report_data:v4]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /v4/K0
+        expect: {m: 60, n_reject: 7, binom_tail: 0.0296941, n_declared: 0, pass: true}
+
+  - id: EMP-S2-PLACEBO
+    kind: empirical
+    statement: "On the confounded placebo logs PMRT declared nothing, with 0 of 60 p-values at or below 0.05."
+    paper: [abstract, sec:res_validity, tab:validity]
+    spec: spec:met.validity
+    depends_on: [DEF-FDR-WBY, DEF-SYS-LOG]
+    code: [oran_causal.analysis.system.report_data:opt_a]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /option_a/disc/K0
+        expect: {pass: true, n_reject: 0, m: 60, n_declared: 0, min_p: 0.0639}
+
+  - id: EMP-S1-NULLOUT
+    kind: empirical
+    statement: "On null outcomes PMRT declared nothing, with p-value rates at or below 0.05 of 0.053 (families 0.047-0.060) on the randomised and 0.050 (0.038-0.063) on the confounded logs, using 999 redraws."
+    paper: [sec:res_validity, tab:validity]
+    spec: spec:met.validity
+    depends_on: [DEF-PMRT-PVAL]
+    code: [oran_causal.analysis.system.report_data:v4]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /v4/K0n
+        expect: {pass: true, rate05: 0.0525, n_variants_with_decl: 0}
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /option_a/disc/K0n
+        expect: {pass: true, rate05: 0.05, n_variants_with_decl: 0}
+
+  - id: EMP-S1-STRICT
+    kind: empirical
+    statement: "Repeated with 9,999 redraws on 590 null-outcome variants of the randomised logs, declarations occurred in 2 variants, within the limit of 7.5 %, and the shares of p-values at or below 1e-3 and 2e-4 were 7.9e-4 and 1.1e-4; the evidence rests on ten logged designs."
+    paper: [sec:res_validity, app:validity, tab:validity, sec:disc_deploy]
+    spec: spec:met.validity
+    depends_on: [DEF-PMRT-PVAL, DEF-FDR-WBY]
+    tests: {min: 1, tier: t0}
+    posthoc: true
+
+  - id: EMP-S1-SMALLNULL
+    kind: empirical
+    statement: "Over the 21 hypotheses that the ground truth labels null, the rate of p-values at or below 0.05 was 0.15 (0.048-0.29); over the 12 whose knockout interval also contains zero it was 0.075 (0.017-0.16)."
+    paper: [sec:res_validity, tab:validity, sec:disc_deploy]
+    spec: spec:met.validity
+    depends_on: [DEF-GT-LABEL, DEF-PMRT-PVAL]
+    tests: {min: 1, tier: t0}
+
+  - id: EMP-S1-MAP
+    kind: empirical
+    statement: "On the randomised logs PMRT declared 28 edges, with precision 0.92, recall 0.79 and no wrong sign."
+    paper: [abstract, tab:rq, sec:res_map, tab:maps, tab:maps_full]
+    spec: spec:met.map
+    depends_on: [DEF-MET-MAP, DEF-GT-LABEL, DEF-FDR-WBY]
+    code: [oran_causal.analysis.system.report_data:pooled]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /v4/pooled/loadsp_c+wby1s
+        expect: {n_declared: 28, ov_precision: 0.92, sign_acc: 1.0}
+        values: [s1.pmrt.declared, s1.pmrt.precision]
+      - record: system_artifacts/decision/v4_analysis.json
+        sha256: 38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a
+        derive: "true_right / n_true"
+        values: [s1.pmrt.recall]
+
+  - id: EMP-S2-MAP
+    kind: empirical
+    statement: "On the confounded logs PMRT declared 22 edges, with precision 0.86, recall 0.62 and no wrong sign."
+    paper: [abstract, tab:rq, sec:res_map, tab:maps, tab:maps_full]
+    spec: spec:met.map
+    depends_on: [DEF-MET-MAP, DEF-GT-LABEL, DEF-FDR-WBY]
+    code: [oran_causal.analysis.system.report_data:opt_a]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /option_a/map_quality/MG:PMRT
+        expect: {edges: 22, true_right: 18, true_wrong: 0, "null": 3, indet: 1, unknown: 0, placebo_edges: 0}
+
+  - id: EMP-S1-CHAIN
+    kind: empirical
+    statement: "PMRT declared the four edges of the conflict chain with the ground-truth sign on both kinds of log and in every larger subsample of the randomised logs, and 9 of the 10 true neighbour-relation edges, missing only pico sleep to neighbour RLFs."
+    paper: [sec:res_map, tab:maps_full]
+    spec: spec:met.map
+    depends_on: [DEF-MET-MAP, DEF-GT-LABEL]
+    code: [oran_causal.analysis.system.report_data:v4]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /v4/chain_z_pooled
+
+  - id: EMP-S1-P2
+    kind: empirical
+    statement: "The protocol criterion comparing PMRT's neighbour-relation F1 with Granger + BY held on only 2 of the 10 smallest subsamples and on 4 of the 5 larger ones, so the discovery verdict on the randomised logs was partial."
+    paper: [sec:res_map]
+    spec: spec:pro.study1
+    depends_on: [DEF-MET-MAP]
+    code: [oran_causal.analysis.system.report_data:v4]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /v4/verdict
+        expect: PARTIAL
+
+  - id: EMP-BASE-MAPS
+    kind: empirical
+    statement: "The baselines declared edges on placebo logs, up to 13 on the randomised and up to 29 on the confounded logs; Granger + BY, the strongest, reached a recall of 0.55 with six wrong signs on each kind of log, and placebo-calibrated thresholds cut recall to at most 0.21."
+    paper: [abstract, sec:res_validity, sec:res_map, tab:maps, tab:maps_full, fig:placebo]
+    spec: spec:met.map
+    depends_on: [DEF-MET-MAP, DEF-GT-LABEL]
+    code: [oran_causal.analysis.system.report_data:pooled]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /v4/placebo_declarations
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /option_a/map_quality/MG:granger_by
+        expect: {edges: 47, true_right: 16, true_wrong: 6, "null": 19, indet: 6, unknown: 0, placebo_edges: 29}
+
+  - id: EMP-GT-LABELS
+    kind: empirical
+    statement: "On the randomised logs the knockout ground truth labels 29 hypotheses true, 21 null and 10 indeterminate."
+    paper: [app:ko_labels, tab:system_hypotheses]
+    spec: spec:gt.label
+    depends_on: [DEF-GT-LABEL, DEF-EST-TAUAA]
+    code: [oran_causal.analysis.system.report_data:v4]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /v4/gt/counts
+        expect: {"TRUE": 29, "NULL": 21, "INDET": 10}
+
+  - id: EMP-GT-SENS
+    kind: empirical
+    statement: "With the materiality threshold halved PMRT's precision rose to 1.00 on both kinds of log, and with it doubled it fell to 0.59 and 0.73; halving or doubling delta_k changed 10 and 16 of the 60 labels, the floor and interval level at most 2."
+    paper: [abstract, sec:res_map, app:maps_full, tab:maps_full]
+    spec: spec:gt.label
+    depends_on: [DEF-GT-LABEL, DEF-MET-MAP]
+    tests: {min: 1, tier: t0}
+    posthoc: true
+
+  - id: EMP-GT-EXIST
+    kind: empirical
+    statement: "Under the existence rule, 26 of PMRT's 28 declarations on the randomised logs and all 22 on the confounded logs were real effects with the declared sign, and its neighbour and far declarations were labelled true in 12 of 13 and 7 of 7 cases."
+    paper: [sec:res_map, app:maps_full, tab:maps_full]
+    spec: spec:gt.exist
+    depends_on: [DEF-GT-LABEL, DEF-MET-MAP]
+    tests: {min: 1, tier: t0}
+    posthoc: true
+
+  - id: EMP-S2-REFEREE
+    kind: empirical
+    statement: "Without the gate, the PMRT referee reached the highest recovery of any referee, R = 0.47, but its RLF ratio of 1.31 (90 % CI 1.10 to 1.56) breached the 1.10 guard, so it was ineligible; its gain over never-sleep was +0.25 [0.14, 0.36]."
+    paper: [abstract, sec:res_decision, tab:decision_e2e, fig:decisions, tab:decision_full]
+    spec: spec:met.decision
+    depends_on: [DEF-REF-RULES, DEF-MET-DEC, DEF-SYS-MITIG]
+    code: [oran_causal.analysis.system.report_data:opt_a]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /option_a/eval/arms/MG:PMRT
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /option_a/eval/never_sleep
+        expect: {dR: 0.2485038, ci90: [0.1385655, 0.3618438]}
+
+  - id: EMP-S2-MECH
+    kind: empirical
+    statement: "The breach came from rejected transmit-power requests: PMRT's confounded map lacked the transmit-power to neighbour RLF edge (primary p = 0.49), and its referee rejected 8,674 power-up units against the oracle map's 2,370."
+    paper: [sec:res_decision]
+    spec: spec:met.decision
+    depends_on: [DEF-REF-RULES]
+    code: [oran_causal.analysis.system.report_data:opt_a]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /option_a/ptx_nbr_rlf
+        expect: {primary_p: 0.4872, primary_status: not_detected}
+
+  - id: EMP-S2-ASSOC
+    kind: empirical
+    statement: "Referees using the associational maps raised protected-slice violations to 4.5 to 5.4 times the accept-all level, and several stayed eligible."
+    paper: [sec:res_decision, tab:decision_full]
+    spec: spec:met.decision
+    depends_on: [DEF-REF-RULES, DEF-MET-DEC]
+    code: [oran_causal.analysis.system.report_data:opt_a]
+    tests: {min: 1, tier: t0}
+
+  - id: EMP-S3-GATED
+    kind: empirical
+    statement: "With the gate, the PMRT referee met every guard but its outcomes were identical to never-sleep on every seed, so its gain over that rule was zero (R = 0.26, RLF ratio 0.96)."
+    paper: [abstract, tab:rq, sec:res_decision, tab:decision_e2e, sec:conclusion]
+    spec: spec:pro.study3
+    depends_on: [DEF-GATE, DEF-REF-RULES, DEF-MET-DEC]
+    code: [oran_causal.analysis.system.report_data:certsafe]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /certsafe/eval/D3
+        expect: {pass: false, delta3: 0.0, lb90: 0.0, ci90: [0.0, 0.0]}
+
+  - id: EMP-S3-ORACLE
+    kind: empirical
+    statement: "No gated referee improved on never-sleep: the oracle map differed from it by -0.04 (90 % CI -0.10 to 0.03) and gained only in energy retention, 1.29 against 1.15."
+    paper: [abstract, sec:res_decision, tab:decision_e2e, sec:disc_mitigation]
+    spec: spec:met.decision
+    depends_on: [DEF-GATE, DEF-MET-DEC]
+    code: [oran_causal.analysis.system.report_data:certsafe]
+    tests: {min: 1, tier: t0}
+
+  - id: EMP-S3-GATEDIAG
+    kind: empirical
+    statement: "The gate certified only pico-sleep rejections (899 units) and withheld transmit-power-up rejections (2,579 units) because their two unresolved guard edges are true with harm above tolerance; the deciding bound was 0.148 against a tolerance of 0.036."
+    paper: [sec:disc_decision, app:gate, tab:gate_diag]
+    spec: spec:gate
+    depends_on: [DEF-GATE]
+    code: [oran_causal.core.gate:certify]
+    tests: {min: 1, tier: t0}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /certsafe/pmrt_bound_ptx_nbr_rlf
+        expect: {ub90_defer_up: 0.1481758, tau: 0.03642746}
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /certsafe/eval/composition/CS:PMRT/withheld
+        expect: {carrier: 67, sleep: 0, ptx: 2579, prot_min: 0}
+
+  - id: EMP-X15
+    kind: empirical
+    statement: "On the gated dataset's seeds the ungated PMRT referee no longer outperformed never-sleep (-0.06 at an RLF ratio of 1.05); pooled over both seed sets its gain was 0.10 with an interval that barely excludes zero, at an RLF ratio of 1.18."
+    paper: [sec:res_decision, app:x15, sec:disc_limits]
+    spec: spec:pro.x15
+    depends_on: [DEF-MET-DEC]
+    tests: {min: 1, tier: t0}
+    posthoc: true
+
+  - id: EMP-X16
+    kind: empirical
+    statement: "With a strictly predictable centre all 22 map slopes kept their sign, with relative changes of -2.9 to +6.5 %, the gate bounds moved by a median of 3.5 % of their tolerance and no class changed certification."
+    paper: [sec:slope, sec:disc_limits, app:gate]
+    spec: spec:asm.centre
+    depends_on: [DEF-SLOPE, DEF-GATE]
+    tests: {min: 1, tier: t0}
+    posthoc: true
+
+  - id: EMP-X4
+    kind: empirical
+    statement: "A referee that rejected requests at random, at the rate of the ungated referee, had negative recovery."
+    paper: [sec:disc_decision, sec:disc_deploy, tab:decision_full]
+    spec: spec:met.decision
+    depends_on: [DEF-MET-DEC]
+    tests: {min: 1, tier: t0}
+    posthoc: true
+
+  - id: EMP-S4-C1
+    kind: empirical
+    statement: "Tests that ignored the design were close to their nominal rate under independent logging but lost it under a dithered setpoint, with null-edge rates of 0.33 to 0.94."
+    paper: [abstract, sec:study4, fig:logging_validity]
+    spec: spec:env.validity
+    depends_on: [DEF-ENV, DEF-ENV-ARMS]
+    code: [oran_causal.analysis.controlled.verdicts:verdicts]
+    tests: {min: 1, tier: t0}
+
+  - id: EMP-S4-C2C3
+    kind: empirical
+    statement: "The design-based and design-adjusted tests remained near 0.05 under every logging design and all four protocol claims were supported, except that design-adjusted RCoT was invalid and PMRT-Lin exceeded its allowance of invalid conditions under the confounded policy."
+    paper: [abstract, sec:study4, fig:logging_validity]
+    spec: spec:env.validity
+    depends_on: [DEF-ENV, DEF-ENV-ARMS, ASM-S4-KNOWN]
+    code: [oran_causal.analysis.controlled.verdicts:verdicts, oran_causal.analysis.controlled.validity:classify]
+    tests: {min: 1, tier: t0}
+
+  - id: EMP-S4-E4
+    kind: empirical
+    statement: "Under the logged confounded policy the null-edge rate of correlation was 1.00 whenever confounding was present while PMRT-GBM stayed between 0.02 and 0.06, and design-adjusted partial correlation also stayed valid."
+    paper: [sec:study4]
+    spec: spec:env.validity
+    depends_on: [DEF-ENV, DEF-ENV-ARMS]
+    code: [oran_causal.analysis.controlled.verdicts:verdicts]
+    tests: {min: 1, tier: t0}
+
+  - id: EMP-S4-CDD
+    kind: empirical
+    statement: "With its threshold calibrated on the placebo column, the discovery stage of CDD O-RAN passed the placebo check but exceeded the nominal null-edge rate in 9 of 30 conditions."
+    paper: [sec:study4, sec:disc_deploy]
+    spec: spec:env.validity
+    depends_on: [DEF-ENV]
+    tests: {min: 1, tier: t0}
+
+  - id: EMP-POWER
+    kind: empirical
+    statement: "In the latent-confounding environment the recall of PMRT-GBM did not exceed 0.075 while design-adjusted partial correlation reached 0.90; on the randomised simulator logs pooled recalls were 0.72, 0.69 and 0.79 for design-adjusted partial correlation, context-only partial correlation and PMRT."
+    paper: [sec:disc_discovery]
+    spec: spec:env.power
+    depends_on: [DEF-ENV, DEF-MET-MAP]
+    tests: {min: 1, tier: t0}
+    posthoc: true
+
+  - id: EMP-X3
+    kind: empirical
+    statement: "PMRT-GBM and PMRT-Lin exceeded the nominal null-edge rate when the assumed dither width was 0.8 times the true width, and every PMRT variant when the assumed logging-policy strength was twice the true value."
+    paper: [sec:disc_deploy]
+    spec: spec:asm.known
+    depends_on: [DEF-ENV, DEF-ENV-ARMS]
+    tests: {min: 1, tier: t0}
+    posthoc: true
+
+  - id: EMP-ERLY
+    kind: empirical
+    statement: "An earlier construction that centred the score over each episode's realised units had a rate of p <= 0.05 of 0.14 for sleep hypotheses on null outcomes."
+    paper: [sec:pmrt]
+    spec: spec:pmrt.weight
+    depends_on: [DEF-PMRT-WEIGHT]
+    tests: {min: 1, tier: unit}
+
+  - id: EMP-RUNTIME
+    kind: empirical
+    statement: "Computation times per method and sample size are reported in Online Resource 1, Section S5.2."
+    paper: [sec:disc_deploy]
+    spec: spec:met.cost
+    tests: {min: 0, tier: t0}
+    posthoc: true
+
+  - id: PRO-FROZEN
+    kind: protocol
+    statement: "For each dataset the analysis rules, seeds and pass criteria were fixed before the evaluation data were generated, and the analysis code, fixed at the same time, was run once; one amendment changed the fixed code."
+    paper: [sec:protocol]
+    spec: spec:pro
+    tests: {min: 1, tier: unit}
+    evidence:
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /v4/protocol_sha256
+        expect: 6857466c91afa296a5cbaabd8fe0be9cb036dd35358736e855adfc540faf84ec
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /option_a/protocol_sha256
+        expect: f719f43085cf1f95cf7c487e0e2c015e4377f9d83a9d4daa5484f42a996c7a1b
+      - record: system_artifacts/report_2026-10-02/figures_data.json
+        sha256: 85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e
+        pointer: /certsafe/protocol_sha256
+        expect: cdd2c7e63fe3b81efe07c6cedea331b81124eca078f056e87f3008e6d2850b4a
+
+  - id: PRO-SEEDS
+    kind: protocol
+    statement: "Seeds came from disjoint blocks of an internal registry."
+    paper: [sec:protocol]
+    spec: spec:pro.seeds
+    tests: {min: 1, tier: unit}
+
+  - id: PRO-TUNE
+    kind: protocol
+    statement: "All methods and baseline thresholds were tuned on development episodes separate from the evaluation data, and the gate was calibrated on 40 development episodes."
+    paper: [sec:datasets, sec:baselines_scores]
+    spec: spec:pro.tune
+    tests: {min: 1, tier: unit}
+
+  - id: PRO-POSTHOC
+    kind: protocol
+    statement: "Analyses chosen after a protocol was fixed are reported as post hoc and change no verdict; the gated referee was designed after the result of the ungated referee was known."
+    paper: [sec:protocol, app:posthoc]
+    spec: spec:pro.status
