@@ -1,0 +1,24 @@
+[project]
+name = "oran-causal-methods"
+version = "0.1.0"
+requires-python = ">=3.14"
+license = "MIT"
+dependencies = [
+    "oran-causal-core",
+    "oran-causal-sim",
+    "causal-learn",
+    "shap",
+    "xgboost",
+    "momentchi2",
+]
+
+[project.optional-dependencies]
+cpu = ["torch"]
+cu128 = ["torch"]
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "oran_causal.methods"

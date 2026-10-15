@@ -1,0 +1,96 @@
+[tool.uv]
+required-version = ">=0.12.1"
+default-groups = ["dev"]
+conflicts = [
+    [
+        { package = "oran-causal-methods", extra = "cpu" },
+        { package = "oran-causal-methods", extra = "cu128" },
+    ],
+]
+constraint-dependencies = [
+    "numpy>=2.5,<2.6",
+    "scipy>=1.18,<1.19",
+    "torch>=2.10,<2.12",
+]
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+oran-causal-core = { workspace = true }
+oran-causal-sim = { workspace = true }
+oran-causal-methods = { workspace = true }
+oran-causal-experiments = { workspace = true }
+oran-causal-analysis = { workspace = true }
+oran-causal-figures = { workspace = true }
+oran-causal-trace = { workspace = true }
+torch = [
+    { index = "pytorch-cpu", extra = "cpu" },
+    { index = "pytorch-cu128", extra = "cu128" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.150",
+    "pytest>=9.1.1",
+    "pytest-cov>=7",
+    "ruff>=0.17",
+    "ty>=0.0.87",
+]
+browser = ["playwright>=1.64"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+extend-exclude = ["archive", "data", "paper"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "PT", "RUF", "ERA", "D", "TID", "PL", "NPY", "PD"]
+ignore = ["PLR2004", "D100", "D104", "D105", "D107", "D203", "D213"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["oran_causal"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["D", "PLR0913"]
+"tests/**" = ["D", "PLR0913"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ty.environment]
+python-version = "3.14"
+
+[tool.ty.src]
+include = ["packages", "tests"]
+exclude = ["**/tests/fixtures"]
+
+[tool.ty.rules]
+possibly-unresolved-reference = "error"
+
+[tool.pytest.ini_options]
+addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
+testpaths = ["packages", "tests"]
+python_files = ["test_*.py"]
+xfail_strict = true
+filterwarnings = ["error"]
+markers = [
+    "smoke: T1 CPU smoke tier, must finish inside 10 minutes",
+    "slow: excluded from the default run",
+]
