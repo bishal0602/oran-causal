@@ -1093,9 +1093,14 @@ source = { editable = "packages/methods" }
 dependencies = [
     { name = "causal-learn" },
     { name = "momentchi2" },
+    { name = "numpy" },
     { name = "oran-causal-core" },
     { name = "oran-causal-sim" },
+    { name = "scikit-learn" },
+    { name = "scipy" },
     { name = "shap" },
+    { name = "statsmodels" },
+    { name = "threadpoolctl" },
     { name = "xgboost" },
 ]
 
@@ -1112,9 +1117,14 @@ cu128 = [
 requires-dist = [
     { name = "causal-learn" },
     { name = "momentchi2" },
+    { name = "numpy", specifier = ">=2.5.4" },
     { name = "oran-causal-core", editable = "packages/core" },
     { name = "oran-causal-sim", editable = "packages/sim" },
+    { name = "scikit-learn", specifier = ">=1.9.1" },
+    { name = "scipy", specifier = ">=1.18.1" },
     { name = "shap" },
+    { name = "statsmodels", specifier = ">=0.15.0" },
+    { name = "threadpoolctl", specifier = ">=3.7.0" },
     { name = "torch", marker = "extra == 'cpu'", index = "https://download.pytorch.org/whl/cpu", conflict = { package = "oran-causal-methods", extra = "cpu" } },
     { name = "torch", marker = "extra == 'cu128'", index = "https://download.pytorch.org/whl/cu128", conflict = { package = "oran-causal-methods", extra = "cu128" } },
     { name = "xgboost" },

@@ -176,7 +176,7 @@ claims:
     statement: "In the controlled environments, the design-based tests are PMRT-GBM and PMRT-Lin with plain BY at q = 0.05 and without the Huber clip; design-adjusted and design-blind tests are compared against them."
     paper: [sec:envs]
     spec: spec:env.arms
-    code: [oran_causal.core.pmrt.rows:PmrtCore]
+    code: [oran_causal.core.pmrt.rows:PmrtCore, oran_causal.methods.registry:resolve]
     tests: {min: 1, tier: unit}
 
   - id: DEF-SIM-CONST
@@ -697,6 +697,7 @@ claims:
     paper: [sec:study4, sec:disc_deploy]
     spec: spec:env.validity
     depends_on: [DEF-ENV]
+    code: [oran_causal.methods.controlled.cdl:CDLMethod]
     tests: {min: 1, tier: t0}
 
   - id: EMP-POWER

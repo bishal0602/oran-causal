@@ -53,7 +53,7 @@ browser = ["playwright>=1.64"]
 [tool.ruff]
 line-length = 100
 target-version = "py314"
-extend-exclude = ["archive", "data", "paper"]
+extend-exclude = ["archive", "data", "paper", "**/_vendor/**"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "PT", "RUF", "ERA", "D", "TID", "PL", "NPY", "PD"]
@@ -81,7 +81,7 @@ python-version = "3.14"
 
 [tool.ty.src]
 include = ["packages", "tests"]
-exclude = ["**/tests/fixtures"]
+exclude = ["**/tests/fixtures", "**/_vendor/**"]
 
 [tool.ty.rules]
 possibly-unresolved-reference = "error"
