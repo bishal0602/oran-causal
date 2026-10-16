@@ -1,7 +1,7 @@
 ---
 id: THM-COUNTEREX
 kind: lean
-status: todo
+status: needs clarity
 ---
 
 # 02 THM-COUNTEREX: Re-proposal counterexample
@@ -49,11 +49,11 @@ Filled in by the agent.
 
 | Field | Value |
 |---|---|
-| Status | |
-| Main declaration(s) | |
-| Files | |
-| Deviation from the claim | |
-| Hypotheses not stated in the claim | |
-| `lake build` | |
-| `#print axioms` | |
-| Notes | |
+| Status | needs clarity; both interpretations proved, as explicitly requested by the user |
+| Main declaration(s) | `OranCausal.Counterexample.exact_tail_rejection`; `OranCausal.Counterexample.finite_redraw_rejection_limit`; `OranCausal.Counterexample.finite_redraw_rejection_formula` |
+| Files | `proofs/OranCausal/Counterexample.lean`, imported by `proofs/OranCausal.lean`; `proofs/COUNTEREX_REPORT.md`; `proofs/task02-build.log` |
+| Deviation from the claim | Exact-tail result: `Pr(p∞ ≤ 1/2) = 3/4`. Separately, for the source's plus-one Monte Carlo p-value, `lim_B Pr(pB ≤ 1/2) = 3/8`, not `3/4`. For odd `B` the finite probability is `3/8`; for `B = 2n` it is `(3/8)(1 - choose(2n,n)/4^n)`. At `B = 1`, `3/8` is a formal counterexample to the unqualified finite-redraw equality. |
+| Hypotheses not stated in the claim | `a : ℝ`, `1 < a`; fair sequential assignments, first rejection triggers the second unit, fixed weights `1,a`, positive direction and orientation, redraws hold the observed unit set fixed, and conditionally iid redraws. These are specified by the source; `a` is arbitrary. |
+| `lake build` | Passed without warnings or errors, 2703 jobs; 36.626 seconds wall time with cached dependencies |
+| `#print axioms` | Both principal theorems: `[propext, Classical.choice, Quot.sound]` |
+| Notes | The cutoff is an atom of the exact-tail p-value distribution, so taking a limit of p-values and taking a limit of rejection probabilities are different operations. Authors must clarify the intended p-value in the claim. The original claim and source are unchanged. See `COUNTEREX_REPORT.md` for the definitions and proof structure. |
