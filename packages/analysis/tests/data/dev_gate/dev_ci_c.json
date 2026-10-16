@@ -1,0 +1,530 @@
+{
+ "name": "dev_ci_c",
+ "note": "Q10 plan C (user) + R-48 / R-49: full DEV grid for pcorr x7 + rcot2 x3; mscr x3 at n <= 1000; pdcor and cmi_knn dropped from Study A. Arms, grid and seeds from full_ci.json",
+ "budget_cpu_s": 7200,
+ "arms": {
+  "pcorr_eq": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "pcorr_native"
+  },
+  "pcorr_native": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  },
+  "pcorr_hac": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "set_D": false
+  },
+  "pcorr_hac_fb": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "native",
+    "inference": "fixed_b"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "set_D": true
+  },
+  "rcot2_eq": {
+   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "rcot2_native"
+  },
+  "rcot2_native": {
+   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  },
+  "pcorr_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "pcorr_native"
+  },
+  "rcot2_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "rcot2_native"
+  },
+  "pcorr_hac_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "pcorr_hac"
+  },
+  "pcorr_hac_fb_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "eq_min",
+    "inference": "fixed_b"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "pcorr_hac_fb"
+  },
+  "mscr_eq": {
+   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "mscr_native",
+   "c2b": false,
+   "label": "single-conditioner max statistic; cannot condition on the joint design set"
+  },
+  "mscr_native": {
+   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  },
+  "mscr_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "mscr_native",
+   "label": "single-conditioner max statistic; cannot condition on the joint design set"
+  }
+ },
+ "blocks": [
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000,
+    8000,
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ],
+   "arms": [
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ],
+   "arms": [
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000,
+    8000,
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100,
+    3000119
+   ],
+   "arms": [
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3000100,
+    3000119
+   ],
+   "arms": [
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000120,
+    3000159
+   ],
+   "arms": [
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000120,
+    3000159
+   ],
+   "arms": [
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ],
+   "arms": [
+    "mscr_eq",
+    "mscr_native",
+    "mscr_eq_min"
+   ]
+  },
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ],
+   "arms": [
+    "mscr_eq",
+    "mscr_native",
+    "mscr_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100,
+    3000119
+   ],
+   "arms": [
+    "mscr_eq",
+    "mscr_native",
+    "mscr_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3000100,
+    3000119
+   ],
+   "arms": [
+    "mscr_eq",
+    "mscr_native",
+    "mscr_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    500,
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000120,
+    3000159
+   ],
+   "arms": [
+    "mscr_eq",
+    "mscr_native",
+    "mscr_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    500,
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000120,
+    3000159
+   ],
+   "arms": [
+    "mscr_eq",
+    "mscr_native",
+    "mscr_eq_min"
+   ]
+  }
+ ]
+}

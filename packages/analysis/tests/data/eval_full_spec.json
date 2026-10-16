@@ -1,0 +1,836 @@
+{
+ "name": "eval_full",
+ "status": "FROZEN 2026-10-04 (PROTOCOL_A FROZEN: yes; T-register filled, S = 40 by T1; EVAL block 3100000-3100299 claimed in docs/benchmark/SEED_REGISTRY.json)",
+ "protocol": "docs/xmethod/PROTOCOL_A.md",
+ "protocol_sha256": "c5f7a4fe4dff4bfdeef3ccebac2dcc3748dfa9c2d0c3d17f2ac9d6246379fa22",
+ "fmax_dependence_sha256": "402802b15c797f38cf1813aec1b4a912ffdbc3dba2ba3bfe94f1ee7a50d4f73e",
+ "pkgs_lock": {
+  "numpy": "2.4.2",
+  "scipy": "1.18.1",
+  "scikit-learn": "1.9.1",
+  "statsmodels": "0.15.0",
+  "causal-learn": "0.1.4.8",
+  "xgboost": "3.4.1",
+  "shap": "0.52.0",
+  "torch": "2.10.0+cpu",
+  "threadpoolctl": "3.7.0",
+  "tigramite": "5.2.10.1",
+  "dcor": "0.7",
+  "momentchi2": "0.1.8"
+ },
+ "focal": "pmrt_nl_eq",
+ "budget_cpu_s": 7200,
+ "safety_cap_cpu_s": 14400,
+ "tbd": {
+  "seeds": "FILLED at the freeze: S = 40 (PROTOCOL_A T1) -> measure blocks [3100000, 3100039], half blocks [3100000, 3100019]; the C3 readers' E4 R3 blocks [3100000, 3100299] (S_E4 300, T9); E4 R4 at S for every arm (R-58(4))",
+  "protocol_sha256": "FILLED at the freeze: LF sha256 of the frozen docs/xmethod/PROTOCOL_A.md (campaign EVAL guard and eval_analysis check it)",
+  "pkgs_lock": "FILLED at the freeze: uv.lock versions of every package campaign.PKGS stamps (R-35); torch '2.10.0+cpu' = the locked public version 2.10.0 in the CPU build every EVAL platform installs (R-35 torch-build amendment; no GPU arm, R-53); FINAL needs every record's pkgs equal to it",
+  "citests_arms": "mscr (eq, native) / pcorr / rcot2 arms (eq, native, eq_min) admitted under PROTOCOL_A T4; mscr_eq_min dropped (R-58(5))",
+  "pcorr_hac": "T8 filled (R-38, calib F4 on synthetic data, xm/hac2 results/pcorr_hac_f4b.json): set-D member = pcorr_hac_fb (inference fixed_b, max |rate - .05| .0405 vs .0535 for t); pcorr_hac (inference t) secondary",
+  "max_n": "an arm infeasible at n under PROTOCOL_A T3 gets 'max_n' and 't3_cost_cpu_s' {n: DEV cost}; eval_analysis shows those cells as infeasible_t3",
+  "driver": "campaign EVAL mode (xm/dev-runs, R-35): guard on protocol_sha256 + 'FROZEN: yes', records stamp run_mode.protocol_sha256 and integrity.spec_file_sha256 (the spec file's LF sha256, checked by eval_analysis V11 stamps; R-59)",
+  "pmrt_nl_eq": "filled (T10, R-52): statistic 'gbm' (pmrt_core statistic option -> version pmrt-core-v2, module pmrt-nl-v1; results/pmrt_nl/SELECTION.md); 'focal' names it the primary PMRT arm (C2a, C3, V3, T1); the linear pmrt_eq is secondary",
+  "pdcor": "dropped from Study A, all arms (R-48): not a valid CI test under conditioning (audit: E2 R2 eq null .22, P_placebo_conf 5/5), O(n^2) cost, no role in any verdict; PROTOCOL_A section 4",
+  "cmi_knn": "dropped from Study A, all arms (R-49 revised): cost (GPU cost probe ~2.4k-6.1k s per dataset at n 4000); RCoT and pcorr remain as CI tests; PROTOCOL_A section 4",
+  "cdl": "filled (R-53): adapter cdd_oran.xmethod.methods.cdl:CDLMethod, version 'refactor/codebase@65b56f3 cdd_oran/models/cdl.py port, offline 130-epoch rule (cap 16k steps)' (training budget steps = min(16000, ceil(130 n / 128))), CPU (F2: GPU does not reproduce CPU and is not faster), so a CPU arm under budget_cpu_s; score = final EMA CMI; primary declaration = conformal placebo tau (R-29); 'fixed_threshold' .16 = the conference rule CMI >= .16, scored as a secondary (V0 rule 'fixed'); native only, R-37 applies; its KPI -> KPI family is reported as 'not calibrated by the action placebo' (no claim); admitted under PROTOCOL_A T4",
+  "mscr": "SETTLED (R-54, R-58(5), PROTOCOL_A T11): mscr is kept as a reported-INVALID arm (R2 truth-null raw .93-1.00 on DEV); mscr_eq and mscr_native run n 500 / 1000 only, not in the kappa sweep; mscr_eq_min is dropped (R-58(5)); never in C2b (mscr_eq c2b false)",
+  "c1_sensitivity": "R-56: C1 is also reported without the arms flagged c1_sensitivity_drop (mscr_native, R-54); sensitivity line, no verdict effect",
+  "grid_r58": "R-58 grid (user GO 2026-10-04, pre-registered grid choices; cells outside an arm's grid read 'not in grid', never missing / PARTIAL / NOT EVALUABLE): (1) cdl R1 / R2 n <= 4000 only, not in E4 R3 / R4 nor the kappa sweep; (2) pmrt_nl_eq R1 / R2 at all five n; (3) E4 R3: C3 readers at S_E4 (fallback: n 24000 dropped in E4 R3 for all C3 readers alike, flag 'e4r3_fallback'); (4) E4 R4: every arm at S; (5) mscr_eq_min dropped, mscr arms out of the kappa sweep (n <= 1000, R-54)"
+ },
+ "arms": {
+  "pmrt_nl_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary"
+  },
+  "pmrt_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "linear statistic (pmrt-core-v1); secondary PMRT arm (R-42)"
+  },
+  "pmrt_r3": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "r3"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  },
+  "pc_eq": {
+   "ref": "cdd_oran.xmethod.methods.pc:PC",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "tau",
+   "analysis": "primary",
+   "native_partner": "pc_native"
+  },
+  "pc_native": {
+   "ref": "cdd_oran.xmethod.methods.pc:PC",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau",
+   "analysis": "secondary"
+  },
+  "granger_eq": {
+   "ref": "cdd_oran.xmethod.methods.granger:Granger",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "worlds": [
+    "E3"
+   ],
+   "analysis": "primary",
+   "native_partner": "granger_native"
+  },
+  "granger_native": {
+   "ref": "cdd_oran.xmethod.methods.granger:Granger",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "worlds": [
+    "E3"
+   ],
+   "analysis": "secondary"
+  },
+  "corr": {
+   "ref": "cdd_oran.xmethod.methods.corr:Corr",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "primary"
+  },
+  "notears": {
+   "ref": "cdd_oran.xmethod.methods.notears:Notears",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau",
+   "analysis": "primary"
+  },
+  "shap_dag": {
+   "ref": "cdd_oran.xmethod.methods.shap_dag:ShapDag",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau",
+   "analysis": "primary"
+  },
+  "two_tower": {
+   "ref": "cdd_oran.xmethod.methods.two_tower:TwoTowerM",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau",
+   "analysis": "primary"
+  },
+  "cdl": {
+   "ref": "cdd_oran.xmethod.methods.cdl:CDLMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau",
+   "analysis": "primary",
+   "fixed_threshold": 0.16
+  },
+  "mscr_eq": {
+   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "mscr_native",
+   "c2b": false,
+   "label": "single-conditioner max statistic; cannot condition on the joint design set; reported INVALID arm, EVAL n <= 1000 (R-54)"
+  },
+  "mscr_native": {
+   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "label": "single-conditioner max statistic; reported INVALID arm, EVAL n <= 1000 (R-54)",
+   "c1_sensitivity_drop": true
+  },
+  "pcorr_eq": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "pcorr_native"
+  },
+  "pcorr_native": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  },
+  "pcorr_hac": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "set_D": false
+  },
+  "pcorr_hac_fb": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "native",
+    "inference": "fixed_b"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "set_D": true
+  },
+  "rcot2_eq": {
+   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "native_partner": "rcot2_native"
+  },
+  "rcot2_native": {
+   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "analysis": "secondary"
+  },
+  "pcorr_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "pcorr_native"
+  },
+  "rcot2_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "rcot2_native"
+  },
+  "pcorr_hac_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "eq_min"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "pcorr_hac"
+  },
+  "pcorr_hac_fb_eq_min": {
+   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "config": {
+    "arm": "eq_min",
+    "inference": "fixed_b"
+   },
+   "declare": "by",
+   "analysis": "secondary",
+   "native_partner": "pcorr_hac_fb"
+  }
+ },
+ "blocks": [
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000,
+    8000,
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ],
+   "arms": [
+    "pmrt_nl_eq",
+    "pmrt_eq",
+    "pmrt_r3",
+    "pc_eq",
+    "pc_native",
+    "granger_eq",
+    "granger_native",
+    "corr",
+    "notears",
+    "shap_dag",
+    "two_tower",
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ],
+   "arms": [
+    "mscr_eq",
+    "mscr_native"
+   ]
+  },
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ],
+   "arms": [
+    "cdl"
+   ]
+  },
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ],
+   "arms": [
+    "pmrt_nl_eq",
+    "pmrt_eq",
+    "pmrt_r3",
+    "pc_eq",
+    "pc_native",
+    "granger_eq",
+    "granger_native",
+    "corr",
+    "notears",
+    "shap_dag",
+    "two_tower",
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000,
+    8000,
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3100000,
+    3100039
+   ],
+   "arms": [
+    "pmrt_nl_eq",
+    "pmrt_eq",
+    "pmrt_r3",
+    "pc_eq",
+    "pc_native",
+    "granger_eq",
+    "granger_native",
+    "corr",
+    "notears",
+    "shap_dag",
+    "two_tower",
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2"
+   ],
+   "ns": [
+    500,
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3100000,
+    3100039
+   ],
+   "arms": [
+    "mscr_eq",
+    "mscr_native"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3100000,
+    3100039
+   ],
+   "arms": [
+    "cdl"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000,
+    8000,
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3100000,
+    3100299
+   ],
+   "arms": [
+    "pmrt_nl_eq",
+    "pmrt_eq",
+    "pmrt_r3",
+    "pc_eq",
+    "granger_eq",
+    "pcorr_eq",
+    "rcot2_eq"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    500,
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3100000,
+    3100299
+   ],
+   "arms": [
+    "mscr_eq"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000,
+    8000,
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3100000,
+    3100039
+   ],
+   "arms": [
+    "pc_native",
+    "granger_native",
+    "corr",
+    "notears",
+    "shap_dag",
+    "two_tower",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "ns": [
+    500,
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3100000,
+    3100039
+   ],
+   "arms": [
+    "mscr_native"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000,
+    8000,
+    24000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3100000,
+    3100039
+   ],
+   "arms": [
+    "pmrt_nl_eq",
+    "pmrt_eq",
+    "pmrt_r3",
+    "pc_eq",
+    "pc_native",
+    "granger_eq",
+    "granger_native",
+    "corr",
+    "notears",
+    "shap_dag",
+    "two_tower",
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E4"
+   ],
+   "regimes": [
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3100000,
+    3100039
+   ],
+   "arms": [
+    "mscr_eq",
+    "mscr_native"
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E4",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    1000
+   ],
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "seeds": [
+    3100000,
+    3100019
+   ],
+   "arms": [
+    "pmrt_nl_eq",
+    "pmrt_eq",
+    "pmrt_r3",
+    "pc_eq",
+    "pc_native",
+    "granger_eq",
+    "granger_native",
+    "corr",
+    "notears",
+    "shap_dag",
+    "two_tower",
+    "pcorr_eq",
+    "pcorr_native",
+    "pcorr_hac",
+    "pcorr_hac_fb",
+    "rcot2_eq",
+    "rcot2_native",
+    "pcorr_eq_min",
+    "rcot2_eq_min",
+    "pcorr_hac_eq_min",
+    "pcorr_hac_fb_eq_min"
+   ]
+  }
+ ],
+ "not_in_grid": [
+  {
+   "ruling": "R-58(1)",
+   "arms": [
+    "cdl"
+   ],
+   "regimes": [
+    "R3",
+    "R4"
+   ],
+   "ns": null,
+   "kappas": null,
+   "reason": "cdl: training cost; feeds no claim (R1 / R2, n <= 4000 only)"
+  },
+  {
+   "ruling": "R-58(1)",
+   "arms": [
+    "cdl"
+   ],
+   "regimes": null,
+   "ns": [
+    8000,
+    24000
+   ],
+   "kappas": null,
+   "reason": "cdl: training cost; feeds no claim (R1 / R2, n <= 4000 only)"
+  },
+  {
+   "ruling": "R-58(1)",
+   "arms": [
+    "cdl"
+   ],
+   "regimes": null,
+   "ns": null,
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "reason": "cdl: not in the kappa sweep"
+  },
+  {
+   "ruling": "R-54",
+   "arms": [
+    "mscr_eq",
+    "mscr_native"
+   ],
+   "regimes": null,
+   "ns": [
+    4000,
+    8000,
+    24000
+   ],
+   "kappas": null,
+   "reason": "mscr: reported-INVALID arm, EVAL n <= 1000 only"
+  },
+  {
+   "ruling": "R-58(5)",
+   "arms": [
+    "mscr_eq",
+    "mscr_native"
+   ],
+   "regimes": null,
+   "ns": null,
+   "kappas": [
+    0.125,
+    0.5
+   ],
+   "reason": "mscr: not in the kappa sweep"
+  }
+ ],
+ "e4r3_fallback": false
+}

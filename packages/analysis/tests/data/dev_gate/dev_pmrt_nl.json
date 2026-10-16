@@ -1,0 +1,97 @@
+{
+ "name": "dev_pmrt_nl",
+ "budget_cpu_s": 7200,
+ "note": "R-43 (user GO 2026-10-03): pmrt_nl_eq (statistic gbm, pmrt-core-v2; feat/v2 5e8b4f9 pmrt_core + pmrt_nl files only) on the T1 cells (kappa .25, n 500 / 1000 / 4000, E4 excluded, eval_analysis T1_NS), same blocks and seeds as dev_full",
+ "arms": {
+  "pmrt_nl_eq": {
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "analysis": "primary",
+   "label": "nonlinear gbm statistic (pmrt-core-v2); primary PMRT arm (R-42)"
+  }
+ },
+ "blocks": [
+  {
+   "role": "tune",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000000,
+    3000019
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E5"
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3",
+    "R4"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000100,
+    3000119
+   ]
+  },
+  {
+   "role": "measure",
+   "worlds": [
+    "E1",
+    "E2",
+    "E3",
+    "E5"
+   ],
+   "regimes": [
+    "R2"
+   ],
+   "ns": [
+    500,
+    1000,
+    4000
+   ],
+   "kappas": [
+    0.25
+   ],
+   "seeds": [
+    3000120,
+    3000159
+   ]
+  }
+ ]
+}

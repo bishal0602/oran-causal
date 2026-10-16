@@ -19,4 +19,5 @@ Per-area tables, one row per migrated file or record set:
 | Claims registry and spec | [provenance/trace.md](provenance/trace.md) |
 | Lean proof | [provenance/proofs.md](provenance/proofs.md) |
 | Method core (`oran_causal.core`) | [provenance/core.md](provenance/core.md) |
+| Study 4 analysis (`oran_causal.analysis.controlled`) | [provenance/analysis_controlled.md](provenance/analysis_controlled.md) |
 | Controlled environments and datasets (`oran_causal.sim.controlled`, `core.data`) | [provenance/sim_controlled.md](provenance/sim_controlled.md) |

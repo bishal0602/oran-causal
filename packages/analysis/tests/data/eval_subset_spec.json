@@ -1,0 +1,225 @@
+{
+ "arms": {
+  "pc_native": {
+   "analysis": "secondary",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "tau",
+   "ref": "cdd_oran.xmethod.methods.pc:PC"
+  },
+  "pcorr_eq": {
+   "analysis": "primary",
+   "config": {
+    "arm": "eq"
+   },
+   "declare": "by",
+   "native_partner": "pcorr_native",
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod"
+  },
+  "pcorr_native": {
+   "analysis": "secondary",
+   "config": {
+    "arm": "native"
+   },
+   "declare": "by",
+   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod"
+  },
+  "pmrt_nl_eq": {
+   "analysis": "primary",
+   "config": {
+    "covariates": "eq",
+    "statistic": "gbm"
+   },
+   "declare": "by",
+   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore"
+  }
+ },
+ "blocks": [
+  {
+   "arms": [
+    "pmrt_nl_eq",
+    "pc_native",
+    "pcorr_eq",
+    "pcorr_native"
+   ],
+   "e4_lams": {
+    "R1": [
+     1.0
+    ],
+    "R2": [
+     1.0
+    ],
+    "R3": [
+     1.0
+    ]
+   },
+   "kappas": [
+    0.25
+   ],
+   "ns": [
+    500
+   ],
+   "regimes": [
+    "R1",
+    "R2",
+    "R3"
+   ],
+   "role": "tune",
+   "seeds": [
+    3000000,
+    3000011
+   ],
+   "worlds": [
+    "E1",
+    "E4"
+   ]
+  },
+  {
+   "arms": [
+    "pmrt_nl_eq",
+    "pc_native",
+    "pcorr_eq",
+    "pcorr_native"
+   ],
+   "e4_lams": {
+    "R1": [
+     1.0
+    ],
+    "R2": [
+     1.0
+    ],
+    "R3": [
+     1.0
+    ]
+   },
+   "kappas": [
+    0.25
+   ],
+   "ns": [
+    500
+   ],
+   "regimes": [
+    "R1",
+    "R2"
+   ],
+   "role": "measure",
+   "seeds": [
+    3100000,
+    3100011
+   ],
+   "worlds": [
+    "E1",
+    "E4"
+   ]
+  },
+  {
+   "arms": [
+    "pmrt_nl_eq",
+    "pcorr_eq"
+   ],
+   "e4_lams": {
+    "R1": [
+     1.0
+    ],
+    "R2": [
+     1.0
+    ],
+    "R3": [
+     1.0
+    ]
+   },
+   "kappas": [
+    0.25
+   ],
+   "ns": [
+    500
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "role": "measure",
+   "seeds": [
+    3100000,
+    3100011
+   ],
+   "worlds": [
+    "E4"
+   ]
+  },
+  {
+   "arms": [
+    "pc_native",
+    "pcorr_native"
+   ],
+   "e4_lams": {
+    "R1": [
+     1.0
+    ],
+    "R2": [
+     1.0
+    ],
+    "R3": [
+     1.0
+    ]
+   },
+   "kappas": [
+    0.25
+   ],
+   "ns": [
+    500
+   ],
+   "regimes": [
+    "R3"
+   ],
+   "role": "measure",
+   "seeds": [
+    3100000,
+    3100011
+   ],
+   "worlds": [
+    "E4"
+   ]
+  }
+ ],
+ "budget_cpu_s": 7200,
+ "e4r3_fallback": false,
+ "fmax_dependence_sha256": "402802b15c797f38cf1813aec1b4a912ffdbc3dba2ba3bfe94f1ee7a50d4f73e",
+ "focal": "pmrt_nl_eq",
+ "name": "eval_subset",
+ "not_in_grid": [],
+ "pkgs_lock": {
+  "causal-learn": "0.1.4.8",
+  "dcor": "0.7",
+  "momentchi2": "0.1.8",
+  "numpy": "2.4.2",
+  "scikit-learn": "1.9.1",
+  "scipy": "1.18.1",
+  "shap": "0.52.0",
+  "statsmodels": "0.15.0",
+  "threadpoolctl": "3.7.0",
+  "tigramite": "5.2.10.1",
+  "torch": "2.10.0+cpu",
+  "xgboost": "3.4.1"
+ },
+ "protocol": "docs/xmethod/PROTOCOL_A.md",
+ "protocol_sha256": "c5f7a4fe4dff4bfdeef3ccebac2dcc3748dfa9c2d0c3d17f2ac9d6246379fa22",
+ "safety_cap_cpu_s": 14400,
+ "status": "FROZEN 2026-10-04 (PROTOCOL_A FROZEN: yes; T-register filled, S = 40 by T1; EVAL block 3100000-3100299 claimed in docs/benchmark/SEED_REGISTRY.json)",
+ "tbd": {
+  "c1_sensitivity": "R-56: C1 is also reported without the arms flagged c1_sensitivity_drop (mscr_native, R-54); sensitivity line, no verdict effect",
+  "cdl": "filled (R-53): adapter cdd_oran.xmethod.methods.cdl:CDLMethod, version 'refactor/codebase@65b56f3 cdd_oran/models/cdl.py port, offline 130-epoch rule (cap 16k steps)' (training budget steps = min(16000, ceil(130 n / 128))), CPU (F2: GPU does not reproduce CPU and is not faster), so a CPU arm under budget_cpu_s; score = final EMA CMI; primary declaration = conformal placebo tau (R-29); 'fixed_threshold' .16 = the conference rule CMI >= .16, scored as a secondary (V0 rule 'fixed'); native only, R-37 applies; its KPI -> KPI family is reported as 'not calibrated by the action placebo' (no claim); admitted under PROTOCOL_A T4",
+  "citests_arms": "mscr (eq, native) / pcorr / rcot2 arms (eq, native, eq_min) admitted under PROTOCOL_A T4; mscr_eq_min dropped (R-58(5))",
+  "cmi_knn": "dropped from Study A, all arms (R-49 revised): cost (GPU cost probe ~2.4k-6.1k s per dataset at n 4000); RCoT and pcorr remain as CI tests; PROTOCOL_A section 4",
+  "driver": "campaign EVAL mode (xm/dev-runs, R-35): guard on protocol_sha256 + 'FROZEN: yes', records stamp run_mode.protocol_sha256 and integrity.spec_file_sha256 (the spec file's LF sha256, checked by eval_analysis V11 stamps; R-59)",
+  "grid_r58": "R-58 grid (user GO 2026-10-04, pre-registered grid choices; cells outside an arm's grid read 'not in grid', never missing / PARTIAL / NOT EVALUABLE): (1) cdl R1 / R2 n <= 4000 only, not in E4 R3 / R4 nor the kappa sweep; (2) pmrt_nl_eq R1 / R2 at all five n; (3) E4 R3: C3 readers at S_E4 (fallback: n 24000 dropped in E4 R3 for all C3 readers alike, flag 'e4r3_fallback'); (4) E4 R4: every arm at S; (5) mscr_eq_min dropped, mscr arms out of the kappa sweep (n <= 1000, R-54)",
+  "max_n": "an arm infeasible at n under PROTOCOL_A T3 gets 'max_n' and 't3_cost_cpu_s' {n: DEV cost}; eval_analysis shows those cells as infeasible_t3",
+  "mscr": "SETTLED (R-54, R-58(5), PROTOCOL_A T11): mscr is kept as a reported-INVALID arm (R2 truth-null raw .93-1.00 on DEV); mscr_eq and mscr_native run n 500 / 1000 only, not in the kappa sweep; mscr_eq_min is dropped (R-58(5)); never in C2b (mscr_eq c2b false)",
+  "pcorr_hac": "T8 filled (R-38, calib F4 on synthetic data, xm/hac2 results/pcorr_hac_f4b.json): set-D member = pcorr_hac_fb (inference fixed_b, max |rate - .05| .0405 vs .0535 for t); pcorr_hac (inference t) secondary",
+  "pdcor": "dropped from Study A, all arms (R-48): not a valid CI test under conditioning (audit: E2 R2 eq null .22, P_placebo_conf 5/5), O(n^2) cost, no role in any verdict; PROTOCOL_A section 4",
+  "pkgs_lock": "FILLED at the freeze: uv.lock versions of every package campaign.PKGS stamps (R-35); torch '2.10.0+cpu' = the locked public version 2.10.0 in the CPU build every EVAL platform installs (R-35 torch-build amendment; no GPU arm, R-53); FINAL needs every record's pkgs equal to it",
+  "pmrt_nl_eq": "filled (T10, R-52): statistic 'gbm' (pmrt_core statistic option -> version pmrt-core-v2, module pmrt-nl-v1; results/pmrt_nl/SELECTION.md); 'focal' names it the primary PMRT arm (C2a, C3, V3, T1); the linear pmrt_eq is secondary",
+  "protocol_sha256": "FILLED at the freeze: LF sha256 of the frozen docs/xmethod/PROTOCOL_A.md (campaign EVAL guard and eval_analysis check it)",
+  "seeds": "FILLED at the freeze: S = 40 (PROTOCOL_A T1) -> measure blocks [3100000, 3100039], half blocks [3100000, 3100019]; the C3 readers' E4 R3 blocks [3100000, 3100299] (S_E4 300, T9); E4 R4 at S for every arm (R-58(4))"
+ }
+}
