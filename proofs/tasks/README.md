@@ -17,7 +17,7 @@ Each file starts with `status:`. Set it when you stop work on the file and fill 
 
 ## Sources
 
-`sources/` holds the manuscript files the claims come from, with LaTeX comments removed (drafting notes only; the text is unchanged). Originals: journal working tree over HEAD `ec32c22`, pinned by sha256 of the original file:
+`sources/` holds the manuscript files the claims come from, with LaTeX comments removed (drafting notes only; the text is unchanged). Originals: journal commit `8744ef6`, pinned by sha256 of the original file:
 
 | File | sha256 of original |
 |---|---|

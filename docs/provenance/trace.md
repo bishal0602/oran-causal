@@ -1,6 +1,6 @@
 # Provenance: trace member and spec
 
-Journal repo `xApp-Journal-Discover-Telecommunications`: HEAD `ec32c2256ebaaccff2b9865ab92f2595df2298e7`. The section files read on 2026-10-15 carry uncommitted changes, so each is pinned by the sha256 of its working-tree copy.
+Journal repo `xApp-Journal-Discover-Telecommunications`: commit `8744ef6` (the working tree read on 2026-10-15 over `ec32c22`, committed unchanged on 2026-10-16). Each file is also pinned by sha256.
 
 | New path | Source | Note |
 |---|---|---|
