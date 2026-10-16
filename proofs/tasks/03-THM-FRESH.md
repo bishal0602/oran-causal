@@ -1,7 +1,7 @@
 ---
 id: THM-FRESH
 kind: lean
-status: todo
+status: implemented
 ---
 
 # 03 THM-FRESH: Fresh draws
@@ -52,11 +52,11 @@ Filled in by the agent.
 
 | Field | Value |
 |---|---|
-| Status | |
-| Main declaration(s) | |
-| Files | |
-| Deviation from the claim | |
-| Hypotheses not stated in the claim | |
-| `lake build` | |
-| `#print axioms` | |
-| Notes | |
+| Status | implemented; the author explicitly accepted the surrounding source setup as context |
+| Main declaration(s) | `OranCausal.Fresh.fresh_draw`; also `selected_law`, `selected_independent`, and `ConditionalAcceptance.condExp_eq` in that namespace |
+| Files | `proofs/OranCausal/Fresh.lean`, imported by `proofs/OranCausal.lean`; `proofs/FRESH_REPORT.md`; `proofs/task03-build.log` |
+| Deviation from the claim | None under the approved full source context. The conditional-probability equality is formalized as an almost-everywhere equality of Mathlib conditional expectations. Uniform law means Lebesgue measure restricted to `(0,1)`, as explicitly approved. |
+| Hypotheses not stated in the claim | The surrounding source supplies a countable key space, a jointly independent uniform field independent of initial information, recursively predictable keys, a history generated only by initial information and previously revealed draws, and propensities in `[0,1]`. Measurability and the initial sigma-algebra's inclusion in the ambient sigma-algebra are explicit. See `FRESH_REPORT.md` for the complete mapping. |
+| `lake build` | Passed without warnings or errors, 3027 jobs; final successful incremental build 30.950 seconds. Direct source check also passed. |
+| `#print axioms` | `OranCausal.Fresh.fresh_draw`: `[propext, Classical.choice, Quot.sound]` |
+| Notes | The proof establishes the recursive no-lookahead localization step, derives selected-draw independence by countable partition, and handles random propensities via the product law and conditional-expectation uniqueness. It does not assume independence of the adaptively selected draw. Only freshness of the current key is required; earlier keys need not be pairwise distinct. |

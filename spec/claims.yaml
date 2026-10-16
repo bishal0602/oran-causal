@@ -267,7 +267,7 @@ claims:
 
   - id: THM-FRESH
     kind: theorem-paper
-    statement: "If xi_u and pi_u are G_{u-1}-measurable and xi_u differs from the earlier keys, then U_{xi_u} is Uniform(0, 1) and independent of G_{u-1}, so Pr(W_u = accept | G_{u-1}) = pi_u (Lemma 1)."
+    statement: "In the setting of app:proof_setting (draws U_xi independent Uniform(0, 1) over keys and independent of G_0; G_u = G_0 v sigma(U_{xi_1}, ..., U_{xi_u})), if xi_u and pi_u are G_{u-1}-measurable and xi_u differs from the earlier keys, then U_{xi_u} is Uniform(0, 1) and independent of G_{u-1}, so Pr(W_u = accept | G_{u-1}) = pi_u (Lemma 1)."
     paper: [lem:fresh]
     spec: spec:thm.fresh
 
