@@ -1,4 +1,5 @@
 import json
+import sys
 from fractions import Fraction
 from functools import cache
 from pathlib import Path
@@ -25,6 +26,7 @@ GRID = 4000.0
 NAN_CODE = 65535
 N_HYPS = 60
 DECLARE_STRIDE = 20
+PRIOR_WEIGHTS = {"win32": "declare_p", "linux": "prior_weights_linux"}
 
 
 def p_of(codes: np.ndarray) -> np.ndarray:
@@ -132,8 +134,11 @@ def test_declare_matches_fdr_layer_full() -> None:
 
 @pytest.mark.claim("DEF-FDR-WBY", "ASM-FDR-FIXED")
 def test_prior_weights_match_fdr_layer() -> None:
+    if sys.platform not in PRIOR_WEIGHTS:
+        pytest.skip(f"no reference weights for platform {sys.platform}")
     z, e = fixture("declare_p"), fixture("declare_e")
-    for i, golden in enumerate(z["dc_weights"]):
+    weights = fixture(PRIOR_WEIGHTS[sys.platform])["dc_weights"]
+    for i, golden in enumerate(weights):
         hyps, _, prior = declare_inputs(z, e, i)
         w = prior_weights(prior, hyps, WeightConfig(n_target=600))
         assert np.array_equal(np.array([w[h] for h in hyps]), golden)
