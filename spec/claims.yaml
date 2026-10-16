@@ -165,7 +165,7 @@ claims:
     statement: "The controlled environments are five mechanisms with known causal graphs (linear graph, rare regime, delayed harm, latent confounding, composed), logged by independent redraws, a dithered setpoint, a confounded policy or unlogged confounding, at n from 500 to 24,000."
     paper: [sec:envs, app:envs, tab:study4_design]
     spec: spec:env
-    code: [oran_causal.sim.controlled.datasets.generate:generate_dataset]
+    code: [oran_causal.sim.controlled.datasets.generate:generate_dataset, oran_causal.sim.controlled.datasets.truth:truth_for, oran_causal.sim.controlled.base:ControlledEnv]
     tests: {min: 1, tier: unit}
 
   - id: DEF-ENV-ARMS

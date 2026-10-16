@@ -17,3 +17,4 @@ Per-area tables, one row per migrated file or record set:
 | Record sets and frozen experiment inputs | [provenance/data.md](provenance/data.md) |
 | Workspace configuration | [provenance/skeleton.md](provenance/skeleton.md) |
 | Claims registry and spec | [provenance/trace.md](provenance/trace.md) |
+| Controlled environments and datasets (`oran_causal.sim.controlled`, `core.data`) | [provenance/sim_controlled.md](provenance/sim_controlled.md) |
