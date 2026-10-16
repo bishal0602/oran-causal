@@ -184,7 +184,7 @@ claims:
     statement: "The simulator has 24 cells and 300 UEs, a 40 ms tick and 120 s warm-up plus 600 s scored time; the gate tolerances used G_v = 19,953.65 violated UE-seconds and G_RLF = 35.025 RLFs."
     paper: [sec:scenario, app:simparams]
     spec: spec:sys.sim
-    code: [oran_causal.core.gate:tau_table]
+    code: [oran_causal.core.gate:tau_table, oran_causal.sim.system.config:E6Config, oran_causal.sim.system.config:TICK_S, oran_causal.sim.system.env:E6Env]
     tests: {min: 1, tier: unit}
     evidence:
       - record: system_artifacts/report_2026-10-02/figures_data.json

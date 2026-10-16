@@ -23,3 +23,4 @@ Per-area tables, one row per migrated file or record set:
 | Study 4 harness, campaign and driver (`oran_causal.experiments`) | [provenance/experiments_controlled.md](provenance/experiments_controlled.md) |
 | Study 4 analysis (`oran_causal.analysis.controlled`) | [provenance/analysis_controlled.md](provenance/analysis_controlled.md) |
 | Controlled environments and datasets (`oran_causal.sim.controlled`, `core.data`) | [provenance/sim_controlled.md](provenance/sim_controlled.md) |
+| System-level plant (`oran_causal.sim.system`) | [provenance/sim_system.md](provenance/sim_system.md) |
