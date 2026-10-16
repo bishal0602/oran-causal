@@ -99,6 +99,25 @@ HERMETIC = frozenset(
 DESIGN = WORKSPACE_ROOT.parent / "DESIGN.md"
 
 
+@pytest.fixture(autouse=True, scope="session")
+def _skip_rendering_without_arial():
+    try:
+        style.arial_files()
+    except RuntimeError as exc:
+        reason = str(exc)
+    else:
+        yield
+        return
+
+    def missing():
+        pytest.skip(reason)
+
+    mp = pytest.MonkeyPatch()
+    mp.setattr(style, "arial_files", missing)
+    yield
+    mp.undo()
+
+
 @pytest.fixture(scope="session")
 def records():
     if not (RECORDS / "study4_eval" / "eval" / "merged.jsonl.gz").exists():
