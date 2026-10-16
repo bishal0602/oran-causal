@@ -69,8 +69,11 @@ claims:
     spec: spec:pmrt.weight
     code:
       - oran_causal.core.pmrt.units:fit_pmrt
+      - oran_causal.core.pmrt.units:fit_core
+      - oran_causal.core.pmrt.units:slot_matrix
       - oran_causal.core.pmrt.units:running_center
       - oran_causal.core.pmrt.units:h_weights
+      - oran_causal.core.pmrt.units:modified
     tests: {min: 1, tier: unit}
 
   - id: DEF-PMRT-STAT
