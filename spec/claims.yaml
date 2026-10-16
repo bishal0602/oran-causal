@@ -168,7 +168,7 @@ claims:
     statement: "The controlled environments are five mechanisms with known causal graphs (linear graph, rare regime, delayed harm, latent confounding, composed), logged by independent redraws, a dithered setpoint, a confounded policy or unlogged confounding, at n from 500 to 24,000."
     paper: [sec:envs, app:envs, tab:study4_design]
     spec: spec:env
-    code: [oran_causal.sim.controlled.datasets.generate:generate_dataset, oran_causal.sim.controlled.datasets.truth:truth_for, oran_causal.sim.controlled.base:ControlledEnv]
+    code: [oran_causal.sim.controlled.datasets.generate:generate_dataset, oran_causal.sim.controlled.datasets.truth:truth_for, oran_causal.sim.controlled.base:ControlledEnv, oran_causal.experiments.campaign.estimand:run]
     tests: {min: 1, tier: unit}
 
   - id: DEF-ENV-ARMS
@@ -739,6 +739,7 @@ claims:
     statement: "For each dataset the analysis rules, seeds and pass criteria were fixed before the evaluation data were generated, and the analysis code, fixed at the same time, was run once; one amendment changed the fixed code."
     paper: [sec:protocol]
     spec: spec:pro
+    code: [oran_causal.experiments.campaign.spec:eval_authorised, oran_causal.experiments.campaign.spec:expand, oran_causal.experiments.campaign.shard:assignment]
     tests: {min: 1, tier: unit}
     evidence:
       - record: system_artifacts/report_2026-10-02/figures_data.json
@@ -759,6 +760,7 @@ claims:
     statement: "Seeds came from disjoint blocks of an internal registry."
     paper: [sec:protocol]
     spec: spec:pro.seeds
+    code: [oran_causal.experiments.campaign.spec:validate_spec]
     tests: {min: 1, tier: unit}
 
   - id: PRO-TUNE
@@ -766,6 +768,7 @@ claims:
     statement: "All methods and baseline thresholds were tuned on development episodes separate from the evaluation data, and the gate was calibrated on 40 development episodes."
     paper: [sec:datasets, sec:baselines_scores]
     spec: spec:pro.tune
+    code: [oran_causal.experiments.campaign.aggregate:aggregate]
     tests: {min: 1, tier: unit}
 
   - id: PRO-POSTHOC

@@ -1,0 +1,98 @@
+{
+ "record": [
+  "arm",
+  "campaign",
+  "child_cpu_s",
+  "child_maxrss_mb",
+  "child_wall_s",
+  "code",
+  "config",
+  "cpu_s",
+  "dataset_sha256",
+  "edges",
+  "error",
+  "gen_cpu_s",
+  "host",
+  "integrity",
+  "job",
+  "key",
+  "limits",
+  "load",
+  "method",
+  "method_cpu_s",
+  "notes",
+  "peak_rss_mb",
+  "pkgs",
+  "result_config",
+  "role",
+  "rss_scope",
+  "run_mode",
+  "scores",
+  "spec_name",
+  "status",
+  "version",
+  "versions",
+  "wall_s"
+ ],
+ "job": [
+  "kappa",
+  "lam",
+  "n",
+  "regime",
+  "seed",
+  "world"
+ ],
+ "versions": [
+  "numpy",
+  "platform",
+  "python",
+  "runner"
+ ],
+ "code": [
+  "commit",
+  "dirty",
+  "dirty_paths",
+  "source"
+ ],
+ "run_mode": [
+  "mode",
+  "protocol_sha256"
+ ],
+ "integrity": [
+  "budget_cpu_s",
+  "cap_factor",
+  "code_commit",
+  "code_dirty",
+  "cost_table_sha256",
+  "isolation",
+  "lock_sha256",
+  "part",
+  "parts",
+  "pin_mismatches",
+  "protocol_sha256",
+  "python",
+  "spec_file_sha256",
+  "spec_sha256",
+  "torch_build"
+ ],
+ "host": [
+  "cpu_count",
+  "cpu_model",
+  "cuda_visible_devices",
+  "gpu",
+  "node",
+  "platform"
+ ],
+ "limits": [
+  "cpu_s",
+  "wall_s"
+ ],
+ "load.start": [
+  "campaign_procs",
+  "cpu_quota",
+  "loadavg",
+  "proc_visible",
+  "procs_running",
+  "procs_total"
+ ]
+}
