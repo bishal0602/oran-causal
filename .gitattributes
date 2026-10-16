@@ -10,3 +10,4 @@ packages/analysis/tests/data/dev_gate/** -text
 packages/analysis/tests/data/*.json -text
 **/_vendor/** -text
 packages/experiments/tests/data/*.json -text
+packages/figures/data/** -text

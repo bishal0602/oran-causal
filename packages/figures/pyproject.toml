@@ -15,9 +15,25 @@ dependencies = [
     "seaborn>=0.13.2",
 ]
 
+[project.scripts]
+oran-causal-figures = "oran_causal.figures.cli:main"
+
 [build-system]
 requires = ["uv_build>=0.12.1,<0.13"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-name = "oran_causal.figures"
+
+[tool.ruff]
+extend = "../../pyproject.toml"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "PLR0913", "PLR0917", "E501", "PLC0415", "PT011", "PT018", "RUF007", "RUF059", "SIM102"]
+"src/**" = [
+    "E501", "D205", "D301", "PLR0912", "PLR0913", "PLR0915", "PLR0917", "PLC0415", "PLW0603", "PLW2901",
+    "RUF001", "RUF002", "RUF003", "RUF007", "RUF059", "B007", "E731", "E741", "PT018", "PLC0206", "ERA001",
+]
+"src/oran_causal/figures/figs/**" = ["D101", "D102", "D103"]
+"src/oran_causal/figures/svg/**" = ["D101", "D102", "D103"]
+"src/oran_causal/figures/{checks,diagram,entities,envgraph,graph,layout,methods,style,wording}.py" = ["D101", "D102", "D103"]
