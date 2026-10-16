@@ -11,6 +11,7 @@ import pytest
 
 from oran_causal.experiments.campaign.run import Providers, RunOptions
 from oran_causal.experiments.campaign.spec import ProtocolTexts, shipped_protocol
+from oran_causal.experiments.launch.runner import Clock
 
 DATA = Path(__file__).parent / "data"
 DUMMY = "cdd_oran.xmethod.runner:DummyMethod"
@@ -137,4 +138,55 @@ def kit() -> types.SimpleNamespace:
         frozen_texts=frozen_texts,
         read_jsonl=read_jsonl,
         quiet_providers=quiet_providers,
+    )
+
+
+HEAD = "f" * 40
+
+
+def fake_git(status: str = ""):
+    answers = {"rev-parse": HEAD + "\n", "status": status}
+    return lambda args: answers[args[0]]
+
+
+def mini_workspace(root: Path) -> Path:
+    files = {
+        "pyproject.toml": "[tool.uv]\r\n",
+        "uv.lock": "version = 1\n",
+        ".python-version": "3.14\n",
+        "packages/a/pyproject.toml": "[project]\nname = 'a'\n",
+        "packages/a/src/oran_causal/a/__init__.py": "A = 1\r\n",
+        "packages/a/src/oran_causal/a/__pycache__/m.cpython-314.pyc": "x",
+        "packages/a/tests/test_a.py": "def test(): ...\n",
+        "packages/experiments/protocols/study4/PROTOCOL_A.md": "FROZEN: yes\n",
+        "packages/experiments/manifests/seeds.json": "{}\n",
+        "packages/experiments/artifacts/table.json": "[1]\n",
+        "packages/experiments/specs/dev/s.json": "{}\n",
+        "records/runs/old/done/a.jsonl": "{}\n",
+        "scratch/notes.md": "x\n",
+    }
+    for rel, text in files.items():
+        p = root / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(text.encode())
+    return root
+
+
+@dataclasses.dataclass
+class FakeClock:
+    t: float = 1_000_000.0
+    slept: list[float] = dataclasses.field(default_factory=list)
+
+    def sleep(self, s: float) -> None:
+        self.slept.append(s)
+        self.t += s
+
+    def clock(self) -> Clock:
+        return Clock(now=lambda: self.t, sleep=self.sleep)
+
+
+@pytest.fixture
+def launch_kit() -> types.SimpleNamespace:
+    return types.SimpleNamespace(
+        HEAD=HEAD, fake_git=fake_git, mini_workspace=mini_workspace, FakeClock=FakeClock
     )

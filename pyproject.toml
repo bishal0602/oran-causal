@@ -66,8 +66,8 @@ known-first-party = ["oran_causal"]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/**" = ["D", "PLR0913"]
-"tests/**" = ["D", "PLR0913"]
+"**/tests/**" = ["D", "PLR0911", "PLR0913"]
+"tests/**" = ["D", "PLR0911", "PLR0913"]
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
