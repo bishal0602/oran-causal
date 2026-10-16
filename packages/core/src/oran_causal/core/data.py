@@ -2,13 +2,15 @@
 
 A `Dataset` is one (world, regime, n, seed) corpus of one-step rows. A `Method` maps a
 `Dataset` to a `Result` with one entry per candidate edge. Ground truth never enters a
-`Dataset`; it lives in `Truth` and is read only by the scorer.
+`Dataset`; it lives in `Truth` and is read only by the scorer. A `UnitTable` is the unit-level
+corpus of the system-level studies: one row per logged decision unit.
 """
 
 import dataclasses
 from typing import Any, Protocol
 
 import numpy as np
+import numpy.typing as npt
 
 WORLDS = ("E1", "E2", "E3", "E4", "E5")
 REGIMES = ("R1", "R2", "R3", "R4")
@@ -143,3 +145,114 @@ class Method(Protocol):
     def run(self, data: Dataset, config: dict[str, Any]) -> Result:
         """Scores every candidate edge of `data` under `config`."""
         ...
+
+
+@dataclasses.dataclass(frozen=True)
+class UnitTable:
+    """Pooled unit table of logged decision units, one row per unit.
+
+    A unit's target for relation r and KPI k is the KPI summed over r's cells in the H seconds
+    from the unit's opening minus the same sum over the H_pre seconds before it.
+
+    Attributes:
+        episode: Episode index of each row (position among the pooled episodes).
+        seed: Protocol seed of the row's episode.
+        fold: Evaluation fold of the row's episode, -1 if none.
+        family: Index into `families` of the unit's knob family.
+        xapp: xApp that opened the unit (object array of str).
+        c: Cell of the unit.
+        t0: Opening second.
+        mode: Logged mode, an index into the mode list of the logging policy.
+        applied: Applied mode index (differs from `mode` under a placebo policy).
+        p: Logged propensity of the logged mode.
+        probs: Logged mode-probability row of the unit, shape `[n, modes]`.
+        step: Proposed minus current value of the opening request.
+        sgn: sign(step), with 0 mapped to +1.
+        y: Target per (relation, KPI), each of shape `[n]`.
+        pre: Pre-window sum per (relation, KPI), each of shape `[n]`.
+        ycell: Per-cell target per KPI, each of shape `[n, n_cells]`.
+        rel_mask: Cells of each relation per row, each of shape `[n, n_cells]`.
+        z: Conditioner columns by name, each of shape `[n]`.
+        prev: Row of the previous unit of the same (episode, cell, xApp, family), -1 if none.
+        n_cells: Number of cells.
+        H: Post-window length in seconds.
+        H_pre: Pre-window length in seconds.
+        relations: Relation names, in the order of `y`.
+        kpis: KPI names, in the order of `y`.
+        families: Knob family names indexed by `family`.
+        levels: Treatment dose of each mode index.
+        meta: Builder metadata (episodes, dropped units, checks).
+    """
+
+    episode: np.ndarray
+    seed: np.ndarray
+    fold: np.ndarray
+    family: np.ndarray
+    xapp: np.ndarray
+    c: np.ndarray
+    t0: np.ndarray
+    mode: np.ndarray
+    applied: np.ndarray
+    p: np.ndarray
+    probs: np.ndarray
+    step: np.ndarray
+    sgn: np.ndarray
+    y: dict[tuple[str, str], np.ndarray]
+    pre: dict[tuple[str, str], np.ndarray]
+    ycell: dict[str, np.ndarray]
+    rel_mask: dict[str, np.ndarray]
+    z: dict[str, np.ndarray]
+    prev: np.ndarray
+    n_cells: int
+    H: int
+    H_pre: int
+    relations: tuple[str, ...]
+    kpis: tuple[str, ...]
+    families: tuple[str, ...]
+    levels: np.ndarray
+    meta: dict[str, Any]
+
+    @property
+    def n(self) -> int:
+        """Number of units."""
+        return len(self.t0)
+
+    @property
+    def level(self) -> np.ndarray:
+        """Dose of each unit's logged mode."""
+        return self.levels[self.mode]
+
+    @property
+    def x(self) -> np.ndarray:
+        """Oriented treatment: dose times the request direction."""
+        return self.level * self.sgn
+
+    def rows_of(self, family: str) -> np.ndarray:
+        """Returns the rows of one knob family."""
+        return np.nonzero(self.family == self.families.index(family))[0]
+
+    def subset(self, rows: npt.ArrayLike) -> UnitTable:
+        """Returns the table restricted to `rows` (indices or a boolean mask), `prev` remapped."""
+        rows = np.asarray(rows)
+        if rows.dtype == bool:
+            rows = np.nonzero(rows)[0]
+        pos = np.full(self.n, -1)
+        pos[rows] = np.arange(len(rows))
+        prev = self.prev[rows]
+        prev = np.where(prev >= 0, pos[np.maximum(prev, 0)], -1)
+        pick = {
+            f.name: getattr(self, f.name)[rows]
+            for f in dataclasses.fields(self)
+            if f.name not in ("prev", "levels") and isinstance(getattr(self, f.name), np.ndarray)
+        }
+        return dataclasses.replace(
+            self,
+            **pick,
+            prev=prev,
+            y={k: v[rows] for k, v in self.y.items()},
+            pre={k: v[rows] for k, v in self.pre.items()},
+            ycell={k: v[rows] for k, v in self.ycell.items()},
+            rel_mask={k: v[rows] for k, v in self.rel_mask.items()},
+            z={k: v[rows] for k, v in self.z.items()},
+            meta=dict(self.meta),
+        )
