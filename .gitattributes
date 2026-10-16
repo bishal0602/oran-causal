@@ -1,3 +1,6 @@
+* text=auto eol=lf
+*.npz binary
+*.gz binary
 packages/experiments/protocols/** -text
 packages/experiments/specs/** -text
 packages/experiments/artifacts/** -text

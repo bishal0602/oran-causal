@@ -44,6 +44,7 @@ dev = [
     "hypothesis>=6.150",
     "pytest>=9.1.1",
     "pytest-cov>=7",
+    "pytest-xdist>=3.8.0",
     "ruff>=0.17",
     "ty>=0.0.87",
 ]
@@ -72,6 +73,7 @@ convention = "google"
 ban-relative-imports = "all"
 
 [tool.ruff.format]
+line-ending = "lf"
 docstring-code-format = true
 
 [tool.ty.environment]
@@ -85,7 +87,7 @@ exclude = ["**/tests/fixtures"]
 possibly-unresolved-reference = "error"
 
 [tool.pytest.ini_options]
-addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
+addopts = ["-ra", "-m", "not slow", "--strict-markers", "--strict-config", "--import-mode=importlib"]
 testpaths = ["packages", "tests"]
 python_files = ["test_*.py"]
 xfail_strict = true
