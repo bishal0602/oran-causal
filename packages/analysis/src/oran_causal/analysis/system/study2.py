@@ -37,6 +37,7 @@ Check = dict[str, Any]
 
 SCHEMA_EVAL_REPORT = "e6p-conf-eval/1"
 SCHEMA_EVAL = "e6p-optaka2-rec/1"
+SCHEMA_DISC = "e6p-conf-disc/1"
 SUB = "conf"
 DRIVER = "e6p_conf"
 LAYOUT = {
@@ -570,7 +571,7 @@ def disc_from_tests(tests: Mapping[str, Any]) -> dict[str, Any]:
 
     `placebo_combos` is K0 of every combination's placebo declarations, `K0n` the primary
     combination's null-outcome check and `K0n_descriptive` every combination's (with the number
-    of episode groups); then `recompute_disc`.
+    of episode groups); the schema becomes `SCHEMA_DISC`; then `recompute_disc`.
     """
     blocks = study1.placebo_null_blocks(dict(tests) | {"placebo_baselines": {}})
     rep = {k: v for k, v in tests.items() if k not in TESTS_ONLY}
@@ -578,4 +579,5 @@ def disc_from_tests(tests: Mapping[str, Any]) -> dict[str, Any]:
     if "K0n_descriptive" in blocks:
         rep["K0n_descriptive"] = blocks["K0n_descriptive"] | {"groups": tests["K0n_raw"]["groups"]}
     rep["K0n"] = blocks["K0n"]
+    rep["schema"] = SCHEMA_DISC
     return recompute_disc(rep)

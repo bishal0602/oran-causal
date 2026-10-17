@@ -303,7 +303,8 @@ def test_disc_from_tests_adds_the_placebo_and_null_blocks(monkeypatch: pytest.Mo
         "units": {},
     }
     rep = study2.disc_from_tests(tests)
-    assert set(rep) == {"primary", "units", "placebo_combos", "K0n", "K0n_descriptive"}
+    assert set(rep) == {"primary", "units", "placebo_combos", "K0n", "K0n_descriptive", "schema"}
+    assert rep["schema"] == study2.SCHEMA_DISC
     assert rep["placebo_combos"][study1.PRIMARY_NAME]["m"] == 1
     assert rep["K0n"]["n_variants"] == 1
     assert rep["K0n_descriptive"]["groups"] == 10
