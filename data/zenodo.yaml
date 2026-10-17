@@ -2,8 +2,8 @@ sets:
   - name: study1_raw
     description: "Study 1 randomised logs: eval, placebo, GT, dev episodes; v4 analysis jobs"
     manifest: manifests/study1_raw.sha256
-    files: 1102
-    bytes: 755448757
+    files: 958
+    bytes: 752158165
     doi: null
   - name: study1_train
     description: "Training and bench episodes for the frozen PMRT v4 artifact"
@@ -14,8 +14,8 @@ sets:
   - name: study2_raw
     description: "Study 2 confounded logs: discovery, placebo, GT, dev episodes; discovery analysis job"
     manifest: manifests/study2_raw.sha256
-    files: 1186
-    bytes: 740280753
+    files: 1012
+    bytes: 735880597
     doi: null
   - name: study2_3_decision
     description: "Studies 2-3 referee evaluation, analysis, calibration and bounds jobs"
