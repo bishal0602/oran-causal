@@ -425,22 +425,16 @@
   },
   "s1.map.corr.rec": {
    "args": {
-    "r": {
+    "v": {
      "pointer": "/slices_result/pooled/metrics/corr/ov_recall",
      "record": "system_artifacts/decision/v4_analysis.json",
      "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
      "value": 0.20689655172413793
-    },
-    "s": {
-     "pointer": "/slices_result/pooled/metrics/corr/sign_acc",
-     "record": "system_artifacts/decision/v4_analysis.json",
-     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
-     "value": 0.8333333333333334
     }
    },
-   "expr": "r * s",
+   "expr": "v",
    "fmt": ".2f|up",
-   "text": "0.17"
+   "text": "0.21"
   },
   "s1.map.corr.wrong": {
    "args": {
@@ -495,22 +489,16 @@
   },
   "s1.map.gby.rec": {
    "args": {
-    "r": {
+    "v": {
      "pointer": "/slices_result/pooled/metrics/granger_by/ov_recall",
      "record": "system_artifacts/decision/v4_analysis.json",
      "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
      "value": 0.7586206896551724
-    },
-    "s": {
-     "pointer": "/slices_result/pooled/metrics/granger_by/sign_acc",
-     "record": "system_artifacts/decision/v4_analysis.json",
-     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
-     "value": 0.7272727272727273
     }
    },
-   "expr": "r * s",
+   "expr": "v",
    "fmt": ".2f|up",
-   "text": "0.55"
+   "text": "0.76"
   },
   "s1.map.gby.wrong": {
    "args": {
@@ -565,22 +553,16 @@
   },
   "s1.map.gr.rec": {
    "args": {
-    "r": {
+    "v": {
      "pointer": "/slices_result/pooled/metrics/granger/ov_recall",
      "record": "system_artifacts/decision/v4_analysis.json",
      "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
      "value": 0.6206896551724138
-    },
-    "s": {
-     "pointer": "/slices_result/pooled/metrics/granger/sign_acc",
-     "record": "system_artifacts/decision/v4_analysis.json",
-     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
-     "value": 0.7777777777777778
     }
    },
-   "expr": "r * s",
+   "expr": "v",
    "fmt": ".2f|up",
-   "text": "0.48"
+   "text": "0.62"
   },
   "s1.map.gr.wrong": {
    "args": {
@@ -635,20 +617,14 @@
   },
   "s1.map.int.rec": {
    "args": {
-    "r": {
+    "v": {
      "pointer": "/slices_result/pooled/metrics/int/ov_recall",
      "record": "system_artifacts/decision/v4_analysis.json",
      "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
      "value": 0.2413793103448276
-    },
-    "s": {
-     "pointer": "/slices_result/pooled/metrics/int/sign_acc",
-     "record": "system_artifacts/decision/v4_analysis.json",
-     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
-     "value": 1.0
     }
    },
-   "expr": "r * s",
+   "expr": "v",
    "fmt": ".2f|up",
    "text": "0.24"
   },
@@ -705,20 +681,14 @@
   },
   "s1.map.pmrt.rec": {
    "args": {
-    "r": {
+    "v": {
      "pointer": "/slices_result/pooled/metrics/loadsp_c+wby1s/ov_recall",
      "record": "system_artifacts/decision/v4_analysis.json",
      "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
      "value": 0.7931034482758621
-    },
-    "s": {
-     "pointer": "/slices_result/pooled/metrics/loadsp_c+wby1s/sign_acc",
-     "record": "system_artifacts/decision/v4_analysis.json",
-     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
-     "value": 1.0
     }
    },
-   "expr": "r * s",
+   "expr": "v",
    "fmt": ".2f|up",
    "text": "0.79"
   },
@@ -775,20 +745,14 @@
   },
   "s1.map.qacm.rec": {
    "args": {
-    "r": {
+    "v": {
      "pointer": "/slices_result/pooled/metrics/qacm/ov_recall",
      "record": "system_artifacts/decision/v4_analysis.json",
      "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
      "value": 0.27586206896551724
-    },
-    "s": {
-     "pointer": "/slices_result/pooled/metrics/qacm/sign_acc",
-     "record": "system_artifacts/decision/v4_analysis.json",
-     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
-     "value": 1.0
     }
    },
-   "expr": "r * s",
+   "expr": "v",
    "fmt": ".2f|up",
    "text": "0.28"
   },
@@ -845,20 +809,14 @@
   },
   "s1.map.shap.rec": {
    "args": {
-    "r": {
+    "v": {
      "pointer": "/slices_result/pooled/metrics/shap_gbdt/ov_recall",
      "record": "system_artifacts/decision/v4_analysis.json",
      "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
      "value": 0.034482758620689655
-    },
-    "s": {
-     "pointer": "/slices_result/pooled/metrics/shap_gbdt/sign_acc",
-     "record": "system_artifacts/decision/v4_analysis.json",
-     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
-     "value": 1.0
     }
    },
-   "expr": "r * s",
+   "expr": "v",
    "fmt": ".2f|up",
    "text": "0.03"
   },
@@ -915,22 +873,16 @@
   },
   "s1.map.tt.rec": {
    "args": {
-    "r": {
+    "v": {
      "pointer": "/slices_result/pooled/metrics/two_tower/ov_recall",
      "record": "system_artifacts/decision/v4_analysis.json",
      "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
      "value": 0.20689655172413793
-    },
-    "s": {
-     "pointer": "/slices_result/pooled/metrics/two_tower/sign_acc",
-     "record": "system_artifacts/decision/v4_analysis.json",
-     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
-     "value": 0.8333333333333334
     }
    },
-   "expr": "r * s",
+   "expr": "v",
    "fmt": ".2f|up",
-   "text": "0.17"
+   "text": "0.21"
   },
   "s1.map.tt.wrong": {
    "args": {
@@ -2286,20 +2238,14 @@
   },
   "s1.pmrt.recall": {
    "args": {
-    "r": {
+    "v": {
      "pointer": "/slices_result/pooled/metrics/loadsp_c+wby1s/ov_recall",
      "record": "system_artifacts/decision/v4_analysis.json",
      "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
      "value": 0.7931034482758621
-    },
-    "s": {
-     "pointer": "/slices_result/pooled/metrics/loadsp_c+wby1s/sign_acc",
-     "record": "system_artifacts/decision/v4_analysis.json",
-     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
-     "value": 1.0
     }
    },
-   "expr": "r * s",
+   "expr": "v",
    "fmt": ".2f|up",
    "text": "0.79"
   },
@@ -3100,11 +3046,17 @@
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 6
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:corr@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 2
     }
    },
-   "expr": "r / n",
+   "expr": "(r + w) / n",
    "fmt": ".2f|up",
-   "text": "0.21"
+   "text": "0.28"
   },
   "s2.map.corr.wrong": {
    "args": {
@@ -3170,11 +3122,17 @@
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 16
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:granger_by/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 6
     }
    },
-   "expr": "r / n",
+   "expr": "(r + w) / n",
    "fmt": ".2f|up",
-   "text": "0.55"
+   "text": "0.76"
   },
   "s2.map.gby.wrong": {
    "args": {
@@ -3240,11 +3198,17 @@
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 12
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:granger@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 6
     }
    },
-   "expr": "r / n",
+   "expr": "(r + w) / n",
    "fmt": ".2f|up",
-   "text": "0.41"
+   "text": "0.62"
   },
   "s2.map.gr.wrong": {
    "args": {
@@ -3310,9 +3274,15 @@
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 4
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:int@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
     }
    },
-   "expr": "r / n",
+   "expr": "(r + w) / n",
    "fmt": ".2f|up",
    "text": "0.14"
   },
@@ -3380,9 +3350,15 @@
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 18
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:PMRT/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
     }
    },
-   "expr": "r / n",
+   "expr": "(r + w) / n",
    "fmt": ".2f|up",
    "text": "0.62"
   },
@@ -3450,9 +3426,15 @@
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 5
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:qacm@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
     }
    },
-   "expr": "r / n",
+   "expr": "(r + w) / n",
    "fmt": ".2f|up",
    "text": "0.17"
   },
@@ -3520,9 +3502,15 @@
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 1
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:shap_gbdt@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
     }
    },
-   "expr": "r / n",
+   "expr": "(r + w) / n",
    "fmt": ".2f|up",
    "text": "0.03"
   },
@@ -3590,9 +3578,15 @@
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 5
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:two_tower@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
     }
    },
-   "expr": "r / n",
+   "expr": "(r + w) / n",
    "fmt": ".2f|up",
    "text": "0.17"
   },
@@ -3624,41 +3618,77 @@
   },
   "s2.plc.rec_max": {
    "args": {
-    "a": {
+    "ar": {
      "pointer": "/option_a/map_quality/MG:corr@plc/true_right",
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 3
     },
-    "b": {
+    "aw": {
+     "pointer": "/option_a/map_quality/MG:corr@plc/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    },
+    "br": {
      "pointer": "/option_a/map_quality/MG:granger@plc/true_right",
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 5
     },
-    "c": {
+    "bw": {
+     "pointer": "/option_a/map_quality/MG:granger@plc/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    },
+    "cr": {
      "pointer": "/option_a/map_quality/MG:shap_gbdt@plc/true_right",
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 1
     },
-    "d": {
+    "cw": {
+     "pointer": "/option_a/map_quality/MG:shap_gbdt@plc/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    },
+    "dr": {
      "pointer": "/option_a/map_quality/MG:two_tower@plc/true_right",
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 0
     },
-    "e": {
+    "dw": {
+     "pointer": "/option_a/map_quality/MG:two_tower@plc/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    },
+    "er": {
      "pointer": "/option_a/map_quality/MG:int@plc/true_right",
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 4
     },
-    "f": {
+    "ew": {
+     "pointer": "/option_a/map_quality/MG:int@plc/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 1
+    },
+    "fr": {
      "pointer": "/option_a/map_quality/MG:qacm@plc/true_right",
      "record": "system_artifacts/report_2026-10-02/figures_data.json",
      "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
      "value": 6
+    },
+    "fw": {
+     "pointer": "/option_a/map_quality/MG:qacm@plc/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
     },
     "n": {
      "pointer": "/gt/counts/TRUE",
@@ -3667,7 +3697,7 @@
      "value": 29
     }
    },
-   "expr": "max(a, b, c, d, e, f) / n",
+   "expr": "max(ar + aw, br + bw, cr + cw, dr + dw, er + ew, fr + fw) / n",
    "fmt": ".2f|up",
    "text": "0.21"
   },

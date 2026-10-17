@@ -55,8 +55,8 @@ kinds of log and in every larger subsample of the randomised logs. Of the ten tr
 missing only the edge from pico sleep to neighbour RLFs. The baselines either declared far fewer true edges or reached
 a higher recall only with wrong signs and false edges. Granger~+~BY, the strongest of them, reached a recall of \val{s1.map.gby.rec} with six
 wrong signs on each kind of log and a precision of \val{s1.map.gby.prec} and \val{s2.map.gby.prec}. Calibrating the baselines' thresholds on the placebo
-logs themselves removed their placebo declarations, but only in-sample and at the cost of recall, which fell to at
-most \val{s2.plc.rec_max} (Appendix~\ref{app:maps_full}).
+logs themselves still left a placebo edge in every map, and only in-sample; no calibrated map reached a recall above
+\val{s2.plc.rec_max}, wrong signs included (Appendix~\ref{app:maps_full}).
 
 \begin{figure}[tbp]
 \centering
@@ -68,7 +68,7 @@ most \val{s2.plc.rec_max} (Appendix~\ref{app:maps_full}).
 \begin{table}[tbp]
 \caption{Map quality on randomised / confounded logs.}
 \label{tab:maps}
-% Precision = (R + W) / (R + W + N) and recall = right-sign recall over the 29 true hypotheses, from the old
+% Precision = (R + W) / (R + W + N) and recall = (R + W) / 29 over the true hypotheses, both whatever the sign, from the old
 % tab:maps (journal ec32c22), DEV-tuned thresholds; placebo edges as in fig_placebo.
 \setlength{\tabcolsep}{4pt}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l c c c c@{}}
