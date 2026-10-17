@@ -293,7 +293,7 @@ Method & Decl. & precision & Confirmed & sign & est. & Precision & Recall & 90 /
 \quad Correlation & 8 & 0.86 & 7 & 1 & 0 & 0.88 & 0.16 & 0.88 / 0.88 \\
 \quad Granger & 32 & 0.69 & 18 & 6 & 8 & 0.56 & 0.42 & 0.59 / 0.56 \\
 \quad Granger + BY & 45 & 0.59 & 21 & 11 & 13 & 0.47 & 0.49 & 0.49 / 0.47 \\
-\quad SHAP-GBDT & 1 & 1.00 & 1 & 0 & 0 & 1.00 & 0.02 & 1.00 / 1.00 \\
+\quad SHAP-GBDT & 17 & 0.93 & 16 & 0 & 1 & 0.94 & 0.37 & 0.94 / 0.94 \\
 \quad INT & 8 & 0.88 & 8 & 0 & 0 & 1.00 & 0.19 & 1.00 / 1.00 \\
 \quad QACM & 10 & 0.89 & 10 & 0 & 0 & 1.00 & 0.23 & 1.00 / 1.00 \\
 \quad Two-tower & 6 & 1.00 & 5 & 1 & 0 & 0.83 & 0.12 & 0.83 / 0.83 \\
@@ -307,7 +307,7 @@ Method & Decl. & precision & Confirmed & sign & est. & Precision & Recall & 90 /
 \quad Correlation & 10 & 0.80 & 8 & 2 & 0 & 0.80 & 0.20 & 0.80 / 0.80 \\
 \quad Granger & 32 & 0.60 & 16 & 8 & 8 & 0.50 & 0.40 & 0.50 / 0.50 \\
 \quad Granger + BY (untuned) & 47 & 0.54 & 20 & 10 & 17 & 0.43 & 0.50 & 0.43 / 0.40 \\
-\quad SHAP-GBDT & 5 & 0.50 & 1 & 0 & 4 & 0.20 & 0.03 & 0.20 / 0.20 \\
+\quad SHAP-GBDT & 11 & 0.80 & 11 & 0 & 0 & 1.00 & 0.28 & 1.00 / 1.00 \\
 \quad INT & 5 & 0.80 & 5 & 0 & 0 & 1.00 & 0.12 & 1.00 / 1.00 \\
 \quad QACM & 6 & 0.83 & 6 & 0 & 0 & 1.00 & 0.15 & 1.00 / 1.00 \\
 \quad Two-tower & 8 & 0.62 & 6 & 0 & 2 & 0.75 & 0.15 & 0.75 / 0.75 \\
@@ -443,7 +443,7 @@ Arm & Rej. & $R$ & [90\,\% CI] & Ret. & SVR & eMBB & LL & RLF & Elig. \\
 \multicolumn{10}{@{}l}{\textit{Referees on associational maps (tuned thresholds)}} \\
 \quad Correlation & 0.010 & 0.033 & $-$0.189 [$-$0.259, $-$0.116] & 1.03 & 0.97 & 0.97 & 0.95 & 1.00 & yes \\
 \quad Granger & 0.871 & $-$11.48 & $-$11.70 [$-$12.96, $-$10.63] & 1.44 & 1.16 & 0.99 & 0.65 & 1.18 & no \\
-\quad SHAP-GBDT & 0.820 & $-$9.90 & $-$10.12 [$-$11.27, $-$9.16] & 0.91 & 1.03 & 0.88 & 0.49 & 1.00 & yes \\
+\quad SHAP-GBDT & 0.331 & $-$0.084 & $-$0.306 [$-$0.421, $-$0.184] & 1.44 & 1.12 & 1.11 & 1.27 & 1.19 & no \\
 \quad INT$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.221 [$-$0.296, $-$0.140] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
 \quad QACM & 0.004 & 0.011 & $-$0.210 [$-$0.284, $-$0.130] & 0.99 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
 \quad Two-tower & 0.862 & $-$10.25 & $-$10.47 [$-$11.63, $-$9.49] & 1.47 & 1.06 & 0.91 & 0.59 & 1.16 & no \\
@@ -452,7 +452,7 @@ Arm & Rej. & $R$ & [90\,\% CI] & Ret. & SVR & eMBB & LL & RLF & Elig. \\
 \multicolumn{10}{@{}l}{\textit{Referees on associational maps (placebo-calibrated thresholds)}} \\
 \quad Correlation$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.221 [$-$0.296, $-$0.140] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
 \quad Granger$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.221 [$-$0.296, $-$0.140] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
-\quad SHAP-GBDT & 0.000 & 0.000 & $-$0.221 [$-$0.296, $-$0.140] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
+\quad SHAP-GBDT & 0.868 & $-$9.68 & $-$9.90 [$-$11.05, $-$8.94] & 1.52 & 1.02 & 0.87 & 0.56 & 1.27 & no \\
 \quad INT$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.221 [$-$0.296, $-$0.140] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
 \quad QACM & 0.004 & 0.011 & $-$0.210 [$-$0.284, $-$0.130] & 0.99 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
 \quad Two-tower$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.221 [$-$0.296, $-$0.140] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
@@ -460,7 +460,7 @@ Arm & Rej. & $R$ & [90\,\% CI] & Ret. & SVR & eMBB & LL & RLF & Elig. \\
 \end{tabular}
 
 \par\smallskip
-{\raggedright\footnotesize Rej., share of requests rejected; Ret., energy retention; SVR, service violations; eMBB, non-protected eMBB violations; LL, low-latency violations; Elig., eligible; --, not stored. $\Delta R$: arm minus never-sleep, 90~\% paired seed-bootstrap CI. $^{\mathrm{a}}$Same decisions as accept-all on every seed. $^{\mathrm{b}}$Same decisions as the tuned-threshold map.\par}
+{\raggedright\footnotesize Rej., share of requests rejected; Ret., energy retention; SVR, service violations; eMBB, non-protected eMBB violations; LL, low-latency violations; Elig., eligible; --, not stored. $\Delta R$: arm minus never-sleep, 90~\% paired seed-bootstrap CI. $^{\mathrm{a}}$Same decisions as accept-all on every seed.\par}
 \end{table}
 
 \begin{table}
@@ -495,16 +495,16 @@ Arm & Rej. & $R$ & [90\,\% CI] & Ret. & SVR & eMBB & LL & RLF & Elig. \\
 \multicolumn{10}{@{}l}{\textit{Referees on associational maps (tuned thresholds)}} \\
 \quad Correlation & 0.009 & 0.095 & $-$0.161 [$-$0.229, $-$0.095] & 1.03 & 0.97 & 0.97 & 0.97 & 0.97 & yes \\
 \quad Granger & 0.802 & $-$11.06 & $-$11.31 [$-$12.97, $-$10.04] & 1.00 & 1.03 & 0.88 & 0.50 & 0.99 & yes \\
-\quad SHAP-GBDT & 0.832 & $-$10.74 & $-$11.00 [$-$12.64, $-$9.73] & 0.89 & 1.01 & 0.87 & 0.50 & 0.99 & no \\
+\quad SHAP-GBDT & 0.003 & $-$0.010 & $-$0.266 [$-$0.347, $-$0.180] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
 \quad INT$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.256 [$-$0.339, $-$0.169] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
-\quad QACM & 0.003 & $-$0.010 & $-$0.266 [$-$0.347, $-$0.180] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
+\quad QACM$^{\mathrm{b}}$ & 0.003 & $-$0.010 & $-$0.266 [$-$0.347, $-$0.180] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
 \quad Two-tower & 0.802 & $-$11.02 & $-$11.28 [$-$12.92, $-$10.01] & 1.00 & 1.03 & 0.88 & 0.50 & 0.99 & yes \\
 \quad Granger + BY & 0.806 & $-$10.55 & $-$10.81 [$-$12.42, $-$9.55] & 1.03 & 1.00 & 0.86 & 0.49 & 0.97 & yes \\
 \midrule
 \multicolumn{10}{@{}l}{\textit{Referees on associational maps (placebo-calibrated thresholds)}} \\
 \quad Correlation$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.256 [$-$0.339, $-$0.169] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
 \quad Granger$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.256 [$-$0.339, $-$0.169] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
-\quad SHAP-GBDT$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.256 [$-$0.339, $-$0.169] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
+\quad SHAP-GBDT & 0.805 & $-$10.47 & $-$10.72 [$-$12.29, $-$9.49] & 1.03 & 1.00 & 0.86 & 0.50 & 0.97 & yes \\
 \quad INT$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.256 [$-$0.339, $-$0.169] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
 \quad QACM$^{\mathrm{b}}$ & 0.003 & $-$0.010 & $-$0.266 [$-$0.347, $-$0.180] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
 \quad Two-tower$^{\mathrm{a}}$ & 0.000 & 0.000 & $-$0.256 [$-$0.339, $-$0.169] & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & yes \\
@@ -517,7 +517,7 @@ Arm & Rej. & $R$ & [90\,\% CI] & Ret. & SVR & eMBB & LL & RLF & Elig. \\
 \end{tabular}
 
 \par\smallskip
-{\raggedright\footnotesize Rej., share of requests rejected; Ret., energy retention; SVR, service violations; eMBB, non-protected eMBB violations; LL, low-latency violations; Elig., eligible; --, not stored. $\Delta R$: arm minus never-sleep, 90~\% paired seed-bootstrap CI. $^{\mathrm{a}}$Same decisions as accept-all on every seed. $^{\mathrm{b}}$Same decisions as the tuned-threshold map.\par}
+{\raggedright\footnotesize Rej., share of requests rejected; Ret., energy retention; SVR, service violations; eMBB, non-protected eMBB violations; LL, low-latency violations; Elig., eligible; --, not stored. $\Delta R$: arm minus never-sleep, 90~\% paired seed-bootstrap CI. $^{\mathrm{a}}$Same decisions as accept-all on every seed. $^{\mathrm{b}}$After the gate, this map gives the referee the same decision rule as the SHAP-GBDT tuned-threshold map; the row repeats that map's simulation.\par}
 \end{table}
 
 \subsection{Rejections and certification}
@@ -557,9 +557,10 @@ highest one-sided 90~\% upper bound was 1.01.
 \subsection{Associational referees and the static subset}
 \label{esm:x7}
 
-Four associational maps, Granger, Granger~+~BY, two-tower and SHAP-GBDT, gave gated referees with $R$ near $-11$
-(Table~C3 of the article). On the request stream of the static subset that runs only ES and Power ES, these referees
-matched the subset's decision on 99.64 to 99.99~\% of scored requests and on 99.93 to 100~\% of protected-share
+Four associational maps gave gated referees with $R$ near $-11$: Granger, Granger~+~BY and two-tower with their
+tuned thresholds (Table~C3 of the article) and SHAP-GBDT with its placebo-calibrated threshold
+(Table~\ref{tab:s_arms2}). On the request stream of the static subset that runs only ES and Power ES, these referees
+matched the subset's decision on 99.89 to 99.99~\% of scored requests and on 99.93 to 100~\% of protected-share
 increases (Table~\ref{tab:s_x7}). Replaying only each referee's protected-share rejections reproduced the subset's
 record on 151 to 160 of 160 seeds, and dropping those rejections gave $R$ of $-0.009$ to $+0.071$. The reason lies in
 the scenario: Slice Guarantee is the only xApp that proposes protected-share increases, so a referee that rejects them
@@ -581,7 +582,7 @@ Map & Prot. share up & Tx power & Carrier & Sleep & All & All \\
 Granger & 1.0000 & 1.0000 & 0.9989 & 1.0000 & 0.9999 & 0.9996 \\
 Granger + BY & 1.0000 & 1.0000 & 0.9989 & 0.9742 & 0.9994 & 0.9950 \\
 Two-tower & 0.9993 & 1.0000 & 0.9989 & 1.0000 & 0.9994 & 0.9991 \\
-SHAP-GBDT & 0.9993 & 1.0000 & 0.9463 & 1.0000 & 0.9964 & 0.9361 \\
+SHAP-GBDT (placebo-cal.) & 0.9993 & 1.0000 & 0.9989 & 0.9742 & 0.9989 & 0.9941 \\
 \midrule
 Requests & 99\,785 & 5\,459 & 6\,476 & 2\,097 & 113\,817 & \\
 \bottomrule
@@ -614,15 +615,15 @@ Accept-all & 0.000 [0.000, 0.000] & 0.995 &  &  \\
 \quad Replay: protected share only & $-$11.072 [$-$12.735, $-$9.786] & 1.000 & +0.034 [0.007, 0.069] & 151 \\
 \quad Replay: without it & $-$0.009 [$-$0.049, 0.024] & 0.996 & +11.096 [9.807, 12.762] & 0 \\
 \midrule
-\multicolumn{5}{@{}l}{\textit{Gated referee, SHAP-GBDT map}} \\
-\quad Referee & $-$10.742 [$-$12.407, $-$9.474] & 0.891$^{\ast}$ & +0.364 [0.179, 0.560] & 11 \\
+\multicolumn{5}{@{}l}{\textit{Gated referee, SHAP-GBDT map, placebo-calibrated threshold}} \\
+\quad Referee & $-$10.467 [$-$12.055, $-$9.215] & 1.033 & +0.639 [0.457, 0.848] & 33 \\
 \quad Replay: protected share only & $-$11.072 [$-$12.735, $-$9.786] & 1.000 & +0.034 [0.007, 0.069] & 151 \\
-\quad Replay: without it & +0.055 [$-$0.009, 0.113] & 0.930 & +11.161 [9.872, 12.824] & 0 \\
+\quad Replay: without it & +0.071 [0.012, 0.133] & 1.028 & +11.177 [9.894, 12.844] & 0 \\
 \bottomrule
 \end{tabular}}
 
 \par\smallskip
-{\raggedright\footnotesize $^{\ast}$, not eligible. Identical seeds: seeds on which the arm equals the static subset.\par}
+{\raggedright\footnotesize Identical seeds: seeds on which the arm equals the static subset.\par}
 \end{table}
 
 %======================================================================

@@ -225,11 +225,22 @@ def study3_block(records: Path, artifacts: Path, x4_tables: Mapping[str, Any]) -
     R, _ = stats.load_jobs(files, study3.job_filter("eval"))
     art = json.loads((artifacts / "E6P_CERTSAFE.json").read_text(encoding="utf-8"))
     stats.alias_fill(R, art["alias_of"])
-    arms = [x for x in study3.ALL_ARMS if any(x in R[s] for s in R)]
-    st = stats.gate_a(R, arms, stats.N_BOOT)
     frozen = json.loads(
         (records / "system_artifacts" / "decision" / "cs_eval.json").read_text(encoding="utf-8")
     )
+    return study3_of(R, art, frozen, x4_tables, len(files))
+
+
+def study3_of(
+    R: stats.Records,
+    art: Mapping[str, Any],
+    frozen: Mapping[str, Any],
+    x4_tables: Mapping[str, Any],
+    n_files: int,
+) -> dict[str, Any]:
+    """The Study 3 block of alias-filled EVAL records, checked against the evaluation `frozen`."""
+    arms = [x for x in study3.ALL_ARMS if any(x in R[s] for s in R)]
+    st = stats.gate_a(R, arms, stats.N_BOOT)
     rp = repro(st, frozen, arms)
     quoted = _quoted(st.point)
     ident = identity(R, st.seeds, "CS:PMRT", REF)
@@ -249,7 +260,7 @@ def study3_block(records: Path, artifacts: Path, x4_tables: Mapping[str, Any]) -
     return {
         "n_seeds": st.n,
         "seeds": [st.seeds[0], st.seeds[-1]],
-        "n_files": len(files),
+        "n_files": n_files,
         "gate_a": {"V_AA": st.V_AA, "V_ref": st.V_ref, "ref_arm": st.ref_arm, "den": st.den},
         "repro": rp,
         "rows": rows,
@@ -263,11 +274,18 @@ def study2_block(records: Path, artifacts: Path) -> dict[str, Any]:
     art = json.loads((artifacts / "E6P_CONF_MAPS.json").read_text(encoding="utf-8"))
     R, _ = stats.load_jobs(files, study2.EVAL_FILTER)
     stats.alias_fill(R, art["alias_of"])
-    arms = [x for x in study2.ALL_ARMS if any(x in R[s] for s in R)]
-    st = stats.gate_a(R, arms, stats.N_BOOT)
     frozen = json.loads(
         (records / "system_artifacts" / "decision" / "conf_eval.json").read_text(encoding="utf-8")
     )
+    return study2_of(R, art, frozen, len(files))
+
+
+def study2_of(
+    R: stats.Records, art: Mapping[str, Any], frozen: Mapping[str, Any], n_files: int
+) -> dict[str, Any]:
+    """The Study 2 block of alias-filled EVAL records, checked against the evaluation `frozen`."""
+    arms = [x for x in study2.ALL_ARMS if any(x in R[s] for s in R)]
+    st = stats.gate_a(R, arms, stats.N_BOOT)
     rp = repro(st, frozen, arms)
     sec = frozen["secondary"].get(REF)
     P, B = st.point, st.boot
@@ -282,7 +300,7 @@ def study2_block(records: Path, artifacts: Path) -> dict[str, Any]:
     return {
         "n_seeds": st.n,
         "seeds": [st.seeds[0], st.seeds[-1]],
-        "n_files": len(files),
+        "n_files": n_files,
         "gate_a": {"V_AA": st.V_AA, "V_ref": st.V_ref, "ref_arm": st.ref_arm, "den": st.den},
         "repro": rp,
         "rows": rows_of(R, st, show, GROUP2, art["alias_of"]),
@@ -304,13 +322,20 @@ def run(records: Path = RECORDS, artifacts: Path = ARTIFACTS) -> dict[str, Any]:
     warnings.simplefilter("ignore")
     np.seterr(all="ignore")
     x4 = json.loads((records / "posthoc_x4" / "x4" / "x4_tables.json").read_text(encoding="utf-8"))
-    s3 = study3_block(records, artifacts, x4)
+    return assemble(study3_block(records, artifacts, x4), study2_block(records, artifacts))
+
+
+def assemble(s3: Mapping[str, Any], s2: Mapping[str, Any]) -> dict[str, Any]:
+    """The output tree of the Study 3 and Study 2 blocks.
+
+    Raises:
+        ReproductionError: If the Study 3 block does not reproduce its evaluation.
+    """
     if not s3["repro"]["ok"]:
         raise ReproductionError(
             "X9 Study 3: the stored records do not reproduce cs_eval.json / the quoted values: "
             + json.dumps(s3["repro"], indent=1, default=str)
         )
-    s2 = study2_block(records, artifacts)
     omitted = {"omitted": "Study 2 records do not reproduce conf_eval.json", "repro": s2["repro"]}
     return {
         "schema": "x9-decision-e2e/1",

@@ -193,7 +193,7 @@
    ]
   },
   "fig_placebo": {
-   "digest": "86ec8fb0323438b2e2b7187ceb07dec2",
+   "digest": "be4d97ecbb160bde80c0c3f1496f3c31",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -202,14 +202,14 @@
     " 0 0 367.6800734525 152.61552 "
    ],
    "pages": 1,
-   "rows": 185,
+   "rows": 184,
    "size_in": [
     5.15,
     2.163
    ]
   },
   "fig_study1_discovery": {
-   "digest": "0880747ed26440287de9a8fbd0907b47",
+   "digest": "adc4a4080ccbe06a0b4cce8493cafca0",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -218,7 +218,7 @@
     " 0 0 367.67952 230.27976 "
    ],
    "pages": 1,
-   "rows": 326,
+   "rows": 330,
    "size_in": [
     5.15,
     3.2
@@ -256,7 +256,7 @@
    ]
   },
   "fig_study2_maps": {
-   "digest": "93740148708e6ee2e2c2fd2c197d391f",
+   "digest": "3d3ef360668426154464a7cb0a2c468b",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -265,7 +265,7 @@
     " 0 0 367.6787852487 323.87976 "
    ],
    "pages": 1,
-   "rows": 339,
+   "rows": 342,
    "size_in": [
     5.15,
     4.5

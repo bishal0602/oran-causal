@@ -65,14 +65,14 @@ def arm_name(ref: str | None, kind: str) -> str:
 
 
 def job_list(
-    seeds: Sequence[int], kinds: Sequence[str] = KINDS
+    seeds: Sequence[int], kinds: Sequence[str] = KINDS, refs: Sequence[str] = REFS
 ) -> list[tuple[int, str, str | None]]:
     """`(seed, kind, ref)` seed-major: per seed the shadow job, then per referee own, pm, other."""
     out: list[tuple[int, str, str | None]] = []
     for s in seeds:
         if "shadow" in kinds:
             out.append((s, "shadow", None))
-        out += [(s, k, r) for r in REFS for k in ("own", "pm", "other") if k in kinds]
+        out += [(s, k, r) for r in refs for k in ("own", "pm", "other") if k in kinds]
     return out
 
 
@@ -164,9 +164,11 @@ def _identity_arm(
     }
 
 
-def _relation(Rx: stats.Records, Rs: stats.Records, seeds: Sequence[int]) -> dict[str, Any]:
+def _relation(
+    Rx: stats.Records, Rs: stats.Records, seeds: Sequence[int], refs: Sequence[str]
+) -> dict[str, Any]:
     rel = {}
-    for r in REFS:
+    for r in refs:
         a = arm_name(r, "own")
         both = [s for s in seeds if a in Rx.get(s, {}) and SHADOW_ARM in Rx.get(s, {})]
         k_eq = {s for s in both if not same_fields(Rs[s][r], Rs[s][REF])}
@@ -180,12 +182,12 @@ def _relation(Rx: stats.Records, Rs: stats.Records, seeds: Sequence[int]) -> dic
     return rel
 
 
-def _agreements(Rx: stats.Records, seeds: Sequence[int]) -> dict[str, Any]:
+def _agreements(Rx: stats.Records, seeds: Sequence[int], refs: Sequence[str]) -> dict[str, Any]:
     agr: dict[str, Any] = {"stream_ref": {}, "stream_own": {}}
     if all(SHADOW_ARM in Rx.get(s, {}) for s in seeds):
         recs = [Rx[s][SHADOW_ARM] for s in seeds]
-        agr["stream_ref"] = {r: agreement(recs, r, len(seeds)) for r in REFS}
-    for r in REFS:
+        agr["stream_ref"] = {r: agreement(recs, r, len(seeds)) for r in refs}
+    for r in refs:
         a = arm_name(r, "own")
         if all(a in Rx.get(s, {}) for s in seeds):
             agr["stream_own"][r] = agreement([Rx[s][a] for s in seeds], REF, len(seeds))
@@ -197,11 +199,12 @@ def _rows_and_diffs(
     st: stats.GateA,
     Vb: Mapping[str, np.ndarray],
     a3: Sequence[str],
+    refs: Sequence[str],
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     P, B = st.point, st.boot
     rows: dict[str, Any] = {}
     diffs: dict[str, Any] = {}
-    for a in [REF, "noarb", *REFS, *a3]:
+    for a in [REF, "noarb", *refs, *a3]:
         rows[a] = dict(
             P[a],
             R_ci90=stats.ci(B[a]["R"]),
@@ -233,14 +236,15 @@ def _same_platform(
     st: stats.GateA,
     Vb: Mapping[str, np.ndarray],
     vps: Sequence[str],
+    refs: Sequence[str],
 ) -> dict[str, Any]:
     out: dict[str, Any] = {}
     if SHADOW_ARM not in vps:
         return out
     P, B = st.point, st.boot
-    pairs = [(arm_name(r, k), SHADOW_ARM) for r in REFS for k in ("own", "pm", "other")]
-    pairs += [(arm_name(r, k), arm_name(r, "own")) for r in REFS for k in ("pm", "other")]
-    pairs += [(SHADOW_ARM, REF)] + [(arm_name(r, "own"), r) for r in REFS]
+    pairs = [(arm_name(r, k), SHADOW_ARM) for r in refs for k in ("own", "pm", "other")]
+    pairs += [(arm_name(r, k), arm_name(r, "own")) for r in refs for k in ("pm", "other")]
+    pairs += [(SHADOW_ARM, REF)] + [(arm_name(r, "own"), r) for r in refs]
     for a, b in pairs:
         if a in Vb and b in Vb:
             ss = sum(not same_fields(R[s][a], R[s][b]) for s in st.seeds)
@@ -276,27 +280,54 @@ def analyse(
     Returns:
         The output tree (`x7_tables.json`).
     """
-    warnings.simplefilter("ignore", RuntimeWarning)
     art = read_json(artifacts / "E6P_CERTSAFE.json")
     Rs, _ = alias_filled(
         sorted(stored.glob("*/res_*.jsonl")), study3.job_filter("eval"), art["alias_of"]
     )
     Rx, heads_x = stats.load_jobs(shard_files(x7), sub_filter(SUB))
+    return analyse_records(Rs, Rx, heads_x, read_json(cs_eval), read_json(factors), n_boot=n_boot)
+
+
+def analyse_records(
+    Rs: stats.Records,
+    Rx: stats.Records,
+    heads_x: Sequence[Mapping[str, Any]],
+    E: Mapping[str, Any],
+    fac: Mapping[str, Any],
+    *,
+    refs: Sequence[str] = REFS,
+    n_boot: int = stats.N_BOOT,
+) -> dict[str, Any]:
+    """X7 over loaded records.
+
+    Args:
+        Rs: The alias-filled certified-safe EVAL records.
+        Rx: The X7 records.
+        heads_x: The header lines of the X7 shards.
+        E: The evaluation the stored arms must reproduce (`cs_eval.json`).
+        fac: The speed factors of the runtime table.
+        refs: The referees.
+        n_boot: Bootstrap draws.
+
+    Returns:
+        The output tree (`x7_tables.json`).
+    """
+    warnings.simplefilter("ignore", RuntimeWarning)
     seeds = study3.stage_seeds("eval")
-    expect = [arm_name(r, k) for _, k, r in job_list(seeds[:1])]
+    expect = [arm_name(r, k) for _, k, r in job_list(seeds[:1], KINDS, refs)]
     missing = {a: [s for s in seeds if a not in Rx.get(s, {})] for a in expect}
     ident = {
         a: _identity_arm(Rx, Rs, seeds, a, src)
-        for a, src in [(SHADOW_ARM, REF)] + [(arm_name(r, "own"), r) for r in REFS]
+        for a, src in [(SHADOW_ARM, REF)] + [(arm_name(r, "own"), r) for r in refs]
     }
-    rel = _relation(Rx, Rs, seeds)
-    agr = _agreements(Rx, seeds)
+    rel = _relation(Rx, Rs, seeds, refs)
+    agr = _agreements(Rx, seeds, refs)
     R = {s: dict(r) for s, r in Rs.items()}
-    a3 = [arm_name(r, k) for r in REFS for k in ("pm", "other")]
+    a3 = [arm_name(r, k) for r in refs for k in ("pm", "other")]
     a3 = [a for a in a3 if all(a in Rx.get(s, {}) for s in seeds)]
     vps = [
         a
-        for a in [SHADOW_ARM, *(arm_name(r, "own") for r in REFS)]
+        for a in [SHADOW_ARM, *(arm_name(r, "own") for r in refs)]
         if all(a in Rx.get(s, {}) for s in seeds)
     ]
     a3 = vps + a3
@@ -306,7 +337,6 @@ def analyse(
     stored_arms = [a for a in study3.ALL_ARMS if any(a in Rs[s] for s in Rs)]
     st = stats.gate_a(R, [*stored_arms, *a3], n_boot)
     P, B = st.point, st.boot
-    E = read_json(cs_eval)
     bad = [
         a
         for a in stored_arms
@@ -317,18 +347,17 @@ def analyse(
     ]
     n = st.n
     idx = np.random.default_rng([*stats.EVAL_BOOT_KEY, n]).integers(0, n, (n_boot, n))
-    Vb = {a: stats.pooled(stats.arrays(R, st.seeds, a), idx)["V"] for a in [REF, *REFS, *a3]}
-    rows, diffs = _rows_and_diffs(R, st, Vb, a3)
-    same = _same_platform(R, st, Vb, vps)
+    Vb = {a: stats.pooled(stats.arrays(R, st.seeds, a), idx)["V"] for a in [REF, *refs, *a3]}
+    rows, diffs = _rows_and_diffs(R, st, Vb, a3, refs)
+    same = _same_platform(R, st, Vb, vps, refs)
     share = {
         r: {
             "R_full": P[r]["R"],
             "R_pm": P.get(arm_name(r, "pm"), {}).get("R"),
             "R_other": P.get(arm_name(r, "other"), {}).get("R"),
         }
-        for r in REFS
+        for r in refs
     }
-    fac = read_json(factors)
     vk = next((k for k in fac["factors"]["*"] if k.startswith("vps|")), None)
     cpu = sum(Rx[s][a]["cpu_s"] for s in Rx for a in Rx[s]) / 3600
     drivers = [h for h in heads_x if h.get("driver") == DRIVER and not h.get("smoke")]
@@ -337,7 +366,7 @@ def analyse(
         "declared": DECLARED,
         "status": "POST HOC, DESCRIPTIVE",
         "ref": REF,
-        "refs": list(REFS),
+        "refs": list(refs),
         "n_seeds": n,
         "missing": {a: v for a, v in missing.items() if v},
         "bad_lines": 0,

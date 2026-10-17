@@ -101,6 +101,8 @@ values = [
   { key = "s1.gt.dbl.qacm.rec", from = "x11:/studies/S1/variants/delta_x2/methods/qacm/recall", fmt = ".2f|up" },
   { key = "s1.gt.dbl.tt.prec", from = "x11:/studies/S1/variants/delta_x2/methods/two_tower/precision", fmt = ".2f|up" },
   { key = "s1.gt.dbl.tt.rec", from = "x11:/studies/S1/variants/delta_x2/methods/two_tower/recall", fmt = ".2f|up" },
+  { key = "s1.gt.dbl.shap.prec", from = "x11:/studies/S1/variants/delta_x2/methods/shap_gbdt/precision", fmt = ".2f|up" },
+  { key = "s1.gt.dbl.shap.rec", from = "x11:/studies/S1/variants/delta_x2/methods/shap_gbdt/recall", fmt = ".2f|up" },
   { key = "s1.ex.confirmed", from = "x14:/studies/S1/levels/0.95/methods/loadsp_c+wby1s/pooled/ex_confirmed", fmt = "d" },
   { key = "s2.ex.confirmed", from = "x14:/studies/S2/levels/0.95/methods/MG:PMRT/pooled/ex_confirmed", fmt = "d" },
   { key = "s1.ex.n_exists", from = "x14:/studies/S1/levels/0.95/methods/loadsp_c+wby1s/pooled/ex_n_exists", fmt = "d" },
@@ -270,20 +272,20 @@ values = [
 ]
 
 [records]
-fd = "system_artifacts/report_2026-10-02/figures_data.json"
-v4a = "system_artifacts/decision/v4_analysis.json"
-cd = "system_artifacts/decision/conf_disc_conf.json"
+fd = "shap_rerun/overlay/system_artifacts/report_2026-10-02/figures_data.json"
+v4a = "shap_rerun/overlay/system_artifacts/decision/v4_analysis.json"
+cd = "shap_rerun/overlay/system_artifacts/decision/conf_disc_conf.json"
 x8 = "posthoc_x8/x8/summary.json"
-x11 = "posthoc_x9_x16/revision/x11_gt_sensitivity.json"
-x14 = "posthoc_x9_x16/revision/x14_existence.json"
-x9 = "posthoc_x9_x16/revision/x9_decision_e2e.json"
+x11 = "shap_rerun/overlay/posthoc_x9_x16/revision/x11_gt_sensitivity.json"
+x14 = "shap_rerun/overlay/posthoc_x9_x16/revision/x14_existence.json"
+x9 = "shap_rerun/overlay/posthoc_x9_x16/revision/x9_decision_e2e.json"
 x15 = "posthoc_x9_x16/revision/x15_replication.json"
-x13 = "posthoc_x9_x16/revision/x13_attribution.json"
+x13 = "shap_rerun/overlay/posthoc_x9_x16/revision/x13_attribution.json"
 x23 = "posthoc_x2_x3/extras_tables.json"
 x16 = "posthoc_x9_x16/revision/x16_centre.json"
 s4r = "study4_eval/eval/csv/recall_vs_n.csv"
 s4 = "study4_eval/eval/report.json"
 br = "bridging/exp_b/exp_b_tables.json"
-ce = "system_artifacts/decision/conf_eval.json"
-cs = "system_artifacts/decision/cs_eval.json"
+ce = "shap_rerun/overlay/system_artifacts/decision/conf_eval.json"
+cs = "shap_rerun/overlay/system_artifacts/decision/cs_eval.json"
 mscri = "study1_train/e6p-mscri-2/out/bench_int.json"

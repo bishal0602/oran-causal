@@ -12,7 +12,9 @@ file in place. Commands (`python -m oran_causal.experiments.system.shap_rerun <c
 - `maps`, `bounds`, `certsafe`: `E6P_CONF_MAPS_SHAP.json` and `E6P_CERTSAFE_SHAP.json` (own pins);
 - `eval`: Study 2 / 3 referee jobs against those artifacts;
 - `report`: the Study 2 / 3 evaluation reports on the frozen EVAL records with the arms whose
-  decision signature changed replaced by the rerun.
+  decision signature changed replaced by the rerun;
+- `x7`: the post hoc X7 jobs of the SHAP referee with R near -11 (`CS:shap_gbdt@plc`) and the
+  subset's shadow job over the four referees of `X7_REFS`.
 """
 
 import argparse
@@ -25,12 +27,13 @@ from typing import Any
 
 import numpy as np
 
-from oran_causal.analysis.system import stats
 from oran_causal.analysis.system import study1 as crit
 from oran_causal.analysis.system import study2 as astudy2
 from oran_causal.analysis.system import study3 as astudy3
+from oran_causal.analysis.system.shap_splice import changed_jobs, merged_records
 from oran_causal.experiments.launch.fingerprint import numeric_env
-from oran_causal.experiments.paths import ARTIFACTS
+from oran_causal.experiments.paths import ARTIFACTS, WORKSPACE_ROOT
+from oran_causal.experiments.posthoc import x7 as x7_run
 from oran_causal.experiments.system import artifacts as art
 from oran_causal.experiments.system import study2, study3
 from oran_causal.experiments.system import study2_discovery as sd
@@ -68,6 +71,11 @@ MAPS_SHAP = FrozenDoc(
     ARTIFACTS / "E6P_CONF_MAPS_SHAP.json",
     "54c6c4a5da4740e3f4d23cb354273d9844adbd6802f704f87e9cd823b2689685",
     needs_line=False,
+)
+X7_REF = "CS:shap_gbdt@plc"
+X7_REFS = ("CS:granger@dev", "CS:granger_by", "CS:two_tower@dev", X7_REF)
+X7_ARMS = frozenset(
+    {x7_run.arm_name(None, "shadow"), *(x7_run.arm_name(X7_REF, k) for k in ("own", "pm", "other"))}
 )
 CERTSAFE_SHAP = FrozenDoc(
     "E6P_CERTSAFE_SHAP.json",
@@ -293,39 +301,6 @@ def build_certsafe_shap(bounds: Path, calib: Path, disc_path: Path) -> dict[str,
     return a
 
 
-def _sig(v: Mapping[str, Any]) -> str:
-    return json.dumps(v["signature"])
-
-
-def frozen_twins(old: Mapping[str, Any], new: Mapping[str, Any]) -> dict[str, str]:
-    """{job arm of `new`: job arm of `old`} where only the arm that represents a signature changed.
-
-    The new job's decision signature differs from its own frozen one but equals the signature of
-    a frozen job, so the frozen records of that job stand for it.
-    """
-    by_sig = {_sig(old["arms"][j]): j for j in old["jobs"] if j in old["arms"]}
-    out = {}
-    for a in new["jobs"]:
-        own = old["arms"].get(a)
-        if a in old["jobs"] and own is not None and _sig(own) == _sig(new["arms"][a]):
-            continue
-        twin = by_sig.get(_sig(new["arms"][a]))
-        if twin is not None:
-            out[a] = twin
-    return out
-
-
-def changed_jobs(old: Mapping[str, Any], new: Mapping[str, Any]) -> list[str]:
-    """Job arms of `new` whose decision signature no frozen job of `old` simulates."""
-    twins = frozen_twins(old, new)
-    sig_old = {a: _sig(v) for a, v in old["arms"].items()}
-    return [
-        a
-        for a in new["jobs"]
-        if a not in twins and (a not in old["jobs"] or _sig(new["arms"][a]) != sig_old[a])
-    ]
-
-
 def run_eval(
     study: int,
     out: Path,
@@ -344,9 +319,44 @@ def run_eval(
     return study3.run("eval", out, part, smoke, short, arms, art_doc=cs, maps_doc=mdoc)
 
 
+def run_x7(
+    out: Path,
+    part: Part,
+    seeds: Sequence[int] | None = None,
+    smoke: bool = False,
+    short: float | None = None,
+) -> int:
+    """The X7 jobs of `X7_ARMS` against the SHAP artifacts."""
+    return x7_run.run(
+        part,
+        out,
+        smoke=smoke,
+        short=short,
+        seeds=seeds,
+        refs=X7_REFS,
+        arms=X7_ARMS,
+        maps_doc=MAPS_SHAP,
+        art_doc=CERTSAFE_SHAP,
+    )
+
+
+def portable(arg: str | Path) -> str:
+    """`arg` as a workspace-relative POSIX path when it names a path in the workspace."""
+    p = Path(arg)
+    if not p.is_absolute():
+        p = Path.cwd() / p
+        if not p.exists():
+            return str(arg)
+    p = p.resolve()
+    if not p.is_relative_to(WORKSPACE_ROOT):
+        return str(arg)
+    return p.relative_to(WORKSPACE_ROOT).as_posix()
+
+
 def driver_verify(v: Mapping[str, Any], name: str) -> dict[str, Any]:
     """A `verify_*` report in the stored form (`driver_<name>_SHA256`, `driver_matches`)."""
     out = {k: x for k, x in v.items() if k not in ("pinned", "matches_pin")}
+    out["path"] = portable(out["path"])
     return out | {f"driver_{name}_SHA256": v["pinned"], "driver_matches": v["matches_pin"]}
 
 
@@ -367,32 +377,19 @@ def eval_report(
     filt = astudy2.EVAL_FILTER if study == 2 else astudy3.job_filter("eval")
     old_doc, new_doc = (study2.MAPS, MAPS_SHAP) if study == 2 else (study3.CERTSAFE, CERTSAFE_SHAP)
     old, new = art.read_json(old_doc.path), art.read_json(new_doc.path)
-    redo = set(changed_jobs(old, new))
-    twins = frozen_twins(old, new)
-    map_arms = set(new["arms"])
-    R, heads = stats.load_jobs(frozen_files, filt)
-    for s in R:
-        kept = {
-            a: r
-            for a, r in R[s].items()
-            if a not in map_arms or (a in new["jobs"] and a not in redo and a not in twins)
-        }
-        R[s] = kept | {a: R[s][j] for a, j in twins.items() if j in R[s]}
-    Rn, hn = stats.load_jobs(new_files, filt)
-    for s, by_arm in Rn.items():
-        R.setdefault(s, {}).update({a: r for a, r in by_arm.items() if a in redo})
-    stats.alias_fill(R, new["alias_of"])
+    m = merged_records(frozen_files, new_files, filt, old, new)
     if study == 2:
         ver = driver_verify(art.verify_maps(MAPS_SHAP.path, doc=MAPS_SHAP), "MAPS")
-        inp = astudy2.EvalInputs(disc, new, ver, True, argv)
+        inp = astudy2.EvalInputs(disc, new, ver, True, [portable(a) for a in argv])
     else:
         v = art.verify_certsafe(CERTSAFE_SHAP.path, maps_doc=MAPS_SHAP, doc=CERTSAFE_SHAP)
-        inp = astudy3.EvalInputs(disc, new, driver_verify(v, "CERTSAFE"), True, argv)
-    rep = mod.evaluate(R, heads + hn, inp)
+        ver = driver_verify(v, "CERTSAFE")
+        inp = astudy3.EvalInputs(disc, new, ver, True, [portable(a) for a in argv])
+    rep = mod.evaluate(m.R, m.heads, inp)
     rep["shap_rerun"] = {
-        "replaced_jobs": sorted(redo),
-        "frozen_twins": twins,
-        "new_files": [str(p) for p in new_files],
+        "replaced_jobs": sorted(m.redo),
+        "frozen_twins": m.twins,
+        "new_files": [portable(p) for p in new_files],
     }
     return rep
 
@@ -401,8 +398,8 @@ def _paths(xs: Sequence[str]) -> list[Path]:
     return find_records(xs)
 
 
-def main(argv: Sequence[str] | None = None) -> int:
-    """Command line (module docstring)."""
+def build_parser() -> argparse.ArgumentParser:
+    """The command line parser (module docstring)."""
     ap = argparse.ArgumentParser(prog="python -m oran_causal.experiments.system.shap_rerun")
     sub = ap.add_subparsers(dest="cmd", required=True)
     a1 = sub.add_parser("study1")
@@ -442,56 +439,99 @@ def main(argv: Sequence[str] | None = None) -> int:
     a7.add_argument("--new", nargs="+", required=True)
     a7.add_argument("--disc", type=Path, required=True, help="disc_conf_shap.json")
     a7.add_argument("--out", type=Path, required=True)
-    a = ap.parse_args(argv)
-    if a.cmd == "study1":
-        frozen = art.read_json(a.analysis)
-        res = study1(a.cache, frozen["gt"]["cells"], a.methods.split(","))
-        dump({"schema": SCHEMA, "stage": "study1", **res, "platform": numeric_env()}, a.out)
-    elif a.cmd == "study2":
-        inputs = sd.Inputs(
-            tuple(a.dev), tuple(a.disc), tuple(a.placebo), (), a.cache, tuple(a.dev_step1)
-        )
-        frozen = art.read_json(a.frozen)
-        res = study2_maps(inputs, frozen, a.methods.split(","))
-        a.out.mkdir(parents=True, exist_ok=True)
-        for m, d in res["spliced"].items():
-            dump(d, a.out / f"disc_conf_{m}.json")
-        ctl = {m: control_diff(frozen, d) for m, d in res["spliced"].items() if m != FROZEN_METHOD}
-        dump(
-            {
-                "schema": SCHEMA,
-                "stage": "study2",
-                "methods": res["methods"],
-                "control_diff": ctl,
-                "platform": numeric_env(),
-            },
-            a.out / "study2_maps.json",
-        )
-    elif a.cmd == "maps":
-        art.write_artifact(build_maps_shap(a.disc, sha_lf(a.frozen)), MAPS_SHAP.path)
-    elif a.cmd == "bounds":
-        dump(bounds_shap(art.read_json(a.frozen), a.disc_cache, a.disc), a.out)
-    elif a.cmd == "certsafe":
-        art.write_artifact(build_certsafe_shap(a.bounds, a.calib, a.disc), CERTSAFE_SHAP.path)
-    elif a.cmd == "eval":
-        if a.arms:
-            arms = frozenset(a.arms.split(","))
-        else:
-            old_doc, new_doc = (
-                (study2.MAPS, MAPS_SHAP) if a.study == 2 else (study3.CERTSAFE, CERTSAFE_SHAP)
-            )
-            arms = frozenset(changed_jobs(art.read_json(old_doc.path), art.read_json(new_doc.path)))
-        n = run_eval(a.study, a.out, Part.parse(a.part), arms, a.frozen_artifacts, a.smoke, a.short)
-        log(f"{n} jobs")
+    a8 = sub.add_parser("x7")
+    a8.add_argument("--out", type=Path, required=True)
+    a8.add_argument("--part", default=None)
+    a8.add_argument("--seeds", default=None, help="comma list (default: the Study 3 EVAL seeds)")
+    a8.add_argument("--smoke", action="store_true")
+    a8.add_argument("--short", type=float, default=None)
+    return ap
+
+
+def _study1(a: argparse.Namespace) -> None:
+    frozen = art.read_json(a.analysis)
+    res = study1(a.cache, frozen["gt"]["cells"], a.methods.split(","))
+    dump({"schema": SCHEMA, "stage": "study1", **res, "platform": numeric_env()}, a.out)
+
+
+def _study2(a: argparse.Namespace) -> None:
+    inputs = sd.Inputs(
+        tuple(a.dev), tuple(a.disc), tuple(a.placebo), (), a.cache, tuple(a.dev_step1)
+    )
+    frozen = art.read_json(a.frozen)
+    res = study2_maps(inputs, frozen, a.methods.split(","))
+    a.out.mkdir(parents=True, exist_ok=True)
+    for m, d in res["spliced"].items():
+        dump(d, a.out / f"disc_conf_{m}.json")
+    ctl = {m: control_diff(frozen, d) for m, d in res["spliced"].items() if m != FROZEN_METHOD}
+    dump(
+        {
+            "schema": SCHEMA,
+            "stage": "study2",
+            "methods": res["methods"],
+            "control_diff": ctl,
+            "platform": numeric_env(),
+        },
+        a.out / "study2_maps.json",
+    )
+
+
+def _maps(a: argparse.Namespace) -> None:
+    art.write_artifact(build_maps_shap(a.disc, sha_lf(a.frozen)), MAPS_SHAP.path)
+
+
+def _bounds(a: argparse.Namespace) -> None:
+    dump(bounds_shap(art.read_json(a.frozen), a.disc_cache, a.disc), a.out)
+
+
+def _certsafe(a: argparse.Namespace) -> None:
+    art.write_artifact(build_certsafe_shap(a.bounds, a.calib, a.disc), CERTSAFE_SHAP.path)
+
+
+def _eval(a: argparse.Namespace) -> None:
+    if a.arms:
+        arms = frozenset(a.arms.split(","))
     else:
-        rep = eval_report(
-            a.study, _paths(a.frozen_runs), _paths(a.new), art.read_json(a.disc), list(sys.argv)
+        old_doc, new_doc = (
+            (study2.MAPS, MAPS_SHAP) if a.study == 2 else (study3.CERTSAFE, CERTSAFE_SHAP)
         )
-        key = "conf" if a.study == 2 else "certsafe"
-        mod: Any = astudy2 if a.study == 2 else astudy3
-        a.out.mkdir(parents=True, exist_ok=True)
-        dump(rep, a.out / f"eval_{key}.json")
-        dump(mod.verdict_record(rep), a.out / f"verdict_{key}.json")
+        arms = frozenset(changed_jobs(art.read_json(old_doc.path), art.read_json(new_doc.path)))
+    n = run_eval(a.study, a.out, Part.parse(a.part), arms, a.frozen_artifacts, a.smoke, a.short)
+    log(f"{n} jobs")
+
+
+def _x7(a: argparse.Namespace) -> None:
+    seeds = [int(x) for x in a.seeds.split(",")] if a.seeds else None
+    log(f"{run_x7(a.out, Part.parse(a.part), seeds, a.smoke, a.short)} jobs")
+
+
+def _report(a: argparse.Namespace) -> None:
+    rep = eval_report(
+        a.study, _paths(a.frozen_runs), _paths(a.new), art.read_json(a.disc), list(sys.argv)
+    )
+    key = "conf" if a.study == 2 else "certsafe"
+    mod: Any = astudy2 if a.study == 2 else astudy3
+    a.out.mkdir(parents=True, exist_ok=True)
+    dump(rep, a.out / f"eval_{key}.json")
+    dump(mod.verdict_record(rep), a.out / f"verdict_{key}.json")
+
+
+COMMANDS = {
+    "study1": _study1,
+    "study2": _study2,
+    "maps": _maps,
+    "bounds": _bounds,
+    "certsafe": _certsafe,
+    "eval": _eval,
+    "report": _report,
+    "x7": _x7,
+}
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Command line (module docstring)."""
+    a = build_parser().parse_args(argv)
+    COMMANDS[a.cmd](a)
     return 0
 
 

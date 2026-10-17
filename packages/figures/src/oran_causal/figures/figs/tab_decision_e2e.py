@@ -201,12 +201,12 @@ def rows() -> tuple[list[dict], dict]:
     if by["CS:PMRT"]["alias_of"] not in (None, "never_sleep"):
         raise AssertionError("CS:PMRT alias changed")
     assoc = [
-        r["arm"] for r in t["rows"] if r["group"] == "gated associational" and r["alias_of"] is None
+        r["arm"]
+        for r in t["rows"]
+        if r["group"] == "gated associational"
+        and r["alias_of"] is None
+        and not r["arm"].endswith("@plc")
     ]
-    if any(a.endswith("@plc") for a in assoc):
-        raise AssertionError(
-            f"a placebo-calibrated map is a shown row; the group label says DEV-tuned: {assoc}"
-        )
     aliased = [(r["arm"], r["alias_of"]) for r in t["rows"] if r["alias_of"] is not None]
     if SG in by:
         raise AssertionError(f"X9 Study 3 now has {SG}; read it from X9")

@@ -52,9 +52,11 @@ state-dependent propensities were logged, it declared \val{s2.pmrt.declared} edg
 wrong sign (Table~\ref{tab:maps}). It declared the edge from pico sleep to neighbour protected-slice violations, on which the
 scenario's conflict rests, and the other three edges of the conflict chain, each with the ground-truth sign, on both
 kinds of log and in every larger subsample of the randomised logs. Of the ten true neighbour-relation edges it declared nine,
-missing only the edge from pico sleep to neighbour RLFs. The baselines either declared far fewer true edges or reached
+missing only the edge from pico sleep to neighbour RLFs. The baselines either declared fewer true edges or reached
 a higher recall only with wrong signs and false edges. Granger~+~BY, the strongest of them, reached a recall of \val{s1.map.gby.rec} with six
-wrong signs on each kind of log and a precision of \val{s1.map.gby.prec} and \val{s2.map.gby.prec}. Calibrating the baselines' thresholds on the placebo
+wrong signs on each kind of log and a precision of \val{s1.map.gby.prec} and \val{s2.map.gby.prec}. SHAP-GBDT declared no wrong sign, with a
+precision of \val{s1.map.shap.prec} and \val{s2.map.shap.prec} and a recall of \val{s1.map.shap.rec} and \val{s2.map.shap.rec}, but it declared
+\val{s1.map.shap.placebo} edges on the placebo logs of the randomised dataset. Calibrating the baselines' thresholds on the placebo
 logs themselves still left a placebo edge in every map, and only in-sample; no calibrated map reached a recall above
 \val{s2.plc.rec_max}, wrong signs included (Appendix~\ref{app:maps_full}).
 
@@ -78,11 +80,11 @@ Method & Precision & Recall & Wrong signs & Placebo edges \\
 PMRT         & \val{s1.map.pmrt.prec} / \val{s2.map.pmrt.prec} & \val{s1.map.pmrt.rec} / \val{s2.map.pmrt.rec} & \val{s1.map.pmrt.wrong} / \val{s2.map.pmrt.wrong} & \val{s1.map.pmrt.placebo} / \val{s2.map.pmrt.placebo} \\
 Granger + BY & \val{s1.map.gby.prec} / \val{s2.map.gby.prec} & \val{s1.map.gby.rec} / \val{s2.map.gby.rec} & \val{s1.map.gby.wrong} / \val{s2.map.gby.wrong} & \val{s1.map.gby.placebo} / \val{s2.map.gby.placebo} \\
 Granger      & \val{s1.map.gr.prec} / \val{s2.map.gr.prec} & \val{s1.map.gr.rec} / \val{s2.map.gr.rec} & \val{s1.map.gr.wrong} / \val{s2.map.gr.wrong} & \val{s1.map.gr.placebo} / \val{s2.map.gr.placebo} \\
+SHAP-GBDT    & \val{s1.map.shap.prec} / \val{s2.map.shap.prec} & \val{s1.map.shap.rec} / \val{s2.map.shap.rec} & \val{s1.map.shap.wrong} / \val{s2.map.shap.wrong} & \val{s1.map.shap.placebo} / \val{s2.map.shap.placebo} \\
 QACM         & \val{s1.map.qacm.prec} / \val{s2.map.qacm.prec} & \val{s1.map.qacm.rec} / \val{s2.map.qacm.rec} & \val{s1.map.qacm.wrong} / \val{s2.map.qacm.wrong} & \val{s1.map.qacm.placebo} / \val{s2.map.qacm.placebo} \\
 INT          & \val{s1.map.int.prec} / \val{s2.map.int.prec} & \val{s1.map.int.rec} / \val{s2.map.int.rec} & \val{s1.map.int.wrong} / \val{s2.map.int.wrong} & \val{s1.map.int.placebo} / \val{s2.map.int.placebo} \\
 Correlation  & \val{s1.map.corr.prec} / \val{s2.map.corr.prec} & \val{s1.map.corr.rec} / \val{s2.map.corr.rec} & \val{s1.map.corr.wrong} / \val{s2.map.corr.wrong} & \val{s1.map.corr.placebo} / \val{s2.map.corr.placebo} \\
 Two-tower    & \val{s1.map.tt.prec} / \val{s2.map.tt.prec} & \val{s1.map.tt.rec} / \val{s2.map.tt.rec} & \val{s1.map.tt.wrong} / \val{s2.map.tt.wrong} & \val{s1.map.tt.placebo} / \val{s2.map.tt.placebo} \\
-SHAP-GBDT    & \val{s1.map.shap.prec} / \val{s2.map.shap.prec} & \val{s1.map.shap.rec} / \val{s2.map.shap.rec} & \val{s1.map.shap.wrong} / \val{s2.map.shap.wrong} & \val{s1.map.shap.placebo} / \val{s2.map.shap.placebo} \\
 \bottomrule
 \end{tabular*}
 \end{table}
@@ -104,6 +106,7 @@ declaration under any ground-truth variant, and its neighbour and far declaratio
 \val{s1.attr.declared} on the randomised logs and all \val{s2.attr.declared} on the confounded logs. Under the doubled threshold, however, the ranking of
 methods is not preserved: the small maps of INT, QACM and two-tower kept precisions of \val{s1.gt.dbl.int.prec}, \val{s1.gt.dbl.qacm.prec} and \val{s1.gt.dbl.tt.prec} on the
 randomised logs, above PMRT's \val{s1.gt.dbl.pmrt.prec}, although at recalls of \val{s1.gt.dbl.int.rec}, \val{s1.gt.dbl.qacm.rec} and \val{s1.gt.dbl.tt.rec} against its \val{s1.gt.dbl.pmrt.rec}.
+SHAP-GBDT's larger map kept a precision of \val{s1.gt.dbl.shap.prec} at a recall of \val{s1.gt.dbl.shap.rec}.
 
 \subsection{Role of the logging design}
 \label{sec:study4}\claim{EMP-S4-C1}\claim{EMP-S4-C2C3}\claim{EMP-S4-E4}\claim{EMP-S4-CDD}

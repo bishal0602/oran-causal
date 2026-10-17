@@ -5,8 +5,8 @@ MG:corr@plc,Correlation (placebo-calibrated),Design-blind methods,4,3,0,1,0,1
 MG:granger@dev,Granger (DEV-tuned),Design-blind methods,32,12,6,12,2,19
 MG:granger@plc,Granger (placebo-calibrated),Design-blind methods,6,5,0,1,0,1
 MG:granger_by,Granger + BY,Design-blind methods,47,16,6,19,6,29
-MG:shap_gbdt@dev,SHAP-GBDT (DEV-tuned),Design-blind methods,5,1,0,1,3,2
-MG:shap_gbdt@plc,SHAP-GBDT (placebo-calibrated),Design-blind methods,1,1,0,0,0,1
+MG:shap_gbdt@dev,SHAP-GBDT (DEV-tuned),Design-blind methods,11,8,0,2,1,0
+MG:shap_gbdt@plc,SHAP-GBDT (placebo-calibrated),Design-blind methods,19,14,2,2,1,1
 MG:two_tower@dev,Two-tower (DEV-tuned),Design-blind methods,8,5,0,3,0,22
 MG:two_tower@plc,Two-tower (placebo-calibrated),Design-blind methods,0,0,0,0,0,1
 MG:qacm@dev,QACM (DEV-tuned),Design-blind methods,6,5,0,1,0,0

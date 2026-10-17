@@ -208,8 +208,10 @@ def analyse_study(study: str, a: Mapping[str, Any]) -> tuple[dict[str, Any], lis
     return out, rows
 
 
-def run(records: Path = RECORDS) -> dict[str, Any]:
-    """X13 from the frozen record sets.
+def run(
+    records: Path = RECORDS, inputs: Mapping[str, tuple[str | Path, str]] = INPUTS
+) -> dict[str, Any]:
+    """X13 from the frozen record sets (`inputs`: study -> analysis path, recorded label).
 
     Returns:
         `{"result", "rows"}`: the JSON output and the CSV rows.
@@ -222,7 +224,7 @@ def run(records: Path = RECORDS) -> dict[str, Any]:
         "studies": {},
     }
     rows: list[dict[str, Any]] = []
-    for study, (rel_path, label_path) in INPUTS.items():
+    for study, (rel_path, label_path) in inputs.items():
         a = json.loads((records / rel_path).read_text(encoding="utf-8"))
         out, srows = analyse_study(study, a)
         res["studies"][study] = {

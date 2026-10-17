@@ -15,6 +15,9 @@ Scoring the records is `oran_causal.analysis.posthoc.x7`.
 
     python -m oran_causal.experiments.posthoc.x7 run --part i/k --out F.jsonl
         [--seeds a,b] [--kinds shadow,own,pm,other] [--smoke] [--short S]
+
+`run` takes the referees (`refs`), a subset of the job arms (`arms`) and the maps / certsafe
+artifacts as arguments; the defaults are the frozen ones.
 """
 
 import argparse
@@ -42,6 +45,7 @@ from oran_causal.experiments.launch.fingerprint import numeric_env
 from oran_causal.experiments.system import study2, study3
 from oran_causal.experiments.system.common import (
     LOAD_FACTOR_L40,
+    FrozenDoc,
     Job,
     Part,
     Record,
@@ -133,14 +137,21 @@ def raw_ref(ref: str, art: Mapping[str, Any]) -> Any:
     return rf.certsafe_arbiter(t["map"], t["uncertified"], rf.THETA, rf.K_CONF)
 
 
-def make(kind: str, ref: str | None, sd: int, warmup_s: float, art: Mapping[str, Any]) -> Any:
-    """The arbiter of a job kind.
+def make(
+    kind: str,
+    ref: str | None,
+    sd: int,
+    warmup_s: float,
+    art: Mapping[str, Any],
+    refs: Sequence[str] = REFS,
+) -> Any:
+    """The arbiter of a job kind; the shadow job queries `refs`.
 
     Raises:
         ValueError: Unknown kind.
     """
     if kind == "shadow":
-        return Shadowed(anchor(REF, warmup_s), {r: raw_ref(r, art) for r in REFS})
+        return Shadowed(anchor(REF, warmup_s), {r: raw_ref(r, art) for r in refs})
     if ref is None:
         raise ValueError(f"job kind {kind} needs a referee")
     if kind == "own":
@@ -174,6 +185,7 @@ def job(
     *,
     smoke: bool = False,
     short: float | None = None,
+    refs: Sequence[str] = REFS,
 ) -> Record:
     """One episode, with the certified-safe job record layout and sub `x7`."""
     study3.check_stage_seed(seed, STAGE)
@@ -181,7 +193,7 @@ def job(
     cfg = make_cfg(PAIR, STRATUM, sd, LOAD_FACTOR_L40)
     if smoke and short:
         cfg = dataclasses.replace(cfg, scored_s=float(short))
-    arb = make(kind, ref, sd, cfg.warmup_s, art)
+    arb = make(kind, ref, sd, cfg.warmup_s, art, refs)
     t_cpu = time.process_time()
     env = run_env(cfg, arb)
     cpu = time.process_time() - t_cpu
@@ -215,16 +227,19 @@ def jobs(
     *,
     smoke: bool = False,
     short: float | None = None,
+    refs: Sequence[str] = REFS,
+    arms: frozenset[str] | None = None,
 ) -> list[Job]:
-    """The resumable jobs of the run in shard order (seed-major)."""
-    todo = job_list(list(seeds) if seeds else study3.stage_seeds(STAGE), tuple(kinds))
+    """The resumable jobs of the run in shard order (seed-major); `arms` keeps those job arms."""
+    todo = job_list(list(seeds) if seeds else study3.stage_seeds(STAGE), tuple(kinds), refs)
     return [
         Job(
             (s, arm_name(r, k)),
             study3.check_stage_seed(s, STAGE),
-            lambda s=s, k=k, r=r: job(s, k, r, art, smoke=smoke, short=short),
+            lambda s=s, k=k, r=r: job(s, k, r, art, smoke=smoke, short=short, refs=refs),
         )
         for s, k, r in todo
+        if arms is None or arm_name(r, k) in arms
     ]
 
 
@@ -235,6 +250,9 @@ def head(
     smoke: bool,
     short: float | None,
     environ: Mapping[str, str] | None = None,
+    refs: Sequence[str] = REFS,
+    maps_doc: FrozenDoc = study2.MAPS,
+    art_doc: FrozenDoc = study3.CERTSAFE,
 ) -> Record:
     """The header line of a run call."""
     env = os.environ if environ is None else environ
@@ -250,12 +268,12 @@ def head(
         host=env.get(PLATFORM_ENV),
         code_commit=env.get(COMMIT_ENV),
         code_dirty=env.get(DIRTY_ENV),
-        maps=study2.MAPS.status(),
-        artifact=study3.CERTSAFE.status(),
+        maps=maps_doc.status(),
+        artifact=art_doc.status(),
         certsafe_freeze=study3.PROTOCOL.status(),
         consts={
             "ref": REF,
-            "refs": list(REFS),
+            "refs": list(refs),
             "kinds": list(kinds),
             "load_factor": LOAD_FACTOR_L40,
             "smoke": {"short": short} if smoke else None,
@@ -271,7 +289,10 @@ def run(
     short: float | None = None,
     seeds: Sequence[int] | None = None,
     kinds: Sequence[str] = KINDS,
-    artifact: Path = study3.CERTSAFE.path,
+    refs: Sequence[str] = REFS,
+    arms: frozenset[str] | None = None,
+    maps_doc: FrozenDoc = study2.MAPS,
+    art_doc: FrozenDoc = study3.CERTSAFE,
 ) -> int:
     """Runs shard `part` of the X7 jobs into `out`; returns the number of jobs run.
 
@@ -280,12 +301,12 @@ def run(
     """
     if short and not smoke:
         raise ValueError("--short is smoke-only")
-    art = study3.load_artifact(artifact)
+    art = study3.load_artifact(art_doc.path)
     show = ("seed", "arm", "psvr", "rlf", "st_req", "st_rej", "cpu_s")
     return run_jobs(
         out,
-        head(part, kinds, smoke=smoke, short=short),
-        jobs(art, seeds, kinds, smoke=smoke, short=short),
+        head(part, kinds, smoke=smoke, short=short, refs=refs, maps_doc=maps_doc, art_doc=art_doc),
+        jobs(art, seeds, kinds, smoke=smoke, short=short, refs=refs, arms=arms),
         part,
         smoke,
         show,

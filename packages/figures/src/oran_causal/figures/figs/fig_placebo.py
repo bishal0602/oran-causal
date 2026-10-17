@@ -54,7 +54,7 @@ EXPECT = {
     "corr": (3, 8),
     "granger_dev": (1, 19),
     "granger_by": (13, 29),
-    "shap_gbdt": (2, 2),
+    "shap_gbdt": (8, 0),
     "two_tower": (6, 22),
     "qacm": (5, 0),
     "int": (6, 1),

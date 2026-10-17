@@ -575,8 +575,8 @@ def analyse_study(study: Study) -> tuple[dict[str, Any], list[dict], list[dict]]
     return out, score_rows, label_rows
 
 
-def run(records: Path = RECORDS) -> dict[str, Any]:
-    """X11 over both studies.
+def run(records: Path = RECORDS, study_set: Mapping[str, Study] | None = None) -> dict[str, Any]:
+    """X11 over both studies (`study_set`: other inputs than `studies(records)`).
 
     Returns:
         `{"result", "scores", "labels"}`: the JSON output and the two CSV tables as row lists.
@@ -594,7 +594,7 @@ def run(records: Path = RECORDS) -> dict[str, Any]:
     }
     score_rows: list[dict] = []
     label_rows: list[dict] = []
-    for name, study in studies(records).items():
+    for name, study in (study_set or studies(records)).items():
         out, srows, lrows = analyse_study(study)
         res["studies"][name] = out
         score_rows += srows

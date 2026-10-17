@@ -5,6 +5,8 @@ the manuscript in ``paper/``.
 import os
 from pathlib import Path
 
+from oran_causal.analysis.system.shap_splice import overlaid
+
 MEMBER_ROOT = Path(__file__).resolve().parents[3]
 WORKSPACE_ROOT = MEMBER_ROOT.parents[1]
 RECORDS = WORKSPACE_ROOT / "data" / "records"
@@ -38,9 +40,18 @@ def preview_dir() -> Path:
     return root / "preview" if root else PREVIEW
 
 
+def resolve(*parts: str) -> tuple[str, ...]:
+    """Records-relative parts of the file read for ``parts``.
+
+    A recorded file with ``shap_gbdt`` entries is read from its TreeSHAP copy in the
+    ``shap_rerun`` overlay (``shap_splice.overlaid``), never from the recorded set.
+    """
+    return tuple(overlaid(Path(*parts).as_posix()).split("/"))
+
+
 def record(*parts: str) -> Path:
-    """Path inside ``data/records``; raises if it does not exist (figures never invent data)."""
-    path = RECORDS.joinpath(*parts)
+    """Path inside ``data/records`` (``resolve``); raises if it does not exist (figures never invent data)."""
+    path = RECORDS.joinpath(*resolve(*parts))
     if not path.exists():
         raise FileNotFoundError(f"record missing: {path}")
     return path

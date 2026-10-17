@@ -32,13 +32,18 @@ FAMS = [
 ]
 
 
+def map_name(arm: str) -> str:
+    name = A.M.name(arm)
+    return f"{name} (placebo-cal.)" if A.M.resolve(arm).threshold == "plc" else name
+
+
 def rows(t: dict) -> tuple[list[dict], list[dict]]:
     agree, outcome = [], []
     for arm in t["refs"]:
         s = t["agreement"]["stream_ref"][arm]["post"]
         r = {
             "arm": arm,
-            "map": A.M.name(arm),
+            "map": map_name(arm),
             "overall": s["overall"]["agree"],
             "n_overall": s["overall"]["n"],
             "own_overall": t["agreement"]["stream_own"][arm]["post"]["overall"]["agree"],
@@ -86,7 +91,7 @@ def rows(t: dict) -> tuple[list[dict], list[dict]]:
             outcome.append(
                 out_row(key, f"replay_{rep}", lab, t["diff_same_platform"][f"{key} - {SHADOW}"])
             )
-        outcome[-3]["map"] = outcome[-2]["map"] = outcome[-1]["map"] = A.M.name(arm)
+        outcome[-3]["map"] = outcome[-2]["map"] = outcome[-1]["map"] = map_name(arm)
     return agree, outcome
 
 

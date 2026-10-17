@@ -112,9 +112,13 @@ __all__ = [
     "Sources",
     "bound_ub",
     "build",
+    "certification",
     "certsafe",
+    "cs_eval",
     "figures_json",
+    "map_quality",
     "opt_a",
+    "opt_a_eval",
     "pooled",
     "rename",
     "rounded",
@@ -758,9 +762,8 @@ def _edge_counts(edges: Iterable[Sequence[Any]], ref: study1.Ref) -> dict[str, A
     return c
 
 
-def _map_quality(
-    src: Sources, disc: Mapping[str, Any], maps_art: Mapping[str, Any], checks: Checks
-) -> dict:
+def map_quality(disc: Mapping[str, Any], maps_art: Mapping[str, Any]) -> dict[str, dict]:
+    """Edge counts of every map against the GT cells, asserted against the stored edge quality."""
     ref = study1.gt_ref(disc["gt"]["cells"])
     mq = {}
     for arm, edges in disc["maps"].items():
@@ -777,6 +780,13 @@ def _map_quality(
         art_arm = maps_art["arms"].get(arm, {})
         if "map" in art_arm:
             ensure([list(e) for e in art_arm["map"]] == [list(e) for e in edges], arm)
+    return mq
+
+
+def _map_quality(
+    src: Sources, disc: Mapping[str, Any], maps_art: Mapping[str, Any], checks: Checks
+) -> dict:
+    mq = map_quality(disc, maps_art)
     checks.require(
         "opt(a): map quality of all 17 maps recomputed from maps + GT cells", len(mq) == 17
     )
@@ -873,10 +883,31 @@ def _opt_a_eval(src: Sources, maps_art: Mapping[str, Any], checks: Checks) -> di
     R, heads = load_jobs(files, eval_filter(study2.SUB, "conf_stage", "eval"))
     led = run_ledger(heads, R)
     alias_fill(R, maps_art["alias_of"])
-    arms = [a for a in study2.ALL_ARMS if any(a in R[s] for s in R)]
-    st = gate_a(R, arms)
     E = read_json(src.decision / "conf_eval.json")
     Vd = read_json(src.decision / "conf_verdict.json")
+    return opt_a_eval(R, led, maps_art, E, Vd, checks)
+
+
+def opt_a_eval(
+    R: Records,
+    led: Mapping[str, Any],
+    maps_art: Mapping[str, Any],
+    E: Mapping[str, Any],
+    Vd: Mapping[str, Any],
+    checks: Checks,
+) -> dict[str, Any]:
+    """Study 2 referee evaluation of alias-filled EVAL records, asserted against `E` and `Vd`.
+
+    Args:
+        R: EVAL records per seed and arm, aliases filled.
+        led: The run ledger (`run_ledger`).
+        maps_art: The maps artifact (decision signatures).
+        E: The stored evaluation (`conf_eval.json`).
+        Vd: The stored verdict (`conf_verdict.json`).
+        checks: Collects the passed assertion blocks.
+    """
+    arms = [a for a in study2.ALL_ARMS if any(a in R[s] for s in R)]
+    st = gate_a(R, arms)
     checks.require(
         "opt(a): 160 complete seeds, every arm", st.n == E["n_seeds"] == 160 and len(arms) == 26
     )
@@ -1053,7 +1084,8 @@ def _certify_class(
     return ok
 
 
-def _certification(art: Mapping[str, Any], tau: Mapping, checks: Checks) -> dict[str, Any]:
+def certification(art: Mapping[str, Any], tau: Mapping, checks: Checks) -> dict[str, Any]:
+    """Certification of every certsafe arm recomputed from its map, bounds and `tau`."""
     bset = {m: {(f, r, k): v for f, r, k, v in rows} for m, rows in art["bounds"].items()}
     cert = {}
     for arm, a in art["arms"].items():
@@ -1174,10 +1206,31 @@ def _cs_criteria(st: GateA, art: Mapping[str, Any], Vd: Mapping[str, Any], check
 
 def _cs_eval(src: Sources, art: Mapping[str, Any], checks: Checks) -> dict[str, Any]:
     R, led = _cs_load(src, art, checks)
-    arms = [a for a in study3.ALL_ARMS if any(a in R[s] for s in R)]
-    st = gate_a(R, arms)
     E = read_json(src.decision / "cs_eval.json")
     Vd = read_json(src.decision / "cs_verdict.json")
+    return cs_eval(R, led, art, E, Vd, checks)
+
+
+def cs_eval(
+    R: Records,
+    led: Mapping[str, Any],
+    art: Mapping[str, Any],
+    E: Mapping[str, Any],
+    Vd: Mapping[str, Any],
+    checks: Checks,
+) -> dict[str, Any]:
+    """Study 3 referee evaluation of alias-filled EVAL records, asserted against `E` and `Vd`.
+
+    Args:
+        R: EVAL records per seed and arm, aliases filled.
+        led: The run ledger (`run_ledger`).
+        art: The certsafe artifact (decision signatures).
+        E: The stored evaluation (`cs_eval.json`).
+        Vd: The stored verdict (`cs_verdict.json`).
+        checks: Collects the passed assertion blocks.
+    """
+    arms = [a for a in study3.ALL_ARMS if any(a in R[s] for s in R)]
+    st = gate_a(R, arms)
     checks.require(
         "2b: 160 complete seeds 191100-191259, every arm",
         st.n == 160 == E["n_seeds"] and len(arms) == 26 and st.seeds == list(range(191100, 191260)),
@@ -1262,7 +1315,7 @@ def certsafe(src: Sources, checks: Checks) -> dict[str, Any]:
         "repro": rep,
     }
     out["tau"] = {f"{f}|{d:+d}|{k}": v for (f, d, k), v in tau.items()}
-    out["cert"] = _certification(art, tau, checks)
+    out["cert"] = certification(art, tau, checks)
     out["jobs"] = art["jobs"]
     bp = {(f, r, k): v for f, r, k, v in art["bounds"]["pmrt"]}[("ptx", "nbr", "rlf")]
     out["pmrt_bound_ptx_nbr_rlf"] = {

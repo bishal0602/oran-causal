@@ -85,7 +85,7 @@ PRINTED = {
     "s1.attr.declared": "13",
     "s1.attr.true": "12",
     "s2.attr.declared": "7",
-    "s2.plc.rec_max": "0.21",
+    "s2.plc.rec_max": "0.55",
     "s4.conf.corr_min": "1.00",
     "s4.conf.gbm_min": "0.02",
     "s4.conf.gbm_max": "0.06",

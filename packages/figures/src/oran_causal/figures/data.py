@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from oran_causal.figures.paths import record
+from oran_causal.figures.paths import record, resolve
 
 
 def load_json(*parts: str):
@@ -34,8 +34,8 @@ def mean_ci(
 
 
 def source_note(*parts: str) -> str:
-    """Workspace-relative record path for figure provenance comments."""
-    return str(Path("data", "records").joinpath(*parts).as_posix())
+    """Workspace-relative path of the record file `record` reads, for provenance comments."""
+    return Path("data", "records", *resolve(*parts)).as_posix()
 
 
 def protocol_note(*parts: str) -> str:
