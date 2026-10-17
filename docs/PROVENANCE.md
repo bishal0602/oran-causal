@@ -35,3 +35,4 @@ Per-area tables, one row per migrated file or record set:
 | Experiment B bridging study (`oran_causal.experiments.bridging`, `oran_causal.analysis.bridging`) | [provenance/bridging.md](provenance/bridging.md) |
 | Post hoc analyses X1-X16 (`oran_causal.analysis.posthoc`, `oran_causal.experiments.posthoc`) | [provenance/posthoc.md](provenance/posthoc.md) |
 | `oran-causal` CLI, campaign commands and reproduce tiers (`oran_causal.experiments.{cli,reproduce}`) | [provenance/cli.md](provenance/cli.md) |
+| Per-study manifests and validator (`packages/experiments/manifests`, `oran_causal.experiments.manifests`) | [provenance/manifests.md](provenance/manifests.md) |

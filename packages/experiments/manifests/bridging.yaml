@@ -1,0 +1,55 @@
+id: bridging
+platform: kaggle
+claims: []
+protocol:
+  path: bridging/EXP_B.md
+  sha256: 578ebc0f35a569922ec2703efe39033a90a402fa78ea7503ee46e92ba11ae4c4
+code_origin:
+- CDD-ORAN@0c89106:cdd_oran/xmethod/exp_b.py
+- CDD-ORAN@0c89106:scratchpad/xmethod/exp_b_tables.py
+seeds:
+- block: e6p_discovery_v4_episodes
+  range:
+  - 188100
+  - 188699
+  role: frozen Study 1 EVAL logs the Study 4 methods are run on
+  world: E6
+- block: e6p_discovery_v4_episodes
+  range:
+  - 188700
+  - 188739
+  role: frozen Study 1 placebo logs
+  world: E6
+stages:
+- name: campaign
+  driver: oran_causal.experiments.bridging.run:run
+  inputs:
+  - specs/exp_b/exp_b.json
+  - specs/exp_b/counts_v4.json
+  - bridging/exp_b/gt_v4.json
+  outputs:
+  - bridging/exp_b/merged.jsonl.gz
+  cost:
+    cpu_h: 82.0
+    basis: M
+frozen_inputs:
+- path: specs/exp_b/exp_b.json
+  sha256: 5cb441d1249304002518573bbed4445a0b3d0bf565ec03e1edf43568dad8b8da
+- path: specs/exp_b/exp_b_pilot.json
+  sha256: 603160b372f4847a82ee01b84b08802abb6f4bb53729fe2832690c457795efbe
+- path: specs/exp_b/exp_b_rest.json
+  sha256: 773242cbdac2315249ef13e9f4608a5032cd0e3771bf336da1ff2457d4a0f64e
+- path: specs/exp_b/counts_v4.json
+  sha256: 5b443bfff99ad357f5edfebe701a0effbe445d0606c0204f9179a8cad7e9dbcc
+records:
+- set: bridging
+  manifest: manifests/bridging.sha256
+  zenodo_doi: null
+tiers:
+  t0: rebuild EXP_B_TABLES and EXP_B_COSTS from the merged records (bytes)
+  t1: null
+  t2: null
+  t3: bridging campaign re-run on the frozen Study 1 logs
+equivalence:
+- metric: tables
+  rule: per-method map scores fall inside the stored intervals

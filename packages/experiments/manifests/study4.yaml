@@ -1,0 +1,152 @@
+id: study4
+platform: vps
+claims:
+- EMP-S4-C1
+- EMP-S4-C2C3
+- EMP-S4-E4
+- EMP-S4-CDD
+- EMP-POWER
+- PRO-FROZEN
+- PRO-SEEDS
+- PRO-TUNE
+protocol:
+  path: study4/PROTOCOL_A.md
+  sha256: c5f7a4fe4dff4bfdeef3ccebac2dcc3748dfa9c2d0c3d17f2ac9d6246379fa22
+code_origin:
+- CDD-ORAN@0c89106:scratchpad/xmethod/eval_analysis.py
+- CDD-ORAN@0c89106:scratchpad/xmethod/eval_report.py
+- CDD-ORAN@0c89106:cdd_oran/xmethod/campaign.py
+- CDD-ORAN@0c89106:cdd_oran/xmethod/runner.py
+- CDD-ORAN@0c89106:scratchpad/xmethod/fmax_calib.py
+- CDD-ORAN@0c89106:scratchpad/xmethod/kappa_calib.py
+seeds:
+- block: XMETHOD_DEV
+  range:
+  - 3000000
+  - 3000199
+  role: tune
+  world: E1
+- block: XMETHOD_DEV
+  range:
+  - 3000000
+  - 3000199
+  role: tune
+  world: E2
+- block: XMETHOD_DEV
+  range:
+  - 3000000
+  - 3000199
+  role: tune
+  world: E3
+- block: XMETHOD_DEV
+  range:
+  - 3000000
+  - 3000199
+  role: tune
+  world: E4
+- block: XMETHOD_DEV
+  range:
+  - 3000000
+  - 3000199
+  role: tune
+  world: E5
+- block: XMETHOD_EVAL
+  range:
+  - 3100000
+  - 3100299
+  role: measure
+  world: E1
+- block: XMETHOD_EVAL
+  range:
+  - 3100000
+  - 3100299
+  role: measure
+  world: E2
+- block: XMETHOD_EVAL
+  range:
+  - 3100000
+  - 3100299
+  role: measure
+  world: E3
+- block: XMETHOD_EVAL
+  range:
+  - 3100000
+  - 3100299
+  role: measure
+  world: E4
+- block: XMETHOD_EVAL
+  range:
+  - 3100000
+  - 3100299
+  role: measure
+  world: E5
+stages:
+- name: campaign
+  driver: oran_causal.experiments.controlled.study4:run_study
+  args:
+    spec: specs/eval/full.json
+    drop_n:
+    - 24000
+  inputs:
+  - specs/eval/full.json
+  - artifacts/eval_cost_table.json
+  - artifacts/fmax_table.json
+  outputs:
+  - study4_eval/eval/merged.jsonl.gz
+  cost:
+    cpu_h: 296.53
+    basis: M
+- name: campaign_n24000
+  driver: oran_causal.experiments.controlled.study4:run_study
+  args:
+    spec: specs/eval/full.json
+    only_n:
+    - 24000
+  inputs:
+  - specs/eval/full.json
+  - artifacts/eval_cost_table.json
+  outputs:
+  - study4_eval/eval/merged.jsonl.gz
+  cost:
+    cpu_h: 207.11
+    basis: M
+  frozen_in:
+  - t2
+frozen_inputs:
+- path: specs/eval/full.json
+  sha256: a02fd14833bb3a51bfb4136e78653b3b5c867bf0f494f344b3ad8abababdcc07
+- path: specs/eval/amendments.json
+  sha256: 43be9758506c94dbed5072ca23c0c427386c53d38383f4308fbb588175fc5f03
+- path: artifacts/eval_cost_table.json
+  sha256: cf05e8809ef1741a3840881ea9b466b78e1b280289c4be8b8a5f82290356307a
+- path: artifacts/fmax_table.json
+  sha256: f0a9236763b8507c1a88ec3d8efcd211df3a49e827bd08c4ce7c93071f2e7b67
+- path: protocols/study4/CONTRACT.md
+  sha256: 6b219d38c3269335564fb6e4d49a6b7f5b399abeea64a16dcf07f419bfcb869c
+- path: protocols/study4/PROTOCOL_A_AMENDMENTS.md
+  sha256: 0b7651f9979bb8030aafbb59783fd3d824fe2f2ef914cd32a878859fc32de6cc
+records:
+- set: study4_eval
+  manifest: manifests/study4_eval.sha256
+  zenodo_doi: null
+- set: study4_dev
+  manifest: manifests/study4_dev.sha256
+  zenodo_doi: null
+- set: freeze
+  manifest: manifests/freeze.sha256
+  zenodo_doi: null
+tiers:
+  t0: regenerate report.json, the CSVs and REPORT.md from the stored EVAL records (bytes)
+  t1: 'DEV mini run: corr, pcorr_eq, pmrt_eq on E1-E5 (R2, n 500) and pmrt_nl_eq on E1; agreement with
+    the stored declarations at least 0.9 per arm'
+  t2: EVAL campaign without the n 24000 cells (VPS)
+  t3: full EVAL campaign (VPS)
+equivalence:
+- metric: verdicts
+  rule: C1, C2a, C2b and C3 come out the same, and PMRT-Lin R3 stays NOT SUPPORTED
+- metric: INVALID counts
+  rule: each arm stays within F_max
+- metric: truth-null and placebo rates
+  rule: pooled rates fall inside the frozen 95 % interval
+- metric: point estimates
+  rule: each falls inside the frozen 90 % interval

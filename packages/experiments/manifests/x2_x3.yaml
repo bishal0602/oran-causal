@@ -1,0 +1,101 @@
+id: x2_x3
+platform: kaggle
+claims:
+- EMP-X3
+- PRO-POSTHOC
+protocol:
+  path: posthoc/EXTRAS_PROTOCOL.md
+  sha256: 292a4f6b52783ad170da39bc5f7476d2194fd1d6a25fa20e78e5026818a27ccb
+code_origin:
+- CDD-ORAN@0c89106:cdd_oran/xmethod/extras.py
+seeds:
+- block: XMETHOD_EXTRAS
+  range:
+  - 3200000
+  - 3200199
+  role: X2 tune 3200000-3200019, X2 measure 3200020-3200059, X3 measure 3200060-3200119
+  world: E1
+- block: XMETHOD_EXTRAS
+  range:
+  - 3200000
+  - 3200199
+  role: X2 tune 3200000-3200019, X2 measure 3200020-3200059, X3 measure 3200060-3200119
+  world: E2
+- block: XMETHOD_EXTRAS
+  range:
+  - 3200000
+  - 3200199
+  role: X2 tune 3200000-3200019, X2 measure 3200020-3200059, X3 measure 3200060-3200119
+  world: E3
+- block: XMETHOD_EXTRAS
+  range:
+  - 3200000
+  - 3200199
+  role: X2 tune 3200000-3200019, X2 measure 3200020-3200059, X3 measure 3200060-3200119
+  world: E4
+stages:
+- name: campaign
+  driver: oran_causal.experiments.campaign.__main__:main
+  args:
+    specs:
+    - x2_d02
+    - x2_d05
+    - x2_d10
+    - x2_d20
+    - x2_b05
+    - x2_b80
+    - x3_told
+  inputs:
+  - specs/extras/x2_d02.json
+  - specs/extras/x2_d05.json
+  - specs/extras/x2_d10.json
+  - specs/extras/x2_d20.json
+  - specs/extras/x2_b05.json
+  - specs/extras/x2_b80.json
+  - specs/extras/x3_told.json
+  outputs:
+  - posthoc_x2_x3/x2_*/merged.jsonl.gz
+  - posthoc_x2_x3/x3_told/merged.jsonl.gz
+  cost:
+    cpu_h: 63.9
+    basis: M
+- name: analysis
+  driver: oran_causal.analysis.posthoc.x2x3:analyse
+  inputs:
+  - posthoc_x2_x3
+  outputs:
+  - posthoc_x2_x3/extras_tables.json
+  - posthoc_x2_x3/EXTRAS_REPORT.md
+  cost:
+    cpu_h: 0.0
+    basis: M
+frozen_inputs:
+- path: specs/extras/x2_d02.json
+  sha256: 8a20c37e3376d0911b22b3aa72ee020677b9e837432a20e2a0dad500a5eaa2a0
+- path: specs/extras/x2_d05.json
+  sha256: 3c93fc66de0cf1011825e450f5199f033ce05e613752e75d07997e8b10fb4317
+- path: specs/extras/x2_d10.json
+  sha256: f440d10b1f54438fce851a65aad7aa01c9ce2844ffdda34a563fe41bbb50dea7
+- path: specs/extras/x2_d20.json
+  sha256: 52ae06bfd2654f344c86bbe37a70037bd5b124d819315d3f842a09c040dbba74
+- path: specs/extras/x2_b05.json
+  sha256: 2211558dd7d8a4a67b05a3b44706aa8131bb5a51727cdb728363b389598c93de
+- path: specs/extras/x2_b80.json
+  sha256: e8606af701704be8a6423f7d7c7470df096e0f6ecfa1451110ca22e62f21625c
+- path: specs/extras/x3_told.json
+  sha256: 40472ccf9007f11931670851df150c9322291cde7c99bc5e9fb21e14bf3e811e
+records:
+- set: posthoc_x2_x3
+  manifest: manifests/posthoc_x2_x3.sha256
+  zenodo_doi: null
+tiers:
+  t0: analyse the stored X2 and X3 records (bytes equal on linux; the windows provenance differs)
+  t1: null
+  t2: null
+  t3: X2 and X3 campaigns re-run
+equivalence:
+- metric: X3 conclusion
+  rule: PMRT-GBM and PMRT-Lin exceed the nominal null-edge rate at 0.8 times the true dither width; every
+    PMRT variant does at twice the true policy strength
+- metric: post hoc status
+  rule: descriptive; changes no verdict (PRO-POSTHOC)

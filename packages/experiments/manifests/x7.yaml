@@ -1,0 +1,56 @@
+id: x7
+platform: kaggle
+claims:
+- PRO-POSTHOC
+protocol:
+  path: posthoc/EXTRAS_PROTOCOL.md
+  sha256: 292a4f6b52783ad170da39bc5f7476d2194fd1d6a25fa20e78e5026818a27ccb
+code_origin:
+- CDD-ORAN@0c89106:scratchpad/e6_dev/x7_subset_check.py
+seeds:
+- block: e6p_certsafe_episodes
+  range:
+  - 191100
+  - 191259
+  role: Study 3 EVAL seeds, subset-rule shadow check
+  world: E6
+stages:
+- name: referee
+  driver: oran_causal.experiments.posthoc.x7:run
+  inputs:
+  - artifacts/E6P_CERTSAFE.json
+  - artifacts/E6P_CONF_MAPS.json
+  outputs:
+  - posthoc_x7/x7/records
+  cost:
+    cpu_h: 47.5
+    basis: M
+- name: analysis
+  driver: oran_causal.analysis.posthoc.x7:analyse
+  inputs:
+  - posthoc_x7/x7/records
+  outputs:
+  - posthoc_x7/x7/x7_tables.json
+  - posthoc_x7/X7_REPORT.md
+  cost:
+    cpu_h: 0.0
+    basis: M
+frozen_inputs:
+- path: artifacts/E6P_CERTSAFE.json
+  sha256: 303ac557be16ecd49723ee92850fde0e4e6d8c4c1cecde62aa0d0c48ec2da210
+- path: artifacts/E6P_CONF_MAPS.json
+  sha256: 6c82357b913d5ee11d501ff1209ec5e2068732e85181dcd27a5216109ff8940a
+records:
+- set: posthoc_x7
+  manifest: manifests/posthoc_x7.sha256
+  zenodo_doi: null
+tiers:
+  t0: analyse the stored X7 records
+  t1: null
+  t2: null
+  t3: X7 referee jobs re-run
+equivalence:
+- metric: X7 agreement
+  rule: same ranking of the associational referees against the static subset rule as X7_REPORT.md
+- metric: post hoc status
+  rule: descriptive; changes no verdict (PRO-POSTHOC)

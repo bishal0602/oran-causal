@@ -1,0 +1,85 @@
+id: study3
+platform: kaggle
+claims:
+- EMP-S3-GATED
+- EMP-S3-ORACLE
+- EMP-S3-GATEDIAG
+- PRO-FROZEN
+- PRO-SEEDS
+- PRO-TUNE
+protocol:
+  path: study3/E6P_CERTSAFE_PROTOCOL.md
+  sha256: cdd2c7e63fe3b81efe07c6cedea331b81124eca078f056e87f3008e6d2850b4a
+code_origin:
+- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_certsafe.py
+- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_certsafe_analyze.py
+seeds:
+- block: e6p_certsafe_episodes
+  range:
+  - 191000
+  - 191999
+  role: 'certified-safe referee: gate calibration, DEV and EVAL episodes'
+  world: E6
+stages:
+- name: eval
+  driver: oran_causal.experiments.system.stages:run_stage
+  args:
+    study: 3
+    stage: eval
+  inputs:
+  - artifacts/E6P_CERTSAFE.json
+  - artifacts/E6P_CONF_MAPS.json
+  outputs:
+  - study2_3_decision/runs/e6p-cs-eval-1
+  - study2_3_decision/runs/e6p-cs-evalan-1
+  cost:
+    cpu_h: 58.16
+    basis: M
+- name: dev
+  driver: oran_causal.experiments.system.stages:run_stage
+  args:
+    study: 3
+    stage: dev
+  inputs:
+  - protocols/study3/E6P_CERTSAFE_PROTOCOL.md
+  outputs:
+  - study2_3_decision/runs/e6p-cs-dev-1
+  cost:
+    cpu_h: 0.8
+    basis: M
+- name: bounds
+  driver: oran_causal.experiments.system.stages:run_stage
+  args:
+    study: 3
+    stage: bounds
+  inputs:
+  - study2_3_decision/runs/e6p-cs-dev-1
+  outputs:
+  - study2_3_decision/runs/e6p-cs-bounds-1
+  cost:
+    cpu_h: 0.3
+    basis: M
+frozen_inputs:
+- path: artifacts/E6P_CERTSAFE.json
+  sha256: 303ac557be16ecd49723ee92850fde0e4e6d8c4c1cecde62aa0d0c48ec2da210
+- path: artifacts/E6P_CONF_MAPS.json
+  sha256: 6c82357b913d5ee11d501ff1209ec5e2068732e85181dcd27a5216109ff8940a
+records:
+- set: study2_3_decision
+  manifest: manifests/study2_3_decision.sha256
+  zenodo_doi: null
+- set: system_artifacts
+  manifest: manifests/system_artifacts.sha256
+  zenodo_doi: null
+tiers:
+  t0: recompute the gate bounds and the evaluation from the stored jobs (bytes)
+  t1: one referee job (CS:PMRT, 120 s smoke)
+  t2: evaluation, DEV and bounds re-run
+  t3: evaluation, DEV and bounds re-run
+equivalence:
+- metric: verdict
+  rule: PARTIAL
+- metric: D3
+  rule: gated PMRT matches never-sleep on every seed
+- metric: point estimates
+  rule: each falls inside the frozen 90 % interval

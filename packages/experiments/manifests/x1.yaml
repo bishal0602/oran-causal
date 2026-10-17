@@ -1,0 +1,62 @@
+id: x1
+platform: kaggle
+claims:
+- EMP-RUNTIME
+- PRO-POSTHOC
+protocol:
+  path: posthoc/EXTRAS_PROTOCOL.md
+  sha256: 292a4f6b52783ad170da39bc5f7476d2194fd1d6a25fa20e78e5026818a27ccb
+code_origin:
+- CDD-ORAN@0c89106:scratchpad/xmethod/exp_c_timing.py
+- CDD-ORAN@0c89106:scratchpad/xmethod/exp_c_runtime.py
+seeds:
+- block: XMETHOD_DEV
+  range:
+  - 3000000
+  - 3000002
+  role: calibration and paper timing seeds (E2 R2)
+  world: E2
+- block: XMETHOD_DEV
+  range:
+  - 3000000
+  - 3000002
+  role: Granger timing seeds (E3 R2)
+  world: E3
+stages:
+- name: timing
+  driver: oran_causal.experiments.posthoc.x1_timing:run
+  inputs:
+  - specs/exp_c/timing.json
+  outputs:
+  - posthoc_x1/exp_c/paper
+  - posthoc_x1/exp_c/calib
+  cost:
+    cpu_h: 1.49
+    basis: P
+- name: runtime_table
+  driver: oran_causal.analysis.posthoc.x1_runtime:build
+  inputs:
+  - specs/exp_c/timing.json
+  - posthoc_x1/exp_c
+  outputs:
+  - runtime table of the paper
+  cost:
+    cpu_h: 0.0
+    basis: M
+frozen_inputs:
+- path: specs/exp_c/timing.json
+  sha256: ce7cebd4c1ec2253a5f37e8669ff90f3ab3fd7173bcacb22fe2be384da631a95
+records:
+- set: posthoc_x1
+  manifest: manifests/posthoc_x1.sha256
+  zenodo_doi: null
+tiers:
+  t0: rebuild the runtime table from the stored timing records
+  t1: null
+  t2: null
+  t3: null
+equivalence:
+- metric: runtime table
+  rule: 'timings depend on the host: only magnitudes and the ranking of methods are compared'
+- metric: post hoc status
+  rule: descriptive; changes no verdict (PRO-POSTHOC)

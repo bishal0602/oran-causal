@@ -1,0 +1,63 @@
+id: x8
+platform: kaggle
+claims:
+- EMP-S1-STRICT
+- PRO-POSTHOC
+protocol:
+  path: posthoc/EXTRAS_PROTOCOL.md
+  sha256: 292a4f6b52783ad170da39bc5f7476d2194fd1d6a25fa20e78e5026818a27ccb
+code_origin:
+- CDD-ORAN@0c89106:scratchpad/e6_dev/k0n_tail_check.py
+seeds:
+- block: e6p_discovery_v4_episodes
+  range:
+  - 188100
+  - 188699
+  role: Study 1 EVAL episodes, K0n variants at B 9999
+  world: E6
+stages:
+- name: variants
+  driver: oran_causal.experiments.posthoc.x8:run
+  args:
+    B: 9999
+  inputs:
+  - artifacts/E6P_PMRT_V4.json
+  - study1_raw/e6p-disc-v4ev-1-a
+  - study1_raw/e6p-disc-v4ev-1-b
+  outputs:
+  - posthoc_x8/x8/res_0.jsonl
+  cost:
+    cpu_h: 2.41
+    basis: M
+- name: summary
+  driver: oran_causal.analysis.posthoc.x8:summarize
+  inputs:
+  - posthoc_x8/x8
+  outputs:
+  - posthoc_x8/x8/summary.json
+  - posthoc_x8/x8/X8_REPORT.md
+  cost:
+    cpu_h: 0.0
+    basis: M
+frozen_inputs:
+- path: artifacts/E6P_PMRT_V4.json
+  sha256: 9991c390df3a53ef12b553990da52c6adab25d4087bb029f1427e20a898e6a91
+records:
+- set: posthoc_x8
+  manifest: manifests/posthoc_x8.sha256
+  zenodo_doi: null
+- set: study1_raw
+  manifest: manifests/study1_raw.sha256
+  zenodo_doi: null
+tiers:
+  t0: summarise the stored variants
+  t1: null
+  t2: null
+  t3: 590 K0n variants re-run at B 9999
+equivalence:
+- metric: X8a
+  rule: 'variants with a declaration at most 0.075 (stored: 2 of 590)'
+- metric: X8b, X8c
+  rule: rate of p at most 1e-3 below 2e-3, and rate of p at most 2e-4 below 6e-4
+- metric: post hoc status
+  rule: descriptive; changes no verdict (PRO-POSTHOC)

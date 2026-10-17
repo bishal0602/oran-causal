@@ -1,0 +1,72 @@
+id: x9_x16
+platform: colab
+claims:
+- EMP-GT-SENS
+- EMP-GT-EXIST
+- EMP-X15
+- EMP-X16
+- PRO-POSTHOC
+protocol:
+  path: posthoc/EXTRAS_PROTOCOL.md
+  sha256: 292a4f6b52783ad170da39bc5f7476d2194fd1d6a25fa20e78e5026818a27ccb
+code_origin:
+- CDD-ORAN@0c89106:scratchpad/xmethod/revision/x9_decision_e2e.py
+- CDD-ORAN@0c89106:scratchpad/xmethod/revision/x15_replication.py
+- CDD-ORAN@0c89106:scratchpad/xmethod/x16_centre.py
+seeds: []
+stages:
+- name: stored_records
+  driver: oran_causal.experiments.posthoc.__main__:main
+  args:
+    items:
+    - x9
+    - x10
+    - x11
+    - x12
+    - x13
+    - x14
+    - x15
+    - x16
+  inputs:
+  - posthoc_x9_x16/revision
+  - study2_3_decision
+  - study1_raw
+  outputs:
+  - posthoc_x9_x16/revision
+  cost:
+    cpu_h:
+    - 0
+    - 1
+    basis: M
+frozen_inputs:
+- path: artifacts/E6P_CERTSAFE.json
+  sha256: 303ac557be16ecd49723ee92850fde0e4e6d8c4c1cecde62aa0d0c48ec2da210
+- path: artifacts/E6P_CONF_MAPS.json
+  sha256: 6c82357b913d5ee11d501ff1209ec5e2068732e85181dcd27a5216109ff8940a
+- path: artifacts/E6P_PMRT_V4.json
+  sha256: 9991c390df3a53ef12b553990da52c6adab25d4087bb029f1427e20a898e6a91
+records:
+- set: posthoc_x9_x16
+  manifest: manifests/posthoc_x9_x16.sha256
+  zenodo_doi: null
+- set: study2_3_decision
+  manifest: manifests/study2_3_decision.sha256
+  zenodo_doi: null
+- set: study1_raw
+  manifest: manifests/study1_raw.sha256
+  zenodo_doi: null
+tiers:
+  t0: recompute X9-X16 from the stored records (x10, x12 exact; x15 within rtol 1e-12 on one key; x16
+    within rtol 1e-9)
+  t1: null
+  t2: null
+  t3: same as t0 on the Colab lane
+equivalence:
+- metric: X10, X12
+  rule: bytes equal
+- metric: X15
+  rule: equal within rtol 1e-12
+- metric: X16
+  rule: equal within rtol 1e-9
+- metric: post hoc status
+  rule: descriptive; changes no verdict (PRO-POSTHOC)

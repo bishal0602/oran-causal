@@ -1,0 +1,73 @@
+id: x5_x6
+platform: kaggle
+claims:
+- PRO-POSTHOC
+protocol:
+  path: posthoc/EXTRAS_PROTOCOL.md
+  sha256: 292a4f6b52783ad170da39bc5f7476d2194fd1d6a25fa20e78e5026818a27ccb
+code_origin:
+- CDD-ORAN@0c89106:cdd_oran/xmethod/diag.py
+seeds:
+- block: XMETHOD_DIAG
+  range:
+  - 3300000
+  - 3301999
+  role: 'X5: PMRT-Lin E4 R3 re-run'
+  world: E4
+- block: XMETHOD_DIAG
+  range:
+  - 3302000
+  - 3302199
+  role: 'X6: PMRT-GBM told-width ablation'
+  world: E1
+stages:
+- name: diagnostics
+  driver: oran_causal.experiments.campaign.__main__:main
+  args:
+    specs:
+    - x5_adj
+    - x5_fail
+    - x6_gbm
+  inputs:
+  - specs/extras/x5_adj.json
+  - specs/extras/x5_fail.json
+  - specs/extras/x6_gbm.json
+  outputs:
+  - posthoc_x5_x6/x5_adj/merged.jsonl.gz
+  - posthoc_x5_x6/diag
+  cost:
+    cpu_h:
+    - 20
+    - 60
+    basis: E
+- name: analysis
+  driver: oran_causal.analysis.posthoc.x5x6:main
+  inputs:
+  - posthoc_x5_x6
+  outputs:
+  - posthoc_x5_x6/diag/diag_tables.json
+  - posthoc_x5_x6/DIAG_REPORT.md
+  cost:
+    cpu_h: 0.0
+    basis: M
+frozen_inputs:
+- path: specs/extras/x5_adj.json
+  sha256: e1ae87fd232e8f550f01cd99fa3b7599c30c3e5b8f5ca4342dfa2b6b1e4da0cb
+- path: specs/extras/x5_fail.json
+  sha256: 753aac5ad1d9af80b3aefb385d99f80a0ca9ee3afe04541276d001b2b134b682
+- path: specs/extras/x6_gbm.json
+  sha256: 9f1f55e20ab3e8ee5fbef479e3240cf2f53b3c2af9258b49038e82c650e85c06
+records:
+- set: posthoc_x5_x6
+  manifest: manifests/posthoc_x5_x6.sha256
+  zenodo_doi: null
+tiers:
+  t0: analyse the stored X5 and X6 records
+  t1: null
+  t2: null
+  t3: X5 and X6 campaigns re-run (the cost is an extrapolation)
+equivalence:
+- metric: X5 and X6 diagnoses
+  rule: same reading of the PMRT-Lin R3 excess and of the told-width ablation as DIAG_REPORT.md
+- metric: post hoc status
+  rule: descriptive; changes no verdict (PRO-POSTHOC)

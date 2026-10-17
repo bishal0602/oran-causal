@@ -1,0 +1,131 @@
+id: study1
+platform: kaggle
+claims:
+- EMP-S1-PLACEBO
+- EMP-S1-NULLOUT
+- EMP-S1-SMALLNULL
+- EMP-S1-MAP
+- EMP-S1-CHAIN
+- EMP-S1-P2
+- EMP-BASE-MAPS
+- EMP-GT-LABELS
+- EMP-ERLY
+- PRO-FROZEN
+- PRO-SEEDS
+protocol:
+  path: study1/E6P_DISCOVERY_PROTOCOL_V4.md
+  sha256: 6857466c91afa296a5cbaabd8fe0be9cb036dd35358736e855adfc540faf84ec
+code_origin:
+- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_discovery.py
+- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_disc_analyze_v4.py
+- CDD-ORAN@0c89106:scratchpad/e6_dev/pmrt_artifacts.py
+- CDD-ORAN@0c89106:scratchpad/e6_dev/pmrt_bench.py
+- CDD-ORAN@0c89106:reports/2026-10-02-v4-pmrt-confounded-certsafe/make_figs.py
+seeds:
+- block: e6p_discovery_v4_episodes
+  range:
+  - 188000
+  - 188019
+  role: dev (before the freeze)
+  world: E6
+- block: e6p_discovery_v4_episodes
+  range:
+  - 188100
+  - 188699
+  role: 'eval: 600 randomised episodes, 10 slices of 60'
+  world: E6
+- block: e6p_discovery_v4_episodes
+  range:
+  - 188700
+  - 188739
+  role: placebo logs
+  world: E6
+- block: e6p_discovery_v4_episodes
+  range:
+  - 188800
+  - 188839
+  role: knockout ground truth
+  world: E6
+stages:
+- name: collection
+  driver: oran_causal.experiments.system.stages:run_stage
+  args:
+    study: 1
+    stage:
+    - dev
+    - eval
+    - placebo
+  inputs:
+  - protocols/study1/E6P_DISCOVERY_PROTOCOL_V4.md
+  outputs:
+  - study1_raw/e6p-disc-v4dev-1-a
+  - study1_raw/e6p-disc-v4ev-1-a
+  - study1_raw/e6p-disc-v4ev-1-b
+  - study1_raw/e6p-disc-v4plc-1-a
+  cost:
+    cpu_h: 12
+    basis: M
+- name: knockout_gt
+  driver: oran_causal.experiments.system.stages:run_stage
+  args:
+    study: 1
+    stage: gt
+  inputs:
+  - protocols/study1/E6P_DISCOVERY_PROTOCOL_V4.md
+  outputs:
+  - study1_raw/e6p-disc-v4gt-1-a
+  - study1_raw/e6p-disc-v4gt-1-b
+  cost:
+    cpu_h: 42
+    basis: M
+  frozen_in:
+  - t2
+- name: analysis
+  driver: oran_causal.analysis.system.study1:recompute
+  inputs:
+  - artifacts/E6P_PMRT_V4.json
+  - study1_raw/e6p-disc-v4an-1
+  - study1_raw/e6p-disc-v4an-pmrt-1
+  outputs:
+  - system_artifacts/decision/v4_analysis.json
+  - system_artifacts/report_2026-10-02/figures_data.json
+  cost:
+    cpu_h: 10
+    basis: M
+frozen_inputs:
+- path: artifacts/E6P_PMRT_V4.json
+  sha256: 9991c390df3a53ef12b553990da52c6adab25d4087bb029f1427e20a898e6a91
+- path: artifacts/E6P_MSCRPLUS_V4_FROZEN.json
+  sha256: 4735a85a1975edc6ddea412972be2f972a4ade9015844f153ae45d82f47d14ba
+- path: artifacts/E6P_PMRT_V4_EQUIV_FULL_analysis.json
+  sha256: 767d133a7e17d28b3e30d3556494d89783120305c12097654a5b4cc64c567677
+- path: artifacts/E6P_PMRT_V4_EQUIV_FULL_verdict.json
+  sha256: 28c10e7379a4e60113cb15f706123973af5f97dfd63d11bc790a4943139ae976
+- path: artifacts/E6P_PMRT_V4_EQUIV_LOCAL.json
+  sha256: 4eda9446967bf72cc56aaf45e02e758e361bed8c6cc7f96de8fc5c3e846984a5
+- path: protocols/study1/E6P_DISCOVERY_PROTOCOL_V4_ADDENDUM_PMRT.md
+  sha256: 18b1c089ab37f655b13491c7900d3fb8ecc225d9caedabc1d5313b7fd9671a4e
+records:
+- set: study1_raw
+  manifest: manifests/study1_raw.sha256
+  zenodo_doi: null
+- set: study1_train
+  manifest: manifests/study1_train.sha256
+  zenodo_doi: null
+- set: system_artifacts
+  manifest: manifests/system_artifacts.sha256
+  zenodo_doi: null
+tiers:
+  t0: recompute both analysis runs, the verdict and figures_data.json from the stored jobs (bytes)
+  t1: two 120 s smoke episodes (eval, placebo) and the PMRT analysis at B 199 on the stored placebo records
+  t2: collection and analysis re-run on the frozen knockout ground truth
+  t3: collection, knockout ground truth and analysis re-run
+equivalence:
+- metric: verdict
+  rule: PARTIAL, with P2 failing only against Granger + BY
+- metric: conflict chain
+  rule: 4 of 4 edges with the ground-truth sign
+- metric: PMRT placebo declarations
+  rule: '0'
+- metric: point estimates
+  rule: each falls inside the frozen 90 % interval

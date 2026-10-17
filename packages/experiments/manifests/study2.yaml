@@ -1,0 +1,112 @@
+id: study2
+platform: kaggle
+claims:
+- EMP-S2-PLACEBO
+- EMP-S2-MAP
+- EMP-S2-REFEREE
+- EMP-S2-MECH
+- EMP-S2-ASSOC
+- PRO-FROZEN
+- PRO-SEEDS
+protocol:
+  path: study2/E6P_CONFOUNDED_PROTOCOL.md
+  sha256: f719f43085cf1f95cf7c487e0e2c015e4377f9d83a9d4daa5484f42a996c7a1b
+code_origin:
+- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_conf.py
+- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_conf_analyze.py
+- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_opta_ka.py
+- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_opta_kb_analyze.py
+seeds:
+- block: e6p_confounded_episodes
+  range:
+  - 186000
+  - 187999
+  role: confounded logs, knockout labels (186000-186079), referee evaluation
+  world: E6
+stages:
+- name: collection
+  driver: oran_causal.experiments.system.stages:run_stage
+  args:
+    study: 2
+    stage:
+    - dev
+    - disc
+    - placebo
+  inputs:
+  - protocols/study2/E6P_CONFOUNDED_PROTOCOL.md
+  outputs:
+  - study2_raw/e6p-conf-dev-2-a
+  - study2_raw/e6p-conf-disc-1-a
+  - study2_raw/e6p-conf-disc-1-b
+  - study2_raw/e6p-conf-placebo-1-a
+  cost:
+    cpu_h: 19
+    basis: P
+- name: knockout_gt
+  driver: oran_causal.experiments.system.stages:run_stage
+  args:
+    study: 2
+    stage: gt
+  inputs:
+  - protocols/study2/E6P_CONFOUNDED_PROTOCOL.md
+  outputs:
+  - study2_raw/e6p-conf-gt-1-a
+  - study2_raw/e6p-conf-gt-1-b
+  cost:
+    cpu_h: 42
+    basis: P
+  frozen_in:
+  - t2
+- name: analysis
+  driver: oran_causal.analysis.system.study2:recompute_disc
+  inputs:
+  - study2_raw/e6p-conf-disc-1-a
+  - study2_raw/e6p-conf-disc-1-b
+  - study2_raw/e6p-conf-placebo-1-a
+  outputs:
+  - study2_raw/e6p-conf-discan-2/out
+  cost:
+    cpu_h: 2.3
+    basis: M
+- name: eval
+  driver: oran_causal.experiments.system.stages:run_stage
+  args:
+    study: 2
+    stage: eval
+  inputs:
+  - artifacts/E6P_CONF_MAPS.json
+  outputs:
+  - study2_3_decision/runs/e6p-conf-eval-1
+  - study2_3_decision/runs/e6p-conf-evalan-1
+  cost:
+    cpu_h: 58.74
+    basis: M
+frozen_inputs:
+- path: artifacts/E6P_CONF_MAPS.json
+  sha256: 6c82357b913d5ee11d501ff1209ec5e2068732e85181dcd27a5216109ff8940a
+- path: artifacts/E6P_PMRT_V4.json
+  sha256: 9991c390df3a53ef12b553990da52c6adab25d4087bb029f1427e20a898e6a91
+records:
+- set: study2_raw
+  manifest: manifests/study2_raw.sha256
+  zenodo_doi: null
+- set: study2_3_decision
+  manifest: manifests/study2_3_decision.sha256
+  zenodo_doi: null
+- set: system_artifacts
+  manifest: manifests/system_artifacts.sha256
+  zenodo_doi: null
+tiers:
+  t0: recompute the discovery analysis and the evaluation criteria from the stored jobs (bytes)
+  t1: null
+  t2: collection, discovery analysis and referee evaluation re-run on the frozen knockout ground truth
+  t3: collection, knockout ground truth, analysis and evaluation re-run
+equivalence:
+- metric: discovery
+  rule: PASS
+- metric: referee
+  rule: 'NOT ELIGIBLE: RLF upper limit above the guard'
+- metric: transmit-power to neighbour RLF edge
+  rule: undeclared
+- metric: point estimates
+  rule: each falls inside the frozen 90 % interval
