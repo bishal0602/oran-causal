@@ -3,6 +3,10 @@
 A job gets a new runtime, an uploaded bundle and one shell command under `nohup`. Ticks keep the
 runtime alive, pack and download its outputs, and on the exit code stop the runtime and remove the
 schedule. A job that loses its runtime is recorded as lost and is not relaunched: start a new one.
+
+A free-tier CPU runtime whose job has ended is reclaimed about `IDLE_RECLAIM_MIN` minutes after the
+last kernel exec (measured 2026-10-17, runs ocz-smoke-c1 and ocz-diag-c1), so ticks run more often
+than that: a job that ends between two ticks is still pulled by the next one.
 """
 
 import ctypes
@@ -38,6 +42,8 @@ FINISH_POLL_S = 20
 STATE_FILE = "colab.json"
 ENDED_KEYS = ("finished", "lost", "failed")
 SETUP_TIMEOUT_S = 2700
+IDLE_RECLAIM_MIN = 10
+TICK_EVERY_MIN = 5
 
 type PidAlive = Callable[[int], bool]
 
@@ -60,6 +66,19 @@ def pid_alive(pid: int) -> bool:
     return code.value == 259
 
 
+def check_every(every_min: int) -> None:
+    """Rejects a tick interval at which an ended job's idle runtime is reclaimed before its pull.
+
+    Raises:
+        ValueError: If `every_min` is not in `1 .. IDLE_RECLAIM_MIN - 1`.
+    """
+    if not 0 < every_min < IDLE_RECLAIM_MIN:
+        raise ValueError(
+            f"a Colab tick every {every_min} min: the idle runtime is reclaimed after about "
+            f"{IDLE_RECLAIM_MIN} min, use 1..{IDLE_RECLAIM_MIN - 1}"
+        )
+
+
 def utc(now: float | None = None) -> str:
     """ISO UTC timestamp."""
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now))
@@ -76,7 +95,7 @@ class ColabJob:
         out_dir: Bundle-relative directory whose contents each tick downloads, or None.
         threads: BLAS/OpenMP threads; None means the runtime's CPU quota.
         frozen_protocol: Verified frozen protocol text bundled for the EVAL guard.
-        every_min: Tick interval.
+        every_min: Tick interval; below `IDLE_RECLAIM_MIN`.
         scheduled: Register the recurring tick after launch.
     """
 
@@ -86,11 +105,12 @@ class ColabJob:
     out_dir: str | None = None
     threads: int | None = None
     frozen_protocol: bytes | None = None
-    every_min: int = 10
+    every_min: int = TICK_EVERY_MIN
     scheduled: bool = True
 
     def __post_init__(self) -> None:
-        """Rejects an `out_dir` that is absolute, climbs out of the bundle or names a job file."""
+        """Rejects a slow tick, and an `out_dir` outside the bundle or naming a job file."""
+        check_every(self.every_min)
         if self.out_dir is None:
             return
         parts = self.out_dir.replace("\\", "/").strip("/").split("/")
@@ -150,8 +170,13 @@ class ColabEnv:
             f.write(line + "\n")
         self.log(line)
 
-    def arm(self, name: str, every_min: int) -> str:
-        """Registers the recurring tick of job `name`."""
+    def arm(self, name: str, every_min: int = TICK_EVERY_MIN) -> str:
+        """Registers the recurring tick of job `name`.
+
+        Raises:
+            ValueError: If `every_min` fails `check_every`.
+        """
+        check_every(every_min)
         return self.scheduler.schedule(
             schedule.task_name("colab", name),
             schedule.tick_argv("colab", name),
@@ -446,6 +471,7 @@ def tick(name: str, env: ColabEnv) -> str:
 
 
 def _tick_alive(name: str, env: ColabEnv, meta: dict[str, Any], keepalive: dict[str, Any]) -> str:
+    state: dict[str, Any] | None = None
     try:
         state = remote_state(name, env)
         got = download(name, env)
@@ -453,7 +479,15 @@ def _tick_alive(name: str, env: ColabEnv, meta: dict[str, Any], keepalive: dict[
         meta["exec_failures"] = meta.get("exec_failures", 0) + 1
         env.save(name, meta)
         env.event(
-            name, "exec-error", {"n": meta["exec_failures"], "err": str(e)[-400:], **keepalive}
+            name,
+            "exec-error",
+            {
+                "n": meta["exec_failures"],
+                "step": "exec" if state is None else "download",
+                "err": str(e)[-400:],
+                "state": None if state is None else brief(state),
+                **keepalive,
+            },
         )
         if meta["exec_failures"] < EXEC_FAILURE_LIMIT:
             return "exec-error"

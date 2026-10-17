@@ -58,7 +58,7 @@ def build_parser() -> argparse.ArgumentParser:
         p = sub.add_parser(platform)
         p.add_argument("action", choices=actions)
         p.add_argument("name", nargs="?")
-        p.add_argument("--every", type=int, default=10)
+        p.add_argument("--every", type=int, default=colab.TICK_EVERY_MIN)
     k = sub.add_parser("kaggle")
     k.add_argument("action", choices=("status", "pull"))
     k.add_argument("name")

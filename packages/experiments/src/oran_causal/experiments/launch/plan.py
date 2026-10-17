@@ -229,7 +229,7 @@ def kaggle_job(plan: SessionPlan) -> kaggle.KaggleJob:
     )
 
 
-def colab_job(plan: SessionPlan, every_min: int = 10) -> colab.ColabJob:
+def colab_job(plan: SessionPlan, every_min: int = colab.TICK_EVERY_MIN) -> colab.ColabJob:
     """The Colab job of a plan (one thread per process)."""
     r = plan.request
     return colab.ColabJob(

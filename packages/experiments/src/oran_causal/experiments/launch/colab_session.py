@@ -7,6 +7,7 @@ The campaign uses one-shot jobs: a new runtime, an uploaded bundle, a shell comm
 import dataclasses
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -34,6 +35,8 @@ NEW_TRIES = 3
 NEW_RETRY_S = 60
 STOP_WAIT_S = 600
 STOP_POLL_S = 15
+SESSION_ROW = re.compile(r"^\[(?P<name>[^\]]+)\] \S+ \| Hardware: ")
+NO_SESSIONS = "No active sessions found on server"
 
 WRAP = (
     "import sys\n"
@@ -318,6 +321,20 @@ def session_probe(name: str, ping: bool = True) -> dict[str, Any]:
     raise ColabError(f"session probe rc={p.returncode}: {(p.stdout + p.stderr)[-1500:]}")
 
 
+def assignment_rows(out: str) -> list[str]:
+    """Session names of the server's assignments in `colab sessions` output (`?` for an orphan).
+
+    Message lines such as `[colab] Pruned 1 stale local session(s).` are not rows.
+
+    Raises:
+        ColabError: If the output has neither a row nor the no-sessions message.
+    """
+    rows = [m["name"] for ln in out.splitlines() if (m := SESSION_ROW.match(ln.strip()))]
+    if not rows and NO_SESSIONS not in out:
+        raise ColabError(f"cannot parse `colab sessions`: {out[-1500:]}")
+    return rows
+
+
 def tagged(out: str, tag: str) -> dict[str, Any]:
     """The JSON after the last line starting with `tag `."""
     for line in reversed(out.splitlines()):
@@ -406,34 +423,26 @@ class Colab:
                     return
             except ColabError, subprocess.TimeoutExpired:
                 pass
-            n = self.active_assignments()
-            if n:
-                sessions = self.call("sessions", timeout=120, check=False)
-                if f"[{name}]" in sessions:
-                    return
-                known = sum(1 for ln in sessions.splitlines() if ln.lstrip().startswith("["))
-                if n > known:
-                    raise AssignmentError(
-                        f"{n} active assignment(s), only {known} known sessions "
-                        f"(not {name!r}): {sessions}"
-                    )
+            sessions = self.call("sessions", timeout=120)
+            rows = assignment_rows(sessions)
+            if name in rows:
+                return
+            if "?" in rows:
+                raise AssignmentError(
+                    f"{rows.count('?')} orphan assignment(s) (not {name!r}): {sessions}"
+                )
             self.clock.sleep(NEW_RETRY_S)
         raise ColabError(f"could not create a {self.accelerator} runtime after {tries} attempts")
 
     def gone(self, name: str) -> tuple[bool, int]:
-        """(session `name` is gone, active assignments).
+        """(session `name` is gone, the other active assignments).
 
-        Gone means not listed by `colab sessions` and no more assignments than the other listed
-        sessions, so a finished job is recognised while another one runs.
+        Both come from the server's assignment list (`colab sessions`), so a finished job is
+        recognised while another one runs. `colab usage` is not used: it shows an unassigned
+        runtime for about 5 more minutes.
         """
-        n = self.active_assignments()
-        sessions = self.call("sessions", timeout=120, check=False)
-        others = sum(
-            1
-            for ln in sessions.splitlines()
-            if ln.lstrip().startswith("[") and f"[{name}]" not in ln
-        )
-        return f"[{name}]" not in sessions and n <= others, n
+        rows = assignment_rows(self.call("sessions", timeout=120))
+        return name not in rows, sum(1 for r in rows if r != name)
 
     def wait_gone(self, name: str, wait_s: float = STOP_WAIT_S) -> tuple[bool, int]:
         """Polls `gone` until true or `wait_s` passed (unassigning shows in usage after minutes)."""

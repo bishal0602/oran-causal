@@ -1,3 +1,4 @@
+import dataclasses
 import io
 import json
 import tarfile
@@ -9,6 +10,8 @@ import pytest
 from oran_causal.experiments.launch import colab, colab_session
 from oran_causal.experiments.launch.runner import Dirs
 from oran_causal.experiments.launch.schedule import task_name
+
+SESSION_ROW = "[job-x] m-s-1 | Hardware: CPU | Shape: Standard | Variant: DEFAULT"
 
 
 class FakeScheduler:
@@ -34,6 +37,7 @@ class FakeColab:
         self.pack: dict[str, bytes] = {"outdir/res_0.jsonl": b"{}\n", "exit_code": b"0"}
         self.execs: list[str] = []
         self.setup_error: Exception | None = None
+        self.download_error: Exception | None = None
 
     def __call__(self, argv: Sequence[str], timeout: float, check: bool) -> str:
         self.calls.append(tuple(argv))
@@ -44,13 +48,15 @@ class FakeColab:
             self.session = True
             return "READY"
         if verb == "sessions":
-            return "[job-x] cpu" if self.session else ""
+            return SESSION_ROW if self.session else "[colab] No active sessions found on server."
         if verb == "stop":
             self.session = False
             return "stopped"
         if verb == "upload":
             return "uploaded"
         if verb == "download":
+            if self.download_error is not None:
+                raise self.download_error
             self.write_tar(Path(argv[-1]))
             return "downloaded"
         if verb == "exec":
@@ -241,3 +247,80 @@ def test_stop_disarms_and_reports_other_assignments(world):
     assert colab.stop("job-x", env) == 0
     assert not sched.tasks
     assert not cli.session
+
+
+def tick_events(env) -> list[tuple[str, dict]]:
+    lines = (env.run_dir("job-x") / "tick.log").read_text().splitlines()
+    return [(ln.split(" ", 2)[1], json.loads(ln.split(" ", 2)[2])) for ln in lines]
+
+
+def test_a_reclaimed_runtime_fails_the_download_then_the_job_is_lost(world):
+    env, cli, sched, _ = world
+    colab.launch_job(JOB, env)
+    cli.ticks = [tick_state(exit_code=0, alive=False)]
+    cli.download_error = colab_session.ColabError(
+        "colab download -s job-x rc=1: File or directory not found: " + colab_session.JOB_PULL
+    )
+    assert colab.tick("job-x", env) == "exec-error"
+    event, info = tick_events(env)[-1]
+    assert event == "exec-error"
+    assert info["step"] == "download"
+    assert info["state"]["exit_code"] == 0
+    assert sched.tasks
+    cli.session = False
+    assert colab.tick("job-x", env) == "lost"
+    assert env.load("job-x")["lost_reason"] == "session gone before the exit code was pulled"
+    assert not sched.tasks
+
+
+def test_a_failed_exec_is_logged_without_a_state(world):
+    env, cli, _, _ = world
+    colab.launch_job(JOB, env)
+    cli.ticks = [colab_session.ColabError("x")]
+    colab.tick("job-x", env)
+    _, info = tick_events(env)[-1]
+    assert (info["step"], info["state"]) == ("exec", None)
+
+
+@pytest.mark.parametrize("every", [0, colab.IDLE_RECLAIM_MIN, 15])
+def test_a_tick_slower_than_the_idle_reclaim_is_refused(world, every: int):
+    env, *_ = world
+    with pytest.raises(ValueError, match="reclaimed"):
+        colab.ColabJob("n", "c", every_min=every)
+    with pytest.raises(ValueError, match="reclaimed"):
+        env.arm("job-x", every)
+
+
+def test_the_default_tick_beats_the_idle_reclaim(world):
+    env, _, sched, _ = world
+    colab.launch_job(dataclasses.replace(JOB, every_min=colab.TICK_EVERY_MIN), env)
+    assert sched.tasks[task_name("colab", "job-x")][1] == colab.TICK_EVERY_MIN
+    assert 2 * colab.TICK_EVERY_MIN <= colab.IDLE_RECLAIM_MIN
+    assert colab.ColabJob("n", "c").every_min == colab.TICK_EVERY_MIN
+
+
+def test_assignment_rows_skip_cli_messages_and_keep_orphans():
+    out = "\n".join(
+        [
+            "[colab] Pruned 1 stale local session(s).",
+            SESSION_ROW,
+            "[?] m-s-2 | Hardware: CPU | Shape: Standard | Variant: DEFAULT",
+        ]
+    )
+    assert colab_session.assignment_rows(out) == ["job-x", "?"]
+    assert colab_session.assignment_rows("[colab] No active sessions found on server.") == []
+    with pytest.raises(colab_session.ColabError):
+        colab_session.assignment_rows("[colab] Error: 503")
+
+
+def test_gone_ignores_the_lagging_usage_count(launch_kit):
+    answers = {
+        "usage": "Active assignments: 1",
+        "sessions": "[colab] No active sessions found on server.",
+    }
+    clock = launch_kit.FakeClock().clock()
+    c = colab_session.Colab(lambda argv, t, check: answers[argv[0]], clock=clock)
+    assert c.gone("job-x") == (True, 0)
+    answers["sessions"] = SESSION_ROW
+    assert c.gone("job-x") == (False, 0)
+    assert c.gone("other") == (True, 1)
