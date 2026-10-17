@@ -390,18 +390,23 @@ def test_x8_declaration_block_keeps_determined_hypotheses():
     }
 
 
+ABSENT_OK = frozenset({"ptx_post"})
+
+
 def near(got, want, rtol=0.2, path=""):
-    """Top-level fields equal; shared numbers within `rtol` (episodes diverge across hardware)."""
+    """Same shape as `want`; numbers within `rtol` (episodes diverge across hardware).
+
+    Dict keys must match at every level except the names in `ABSENT_OK`, which may be missing
+    on either side (a rare event that one platform's episode never reaches).
+    """
     if isinstance(want, dict):
         assert isinstance(got, dict), path
-        if not path:
-            assert sorted(got) == sorted(want), path
+        extra = (got.keys() ^ want.keys()) - ABSENT_OK
+        assert not extra, (path, sorted(extra))
         for k in want.keys() & got.keys():
             near(got[k], want[k], rtol, f"{path}/{k}")
     elif isinstance(want, list):
         assert isinstance(got, list), path
-        if all(isinstance(w, int | float | str) for w in want):
-            return
         assert len(got) == len(want), path
         for i, (g, w) in enumerate(zip(got, want, strict=True)):
             near(g, w, rtol, f"{path}[{i}]")

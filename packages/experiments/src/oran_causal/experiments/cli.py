@@ -28,7 +28,7 @@ CHECKS: tuple[tuple[str, ...], ...] = (
 )
 TIERS = ("t0", "t1", "t2", "t3")
 STUDIES = ("study1", "study2", "study3", "study4")
-DEFAULT_OUT = Path("reproduce_out")
+DEFAULT_OUT = Path("build") / "reproduce"
 LAUNCH_COMMANDS = ("launch", "colab", "kaggle", "vps", "dispatch", "fingerprint")
 DELEGATES: dict[str, str] = {
     "campaign": "Study 4 campaign runner: list, run, merge",
