@@ -20,10 +20,10 @@ Use `--extra cu128` instead of `--extra cpu` on CUDA hosts. The two extras confl
 
 | Tier | Scope | Status |
 |---|---|---|
-| t0 | Regenerate figures and tables from frozen records | not implemented yet |
-| t1 | CPU smoke run, under 10 minutes | not implemented yet |
-| t2 | End-to-end re-run on a VPS | not implemented yet |
-| t3 | Full re-run across VPS, Kaggle and Colab | not implemented yet |
+| t0 | Regenerate figures and tables from frozen records | implemented: `uv run oran-causal reproduce --tier t0 [--records DIR]` |
+| t1 | CPU smoke run, under 10 minutes | implemented: `uv run oran-causal reproduce --tier t1` |
+| t2 | End-to-end re-run on a VPS | dry run only: `uv run oran-causal reproduce --tier t2 --dry-run [--platform P]` |
+| t3 | Full re-run across VPS, Kaggle and Colab | dry run only: `uv run oran-causal reproduce --tier t3 --dry-run [--platform P]` |
 
 ## Layout
 

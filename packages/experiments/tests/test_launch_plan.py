@@ -94,6 +94,7 @@ def test_paths_and_skip_globs_join_the_bundle(ws: Path, launch_kit):
 def test_selftest_bundles_the_tests_for_a_cloud_session(ws: Path, launch_kit):
     p = make(ws, "kaggle", launch_kit, part_ids=[0], selftest=True)
     assert "packages/experiments/tests" in p.extra
+    assert "packages/trace/src" in p.extra
     assert "pytest" in p.cmd
 
 

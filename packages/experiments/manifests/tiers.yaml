@@ -1,0 +1,75 @@
+# Compute plan of the re-run tiers t2 and t3 (`oran-causal reproduce --tier t2|t3 --dry-run`).
+# Costs are CPU-hours on the Kaggle reference host (Xeon 2.20 GHz). Basis: M measured as a sum of
+# record cpu_s, P protocol estimate, E extrapolation; source: the 2026-10-15 re-run cost audit of
+# CDD-ORAN (EVAL eval/csv/cost.csv, exp_c calib factors.json, X4 and X7 reports).
+# A stage listed in `frozen_in` reuses the frozen records in that tier. A range [low, high] is an
+# extrapolation without a measured sum. Study 4 is priced unit by unit from its spec and the frozen
+# DEV-projected cost table.
+factors:
+  kaggle: 1.0
+  colab: 1.07
+  vps: 2.56
+platforms:
+  kaggle: {sessions: 4, procs: 4, session_h: 12}
+  colab: {sessions: 1, procs: 2, session_h: 12}
+  vps: {sessions: 1, procs: 12, session_h: 72}
+items:
+  - name: study1
+    platform: kaggle
+    tiers: [t2, t3]
+    stages:
+      - {name: collection, ref_cpu_h: 12, basis: M}
+      - {name: knockout_gt, ref_cpu_h: 42, basis: M, frozen_in: [t2]}
+      - {name: analysis, ref_cpu_h: 10, basis: M}
+  - name: study2
+    platform: kaggle
+    tiers: [t2, t3]
+    stages:
+      - {name: collection, ref_cpu_h: 19, basis: P}
+      - {name: knockout_gt, ref_cpu_h: 42, basis: P, frozen_in: [t2]}
+      - {name: analysis, ref_cpu_h: 2.3, basis: M}
+      - {name: eval, ref_cpu_h: 58.74, basis: M}
+  - name: study3
+    platform: kaggle
+    tiers: [t2, t3]
+    stages:
+      - {name: eval, ref_cpu_h: 58.16, basis: M}
+      - {name: dev, ref_cpu_h: 0.8, basis: M}
+      - {name: bounds, ref_cpu_h: 0.3, basis: M}
+  - name: study4
+    platform: vps
+    tiers: [t2, t3]
+    campaign:
+      spec: specs/eval/full.json
+      cost_table: artifacts/eval_cost_table.json
+      drop_n_in: {t2: [24000]}
+  - name: bridging
+    platform: kaggle
+    tiers: [t3]
+    stages:
+      - {name: campaign, ref_cpu_h: 82.0, basis: M}
+  - name: x2_x3
+    platform: kaggle
+    tiers: [t3]
+    stages:
+      - {name: campaign, ref_cpu_h: 63.9, basis: M}
+  - name: x4
+    platform: kaggle
+    tiers: [t3]
+    stages:
+      - {name: referee, ref_cpu_h: 10.5, basis: M}
+  - name: x7
+    platform: kaggle
+    tiers: [t3]
+    stages:
+      - {name: referee, ref_cpu_h: 47.5, basis: M}
+  - name: x5_x6
+    platform: kaggle
+    tiers: [t3]
+    stages:
+      - {name: diagnostics, ref_cpu_h: [20, 60], basis: E}
+  - name: x9_x16
+    platform: colab
+    tiers: [t3]
+    stages:
+      - {name: stored_records, ref_cpu_h: [0, 1], basis: M}

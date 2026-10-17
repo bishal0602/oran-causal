@@ -20,7 +20,7 @@ KAGGLE_OUT = "$JOB_OUT"
 COLAB_OUT = "xm_out"
 COLAB_EVAL_OUT = "xm_eval_out"
 EVAL_SUBDIR = "eval"
-SELFTEST_EXTRA = ("packages/experiments/tests",)
+SELFTEST_EXTRA = ("packages/experiments/tests", "packages/trace/src")
 PROFILES: dict[str, hosts.HostProfile] = {
     "kaggle": hosts.KAGGLE_CPU,
     "colab": hosts.COLAB_CPU,

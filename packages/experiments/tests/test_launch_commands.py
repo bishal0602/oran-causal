@@ -68,6 +68,8 @@ def test_setup_installs_the_bundled_lock_and_checks_the_pins():
     assert "pytest" not in setup
     selftest = commands.setup_cmd(commands.SetupPlan("$OUT", selftest=True))
     assert "uv sync --frozen --group dev" in selftest
+    assert f"--package {commands.TRACE_PACKAGE}" in selftest
+    assert commands.TRACE_PACKAGE not in setup
     assert "packages/experiments/tests/test_campaign_*.py" in selftest
 
 

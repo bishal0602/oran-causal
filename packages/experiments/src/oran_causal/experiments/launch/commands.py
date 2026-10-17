@@ -15,6 +15,7 @@ PYTHON_VERSION_REL = ".python-version"
 VENV_DIR = "/tmp/oran-causal-venv"
 EXPERIMENTS_PACKAGE = "oran-causal-experiments"
 METHODS_PACKAGE = "oran-causal-methods"
+TRACE_PACKAGE = "oran-causal-trace"
 SELFTEST_TESTS = ("packages/experiments/tests/test_campaign_*.py",)
 THREADS = "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1"
 PIN_CHECK = (
@@ -146,12 +147,15 @@ class SetupPlan:
 def sync_command(plan: SetupPlan) -> str:
     """`uv sync` of the bundle's lock into a venv outside the bundle.
 
-    The torch extra belongs to the methods package, so it is selected as a second package.
+    The torch extra belongs to the methods package, so it is selected as a second package. A
+    selftest also installs the trace package, whose pytest plugin registers the `claim` marker.
     """
     pkgs = f"--package {EXPERIMENTS_PACKAGE}"
     if plan.torch:
         extra = "cu128" if plan.gpu else "cpu"
         pkgs += f" --package {METHODS_PACKAGE} --extra {extra}"
+    if plan.selftest:
+        pkgs += f" --package {TRACE_PACKAGE}"
     group = "--group dev" if plan.selftest else "--no-dev"
     return f"uv sync --frozen {group} {pkgs}"
 
