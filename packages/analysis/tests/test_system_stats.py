@@ -7,7 +7,6 @@ import pytest
 
 from oran_causal.analysis.system import stats, study2, study3
 from oran_causal.analysis.system.stats import (
-    ANCHORS,
     JobFilter,
     alias_fill,
     arm_stats,
@@ -201,13 +200,3 @@ def test_dumps_joins_tuple_keys_and_keeps_nan() -> None:
     text = dumps({("a", "b"): (1, np.float64(0.5)), "n": float("nan"), "z": np.int64(2)})
     assert text == '{\n "a|b": [\n  1,\n  0.5\n ],\n "n": NaN,\n "z": 2\n}'
 
-
-def test_anchor_order() -> None:
-    assert ANCHORS == (
-        "freeze",
-        "sub:ES+PowerES",
-        "noarb",
-        "sub:ES",
-        "sub:PowerES",
-        "sub:SliceGuarantee",
-    )

@@ -148,8 +148,8 @@ def test_truth_from_gt(tmp_path: Path) -> None:
 def test_end_to_end(tmp_path: Path) -> None:
     tabs = tmp_path / "tables"
     tabs.mkdir()
-    fake_table(tabs / "e6units_eval.npz", "eval", range(188100, 188220), per_ep=6)
-    fake_table(tabs / "e6units_placebo.npz", "placebo", range(188700, 188740), per_ep=6, rng_seed=1)
+    fake_table(tabs / "e6units_eval.npz", "eval", range(188100, 188220), per_ep=4)
+    fake_table(tabs / "e6units_placebo.npz", "placebo", range(188700, 188740), per_ep=4, rng_seed=1)
     fake_gt(tmp_path / "gt.json")
     arms = {
         "corr": ("corr", {"arm": "native"}),
@@ -170,7 +170,7 @@ def test_end_to_end(tmp_path: Path) -> None:
     }
     c = R.counts_from_tables(spec, tabs)
     Path(spec["counts"]).write_text(json.dumps({"counts": c}), encoding="utf-8")
-    assert (c["s60_0"]["sleep"], c["placebo"]["sleep"], c["s60_5"]["sleep"]) == (360, 240, 0)
+    assert (c["s60_0"]["sleep"], c["placebo"]["sleep"], c["s60_5"]["sleep"]) == (240, 160, 0)
     units = R.expand(spec, c)
     assert len(units) == 3 * 4 * 3
     assert len(plan.spec_slices(spec)) == 11

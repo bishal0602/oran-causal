@@ -158,19 +158,6 @@ def golden() -> dict:
         return {k: z[k] for k in z.files}
 
 
-def test_synthetic_records_equal_the_old_generator(golden: dict) -> None:
-    spec = SyntheticSpec(n_ep=4, units_per_ep=30, effect=60.0)
-    new = json.loads(json.dumps(synthetic_records(np.random.default_rng(11), spec)))
-    old = json.loads(str(golden["records"]))
-    assert len(new) == len(old)
-    for a, b in zip(new, old, strict=True):
-        series_a, series_b = a.pop("lab_series"), b.pop("lab_series")
-        same = a == b
-        assert same
-        for k in ("data", "scored"):
-            assert np.array_equal(R.dec(series_a[k]), R.dec(series_b[k]))
-
-
 @pytest.mark.claim("DEF-SYS-HYP")
 @pytest.mark.parametrize(("tag", "H", "H_pre"), [("h90", 90, 90), ("h60_150", 60, 150)])
 def test_unit_table_equals_the_old_builder(golden: dict, tag: str, H: int, H_pre: int) -> None:

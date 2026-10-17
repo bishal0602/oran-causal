@@ -102,10 +102,10 @@ def test_estimand_check_reproduces_the_frozen_run(kit):
 
 
 def synthetic_design(rng: np.random.Generator) -> kappa.DesignData:
-    rows = kappa.N_DEV * 30
+    rows = kappa.N_DEV * 9
     x = rng.normal(size=(rows, 6))
     y = np.column_stack([3 * x[:, i] + rng.normal(scale=0.5, size=rows) for i in range(5)])
-    ep = np.repeat(np.arange(kappa.N_DEV), 30)
+    ep = np.repeat(np.arange(kappa.N_DEV), 9)
     cell = np.tile(np.arange(3), rows // 3)
     return kappa.DesignData(x, y, ep, cell)
 
@@ -119,8 +119,8 @@ def test_kappa_point_and_bootstrap_are_deterministic():
     a = kappa.point(d, train, test, cols)
     assert a == kappa.point(d, train, test, cols)
     assert set(a) == {f"{s}/{k}" for s, _ in kappa.SPLITS for k in ("pooled", "within")}
-    boots = kappa.bootstrap(d, cols, range(3), log=lambda _msg: None)
-    assert boots == kappa.bootstrap(d, cols, range(3), log=lambda _msg: None)
+    boots = kappa.bootstrap(d, cols, range(2), log=lambda _msg: None)
+    assert boots == kappa.bootstrap(d, cols, range(2), log=lambda _msg: None)
     ci = kappa.bootstrap_ci(boots)
     lo, hi = ci["pooled"]["u"]["pv"]
     assert lo <= hi

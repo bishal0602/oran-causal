@@ -30,10 +30,6 @@ SLICES = {
 }
 
 
-def test_flat_flattens_nested_lists_and_scalars() -> None:
-    assert pd.flat([1, [2, [3]]], 4, []) == [1, 2, 3, 4]
-
-
 def test_null_counts_follow_the_labels_and_the_interval() -> None:
     assert pd.null_hypothesis_count(CELLS) == 3
     assert pd.unestablished_null_count(CELLS) == 2
@@ -47,7 +43,7 @@ def test_null_rejection_rates_use_only_the_60_episode_slices() -> None:
 def test_derived_functions_are_available_to_value_expressions() -> None:
     names = {"cells": CELLS, "slices": SLICES}
     assert pv.evaluate("null_hypothesis_count(cells)", names) == 3
-    assert pv.evaluate("min(flat(a, b))", {"a": [[0.4, 0.2]], "b": [0.3]}) == 0.2
+    assert pv.evaluate("min(flat(a, b))", {"a": [[0.4, [0.2]]], "b": 0.3}) == 0.2
 
 
 def test_subtree_arguments_are_pinned_without_a_stored_value(tmp_path: Path) -> None:

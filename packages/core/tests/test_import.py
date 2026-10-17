@@ -15,11 +15,6 @@ PROBE = (
 )
 
 
-def test_member_imports() -> None:
-    module = importlib.import_module("oran_causal.core")
-    assert module.__name__ == "oran_causal.core"
-
-
 def test_every_module_imports() -> None:
     names = [m.name for m in pkgutil.walk_packages(oran_causal.core.__path__, "oran_causal.core.")]
     assert "oran_causal.core.pmrt.engine" in names

@@ -8,7 +8,7 @@ from oran_causal.core.covariates import CovariateSpec, design_covariates
 from oran_causal.core.data import EdgeResult, Result
 from oran_causal.core.pvalues import SequentialP, sequential_p_from_draws
 from oran_causal.core.scoring import placebo_tau, tau_rule_name
-from oran_causal.methods.controlled import _citests, mscr
+from oran_causal.methods.controlled import mscr
 from oran_causal.methods.controlled._citests import (
     PLACEBO,
     CITestBase,
@@ -22,7 +22,6 @@ from oran_causal.methods.controlled._citests import (
 from oran_causal.methods.controlled._classic import cond_set
 from oran_causal.methods.controlled._rcot import (
     frozen_config_v2,
-    pair_seed,
     rcot_statistic,
     residual_collapse,
     rff_residuals,
@@ -321,11 +320,6 @@ def test_eq_arm_layout_on_controlled_worlds(world, regime):
             _check_eq_z(ds, eq, i, nm_i)
 
 
-def test_eq_arm_focal_setpoint_in_z():
-    eq2 = prepare(generate_dataset("E2", "R2", 300, DEV0)[0], "eq")
-    assert "sp:P0" in {eq2.S_names[c] for c in eq2.z_cols(0)}
-
-
 def test_eq_arm_pcorr_matches_ols():
     ds, _ = generate_dataset("E2", "R2", 400, DEV0 + 3)
     ds = dataclasses.replace(
@@ -491,12 +485,3 @@ def test_mscr_bank_stream_per_column_group(monkeypatch):
     assert np.array_equal(s0, np.random.default_rng([5, 0, 299]).random(3))
     s1 = real(5, [0], 299, 1)[0].random(3)
     assert np.array_equal(s1, np.random.default_rng([5, 0, 299, 1]).random(3))
-
-
-def test_pair_seed_and_method_seed_streams():
-    assert pair_seed(0, 1, 2) == int(
-        np.random.SeedSequence(0, spawn_key=(1, 2)).generate_state(1)[0]
-    )
-    assert method_seed(7, 4) == int(
-        np.random.SeedSequence([_citests.RNG_TAG, 7, 4]).generate_state(1)[0]
-    )

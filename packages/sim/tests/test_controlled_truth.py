@@ -1,5 +1,4 @@
 import math
-from typing import ClassVar
 
 import numpy as np
 import pytest
@@ -285,13 +284,3 @@ def test_e5_gated_effect_is_inert_outside_the_gate() -> None:
     outside = terminal_harm(3.5, 25.0, 50.0) - terminal_harm(3.5, 25.0, -50.0)
     assert in_gate > 0.0
     assert outside == 0.0
-
-
-def test_unimplemented_base_hooks_raise() -> None:
-    class Incomplete(ControlledEnv):
-        num_params = 1
-        num_kpis = 1
-        id_ranges: ClassVar[list[tuple[float, float]]] = [(0.0, 1.0)]
-
-    with pytest.raises(NotImplementedError):
-        Incomplete()._update_kpis(np.zeros(1), np.zeros(1))

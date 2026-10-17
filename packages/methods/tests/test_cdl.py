@@ -109,9 +109,10 @@ def test_gradient_step_rule():
     ]
 
 
-def test_deterministic(syn, res):
-    again = CDLMethod().run(syn[0], dict(FAST, tau=0.01))
-    assert [e.score for e in again.edges] == [e.score for e in res.edges]
+def test_deterministic(syn):
+    cfg = dict(FAST, max_gradient_steps=30, tau=0.01)
+    a, b = (CDLMethod().run(syn[0], cfg) for _ in range(2))
+    assert [e.score for e in a.edges] == [e.score for e in b.edges]
 
 
 def test_untuned_declares_nothing(syn):
@@ -149,7 +150,8 @@ def _rows(r):
 def test_placebo_conf_does_not_change_primary(regime):
     ds, _ = generate_dataset("E4", regime, 300, 3_000_001, lam=1.5, kappa=0.25)
     m = CDLMethod()
-    a, b = m.run(ds, FAST), m.run(_conf_scrambled(ds), FAST)
+    cfg = dict(FAST, max_gradient_steps=60)
+    a, b = m.run(ds, cfg), m.run(_conf_scrambled(ds), cfg)
     assert _rows(a) == _rows(b)
     assert all("P_placebo_conf" not in c for c in a.notes["fit"]["cmi"]["K0"])
     assert "R-37" in a.notes["diagnostic_fit"]["rule"]

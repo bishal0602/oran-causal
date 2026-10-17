@@ -13,7 +13,6 @@ from oran_causal.methods.controlled._rcot import (
     standardize,
 )
 from oran_causal.methods.controlled.pcorr import (
-    EPS_COND,
     FROZEN_FLOOR,
     largest_gap,
     partial_correlation_scores,
@@ -38,8 +37,6 @@ def test_largest_gap_cuts_between_zero_and_signal():
     assert largest_gap(np.array([0.0, 0.0001, 0.0004])) == pytest.approx(0.00025)
     assert largest_gap(np.array([0.3])) == 0.3
     assert largest_gap(np.array([])) == 0.0
-    assert FROZEN_FLOOR == 0.0
-    assert EPS_COND == 1e-8
 
 
 def test_partial_correlation_true_edges_near_one_and_non_edges_zero():

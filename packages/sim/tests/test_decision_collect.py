@@ -144,7 +144,7 @@ def test_placebo_incumbent_logs_the_draw_and_applies_accept() -> None:
 
 
 def test_all_accept_pi0_is_bit_identical_to_accept_all_and_the_tap_matches_sla() -> None:
-    cfg = cfg_p3()
+    cfg = cfg_p3(scored=60.0)
     ref = accept_all_reference(cfg)
     tables = {x: {"accept": 1.0} for x in CP.PI0_HIGH}
     res = CP.run_collection(cfg, CP.RandomizedUnitPolicy(cfg.seed, tables=tables))

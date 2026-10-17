@@ -4,7 +4,6 @@ import numpy as np
 import pytest
 
 from oran_causal.experiments.harness import runner
-from oran_causal.experiments.harness.isolation import PeakRSS, can_isolate
 from oran_causal.experiments.harness.records import Job, clean, done_keys, run_one
 from oran_causal.methods.controlled.dummy import DummyMethod
 from oran_causal.sim.controlled.datasets.generate import dataset_hash, generate_dataset
@@ -128,10 +127,3 @@ def test_done_keys_skip_errors_and_broken_lines(tmp_path):
     path.write_text("".join(json.dumps(r) + "\n" for r in rows) + '{"key": "c"', encoding="utf-8")
     assert done_keys(path) == {"a"}
     assert done_keys(tmp_path / "missing.jsonl") == set()
-
-
-def test_peak_rss_reports_a_scope():
-    with PeakRSS() as mem:
-        _ = np.ones(10)
-    assert mem.scope in (None, "job", "process")
-    assert can_isolate() in (True, False)

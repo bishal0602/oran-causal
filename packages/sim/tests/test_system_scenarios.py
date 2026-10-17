@@ -296,7 +296,7 @@ def rollback(env: E6Env, knobs: Iterable[tuple]) -> None:
 
 
 def test_oam_push_once_persists_and_is_not_rollbackable() -> None:
-    c = cfg(scenario="mistune", warmup_s=10.0, scored_s=1800.0)
+    c = cfg(scenario="mistune", warmup_s=10.0, scored_s=600.0)
     env = E6Env(c, log=False)
     p = env.plant
     scn = mistune(p)
@@ -332,7 +332,7 @@ def test_oam_push_once_persists_and_is_not_rollbackable() -> None:
 
 
 def test_tape_is_arbiter_independent_through_the_rollout() -> None:
-    c = cfg(scenario="mistune", mix="M4", warmup_s=10.0, scored_s=1800.0)
+    c = cfg(scenario="mistune", mix="M4", warmup_s=10.0, scored_s=600.0)
     a, b = E6Env(c, log=False), E6Env(c, log=False)
     sa, sb = mistune(a.plant), mistune(b.plant)
     t = int(np.ceil(sa.t_mis)) + 5

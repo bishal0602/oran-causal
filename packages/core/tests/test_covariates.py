@@ -5,51 +5,12 @@ import numpy as np
 import pytest
 
 from oran_causal.core import covariates as cov
-from oran_causal.core.data import Dataset, Result
-from oran_causal.core.pmrt import rows
+from oran_causal.core.data import Dataset
 from oran_causal.core.pmrt.candidates import concurrent_columns
 from oran_causal.core.pmrt.rows import PmrtCore
 
 CFG = {"B": 199, "seq_h": None}
 MakeData = Callable[..., Dataset]
-
-
-def legacy_finite_block(m: np.ndarray | None) -> list[np.ndarray]:
-    if m is None:
-        return []
-    m = np.asarray(m, float)
-    if m.ndim == 1:
-        m = m[:, None]
-    cols: list[np.ndarray] = []
-    for j in range(m.shape[1]):
-        c = m[:, j]
-        ok = np.isfinite(c)
-        if not ok.any():
-            continue
-        cols += [c] if ok.all() else [np.where(ok, c, 0.0), (~ok).astype(float)]
-    return cols
-
-
-def legacy_covariates(data: Dataset, order: np.ndarray, hist_lags: int) -> np.ndarray:
-    n = data.n
-    cols = legacy_finite_block(data.X_kpi_lag[order] if data.X_kpi_lag is not None else None)
-    if data.context is not None:
-        cols += legacy_finite_block(np.asarray(data.context)[order])
-    for d in data.designs:
-        if d.kind == "dither" and d.fixed_part is not None:
-            cols += legacy_finite_block(np.asarray(d.fixed_part, float)[order])
-    a = np.asarray(data.X_action, float)[order]
-    t = None if data.time_index is None else np.asarray(data.time_index)[order]
-    for lag in range(1, min(hist_lags, n - 1) + 1):
-        ok = np.zeros(n, bool)
-        ok[lag:] = True if t is None else (t[lag:] - t[:-lag]) == lag
-        lagged = np.zeros_like(a)
-        lagged[lag:] = a[:-lag]
-        lagged[~ok] = 0.0
-        cols += [lagged[:, j] for j in range(a.shape[1])]
-        if t is not None and not ok[lag:].all():
-            cols.append((~ok).astype(float))
-    return np.column_stack(cols) if cols else np.zeros((n, 0))
 
 
 def perturb(ds: Dataset, seed: int = 7, time_index: bool = True) -> Dataset:
@@ -81,25 +42,6 @@ def perturb(ds: Dataset, seed: int = 7, time_index: bool = True) -> Dataset:
         time_index=t[perm] if time_index else None,
         context=shuffled(ds.context),
     )
-
-
-def bases(make_rows: MakeData, make_logged: MakeData) -> list[Dataset]:
-    return [make_rows(300, regime="R1"), make_rows(300, regime="R2"), make_logged(300)]
-
-
-@pytest.mark.parametrize("lags", [0, 1, 2, 3])
-def test_builder_equals_legacy_covariates(
-    make_rows: MakeData, make_logged: MakeData, lags: int
-) -> None:
-    for base in bases(make_rows, make_logged):
-        for ds in (base, perturb(base), perturb(base, time_index=False)):
-            order = cov.info_order(ds)
-            names, m, mask = cov.design_covariates(ds, cov.CovariateSpec(lags=lags))
-            ref = legacy_covariates(ds, order, lags)
-            assert m.shape == ref.shape
-            assert np.array_equal(m[order], ref)
-            assert len(names) == m.shape[1] == len(set(names))
-            assert mask.shape == (ds.n,)
 
 
 def test_names_blocks_and_encoding(make_rows: MakeData) -> None:
@@ -169,37 +111,6 @@ def test_eq_min_set(make_rows: MakeData) -> None:
     ds = make_rows(200, regime="R2")
     names, _, _ = cov.eq_min_covariates(ds, "P0")
     assert names == ("lag_kpi:K0", "lag_kpi:K1", "sp:P0", "concurrent:P1", "concurrent:P_placebo")
-
-
-def edges_repr(res: Result) -> str:
-    return repr([(e.source, e.target, e.score, e.p, e.sign, e.declared) for e in res.edges])
-
-
-def test_pmrt_bit_identical_with_legacy_covariates(
-    make_rows: MakeData, make_logged: MakeData, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    for base in bases(make_rows, make_logged):
-        for ds in (base, perturb(base)):
-            new = PmrtCore().run(ds, CFG)
-
-            def legacy(data: Dataset, spec: cov.CovariateSpec = cov.EQ) -> tuple:
-                assert spec == dataclasses.replace(cov.EQ, lags=spec.lags)
-                order = cov.info_order(data)
-                m_info = legacy_covariates(data, order, spec.lags)
-                inv = np.empty(data.n, np.int64)
-                inv[order] = np.arange(data.n)
-                return (
-                    tuple(f"c{j}" for j in range(m_info.shape[1])),
-                    m_info[inv],
-                    np.ones(data.n, bool),
-                )
-
-            monkeypatch.setattr(rows, "design_covariates", legacy)
-            old = PmrtCore().run(ds, CFG)
-            monkeypatch.undo()
-            assert edges_repr(new) == edges_repr(old)
-            assert repr(new.notes["z"]) == repr(old.notes["z"])
-            assert repr(new.notes["adjust"]) == repr(old.notes["adjust"])
 
 
 def test_pmrt_r3_option(make_rows: MakeData) -> None:

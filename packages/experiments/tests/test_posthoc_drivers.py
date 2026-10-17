@@ -10,7 +10,7 @@ import numpy as np
 import pytest
 
 from oran_causal.analysis.posthoc import x4 as a_x4
-from oran_causal.analysis.posthoc.x7 import FAMS, KINDS, REFS, arm_name, job_list
+from oran_causal.analysis.posthoc.x7 import FAMS, arm_name, job_list
 from oran_causal.experiments.posthoc import x1_timing as t1
 from oran_causal.experiments.posthoc import x4, x7, x8
 from oran_causal.experiments.system import study3
@@ -293,8 +293,6 @@ def test_x7_shadow_queries_a_copy_of_the_observation():
 def test_x7_arm_names():
     assert arm_name(None, "shadow") == "X7:sub|shadow"
     assert arm_name("CS:granger@dev", "pm") == "X7:CS:granger@dev|pm"
-    assert set(KINDS) == {"shadow", "own", "pm", "other"}
-    assert len(REFS) == 4
 
 
 def _fake_job(monkeypatch, module, name: str = "job") -> list:

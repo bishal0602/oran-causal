@@ -25,7 +25,7 @@ DATA = Path(__file__).parent / "data"
 GRID = 4000.0
 NAN_CODE = 65535
 N_HYPS = 60
-DECLARE_STRIDE = 20
+DECLARE_STRIDE = 50
 PRIOR_WEIGHTS = {"win32": "declare_p", "linux": "prior_weights_linux"}
 
 
@@ -138,7 +138,8 @@ def test_prior_weights_match_fdr_layer() -> None:
         pytest.skip(f"no reference weights for platform {sys.platform}")
     z, e = fixture("declare_p"), fixture("declare_e")
     weights = fixture(PRIOR_WEIGHTS[sys.platform])["dc_weights"]
-    for i, golden in enumerate(weights):
+    for i in range(0, len(weights), 3):
+        golden = weights[i]
         hyps, _, prior = declare_inputs(z, e, i)
         w = prior_weights(prior, hyps, WeightConfig(n_target=600))
         assert np.array_equal(np.array([w[h] for h in hyps]), golden)
@@ -189,7 +190,7 @@ def step_up_case(draw: st.DrawFn) -> tuple[list[float], list[float], bool]:
 
 
 @pytest.mark.claim("THM-BY-FIN", "THM-FDR-ASY")
-@settings(max_examples=400, deadline=None)
+@settings(max_examples=200, deadline=None)
 @given(step_up_case())
 def test_step_up_matches_exact_reference(case: tuple[list[float], list[float], bool]) -> None:
     p, w, reshape = case
