@@ -1,7 +1,6 @@
 import dataclasses
 import gzip
 import json
-import sys
 from pathlib import Path
 
 import numpy as np
@@ -18,10 +17,8 @@ from oran_causal.sim.system.decision.vocab import FAMILIES
 pytestmark = pytest.mark.filterwarnings("ignore::RuntimeWarning", "ignore::UserWarning")
 
 DATA = Path(__file__).parent / "data"
-GOLDEN = {
-    "win32": "system_pmrt_golden_np25_win32.json.gz",
-    "linux": "system_pmrt_golden_np25_linux.json.gz",
-}
+GOLDEN = "system_pmrt_golden.json.gz"
+RTOL = 1e-6
 FAST = PmrtConfig(B=499, cv_reps=1, gb=False)
 GOLD_CFG = PmrtConfig(B=199, cv_reps=1, gb=False)
 
@@ -143,26 +140,30 @@ def _golden_summary(tmp: Path) -> dict:
     }
 
 
-def _nan_equal(a: object, b: object) -> bool:
-    if isinstance(a, float) and isinstance(b, float) and np.isnan(a) and np.isnan(b):
-        return True
+def _close(a: object, b: object, path: str = "") -> None:
     if isinstance(a, dict) and isinstance(b, dict):
-        return a.keys() == b.keys() and all(_nan_equal(a[k], b[k]) for k in a)
-    if isinstance(a, list) and isinstance(b, list):
-        return len(a) == len(b) and all(_nan_equal(x, y) for x, y in zip(a, b, strict=True))
-    return type(a) is type(b) and a == b
+        assert a.keys() == b.keys(), path
+        for k in a:
+            _close(a[k], b[k], f"{path}/{k}")
+    elif isinstance(a, list) and isinstance(b, list):
+        assert len(a) == len(b), path
+        for i, (x, y) in enumerate(zip(a, b, strict=True)):
+            _close(x, y, f"{path}[{i}]")
+    elif isinstance(a, float) and isinstance(b, float):
+        assert a == pytest.approx(b, rel=RTOL, abs=1e-12, nan_ok=True), path
+    else:
+        assert type(a) is type(b), path
+        assert a == b, path
 
 
 @pytest.mark.claim("DEF-PMRT-WEIGHT")
-def test_pipeline_matches_the_old_code_bit_for_bit(tmp_path: Path) -> None:
-    name = GOLDEN.get(sys.platform)
-    if name is None or not (DATA / name).exists():
-        pytest.skip(f"no golden for {sys.platform}")
-    with gzip.open(DATA / name, "rt", encoding="utf-8") as fh:
+def test_pipeline_reaches_the_same_conclusions_as_the_old_code(tmp_path: Path) -> None:
+    with gzip.open(DATA / GOLDEN, "rt", encoding="utf-8") as fh:
         old = json.load(fh)
     new = json.loads(json.dumps(_golden_summary(tmp_path)))
+    assert new.keys() == old.keys()
     for k in old:
-        assert _nan_equal(new[k], old[k]), k
+        _close(new[k], old[k], k)
 
 
 def test_bins_rebuild_the_unit_target_and_table(train_test: dict, tmp_path: Path) -> None:

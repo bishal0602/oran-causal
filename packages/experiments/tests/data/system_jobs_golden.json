@@ -1,0 +1,59 @@
+{
+ "jobs": {
+  "s1/dev/188000/0/40": {
+   "energy_j": 267259.82171612454,
+   "n_labels": 0,
+   "n_units": 61
+  },
+  "s1/gt/188800/0/100/2": {
+   "energy_j": 689111.8507888042,
+   "n_labels": 2,
+   "n_units": 78
+  },
+  "s1/placebo/188700/0/40": {
+   "energy_j": 222449.24438145885,
+   "n_labels": 0,
+   "n_units": 49
+  },
+  "s2a/dev_repro/186080/incumbent/40": {
+   "energy_j": 242443.45674486135,
+   "n_labels": 0,
+   "n_units": 0
+  },
+  "s2a/eval/187000/MG:PMRT/40": {
+   "energy_j": 271517.2408486586,
+   "n_labels": 0,
+   "n_units": 0
+  },
+  "s2a/eval/187000/freeze/40": {
+   "energy_j": 339394.1586383825,
+   "n_labels": 0,
+   "n_units": 0
+  },
+  "s2c/dev_conf/186080/0/40": {
+   "energy_j": 242443.45674486135,
+   "n_labels": 0,
+   "n_units": 63
+  },
+  "s2c/gt/186900/0/100/2": {
+   "energy_j": 613216.6144761329,
+   "n_labels": 2,
+   "n_units": 74
+  },
+  "s2c/placebo/186700/0/40": {
+   "energy_j": 216646.05960896355,
+   "n_labels": 0,
+   "n_units": 59
+  },
+  "s3/dev/191000/CAL:allaccept/40": {
+   "energy_j": 210373.9649786352,
+   "n_labels": 0,
+   "n_units": 0
+  },
+  "s3/eval/191100/CS:PMRT/40": {
+   "energy_j": 239920.6575311876,
+   "n_labels": 0,
+   "n_units": 0
+  }
+ }
+}

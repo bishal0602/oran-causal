@@ -31,6 +31,10 @@ CLASSIC = ("pc", "notears", "shap_dag", "two_tower", "corr", "granger", "pcorr_h
 FAST = {"two_tower": {"epochs": 30}, "cdl": {"max_gradient_steps": 60}}
 VENDORED = Path(_classic.__file__).parent / "_vendor" / "notears" / "linear.py"
 R3 = CovariateSpec(setpoints="none", lagged_actions=False, concurrent="all")
+EXACT_FIT = [
+    "granger",
+    pytest.param("pc", marks=pytest.mark.filterwarnings("ignore:divide by zero:RuntimeWarning")),
+]
 
 
 def _run(name, data, **cfg):
@@ -497,7 +501,7 @@ def test_meta_families_and_diagnostic_by_family(make_classic):
         assert [r.edges[i].declared for i in idx] == list(by_declare([sc[i].p for i in idx]))
 
 
-@pytest.mark.parametrize("name", ["granger", "pc"])
+@pytest.mark.parametrize("name", EXACT_FIT)
 def test_exact_fit_candidates_are_not_testable(name, make_classic):
     data, _ = make_classic(300, 3_000_012, b=1.0, noise=0.0, regime="R2")
     r = _run(name, data)
@@ -520,7 +524,7 @@ def test_exact_fit_candidates_are_not_testable(name, make_classic):
     assert "not_testable_reason" not in clean.notes
 
 
-@pytest.mark.parametrize("name", ["granger", "pc"])
+@pytest.mark.parametrize("name", EXACT_FIT)
 def test_score_accepts_not_testable_notes(name, make_classic):
     data, truth = make_classic(300, 3_000_012, b=1.0, noise=0.0, regime="R2")
     r = _run(name, data)

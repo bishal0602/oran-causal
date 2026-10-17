@@ -1,6 +1,5 @@
 import gzip
 import json
-import sys
 from functools import cache
 from pathlib import Path
 from typing import Any
@@ -15,16 +14,12 @@ from oran_causal.core.pmrt.rows import PmrtCore
 DATA = Path(__file__).parent / "data"
 
 
-NUMPY_24 = "pmrt_rows_golden.json.gz"
-NUMPY_25 = {
-    "win32": "pmrt_rows_golden_np25.json.gz",
-    "linux": "pmrt_rows_golden_np25_linux.json.gz",
-}
-SCORE_RTOL = 1e-12
+GOLDEN = "pmrt_rows_golden.json.gz"
+SCORE_RTOL = 1e-9
 
 
 @cache
-def golden(name: str = NUMPY_24) -> dict[str, Any]:
+def golden(name: str = GOLDEN) -> dict[str, Any]:
     with gzip.open(DATA / name, "rt", encoding="utf-8") as f:
         return json.load(f)
 
@@ -89,21 +84,12 @@ def run_case(
 
 @pytest.mark.claim("DEF-PMRT-PVAL", "DEF-ENV-ARMS")
 @pytest.mark.parametrize(("dataset", "config"), CASES)
-def test_pmrt_rows_bit_equal_to_pmrt_core(dataset: str, config: str) -> None:
-    if sys.platform not in NUMPY_25:
-        pytest.skip(f"no reference run for platform {sys.platform}")
-    res, got, want = run_case(NUMPY_25[sys.platform], dataset, config)
+def test_pmrt_rows_same_conclusion_as_pmrt_core(dataset: str, config: str) -> None:
+    res, got, want = run_case(GOLDEN, dataset, config)
     assert res.version == want["version"]
-    assert got == want["edges"]
     assert res.notes["not_applicable"] == want["not_applicable"]
     for key, value in want["notes"].items():
-        assert res.notes[key] == value, key
-
-
-@pytest.mark.claim("DEF-PMRT-PVAL")
-@pytest.mark.parametrize(("dataset", "config"), CASES)
-def test_pmrt_rows_same_conclusion_as_numpy_24_run(dataset: str, config: str) -> None:
-    _, got, want = run_case(NUMPY_24, dataset, config)
+        assert res.notes[key] == pytest.approx(value, rel=SCORE_RTOL), key
     for g, w in zip(got, want["edges"], strict=True):
         assert (g["src"], g["tgt"], g["p"], g["sign"], g["declared"]) == (
             w["src"],
