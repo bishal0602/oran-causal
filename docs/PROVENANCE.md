@@ -31,3 +31,4 @@ Per-area tables, one row per migrated file or record set:
 | Cloud and VPS launchers (`oran_causal.experiments.launch`) | [provenance/experiments_launch.md](provenance/experiments_launch.md) |
 | Manuscript, build entry point and figure design rules (`paper/`, `packages/figures/DESIGN.md`) | [provenance/paper.md](provenance/paper.md) |
 | Studies 1-3 analysis (`oran_causal.analysis.system`) | [provenance/analysis_system.md](provenance/analysis_system.md) |
+| Studies 1-3 drivers, discovery tests and referee artifacts (`oran_causal.experiments.system`) | [provenance/experiments_system.md](provenance/experiments_system.md) |
