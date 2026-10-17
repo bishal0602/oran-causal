@@ -1,7 +1,7 @@
 ---
 id: THM-GATE-BUDGET
 kind: lean
-status: todo
+status: implemented
 ---
 
 # 05 THM-GATE-BUDGET: Gate tolerance budget
@@ -63,11 +63,13 @@ Filled in by the agent.
 
 | Field | Value |
 |---|---|
-| Status | |
-| Main declaration(s) | |
-| Files | |
-| Deviation from the claim | |
-| Hypotheses not stated in the claim | |
-| `lake build` | |
-| `#print axioms` | |
-| Notes | |
+| Status | implemented under the development-data context explicitly confirmed by the author |
+| Main declaration(s) | `OranCausal.GateBudget.budget_bound`, `mean_count_budget`, `additive_guard_budget`; scope lemma `count_overrun_example` in the same namespace |
+| Files | `proofs/OranCausal/GateBudget.lean`, imported by `proofs/OranCausal.lean`; task 05 section of `proofs/REPORT.md`; `task05-build.log`, `task05-axioms.log`, `task05-leanchecker.log` |
+| Deviation from the claim | None under the author-approved development-data interpretation; the absolute movement bound uses the magnitude interpretation of each per-edge movement. The core budget is proved as an equality and hence also an inequality. |
+| Hypotheses not stated in the claim | Author explicitly confirmed (a) first-order additivity over units and three relations (`sources/s04_pmrt.tex:240–243`); (b) the ratio denominator is the same development `G` used in ε, and `G > 0` (`:235–239`); (c) rejected count is at most `max(N,1)` (`:235,238–240`). Each is explicit in the formal statement and report. |
+| Other source premises | Tolerance formula `sources/s04_pmrt.tex:235`; per-edge movement magnitude at most ε on three relations `:240`. Arbitrary real development means and arbitrary finite rejected-unit set; the real-count version also supports nonintegral means. |
+| `lake build` | Passed without warnings or errors, 3032 jobs, 166.528 seconds; separate source recheck also passed. Pins remain v4.35.0. |
+| `#print axioms` | All four printed declarations: `[propext, Classical.choice, Quot.sound]` |
+| `leanchecker` | `lake env leanchecker --verbose OranCausal.GateBudget`: passed, exit 0 |
+| Notes | `count_overrun_example` proves ε=5/3 for G=100, N=1, and that two units at ε on each relation move the ratio by 0.10 > 0.05 while exceeding the count budget. Recorded as a scope note only. |

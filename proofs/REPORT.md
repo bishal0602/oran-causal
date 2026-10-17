@@ -171,3 +171,74 @@ The reported build time excludes initial toolchain and dependency downloads,
 cache extraction, and earlier failed development builds. The manifest pins
 all dependency commits; Mathlib's `inputRev` is `v4.35.0` and its resolved
 `rev` is the commit recorded above.
+
+## Task 05 — THM-GATE-BUDGET
+
+Status: **implemented** under the development-data source context explicitly
+confirmed by the author. The formalization is in `OranCausal/GateBudget.lean`,
+imported by `OranCausal.lean`.
+
+### Source context and hypotheses
+
+The tolerance is `ε = (1/20) * G / (3 * max N 1)`, where `N` and `G` are
+development accept-all means (`tasks/sources/s04_pmrt.tex:235–239`). The
+author confirmed the following interpretation:
+
+| Hypothesis | Formal representation | Source context |
+|---|---|---|
+| (a) First-order additivity over rejected units and relations | `ratioMovement = (∑ i ∈ units, ∑ r : Fin 3, effect i r) / G` | `s04_pmrt.tex:240–243`; additivity explicitly confirmed by author |
+| (b) Ratio denominator is development `G`, with `G > 0` | The same `G` occurs in `tolerance` and the ratio; premise `hG : 0 < G` | `s04_pmrt.tex:238–241`; denominator matching and positivity explicitly confirmed by author |
+| (c) Rejected count is at most `max N 1` | `hcount : (units.card : ℝ) ≤ max N 1`; a real-valued mean-count version is also provided | `s04_pmrt.tex:235,238–240`; count budget explicitly confirmed by author |
+| Per-edge magnitude bound | `∀ i ∈ units, ∀ r, abs (effect i r) ≤ tolerance N G` | `s04_pmrt.tex:240` |
+| Three relations | Relation index `Fin 3` | `s04_pmrt.tex:240` |
+
+These conditions are explicit premises, not conclusions about held-out
+episodes. The theorem permits arbitrary real `N` and positive `G`; neither a
+study-specific sample size nor a fixed number of rejected units is assumed.
+Nonnegativity of `N` is unnecessary because `max N 1` is positive regardless.
+
+### Declarations and proof
+
+All names below belong to `OranCausal.GateBudget`.
+
+- `budget_identity` proves `3 * max N 1 * tolerance N G / G = 1/20`.
+- `budget_bound` proves the requested inequality `≤ 0.05`.
+- `mean_count_budget` handles an arbitrary real count (including a
+  development mean) and a total movement bounded by `3 * count * ε`.
+- `additive_guard_budget` proves the absolute ratio-movement bound for a
+  finite set of rejected units. Two triangle inequalities bound the sum by
+  the sum of per-edge magnitudes; three relations and the count budget then
+  reduce it to the identity above.
+- `count_overrun_example` records the requested scope note.
+
+### Scope note
+
+For development `G=100`, `N=1`, the tolerance is `5/3`. Two rejected units,
+each contributing exactly `ε` on each of three relations, give additive
+ratio movement `6 * (5/3) / 100 = 1/10 > 1/20`. The lemma also checks
+`2 > max 1 1`: condition (c) fails. All six effects meet the per-edge
+bound. This illustrates the role of the count budget and is recorded only
+as a scope note for the development-data rationale.
+
+### Validation
+
+- `lake build`: passed without warnings or errors, 3032 jobs; **166.528 s**
+  wall time with dependencies cached. Machine/toolchain as above; Lean and
+  Mathlib pins remain `v4.35.0`.
+- `lake env lean OranCausal/GateBudget.lean`: passed without warnings or errors.
+- `#print axioms` for `budget_bound`, `mean_count_budget`,
+  `additive_guard_budget`, and `count_overrun_example`: each exactly
+  `[propext, Classical.choice, Quot.sound]`.
+- `lake env leanchecker --verbose OranCausal.GateBudget`: passed, exit 0,
+  `replaying OranCausal.GateBudget`. This replays the module's declarations
+  against its imported environment with Lean's kernel.
+
+Logs: `task05-build.log`, `task05-axioms.log`, `task05-leanchecker.log`.
+
+The additional repository-wide `uv run oran-causal check` passed lint,
+formatting, and type checks, but did not complete its Python test suite.
+The first run reached the command timeout; the background retry exited 255
+without a traceback or pytest summary, with its log ending during
+`packages/analysis/tests/test_posthoc_gates.py`. The cause is undetermined;
+this is not recorded as a passing workspace check. See
+`task05-workspace-check.log`. The separate Lean acceptance checks above passed.
