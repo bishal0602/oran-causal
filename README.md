@@ -37,5 +37,6 @@ Use `--extra cu128` instead of `--extra cpu` on CUDA hosts. The two extras confl
 | `packages/figures` | Paper figures |
 | `packages/trace` | Claims registry checker and pytest plugin |
 | `paper/` | Manuscript (Springer `sn-jnl`); build with `uv run python paper/build.py [sn-article\|supplementary]`, output in `paper/build/` |
+| `paper/generated/` | Printed values: `uv run oran-causal paper-values [--check]` regenerates `values.tex` and `values.json` from `spec/values.toml` and `data/records` (derived values use `analysis/paper_derived.py`); edit the spec, never the generated files |
 | `tests/` | Cross-package tests, including the import layering |
 | `docs/` | Provenance and per-area provenance sections |

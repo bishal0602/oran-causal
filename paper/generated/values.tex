@@ -2,6 +2,8 @@
 % Do not edit: run `uv run python -m oran_causal.analysis.paper_values`.
 \defval{br.pcorr_eq.recall}{0.72}
 \defval{br.pcorr_native.recall}{0.69}
+\defval{s1.attr.declared}{13}
+\defval{s1.attr.true}{12}
 \defval{s1.ex.confirmed}{26}
 \defval{s1.ex.n_exists}{43}
 \defval{s1.far.total}{20}
@@ -21,6 +23,10 @@
 \defval{s1.k0.binom_tail}{0.03}
 \defval{s1.k0.m}{60}
 \defval{s1.k0.n_reject}{7}
+\defval{s1.k0.tail3}{0.030}
+\defval{s1.k0n.fam_max}{0.060}
+\defval{s1.k0n.fam_min}{0.047}
+\defval{s1.k0n.rate}{0.053}
 \defval{s1.map.corr.placebo}{3}
 \defval{s1.map.corr.prec}{0.86}
 \defval{s1.map.corr.rec}{0.17}
@@ -53,6 +59,10 @@
 \defval{s1.map.tt.prec}{1.00}
 \defval{s1.map.tt.rec}{0.17}
 \defval{s1.map.tt.wrong}{1}
+\defval{s1.null.count}{21}
+\defval{s1.null.open.count}{12}
+\defval{s1.null.open.rate}{0.075}
+\defval{s1.null.rate}{0.15}
 \defval{s1.p2.gby.wins120}{4}
 \defval{s1.p2.gby.wins60}{2}
 \defval{s1.p2.n120}{5}
@@ -61,6 +71,7 @@
 \defval{s1.pmrt.declared}{28}
 \defval{s1.pmrt.precision}{0.92}
 \defval{s1.pmrt.recall}{0.79}
+\defval{s2.attr.declared}{7}
 \defval{s2.dec.aa.dn}{-0.22}
 \defval{s2.dec.aa.dn_hi}{-0.14}
 \defval{s2.dec.aa.dn_lo}{-0.30}
@@ -109,6 +120,9 @@
 \defval{s2.gt.half.prec}{1.00}
 \defval{s2.k0.m}{60}
 \defval{s2.k0.n_reject}{0}
+\defval{s2.k0n.fam_max}{0.063}
+\defval{s2.k0n.fam_min}{0.038}
+\defval{s2.k0n.rate}{0.050}
 \defval{s2.map.corr.placebo}{8}
 \defval{s2.map.corr.prec}{0.80}
 \defval{s2.map.corr.rec}{0.21}
@@ -142,6 +156,7 @@
 \defval{s2.map.tt.rec}{0.17}
 \defval{s2.map.tt.wrong}{0}
 \defval{s2.placebo.granger_by}{29}
+\defval{s2.plc.rec_max}{0.21}
 \defval{s2.pmrt.declared}{22}
 \defval{s2.ptx_nbr_rlf.primary_p}{0.49}
 \defval{s3.dec.aa.dn}{-0.26}
@@ -184,18 +199,52 @@
 \defval{s3.dec.pmrt.rlf_lo}{0.93}
 \defval{s3.dec.seeds}{160}
 \defval{s3.gate.dev_episodes}{40}
+\defval{s3.gate.g_rlf}{35.025}
+\defval{s3.gate.g_v}{19\,953.65}
 \defval{s3.mgpmrt.dr}{$-0.06$}
 \defval{s3.mgpmrt.rlf}{1.05}
 \defval{s4.c1.r2_max}{0.94}
 \defval{s4.c1.r2_min}{0.33}
+\defval{s4.cdl.conditions}{30}
+\defval{s4.cdl.invalid}{9}
+\defval{s4.conf.corr_all}{0.77}
+\defval{s4.conf.corr_min}{1.00}
+\defval{s4.conf.gbm_max}{0.06}
+\defval{s4.conf.gbm_min}{0.02}
+\defval{s4.conf.pcorr_all}{0.056}
+\defval{s4.conf.rcot2_all}{0.23}
+\defval{s4.dither.max}{0.054}
+\defval{s4.dither.min}{0.042}
 \defval{s4.e4.pcorr_eq.recall_24k}{0.90}
 \defval{s4.e4.pmrtgbm.recall_max}{0.075}
+\defval{x11.delta_dbl.changed}{16}
+\defval{x11.delta_half.changed}{10}
+\defval{x11.other.changed_max}{2}
+\defval{x11.pmrt.sign_acc_min}{1.00}
+\defval{x14.gby.wrong_s1}{24}
+\defval{x14.gby.wrong_s2}{21}
+\defval{x15.block_diff}{0.30}
+\defval{x15.p.never_sleep}{0.17}
+\defval{x15.p.noarb}{0.15}
+\defval{x15.perm_p}{0.009}
 \defval{x15.pooled.dr}{0.10}
 \defval{x15.pooled.rlf}{1.18}
+\defval{x15.r.never_sleep_s2}{0.22}
+\defval{x15.r.never_sleep_s3}{0.26}
+\defval{x15.rej.s2}{0.37}
+\defval{x15.rej.s3}{0.35}
+\defval{x15.sd.s2}{0.85}
+\defval{x15.sd.s3}{1.1}
+\defval{x15.trim.s2}{0.21}
+\defval{x15.trim.s3}{0.041}
 \defval{x16.gate.median_pct}{3.5}
 \defval{x16.map.rel_max}{$+6.5$}
 \defval{x16.map.rel_min}{$-2.9$}
+\defval{x8.lim.1e3}{2 \times 10^{-3}}
+\defval{x8.lim.2e4}{6 \times 10^{-4}}
 \defval{x8.n_variants}{590}
 \defval{x8.redraws}{9\,999}
+\defval{x8.share.1e3}{7.9 \times 10^{-4}}
+\defval{x8.share.2e4}{1.1 \times 10^{-4}}
 \defval{x8.tol_pct}{7.5}
 \defval{x8.variants_with_decl}{2}

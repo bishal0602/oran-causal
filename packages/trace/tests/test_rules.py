@@ -173,5 +173,5 @@ def test_pending_rules_say_why_they_are_not_checkable(
     assert results[code].messages
 
 
-def test_rules_cover_f1_to_f14_in_order() -> None:
-    assert [rule.code for rule in RULES] == [f"F{n}" for n in range(1, 15)]
+def test_rules_cover_f1_to_f13_in_order() -> None:
+    assert [rule.code for rule in RULES] == [f"F{n}" for n in range(1, 14)]

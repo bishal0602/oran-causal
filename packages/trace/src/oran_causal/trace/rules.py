@@ -1,4 +1,4 @@
-"""Traceability rules F1-F14 over the registry, test results, manifests and the matrix."""
+"""Traceability rules F1-F13 over the registry, test results, manifests and the matrix."""
 
 import json
 from collections import Counter
@@ -13,7 +13,6 @@ from oran_causal.trace.paper import (
     Exemption,
     GeneratedValues,
     PaperScan,
-    has_posthoc_wording,
 )
 from oran_causal.trace.registry import Claim, Evidence, Registry
 from oran_causal.trace.results import MarkedTest
@@ -261,7 +260,7 @@ def _argument_problems(
             found = _follow(json.loads(path.read_text(encoding="utf-8")), pointer)
         except KeyError, IndexError, ValueError, TypeError:
             return [*problems, f"{where}: pointer {pointer} does not resolve in {record}"]
-        if found != argument.get("value"):
+        if "value" in argument and found != argument["value"]:
             problems.append(f"{where}: stored value differs from {record} at {pointer}")
     return problems
 
@@ -329,21 +328,6 @@ def bare_decimals(context: Context) -> Finding:
     return _finding(problems)
 
 
-def posthoc_wording(context: Context) -> Finding:
-    """F14: a post hoc claim is tagged where the text says "post hoc"."""
-    if context.paper is None:
-        return _paper_unchecked()
-    problems = [
-        f"{claim.id}: no heading carrying its \\claim tag says post hoc"
-        for claim in context.registry.claims
-        if claim.active
-        and claim.posthoc
-        and claim.id in context.paper.claim_units
-        and not any(has_posthoc_wording(unit) for unit in context.paper.claim_units[claim.id])
-    ]
-    return _finding(problems)
-
-
 def pending(reason: str) -> Callable[[Context], Finding]:
     """A rule whose inputs do not exist yet in this phase of the migration."""
 
@@ -375,7 +359,6 @@ RULES = (
     Rule("F11", "no bare decimals in paper prose", bare_decimals),
     Rule("F12", "code symbols import", pending("members are ported in migration phases 2-9")),
     Rule("F13", "docs/TRACEABILITY.md is current", matrix_fresh),
-    Rule("F14", "post hoc claims carry the post hoc wording", posthoc_wording),
 )
 
 

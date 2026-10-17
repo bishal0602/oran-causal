@@ -27,6 +27,8 @@ from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Any
 
+from oran_causal.analysis.paper_derived import FUNCTIONS as DERIVED
+
 WORKSPACE_ROOT = Path(__file__).resolve().parents[5]
 SPEC_PATH = Path("spec") / "values.toml"
 VALUES_TEX = Path("paper") / "generated" / "values.tex"
@@ -55,6 +57,7 @@ _FUNCTIONS: dict[str, Callable[..., Any]] = {
     "sum": sum,
     "len": len,
     "dot": lambda a, b: sum(x * y for x, y in zip(a, b, strict=True)),
+    **DERIVED,
 }
 
 
@@ -108,6 +111,9 @@ def _apply_filter(name: str, text: str) -> str:
             return f"${text}$"
         case "thousands":
             return text.replace(",", r"\,")
+        case "sci":
+            mantissa, exponent = text.split("e")
+            return rf"{mantissa} \times 10^{{{int(exponent)}}}"
         case _:
             raise SpecError(f"unknown format filter {name!r}")
 
@@ -117,11 +123,12 @@ def format_value(value: Number, fmt: str) -> str:
 
     Filters: `up` rounds half up on the decimal repr instead of the binary value (the spec must
     be `.Nf` or `+.Nf`), `x100` scales by 100 first, `thousands` turns `,` into a LaTeX thin space
-    (use with a `,` spec) and `math` wraps the text in `$...$`.
+    (use with a `,` spec), `sci` prints a number given with an `.Ne` spec as `m x 10^{e}` and
+    `math` wraps the text in `$...$`.
 
     Args:
         value: The number to print.
-        fmt: For example `.2f`, `+.2f|up|math` or `,d|thousands`.
+        fmt: For example `.2f`, `+.2f|up|math`, `,d|thousands` or `.1e|sci`.
 
     Returns:
         The LaTeX text.
@@ -155,7 +162,8 @@ def _evaluate(node: ast.expr, names: Mapping[str, Any]) -> Any:
 def evaluate(expr: str, names: Mapping[str, Any]) -> Any:
     """Evaluates an arithmetic expression over named numbers.
 
-    Allowed: numbers, names, `+ - * /`, unary minus and `abs max min round sum len`.
+    Allowed: numbers, names, `+ - * /`, unary minus, `abs max min round sum len dot` and the
+    functions of `oran_causal.analysis.paper_derived`.
     """
     return _evaluate(ast.parse(expr, mode="eval").body, names)
 
@@ -187,6 +195,8 @@ def _walk(node: Any, parts: Sequence[str], pointer: str) -> Any:
         return node
     part, rest = parts[0].replace("~1", "/").replace("~0", "~"), parts[1:]
     try:
+        if part == "[*]" and isinstance(node, dict):
+            return [_walk(member, rest, pointer) for member in node.values()]
         if part.startswith("[") and part.endswith("]") and isinstance(node, list):
             return [_walk(row, rest, pointer) for row in _matching(node, part[1:-1])]
         return _walk(_step(node, part), rest, pointer)
@@ -199,7 +209,7 @@ def resolve_pointer(document: Any, pointer: str) -> Any:
 
     A step `field=value&field=value` picks the one element of a list whose fields print as the
     given values. A step `[field=value&field=value]` (or `[*]`) picks every matching element and
-    maps the rest of the pointer over them, giving a list.
+    maps the rest of the pointer over them, giving a list; `[*]` on an object maps over its values.
 
     Raises:
         SpecError: If a step does not exist or a single selector is not unique.
@@ -313,6 +323,15 @@ def _by_key(resolved: Resolved) -> str:
     return resolved.spec.key
 
 
+def _argument(source: Source, value: Any, records: Records) -> dict[str, Any]:
+    entry = {
+        "record": source.record,
+        "sha256": records.digest(source.record),
+        "pointer": source.pointer,
+    }
+    return entry if isinstance(value, dict) else {**entry, "value": value}
+
+
 def render_json(resolved: Sequence[Resolved], records: Records) -> str:
     """The sidecar: every value with its record hashes, pointers and raw numbers."""
     entries = {
@@ -321,12 +340,7 @@ def render_json(resolved: Sequence[Resolved], records: Records) -> str:
             "fmt": r.spec.fmt,
             "expr": r.spec.expr,
             "args": {
-                name: {
-                    "record": source.record,
-                    "sha256": records.digest(source.record),
-                    "pointer": source.pointer,
-                    "value": r.numbers[name],
-                }
+                name: _argument(source, r.numbers[name], records)
                 for name, source in r.spec.args.items()
             },
         }

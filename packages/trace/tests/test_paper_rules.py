@@ -7,14 +7,13 @@ from typing import Any
 import pytest
 
 from oran_causal.trace.cli import Paths, build_context
-from oran_causal.trace.paper import scan_paper
+from oran_causal.trace.paper import read_exemptions, scan_paper
 from oran_causal.trace.rules import (
     Context,
     Status,
     bare_decimals,
     claim_tags_registered,
     claims_tagged,
-    posthoc_wording,
     run_rules,
     values_generated,
 )
@@ -92,7 +91,7 @@ def test_paper_rules_are_not_checkable_without_a_manuscript(
     workspace: Workspace, new_claim: MakeClaim
 ) -> None:
     results = {r.code: f for r, f in run_rules(paper_context(workspace(claims(new_claim))))}
-    for code in ("F8", "F9", "F10", "F11", "F14"):
+    for code in ("F8", "F9", "F10", "F11"):
         assert results[code].status is Status.NOT_CHECKABLE
 
 
@@ -174,26 +173,18 @@ def test_f11_flags_bare_decimals_and_stale_exemptions(
     )
 
 
-def test_f14_needs_post_hoc_wording_where_the_claim_is_tagged(
-    workspace: Workspace, new_claim: MakeClaim
-) -> None:
-    root = workspace(claims(new_claim))
-    write_paper(root)
-    assert posthoc_wording(paper_context(root)).status is Status.PASS
-    text = SECTION.replace("post hoc", "planned")
-    (root / "paper" / "sections" / "s01.tex").write_text(text, encoding="utf-8")
-    assert posthoc_wording(paper_context(root)).messages == (
-        "EMP-B: no heading carrying its \\claim tag says post hoc",
+def test_unreproduced_results_are_read_apart_from_constants(tmp_path: Path) -> None:
+    path = tmp_path / "paper_exempt.yaml"
+    path.write_text(
+        "exempt:\n"
+        "  - {file: sections/s01.tex, literal: '0.05', count: 1, reason: constant}\n"
+        "unreproduced:\n"
+        "  - {file: sections/s01.tex, literal: '0.14', reason: no record}\n",
+        encoding="utf-8",
     )
-
-
-def test_f14_accepts_section_lead_wording(workspace: Workspace, new_claim: MakeClaim) -> None:
-    root = workspace(claims(new_claim))
-    text = SECTION.replace("This analysis is post hoc.", "").replace(
-        "The rate", "Analyses chosen after the protocols were fixed. The rate"
-    )
-    write_paper(root, text.replace(r"\section{Results}", r"\section{Results}" + "\n"))
-    assert posthoc_wording(paper_context(root)).status is Status.PASS
+    constant, result = read_exemptions(path)
+    assert (constant.unreproduced, result.unreproduced) == (False, True)
+    assert read_exemptions(tmp_path / "missing.yaml") == ()
 
 
 @pytest.mark.parametrize("code", ["F5", "F7", "F12"])

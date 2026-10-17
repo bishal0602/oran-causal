@@ -746,7 +746,7 @@ claims:
   - id: PRO-FROZEN
     kind: protocol
     statement: "For each dataset the analysis rules, seeds and pass criteria were fixed before the evaluation data were generated, and the analysis code, fixed at the same time, was run once; one amendment changed the fixed code."
-    paper: [sec:protocol]
+    paper: []
     spec: spec:pro
     code: [oran_causal.experiments.campaign.spec:eval_authorised, oran_causal.experiments.campaign.spec:expand, oran_causal.experiments.campaign.shard:assignment, oran_causal.experiments.system.common:FrozenDoc, oran_causal.experiments.system.study2:guard]
     tests: {min: 1, tier: unit}
@@ -767,7 +767,7 @@ claims:
   - id: PRO-SEEDS
     kind: protocol
     statement: "Seeds came from disjoint blocks of an internal registry."
-    paper: [sec:protocol]
+    paper: []
     spec: spec:pro.seeds
     code: [oran_causal.experiments.campaign.spec:validate_spec, oran_causal.experiments.system.common:check_layout, oran_causal.experiments.system.common:SeedRegistry]
     tests: {min: 1, tier: unit}
@@ -783,5 +783,5 @@ claims:
   - id: PRO-POSTHOC
     kind: protocol
     statement: "Analyses chosen after a protocol was fixed are reported as post hoc and change no verdict; the gated referee was designed after the result of the ungated referee was known."
-    paper: [sec:protocol, app:posthoc]
+    paper: []
     spec: spec:pro.status

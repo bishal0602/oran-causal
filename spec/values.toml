@@ -207,16 +207,70 @@ values = [
   { key = "s2.dec.seeds", from = "x9:/study2/n_seeds", fmt = "d" },
   { key = "s3.dec.seeds", from = "x9:/study3/n_seeds", fmt = "d" },
   { key = "s3.gate.dev_episodes", from = "fd:/certsafe/calib/n_dev", fmt = "d" },
+  # Remaining results of Sections 6.1-6.3 and Appendix C
+  { key = "s1.null.count", args = { c = "x14:/studies/S1/levels/0.95/cells" }, expr = "null_hypothesis_count(c)", fmt = "d" },
+  { key = "s1.null.rate", args = { c = "x14:/studies/S1/levels/0.95/cells", s = "v4a:/slices_result" }, expr = "null_rejection_rate(c, s)", fmt = ".2f|up" },
+  { key = "s1.null.open.count", args = { c = "x14:/studies/S1/levels/0.95/cells" }, expr = "unestablished_null_count(c)", fmt = "d" },
+  { key = "s1.null.open.rate", args = { c = "x14:/studies/S1/levels/0.95/cells", s = "v4a:/slices_result" }, expr = "unestablished_null_rejection_rate(c, s)", fmt = ".3f|up" },
+  { key = "s1.attr.declared", args = { n = "x13:/studies/S1/methods/loadsp_c+wby1s/slices/pooled/nbr_declared", f = "x13:/studies/S1/methods/loadsp_c+wby1s/slices/pooled/far_declared" }, expr = "n + f", fmt = "d" },
+  { key = "s1.attr.true", args = { n = "x13:/studies/S1/methods/loadsp_c+wby1s/slices/pooled/nbr_gt_TRUE", f = "x13:/studies/S1/methods/loadsp_c+wby1s/slices/pooled/far_gt_TRUE" }, expr = "n + f", fmt = "d" },
+  { key = "s2.attr.declared", args = { n = "x13:/studies/S2/methods/loadsp_c+wby1s/slices/pooled/nbr_declared", f = "x13:/studies/S2/methods/loadsp_c+wby1s/slices/pooled/far_declared" }, expr = "n + f", fmt = "d" },
+  { key = "s2.plc.rec_max", args = { a = "fd:/option_a/map_quality/MG:corr@plc/true_right", b = "fd:/option_a/map_quality/MG:granger@plc/true_right", c = "fd:/option_a/map_quality/MG:shap_gbdt@plc/true_right", d = "fd:/option_a/map_quality/MG:two_tower@plc/true_right", e = "fd:/option_a/map_quality/MG:int@plc/true_right", f = "fd:/option_a/map_quality/MG:qacm@plc/true_right", n = "v4a:/gt/counts/TRUE" }, expr = "max(a, b, c, d, e, f) / n", fmt = ".2f|up" },
+  { key = "s4.conf.corr_min", args = { a = "s4:/tables/V6_E4/[arm=corr&regime=R3&lam=0.5]/conf_raw/rate", b = "s4:/tables/V6_E4/[arm=corr&regime=R3&lam=1.0]/conf_raw/rate", c = "s4:/tables/V6_E4/[arm=corr&regime=R3&lam=1.5]/conf_raw/rate" }, expr = "min(flat(a, b, c))", fmt = ".2f" },
+  { key = "s4.conf.gbm_min", args = { a = "s4:/tables/V6_E4/[arm=pmrt_nl_eq&regime=R3]/conf_raw/rate" }, expr = "min(flat(a))", fmt = ".2f|up" },
+  { key = "s4.conf.gbm_max", args = { a = "s4:/tables/V6_E4/[arm=pmrt_nl_eq&regime=R3]/conf_raw/rate" }, expr = "max(flat(a))", fmt = ".2f|up" },
+  { key = "s4.conf.corr_all", args = { a = "s4:/tables/V6_E4/[arm=corr&regime=R3]/conf_raw/rate" }, expr = "sum(flat(a)) / len(flat(a))", fmt = ".2f|up" },
+  { key = "s4.conf.rcot2_all", args = { a = "s4:/tables/V6_E4/[arm=rcot2_native&regime=R3]/conf_raw/rate" }, expr = "sum(flat(a)) / len(flat(a))", fmt = ".2f|up" },
+  { key = "s4.conf.pcorr_all", args = { a = "s4:/tables/V6_E4/[arm=pcorr_native&regime=R3]/conf_raw/rate" }, expr = "sum(flat(a)) / len(flat(a))", fmt = ".3f|up" },
+  { key = "s4.dither.min", args = { a = "x23:/x2_trend/[arm=pmrt_eq&rate=null_raw]/by_delta/[*]/rate", b = "x23:/x2_trend/[arm=pmrt_eq&rate=null_raw]/blocks_5/rate", c = "x23:/x2_trend/[arm=pmrt_eq&rate=null_raw]/blocks_80/rate", d = "x23:/x2_trend/[arm=pmrt_nl_eq&rate=null_raw]/by_delta/[*]/rate", e = "x23:/x2_trend/[arm=pmrt_nl_eq&rate=null_raw]/blocks_5/rate", f = "x23:/x2_trend/[arm=pmrt_nl_eq&rate=null_raw]/blocks_80/rate" }, expr = "min(flat(a, b, c, d, e, f))", fmt = ".3f|up" },
+  { key = "s4.dither.max", args = { a = "x23:/x2_trend/[arm=pmrt_eq&rate=null_raw]/by_delta/[*]/rate", b = "x23:/x2_trend/[arm=pmrt_eq&rate=null_raw]/blocks_5/rate", c = "x23:/x2_trend/[arm=pmrt_eq&rate=null_raw]/blocks_80/rate", d = "x23:/x2_trend/[arm=pmrt_nl_eq&rate=null_raw]/by_delta/[*]/rate", e = "x23:/x2_trend/[arm=pmrt_nl_eq&rate=null_raw]/blocks_5/rate", f = "x23:/x2_trend/[arm=pmrt_nl_eq&rate=null_raw]/blocks_80/rate" }, expr = "max(flat(a, b, c, d, e, f))", fmt = ".3f|up" },
+  { key = "s4.cdl.invalid", args = { a = "s4:/tables/V1_validity/[arm=cdl&validity=INVALID]/key" }, expr = "len(a)", fmt = "d" },
+  { key = "s4.cdl.conditions", args = { a = "s4:/tables/V1_validity/[arm=cdl]/key" }, expr = "len(a)", fmt = "d" },
+  { key = "x11.delta_half.changed", args = { a = "x11:/studies/S1/variants/delta_x0.5/changed_vs_frozen" }, expr = "len(a)", fmt = "d" },
+  { key = "x11.delta_dbl.changed", args = { a = "x11:/studies/S1/variants/delta_x2/changed_vs_frozen" }, expr = "len(a)", fmt = "d" },
+  { key = "x11.other.changed_max", args = { a = "x11:/studies/S1/variants/floor_x0.5/changed_vs_frozen", b = "x11:/studies/S1/variants/floor_x2/changed_vs_frozen", c = "x11:/studies/S1/variants/ci90/changed_vs_frozen", d = "x11:/studies/S1/variants/ci99/changed_vs_frozen" }, expr = "max(len(a), len(b), len(c), len(d))", fmt = "d" },
+  { key = "x11.pmrt.sign_acc_min", args = { a = "x11:/studies/S1/variants/[*]/methods/loadsp_c+wby1s/sign_acc", b = "x11:/studies/S2/variants/[*]/methods/MG:PMRT/sign_acc" }, expr = "min(flat(a, b))", fmt = ".2f" },
+  { key = "x14.gby.wrong_s1", args = { w = "x14:/studies/S1/levels/0.95/methods/granger_by/pooled/ex_wrong_sign", n = "x14:/studies/S1/levels/0.95/methods/granger_by/pooled/mat_n_declared" }, expr = "w / n", fmt = ".0f|x100" },
+  { key = "x14.gby.wrong_s2", args = { w = "x14:/studies/S2/levels/0.95/methods/MG:granger_by/pooled/ex_wrong_sign", n = "x14:/studies/S2/levels/0.95/methods/MG:granger_by/pooled/mat_n_declared" }, expr = "w / n", fmt = ".0f|x100" },
+  { key = "x15.p.noarb", from = "x15:/Q1/noarb/perm_mean/p", fmt = ".2f|up" },
+  { key = "x15.p.never_sleep", from = "x15:/Q1/never_sleep/perm_mean/p", fmt = ".2f|up" },
+  { key = "x15.r.never_sleep_s2", from = "x15:/frozen_summary/study2/arms/never_sleep/R", fmt = ".2f|up" },
+  { key = "x15.r.never_sleep_s3", from = "x15:/frozen_summary/study3/arms/never_sleep/R", fmt = ".2f|up" },
+  { key = "x15.rej.s2", from = "x9:/study2/rows/arm=MG:PMRT/rejection_rate", fmt = ".2f|up" },
+  { key = "x15.rej.s3", from = "x9:/study3/rows/arm=MG:PMRT/rejection_rate", fmt = ".2f|up" },
+  { key = "x15.sd.s2", from = "x15:/Q2/MG:PMRT-never_sleep/study2/sd", fmt = ".2f|up" },
+  { key = "x15.sd.s3", from = "x15:/Q2/MG:PMRT-never_sleep/study3/sd", fmt = ".1f|up" },
+  { key = "x15.block_diff", from = "x15:/Q2/MG:PMRT-never_sleep/perm_block_diff/diff", fmt = ".2f|up" },
+  { key = "x15.perm_p", from = "x15:/Q2/MG:PMRT-never_sleep/perm_block_diff/p", fmt = ".3f|up" },
+  { key = "x15.trim.s2", from = "x15:/Q2/MG:PMRT-never_sleep/study2/leave_top5_out/largest_abs_c/dR", fmt = ".2f|up" },
+  { key = "x15.trim.s3", from = "x15:/Q2/MG:PMRT-never_sleep/study3/leave_top5_out/largest_abs_c/dR", fmt = ".3f|up" },
+  { key = "s3.gate.g_v", from = "fd:/certsafe/calib/G/v", fmt = ",.2f|thousands" },
+  { key = "s3.gate.g_rlf", from = "fd:/certsafe/calib/G/rlf", fmt = ".3f" },
+  # Validity checks (Appendix C, Table validity)
+  { key = "s1.k0.tail3", from = "fd:/v4/K0/binom_tail", fmt = ".3f|up" },
+  { key = "s1.k0n.rate", from = "fd:/v4/K0n/rate05", fmt = ".3f|up" },
+  { key = "s1.k0n.fam_min", args = { a = "fd:/v4/K0n/rate05_family/[*]" }, expr = "min(a)", fmt = ".3f|up" },
+  { key = "s1.k0n.fam_max", args = { a = "fd:/v4/K0n/rate05_family/[*]" }, expr = "max(a)", fmt = ".3f|up" },
+  { key = "s2.k0n.rate", from = "cd:/K0n/rate05", fmt = ".3f|up" },
+  { key = "s2.k0n.fam_min", args = { a = "cd:/K0n/rate05_family/[*]" }, expr = "min(a)", fmt = ".3f|up" },
+  { key = "s2.k0n.fam_max", args = { a = "cd:/K0n/rate05_family/[*]" }, expr = "max(a)", fmt = ".3f|up" },
+  { key = "x8.share.1e3", from = "x8:/combos/loadsp_c+wby1s/rate_le_0.001", fmt = ".1e|sci" },
+  { key = "x8.share.2e4", from = "x8:/combos/loadsp_c+wby1s/rate_le_0.0002", fmt = ".1e|sci" },
+  { key = "x8.lim.1e3", from = "x8:/criteria/rate_1e3", fmt = ".0e|sci" },
+  { key = "x8.lim.2e4", from = "x8:/criteria/rate_2e4", fmt = ".0e|sci" },
 ]
 
 [records]
 fd = "system_artifacts/report_2026-10-02/figures_data.json"
 v4a = "system_artifacts/decision/v4_analysis.json"
+cd = "system_artifacts/decision/conf_disc_conf.json"
 x8 = "posthoc_x8/x8/summary.json"
 x11 = "posthoc_x9_x16/revision/x11_gt_sensitivity.json"
 x14 = "posthoc_x9_x16/revision/x14_existence.json"
 x9 = "posthoc_x9_x16/revision/x9_decision_e2e.json"
 x15 = "posthoc_x9_x16/revision/x15_replication.json"
+x13 = "posthoc_x9_x16/revision/x13_attribution.json"
+x23 = "posthoc_x2_x3/extras_tables.json"
 x16 = "posthoc_x9_x16/revision/x16_centre.json"
 s4r = "study4_eval/eval/csv/recall_vs_n.csv"
 s4 = "study4_eval/eval/report.json"

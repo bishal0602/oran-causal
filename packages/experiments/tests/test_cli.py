@@ -13,6 +13,7 @@ PARSED_HELP = (
     ["check"],
     ["data"],
     ["data", "fetch"],
+    ["paper-values"],
     ["reproduce"],
     ["verify"],
     ["run"],
@@ -244,3 +245,29 @@ def test_data_fetch_reports_each_set(monkeypatch: pytest.MonkeyPatch, tmp_path: 
     args = ["data", "fetch", "--set", "freeze", "--verify-only", "--records", str(tmp_path)]
     assert cli.main(args, out=out) == 0
     assert "| data | freeze:True | pass |  |" in lines[0]
+
+
+def test_paper_values_command_passes_its_flags_on(monkeypatch: pytest.MonkeyPatch) -> None:
+    from oran_causal.analysis import paper_values
+
+    seen: list[list[str]] = []
+    monkeypatch.setattr(paper_values, "main", lambda argv: seen.append(list(argv)) or 0)
+    assert cli.main(["paper-values"]) == 0
+    assert cli.main(["paper-values", "--check", "--root", "somewhere"]) == 0
+    assert seen == [[], ["--check", "--root", "somewhere"]]
+
+
+def test_check_runs_the_paper_values_step_before_pytest() -> None:
+    assert cli.PAPER_VALUES_CHECK in cli.CHECKS
+    assert cli.CHECKS.index(cli.PAPER_VALUES_CHECK) < cli.CHECKS.index(("pytest",))
+
+
+def test_paper_values_check_is_skipped_without_records(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(cli, "run_module", lambda args: 9)
+    assert cli.run_check(cli.PAPER_VALUES_CHECK, root=tmp_path) == 0
+    assert "skipped" in capsys.readouterr().out
+    (tmp_path / "data" / "records").mkdir(parents=True)
+    assert cli.run_check(cli.PAPER_VALUES_CHECK, root=tmp_path) == 9
+    assert cli.run_check(("ruff", "check"), root=tmp_path / "absent") == 9

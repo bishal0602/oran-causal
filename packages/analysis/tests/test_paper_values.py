@@ -20,6 +20,7 @@ REPO = Path(__file__).resolve().parents[3]
         (-0.029, "+.1f|x100|math", "$-2.9$"),
         (9999, ",d|thousands", r"9\,999"),
         (28, "d", "28"),
+        (0.00079, ".1e|sci", r"7.9 \times 10^{-4}"),
     ],
 )
 def test_format_value(value: float, fmt: str, text: str) -> None:

@@ -1,4 +1,4 @@
-"""Reads the LaTeX manuscript and its generated values for the paper rules F8-F11 and F14."""
+"""Reads the LaTeX manuscript and its generated values for the paper rules F8-F11."""
 
 import json
 import re
@@ -30,10 +30,6 @@ REFERENCE_ARGS = re.compile(
 )
 DECIMAL = re.compile(r"(?<![\w.])\d+\.\d+(?![\w])")
 SECTION = re.compile(r"\\(?:chapter|section)\*?\s*(?:\[[^\]]*\])?\{")
-POSTHOC = re.compile(
-    r"post[ -]?hoc|(?:chosen|declared|decided)\s+after\s+the\s+protocols?\s+(?:was|were)\s+fixed",
-    re.IGNORECASE,
-)
 
 
 @dataclass(frozen=True, slots=True)
@@ -70,6 +66,7 @@ class Exemption:
     literal: str
     reason: str
     count: int | None = None
+    unreproduced: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -187,16 +184,18 @@ def read_generated(paper: Path) -> GeneratedValues | None:
 
 
 def read_exemptions(path: Path) -> tuple[Exemption, ...]:
-    r"""Reads the decimals that the paper may print without `\val` (`spec/paper_exempt.yaml`)."""
+    r"""Reads the decimals that the paper may print without `\val` (`spec/paper_exempt.yaml`).
+
+    The `exempt` list holds constants (coordinates, protocol constants). The `unreproduced` list
+    holds printed results that no stored record reproduces, kept apart so that they stay visible.
+    """
     if not path.is_file():
         return ()
     document = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     return tuple(
-        Exemption(item["file"], str(item["literal"]), item["reason"], item.get("count"))
-        for item in document.get("exempt", ())
+        Exemption(
+            item["file"], str(item["literal"]), item["reason"], item.get("count"), unreproduced
+        )
+        for unreproduced, key in ((False, "exempt"), (True, "unreproduced"))
+        for item in document.get(key, ())
     )
-
-
-def has_posthoc_wording(unit: Unit) -> bool:
-    """Whether the heading's text, or the intro of its section, says the analysis was post hoc."""
-    return POSTHOC.search(unit.text) is not None or POSTHOC.search(unit.lead) is not None

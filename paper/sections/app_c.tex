@@ -16,10 +16,9 @@ This appendix gives the complete tables behind Section~\ref{sec:results} and the
 Table~\ref{tab:validity} lists the validity checks of PMRT where no effect exists (Section~\ref{sec:res_validity}). The
 null-outcome checks used 999 redraws, with which the smallest attainable p-value, $10^{-3}$, lay above the rank-1
 threshold of the weighted BY procedure, so that no declaration could occur. A stricter check therefore applied the same
-procedure with 9\,999 redraws to 590 null-outcome variants of the randomised logs, obtained by pairing each episode's
-logged design with the KPI series of another episode in its group of 60. Variants with a declaration numbered 2 of 590,
-against a limit of 7.5~\%, and the shares of p-values at or below $10^{-3}$ and $2 \times 10^{-4}$ were $7.9 \times
-10^{-4}$ and $1.1 \times 10^{-4}$, against limits of $2 \times 10^{-3}$ and $6 \times 10^{-4}$, so all three checks
+procedure with \val{x8.redraws} redraws to \val{x8.n_variants} null-outcome variants of the randomised logs, obtained by pairing each episode's
+logged design with the KPI series of another episode in its group of 60. Variants with a declaration numbered \val{x8.variants_with_decl} of \val{x8.n_variants},
+against a limit of \val{x8.tol_pct}~\%, and the shares of p-values at or below $10^{-3}$ and $2 \times 10^{-4}$ were $\val{x8.share.1e3}$ and $\val{x8.share.2e4}$, against limits of $\val{x8.lim.1e3}$ and $\val{x8.lim.2e4}$, so all three checks
 passed. The redraw p-values agreed closely with their normal approximation. Because the variants of a
 group share its logged design, this evidence rests on ten logged designs.
 
@@ -52,12 +51,12 @@ Check & Result & Criterion & Met & Note \tabularnewline
 Table~\ref{tab:maps_full} gives the edge counts behind Table~\ref{tab:maps}, the baselines at thresholds calibrated on
 the placebo logs, and the precision under other ground-truth rules (Section~\ref{sec:res_map}). The knockout labels
 depend on the materiality threshold $\delta_k$ but hardly on the floor on protected violations or on the interval
-level: halving or doubling $\delta_k$ changed 10 and 16 of the 60 labels on the randomised logs, whereas the other two
-factors changed at most 2. PMRT's sign accuracy was 1.00 under every variant, and its precision fell with $\delta_k$
+level: halving or doubling $\delta_k$ changed \val{x11.delta_half.changed} and \val{x11.delta_dbl.changed} of the 60 labels on the randomised logs, whereas the other two
+factors changed at most \val{x11.other.changed_max}. PMRT's sign accuracy was \val{x11.pmrt.sign_acc_min} under every variant, and its precision fell with $\delta_k$
 doubled because several small transmit-power and sleep effects then become null although their intervals exclude zero.
 Under the existence rule, which counts any effect whose 95~\% knockout interval
 excludes zero, 43 and 40 of the 60 hypotheses have an effect; Granger~+~BY scores lower under this rule than under the
-materiality rule, because 21 to 24~\% of its declarations have the wrong sign.
+materiality rule, because \val{x14.gby.wrong_s2} to \val{x14.gby.wrong_s1}~\% of its declarations have the wrong sign.
 
 \begin{table}[tbp]
 \caption{Map quality, all variants.}
@@ -187,7 +186,7 @@ The design slope and the gate's bounds use an outcome centre that adds each earl
 while its 90~s window is still open, so the predictable-centre condition of Lemma~\ref{lem:slope} holds only
 approximately. Recomputed with a strict centre, which uses only units whose window had closed before the unit opened,
 all 22 map slopes kept their sign, with relative changes of $-2.9$ to $+6.5$~\% and 19 of them within $\pm 2$~\%. The
-gate bounds moved by a median of 3.5~\% of their tolerance, and by at most 54~\% on an edge that was unresolved under
+gate bounds moved by a median of \val{x16.gate.median_pct}~\% of their tolerance, and by at most 54~\% on an edge that was unresolved under
 both centres. One further edge became unresolved, in a class that was already uncertified, so no class changed
 certification status and every result of the gated dataset is unchanged. The check certifies with the original map;
 the referee's own rule was not recomputed on a map with the strict slope magnitudes.
@@ -233,9 +232,9 @@ ground-truth harm; indet., indeterminate.\par}
 
 The ungated PMRT referee was rerun with the same maps, simulator and code on the seeds of the gated dataset, where it no
 longer outperformed never-sleep (Section~\ref{sec:res_decision}). The two seed blocks did not differ significantly at
-the network level: the permutation test on the per-seed violation rate gave $p = 0.15$ under accept-all and $p = 0.17$
-under never-sleep, the contrast of never-sleep with accept-all replicated, at 0.22 and 0.26, and the referee rejected
-requests at similar rates in both blocks, 0.37 and 0.35. Its per-seed difference from never-sleep was, however,
-heavy-tailed, with standard deviations of 0.85 and 1.1 and a long left tail in the second block, and the block means
-differed by 0.30 (permutation $p = 0.009$); without the five seeds of largest contribution in each block, the estimates
-were $+0.21$ and $+0.041$.
+the network level: the permutation test on the per-seed violation rate gave $p = \val{x15.p.noarb}$ under accept-all and $p = \val{x15.p.never_sleep}$
+under never-sleep, the contrast of never-sleep with accept-all replicated, at \val{x15.r.never_sleep_s2} and \val{x15.r.never_sleep_s3}, and the referee rejected
+requests at similar rates in both blocks, \val{x15.rej.s2} and \val{x15.rej.s3}. Its per-seed difference from never-sleep was, however,
+heavy-tailed, with standard deviations of \val{x15.sd.s2} and \val{x15.sd.s3} and a long left tail in the second block, and the block means
+differed by \val{x15.block_diff} (permutation $p = \val{x15.perm_p}$); without the five seeds of largest contribution in each block, the estimates
+were $+\val{x15.trim.s2}$ and $+\val{x15.trim.s3}$.

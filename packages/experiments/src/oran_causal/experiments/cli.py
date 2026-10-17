@@ -1,8 +1,8 @@
 """Command line entry point for the oran-causal workspace.
 
-`check`, `data fetch`, `reproduce`, `verify` and `run system` are parsed here. `campaign`,
-`bridging`, `posthoc` and the launcher commands (`launch`, `colab`, `kaggle`, `vps`, `dispatch`,
-`fingerprint`) hand their arguments to the command line of their package.
+`check`, `data fetch`, `paper-values`, `reproduce`, `verify` and `run system` are parsed here.
+`campaign`, `bridging`, `posthoc` and the launcher commands (`launch`, `colab`, `kaggle`, `vps`,
+`dispatch`, `fingerprint`) hand their arguments to the command line of their package.
 """
 
 import argparse
@@ -16,10 +16,12 @@ from oran_causal.experiments.reproduce.checks import Check, passed, table
 Runner = Callable[[Sequence[str]], int]
 Out = Callable[[str], None]
 
+PAPER_VALUES_CHECK = ("oran_causal.analysis.paper_values", "--check")
 CHECKS: tuple[tuple[str, ...], ...] = (
     ("ruff", "check"),
     ("ruff", "format", "--check"),
     ("ty", "check"),
+    PAPER_VALUES_CHECK,
     ("pytest",),
 )
 TIERS = ("t0", "t1", "t2", "t3")
@@ -49,6 +51,25 @@ def run_module(args: Sequence[str]) -> int:
         The process exit code.
     """
     return subprocess.run([sys.executable, "-m", *args], check=False).returncode
+
+
+def run_check(args: Sequence[str], root: Path | None = None) -> int:
+    """Runs one check; the paper values check is skipped when `data/records` is absent.
+
+    Args:
+        args: Module name followed by its arguments.
+        root: Workspace root; defaults to this checkout.
+
+    Returns:
+        The process exit code.
+    """
+    from oran_causal.analysis.paper_values import WORKSPACE_ROOT
+
+    base = root or WORKSPACE_ROOT
+    if tuple(args) == PAPER_VALUES_CHECK and not (base / "data" / "records").is_dir():
+        print("paper_values --check skipped: data/records not found")
+        return 0
+    return run_module(args)
 
 
 def run_checks(runner: Runner, checks: Sequence[Sequence[str]] = CHECKS) -> int:
@@ -82,6 +103,14 @@ def _add_data(commands: argparse._SubParsersAction) -> None:
     fetch.add_argument("--set", dest="sets", action="append", help="record set (repeatable)")
     fetch.add_argument("--records", type=Path, default=None, help="records directory")
     fetch.add_argument("--verify-only", action="store_true", help="never download")
+
+
+def _add_paper_values(commands: argparse._SubParsersAction) -> None:
+    values = commands.add_parser(
+        "paper-values", help="regenerate paper/generated/values.{tex,json} from spec/values.toml"
+    )
+    values.add_argument("--check", action="store_true", help="exit 1 when the files are stale")
+    values.add_argument("--root", type=Path, default=None, help="workspace root")
 
 
 def _add_reproduce(commands: argparse._SubParsersAction) -> None:
@@ -125,6 +154,7 @@ def build_parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("check", help="ruff check, ruff format --check, ty check, pytest")
     _add_data(commands)
+    _add_paper_values(commands)
     _add_reproduce(commands)
     _add_verify(commands)
     _add_run(commands)
@@ -167,6 +197,15 @@ def _data(a: argparse.Namespace, out: Out) -> int:
     rows = data.fetch(a.sets, _records(a.records), verify_only=a.verify_only)
     out(table(rows))
     return 0 if passed(rows) else 1
+
+
+def _paper_values(a: argparse.Namespace) -> int:
+    from oran_causal.analysis import paper_values
+
+    argv = ["--check"] if a.check else []
+    if a.root is not None:
+        argv += ["--root", str(a.root)]
+    return paper_values.main(argv)
 
 
 def _report(rows: Sequence[Check], path: Path, out: Out) -> int:
@@ -252,17 +291,16 @@ def main(argv: Sequence[str] | None = None, out: Out = print) -> int:
     if args and args[0] in DELEGATES:
         return _delegate(args, out)
     a = build_parser().parse_args(args)
-    match a.command:
-        case "data":
-            return _data(a, out)
-        case "reproduce":
-            return _reproduce(a, out)
-        case "verify":
-            return _verify(a, out)
-        case "run":
-            return _run_system(a, out)
-        case _:
-            return run_checks(run_module)
+    if a.command == "check":
+        return run_checks(run_check)
+    handlers: dict[str, Callable[[], int]] = {
+        "data": lambda: _data(a, out),
+        "paper-values": lambda: _paper_values(a),
+        "reproduce": lambda: _reproduce(a, out),
+        "verify": lambda: _verify(a, out),
+        "run": lambda: _run_system(a, out),
+    }
+    return handlers[a.command]()
 
 
 if __name__ == "__main__":

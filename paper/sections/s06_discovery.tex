@@ -36,9 +36,9 @@ On the randomised placebo logs, \val{s1.k0.n_reject} of the \val{s1.k0.m} p-valu
 probability of \val{s1.k0.binom_tail} remained above the limit of \val{s1.k0.binom_level}. The null-outcome check used 999 redraws, with which a
 declaration was unattainable, so it was repeated with \val{x8.redraws} redraws, which produced declarations in \val{x8.variants_with_decl} of \val{x8.n_variants}
 variants, within the limit of \val{x8.tol_pct}~\%. Finally, the hypotheses that the ground truth labels
-null are small effects rather than sharp nulls. Over all 21, the rate of p-values at or below 0.05 was 0.15, about
-three times nominal, which reflects real effects below the materiality threshold. Over the 12 whose knockout interval
-also contains zero it was 0.075, with an interval reaching 0.16, so that an excess cannot be excluded there either.
+null are small effects rather than sharp nulls. Over all \val{s1.null.count}, the rate of p-values at or below 0.05 was \val{s1.null.rate}, about
+three times nominal, which reflects real effects below the materiality threshold. Over the \val{s1.null.open.count} whose knockout interval
+also contains zero it was \val{s1.null.open.rate}, with an interval reaching 0.16, so that an excess cannot be excluded there either.
 
 \subsection{Agreement with the ground truth}
 \label{sec:res_map}\claim{EMP-S1-MAP}\claim{EMP-S2-MAP}\claim{EMP-S1-CHAIN}\claim{EMP-S1-P2}\claim{EMP-GT-SENS}\claim{EMP-GT-EXIST}
@@ -56,7 +56,7 @@ missing only the edge from pico sleep to neighbour RLFs. The baselines either de
 a higher recall only with wrong signs and false edges. Granger~+~BY, the strongest of them, reached a recall of \val{s1.map.gby.rec} with six
 wrong signs on each kind of log and a precision of \val{s1.map.gby.prec} and \val{s2.map.gby.prec}. Calibrating the baselines' thresholds on the placebo
 logs themselves removed their placebo declarations, but only in-sample and at the cost of recall, which fell to at
-most 0.21 (Appendix~\ref{app:maps_full}).
+most \val{s2.plc.rec_max} (Appendix~\ref{app:maps_full}).
 
 \begin{figure}[tbp]
 \centering
@@ -100,8 +100,8 @@ with the threshold halved it rose to \val{s1.gt.half.prec} on both kinds of log,
 reflects real effects below the doubled threshold rather than wrong declarations. Under an existence rule, which
 counts any effect whose knockout interval excludes zero, \val{s1.ex.confirmed} of PMRT's \val{s1.pmrt.declared} declarations on the randomised logs and all
 \val{s2.ex.confirmed} on the confounded logs were real effects with the declared sign (Appendix~\ref{app:x11}). PMRT made no wrong-sign
-declaration under any ground-truth variant, and its neighbour and far declarations were almost all labelled true, 12 of
-13 on the randomised logs and all 7 on the confounded logs. Under the doubled threshold, however, the ranking of
+declaration under any ground-truth variant, and its neighbour and far declarations were almost all labelled true, \val{s1.attr.true} of
+\val{s1.attr.declared} on the randomised logs and all \val{s2.attr.declared} on the confounded logs. Under the doubled threshold, however, the ranking of
 methods is not preserved: the small maps of INT, QACM and two-tower kept precisions of \val{s1.gt.dbl.int.prec}, \val{s1.gt.dbl.qacm.prec} and \val{s1.gt.dbl.tt.prec} on the
 randomised logs, above PMRT's \val{s1.gt.dbl.pmrt.prec}, although at recalls of \val{s1.gt.dbl.int.rec}, \val{s1.gt.dbl.qacm.rec} and \val{s1.gt.dbl.tt.rec} against its \val{s1.gt.dbl.pmrt.rec}.
 
@@ -126,17 +126,17 @@ although its pooled rates were valid and a re-run on fresh datasets gave rates c
 \end{figure}
 
 The latent-confounding environment illustrates the mechanism most directly, because there the associational sign is
-reversed at large confounding strength. Under the logged confounded policy, the null-edge rate of correlation was 1.00 whenever the
-confounding was present, while that of PMRT-GBM stayed between 0.02 and 0.06 in every condition. Validity under this
+reversed at large confounding strength. Under the logged confounded policy, the null-edge rate of correlation was \val{s4.conf.corr_min} whenever the
+confounding was present, while that of PMRT-GBM stayed between \val{s4.conf.gbm_min} and \val{s4.conf.gbm_max} in every condition. Validity under this
 policy is not specific to PMRT: design-adjusted partial correlation also stayed valid. Among the
 design-blind tests under this policy, correlation and plain RCoT were far above nominal,
-at 0.77 and 0.23, whereas plain partial correlation stayed near nominal, at 0.056, most likely because the confounder
+at \val{s4.conf.corr_all} and \val{s4.conf.rcot2_all}, whereas plain partial correlation stayed near nominal, at \val{s4.conf.pcorr_all}, most likely because the confounder
 was among its covariates. A variation of the dither width and of the number of setpoints left correlation
-invalid and the two PMRT methods between 0.042 and 0.054. Under unlogged confounding, the negative control, the real
+invalid and the two PMRT methods between \val{s4.dither.min} and \val{s4.dither.max}. Under unlogged confounding, the negative control, the real
 actions have no logged design, and on the placebo edge the rates of the design-based tests were never invalid.
 
 The same environments also show the limits of a placebo check. With its threshold calibrated on the placebo column,
-the discovery stage of CDD O-RAN passed that check but exceeded the nominal null-edge rate in 9 of 30 conditions. A
+the discovery stage of CDD O-RAN passed that check but exceeded the nominal null-edge rate in \val{s4.cdl.invalid} of \val{s4.cdl.conditions} conditions. A
 pipeline that declares placebo edges, as every baseline did on the randomised logs, is thus shown to be invalid, whereas
 a pipeline that passes the check may still be invalid. The check is therefore a necessary condition for validity, but
 not a sufficient one.
