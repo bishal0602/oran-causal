@@ -28,3 +28,4 @@ Per-area tables, one row per migrated file or record set:
 | System decision layer (`oran_causal.sim.system.decision`, `core.data.UnitTable`) | [provenance/sim_decision.md](provenance/sim_decision.md) |
 | Cloud and VPS launchers (`oran_causal.experiments.launch`) | [provenance/experiments_launch.md](provenance/experiments_launch.md) |
 | Manuscript, build entry point and figure design rules (`paper/`, `packages/figures/DESIGN.md`) | [provenance/paper.md](provenance/paper.md) |
+| System MSCR-CRT v2, discovery baselines, published comparators, referees and maps (`oran_causal.methods.system.{mscr_crt,baselines,published,referees,maps}`) | [provenance/methods_system.md](provenance/methods_system.md) |
