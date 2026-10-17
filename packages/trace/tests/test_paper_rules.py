@@ -187,7 +187,7 @@ def test_unreproduced_results_are_read_apart_from_constants(tmp_path: Path) -> N
     assert read_exemptions(tmp_path / "missing.yaml") == ()
 
 
-@pytest.mark.parametrize("code", ["F5", "F7", "F12"])
+@pytest.mark.parametrize("code", ["F5"])
 def test_other_phases_rules_stay_pending(
     code: str, workspace: Workspace, new_claim: MakeClaim
 ) -> None:

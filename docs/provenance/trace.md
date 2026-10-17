@@ -7,7 +7,7 @@ Journal repo `xApp-Journal-Discover-Telecommunications`: commit `8744ef6` (the w
 | `spec/claims.yaml` | journal manuscript files listed below | 80 claims from a manual inventory of the manuscript (2026-10-15). Statements paraphrase the manuscript; paper labels are its `\label`s, plus `abstract` |
 | `spec/claims.yaml` evidence | `CDD-ORAN@0c89106:reports/2026-10-02-v4-pmrt-confounded-certsafe/figures_data.json` (sha256 `85fe7cff…b74e`) | Every pointer and `expect` value checked against this file on 2026-10-15 |
 | `spec/claims.yaml` evidence | `CDD-ORAN@0c89106:scratchpad/e6_dev/decision/v4_analysis.json` (sha256 `38d7d28c…b62a`) | Recall 0.79 = 23/29, derived (`derive`) |
-| `spec/claims.yaml` code symbols | migration port map (old symbol → new module) | Targets of later phases; not importable yet (rule F12) |
+| `spec/claims.yaml` code symbols | migration port map (old symbol → new module) | All 93 symbols of active claims import (rule F12, 2026-10-17) |
 | `spec/claims.schema.yaml` | migration design (2026-10-15) | Paper-label pattern and `additionalProperties: false` added |
 | `spec/claims.sty`, `spec/notation.sty` | migration design (2026-10-15) | New. Notation symbols are the paper's (`s03_setting.tex`, `s04_pmrt.tex`, `app_a.tex`) |
 | `spec/main.tex`, `spec/sections/*.tex` | `spec/claims.yaml` | Statements generated from the registry; headings and labels from migration design (2026-10-15) |
@@ -22,6 +22,7 @@ Journal repo `xApp-Journal-Discover-Telecommunications`: commit `8744ef6` (the w
 | `spec/sections/10-metrics.tex` recovery | journal `s05_evaluation.tex` (§ Baselines and metrics) | verbatim |
 | `spec/sections/12-assumptions.tex` (A1), (A3), (A4) | journal `s04_pmrt.tex` assumption list; `app_a.tex` `app:assumptions` | verbatim; lead-in of (A4) trimmed |
 | `spec/sections/13-theorems.tex` BY inequality, `eq:fdr` | journal `app_a.tex` `app:proof_cor`; `s04_pmrt.tex` `eq:fdr` | verbatim |
+| `packages/trace/src/oran_causal/trace/{pointers,symbols}.py`, rules F7 and F12 | new code | F7 follows each evidence `pointer` (RFC 6901, `.json` / `.json.gz`) in `data/records/<record>` and compares `expect`: mappings by subset, numbers equal or equal after rounding half up to the registry's decimals, integers exact. F12 imports `module:attr.sub` of every active claim. Evidence with only `derive` is not read |
 | `packages/trace/**` | new code | Design: migration design (2026-10-15). Nothing copied |
 
 ## Manuscript files read (working tree at HEAD ec32c22)

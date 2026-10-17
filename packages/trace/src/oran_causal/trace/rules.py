@@ -1,6 +1,5 @@
 """Traceability rules F1-F13 over the registry, test results, manifests and the matrix."""
 
-import json
 from collections import Counter
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
@@ -8,6 +7,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
+from oran_causal.trace import pointers, symbols
 from oran_causal.trace.manifests import Manifests
 from oran_causal.trace.paper import (
     Exemption,
@@ -200,7 +200,6 @@ def matrix_fresh(context: Context) -> Finding:
 
 NO_PAPER = "paper/sn-article.tex not found: paper rules unchecked"
 THEOREM_KINDS = ("empirical", "theorem-paper", "theorem-lean", "theorem-cited")
-POINTER_SELECTORS = ("=", "[", "*")
 
 
 def _paper_unchecked() -> Finding:
@@ -234,17 +233,6 @@ def claims_tagged(context: Context) -> Finding:
     return _finding(problems)
 
 
-def _plain_pointer(pointer: str) -> bool:
-    return pointer.startswith("/") and not any(mark in pointer for mark in POINTER_SELECTORS)
-
-
-def _follow(document: Any, pointer: str) -> Any:
-    for step in pointer.split("/")[1:]:
-        part = step.replace("~1", "/").replace("~0", "~")
-        document = document[int(part)] if isinstance(document, list) else document[part]
-    return document
-
-
 def _argument_problems(
     key: str, name: str, argument: Mapping[str, Any], context: Context
 ) -> list[str]:
@@ -256,10 +244,15 @@ def _argument_problems(
     if listing is not None and listing.get(member) != str(argument.get("sha256", "")).lower():
         problems.append(f"{where}: sha256 differs from data/manifests/{record_set}.sha256")
     path = None if context.records_root is None else context.records_root / record
-    if path is not None and path.suffix == ".json" and path.is_file() and _plain_pointer(pointer):
+    if (
+        path is not None
+        and path.suffix == ".json"
+        and path.is_file()
+        and pointers.is_plain(pointer)
+    ):
         try:
-            found = _follow(json.loads(path.read_text(encoding="utf-8")), pointer)
-        except KeyError, IndexError, ValueError, TypeError:
+            found = pointers.follow(pointers.read_json(path), pointer)
+        except pointers.PointerError:
             return [*problems, f"{where}: pointer {pointer} does not resolve in {record}"]
         if "value" in argument and found != argument["value"]:
             problems.append(f"{where}: stored value differs from {record} at {pointer}")
@@ -329,6 +322,65 @@ def bare_decimals(context: Context) -> Finding:
     return _finding(problems)
 
 
+NO_RECORDS = "data/records not found: record pointers unchecked"
+
+
+def _evidence_problems(
+    claim: Claim, evidence: Evidence, root: Path, cache: dict[Path, Any]
+) -> list[str]:
+    path = root / evidence.record
+    where = f"{claim.id}: {evidence.record} {evidence.pointer}"
+    if not path.is_file():
+        return [f"{claim.id}: {evidence.record} not found under data/records"]
+    if not pointers.is_plain(evidence.pointer or ""):
+        return [f"{where}: not a plain JSON pointer"]
+    try:
+        if path not in cache:
+            cache[path] = pointers.read_json(path)
+        found = pointers.follow(cache[path], evidence.pointer or "")
+    except pointers.PointerError as error:
+        return [f"{where}: {error}"]
+    return (
+        [f"{where}{m}" for m in pointers.mismatches(found, evidence.expect)]
+        if evidence.expect is not None
+        else []
+    )
+
+
+def record_pointers(context: Context) -> Finding:
+    """F7: every evidence pointer resolves in its stored record and holds its `expect` value.
+
+    Evidence with a `derive` expression and no pointer is not read here.
+    """
+    root = context.records_root
+    if root is None or not root.is_dir():
+        return _finding([], unchecked=[NO_RECORDS])
+    cache: dict[Path, Any] = {}
+    problems = [
+        problem
+        for claim in context.registry.claims
+        if claim.active
+        for evidence in claim.evidence
+        if evidence.pointer is not None
+        for problem in _evidence_problems(claim, evidence, root, cache)
+    ]
+    return _finding(problems)
+
+
+def code_symbols(context: Context) -> Finding:
+    """F12: every code symbol of an active claim imports."""
+    problems = []
+    for claim in context.registry.claims:
+        if not claim.active:
+            continue
+        for reference in claim.code:
+            try:
+                symbols.resolve(reference)
+            except ValueError as error:
+                problems.append(f"{claim.id}: {reference}: {error}")
+    return _finding(problems)
+
+
 def pending(reason: str) -> Callable[[Context], Finding]:
     """A rule that cannot run yet, with the reason it reports."""
 
@@ -354,16 +406,12 @@ RULES = (
         pending("waits for the Lean proofs in proofs/"),
     ),
     Rule("F6", "evidence sha256 equals the data manifest", record_hashes),
-    Rule(
-        "F7",
-        "record pointers resolve, expect values hold",
-        pending("record pointer resolution is not implemented"),
-    ),
+    Rule("F7", "record pointers resolve, expect values hold", record_pointers),
     Rule("F8", "\\claim usages name registered claims", claim_tags_registered),
     Rule("F9", "every empirical and theorem claim is \\claim-ed", claims_tagged),
     Rule("F10", "\\val keys are generated and backed by evidence", values_generated),
     Rule("F11", "no bare decimals in paper prose", bare_decimals),
-    Rule("F12", "code symbols import", pending("code symbol import check is not implemented")),
+    Rule("F12", "code symbols import", code_symbols),
     Rule("F13", "docs/TRACEABILITY.md is current", matrix_fresh),
 )
 

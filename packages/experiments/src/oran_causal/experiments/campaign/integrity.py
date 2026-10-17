@@ -5,6 +5,7 @@ from collections import defaultdict
 from collections.abc import Callable
 from typing import Any
 
+from oran_causal.experiments.campaign.extras import is_extras
 from oran_causal.experiments.campaign.provenance import PythonPin
 from oran_causal.experiments.campaign.spec import (
     ProtocolTexts,
@@ -58,8 +59,15 @@ def accept_rule(spec: Spec) -> Callable[[Record], bool]:
     """The records a run of `spec` may use.
 
     EVAL accepts only EVAL records of the spec's protocol and of this spec (canonical sha);
-    DEV accepts only DEV records.
+    DEV accepts only DEV records; an extras spec only DEV records of this spec, because its
+    designs share unit keys.
     """
+    if is_extras(spec):
+        sha = spec_sha256(spec)
+        return lambda r: (
+            (r.get("run_mode") or {}).get("mode", "dev") == "dev"
+            and (r.get("integrity") or {}).get("spec_sha256") == sha
+        )
     if not is_eval(spec):
         return lambda r: (r.get("run_mode") or {}).get("mode", "dev") == "dev"
     psha, ssha = spec.get("protocol_sha256"), spec_sha256(spec)

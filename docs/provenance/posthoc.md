@@ -30,11 +30,13 @@ All under `packages/experiments/src/oran_causal/experiments/posthoc/`.
 | `x7.py` | `scratchpad/e6_dev/x7_subset_check.py` (run half) | As X4 |
 | `x8.py` | `scratchpad/e6_dev/k0n_tail_check.py` (run half) | Reuses the study1 discovery helpers of `experiments.system` |
 | `tools.py` | none | `referee_tools()` wires `RefereeTools` to the method symbols (map decoders, `certify_map`, `can_defer`, `edge_quality`, signatures, `design_slope_bound`, guard KPIs, `LEVEL_V2_ARR`) |
+| `extras_specs.py` | `cdd_oran/xmethod/extras.py` (`build_specs`, `build_cost_agg`, `write_specs`) | Declared X2/X3/X5/X6 specs rebuilt from `specs/eval/full.json`; `check` compares them with `specs/extras/*.json` (floats rtol 1e-9; the cost tables' `about` line names the old `scratchpad/xmethod/results/dev` paths) |
+| `extras_run.py` | `cdd_oran/xmethod/extras.py` (`dither_constants`, `generate`, `tell`, `_told_run_one`, `_x6_run_one`, `x6_hooks`, `installed`) | The monkeypatching of campaign and runner is gone: the campaign runner takes `Providers.dataset` and `Providers.execute`; only the generator's dither constants and the three pmrt_nl functions of X6 are patched, in a context manager (`patched`). `x6_hooks` is rewritten for the new `GbmProfiles` / `Focal` API of `core.pmrt.nonlinear` (same quantities) |
 | `__main__.py` | none | Dispatcher: `x1-runtime x2x3 x4 x5x6 x7 x8 x9 .. x16`, `x1-timing x4-run x7-run x8-run` |
 
 ## Not ported
 
-- X2/X3 and X5/X6 run parts (`extras.py` `build_specs`, `installed`, `tell`, the `x6_hooks` runner monkeypatching): the frozen specs ship in `experiments/specs/extras`; the hook mechanism needs a redesign on the new harness.
+- `extras.py` command line (`specs`, `projection`, cloud commands): specs are checked by `extras_specs check`, runs go through `python -m oran_causal.experiments.campaign run --spec specs/extras/<s>.json` and `experiments.launch`.
 - `exp_c_timing.py` lock, pin check, cloud and launch code.
 
 ## Deviations
@@ -45,8 +47,13 @@ All under `packages/experiments/src/oran_causal/experiments/posthoc/`.
 - X16: floats differ about 1e-14 relative from the stored record (stored on Python 3.12 / numpy 2.4.2). The gate is rtol 1e-9, exact for structure, bools and strings; old-code `sha256`, `env` and `timing_s` keys are excluded.
 - X2/X3 provenance checks pass on Linux and fail locally on Windows for 122 of 360 datasets (platform floats in the generator); gate on the VPS.
 
+## Extras run path
+
+An extras spec has an `extras` block. `campaign/extras.py` (new; validation, the seed blocks `XMETHOD_EXTRAS` 3200000-3200199 and `XMETHOD_DIAG` 3300000-3302199, the `integrity.extras` stamp), `campaign/spec.py` (extras seeds, never EVAL), `campaign/integrity.py` (`accept_rule`: DEV records of the same spec sha), `campaign/run.py` (`Providers.execute`, `run_part` keeps the caller's stamp) and `campaign/__main__.py` (`run` of an extras spec calls `run_extras_part`) carry it. Smoke check, 2026-10-17, win32, in-process: trimmed copies of `x2_d05`, `x3_told`, `x5_adj`, `x6_gbm` (2 seeds, n 1000) ran end to end; edges and X6 bias logs equal the stored records at rtol 1e-6; the E4 R3 `dataset_sha256` differs from the stored one (platform floats in the generator, not investigated).
+
 ## Fixtures and tests
 
 - `packages/analysis/tests/test_posthoc_units.py`, `test_posthoc_gates.py` (gates on the frozen records; slow: X2/X3 all specs, X5/X6 stages).
+- `packages/experiments/tests/test_posthoc_extras.py` (specs equal the frozen files; seed and design guards; `tell`; X2 design generation; X6 hooks; campaign CLI runs of tiny X2 and X3 specs).
 - `packages/experiments/tests/test_posthoc_drivers.py`, `test_posthoc_referee_gates.py` (slow: X16).
 - `packages/experiments/tests/data/posthoc_jobs_golden.json` (job lists of X4 and X7, from the old code), `posthoc_records_golden_win32.json` (3 X4 and 4 X7 smoke episode records, seed 191100, 20 s, generated with the old code on win32). A Linux golden `posthoc_records_golden_linux.json` was made from the old code on the VPS.

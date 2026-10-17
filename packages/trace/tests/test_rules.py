@@ -163,7 +163,7 @@ def test_f13_detects_missing_stale_and_fresh_matrix(
     assert matrix_fresh(context).status is Status.PASS
 
 
-@pytest.mark.parametrize("code", ["F5", "F7", "F12"])
+@pytest.mark.parametrize("code", ["F5"])
 def test_pending_rules_say_why_they_are_not_checkable(
     code: str, workspace: Workspace, new_claim: MakeClaim
 ) -> None:

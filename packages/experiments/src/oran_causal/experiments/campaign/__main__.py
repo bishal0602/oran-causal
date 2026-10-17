@@ -1,7 +1,8 @@
 """Command line of the campaign runner: `python -m oran_causal.experiments.campaign <command>`.
 
 `list` prints a spec's units and the estimated CPU-s per part, `run` runs one part into a
-resumable shard file, `merge` merges shard files by the campaign rules. In an unpacked cloud
+resumable shard file, `merge` merges shard files by the campaign rules. A spec with an `extras`
+block (the post hoc X2, X3, X5 and X6) runs with its design hooks. In an unpacked cloud
 bundle the protocol texts come from the bundle (its protocol file and its frozen copy).
 """
 
@@ -14,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from oran_causal.experiments.campaign.cost import cost_table_from_agg
+from oran_causal.experiments.campaign.extras import is_extras
 from oran_causal.experiments.campaign.merge import merge
 from oran_causal.experiments.campaign.run import Providers, RunOptions, Shard, run_part
 from oran_causal.experiments.campaign.shard import CostTable, partition, unit_cost
@@ -26,6 +28,7 @@ from oran_causal.experiments.campaign.spec import (
     shipped_protocol,
 )
 from oran_causal.experiments.launch.bundle import PROTOCOL_REL, bundled_texts
+from oran_causal.experiments.posthoc.extras_run import run_extras_part
 
 PROG = "python -m oran_causal.experiments.campaign"
 
@@ -124,7 +127,10 @@ def _run(a: argparse.Namespace, spec_bytes: bytes, providers: Providers) -> int:
         registry=a.registry,
         providers=providers,
     )
-    n = run_part(spec, shard, a.out, opts)
+    if is_extras(spec):
+        n = run_extras_part(spec, shard, a.out, opts)
+    else:
+        n = run_part(spec, shard, a.out, opts)
     providers.log(f"[xm-c] part {i}/{p}: {n} units run")
     return 0
 

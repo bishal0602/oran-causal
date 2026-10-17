@@ -12,6 +12,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from oran_causal.experiments.campaign import extras
 from oran_causal.experiments.harness.runner import (
     DEV_SEEDS,
     EVAL_FLOOR,
@@ -136,7 +137,12 @@ def eval_authorised(spec: Spec, texts: ProtocolTexts) -> tuple[bool, str]:
 
 
 def seed_list(seeds: Any, spec: Spec, texts: ProtocolTexts) -> list[int]:
-    """Seeds of a block: DEV always, EVAL (>= 3_100_000) only when authorised."""
+    """Seeds of a block: DEV always, EVAL (>= 3_100_000) only when authorised.
+
+    An extras spec takes only its own experiment's seed block.
+    """
+    if extras.is_extras(spec):
+        return extras.seed_list(seeds, spec)
     if isinstance(seeds, str) or any(isinstance(x, str) for x in seeds):
         raise ValueError(
             f"seeds must be numbers (a 'TBD' placeholder is filled at the freeze): {seeds!r}"
@@ -154,7 +160,9 @@ def seed_list(seeds: Any, spec: Spec, texts: ProtocolTexts) -> list[int]:
 
 
 def is_eval(spec: Spec) -> bool:
-    """EVAL mode: any block seed >= 3_100_000."""
+    """EVAL mode: any block seed >= 3_100_000, except in an extras spec (always DEV)."""
+    if extras.is_extras(spec):
+        return False
     for b in spec.get("blocks", []):
         try:
             if any(int(x) >= EVAL_FLOOR for x in b.get("seeds", [])):
@@ -210,6 +218,8 @@ def validate_spec(spec: Spec, texts: ProtocolTexts) -> None:
         raise ValueError("spec needs 'arms'")
     _validate_arms(spec["arms"])
     _validate_blocks(spec)
+    if extras.is_extras(spec):
+        extras.validate(spec)
     if is_eval(spec):
         _validate_eval_roles(spec, texts)
     overlap = _role_seeds(spec, "tune", texts) & _role_seeds(spec, "measure", texts)

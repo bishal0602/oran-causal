@@ -69,12 +69,18 @@ type Record = dict[str, Any]
 type Spec = dict[str, Any]
 type Family = tuple[str, str, str, float | None, float]
 type DatasetSource = Callable[[Unit], tuple[Dataset, Truth]]
+type Execute = Callable[[Method, Job, Unit], Record]
 
 
 def generated_dataset(u: Unit) -> tuple[Dataset, Truth]:
     """The controlled-simulator dataset and truth of a unit (`lam` None is 1)."""
     lam = 1.0 if u.lam is None else u.lam
     return generate_dataset(u.world, u.regime, u.n, u.seed, lam=lam, kappa=u.kappa)
+
+
+def plain_execute(method: Method, job: Job, unit: Unit) -> Record:
+    """Runs one job unchanged (`unit` is for executors that depend on the arm)."""
+    return run_one(method, job)
 
 
 def _locked_pins(python: PythonPin | None) -> dict[str, Any]:
@@ -96,6 +102,7 @@ class Providers:
     texts: Callable[[], ProtocolTexts] = shipped_protocol
     resolve: Resolver = registry_resolve
     dataset: DatasetSource = generated_dataset
+    execute: Execute = plain_execute
     log: Log = print
 
 
@@ -404,7 +411,9 @@ def _killed_record(run: _UnitRun, o: IsolatedOutcome, ev: bool) -> Record:
 
 def _isolated(run: _UnitRun, ctx: _Context, state: _State, method: Method) -> Record:
     job = _job(run, state)
-    o = run_isolated(lambda: run_one(method, job), run.limits.cpu, run.limits.wall)
+    o = run_isolated(
+        lambda: ctx.providers.execute(method, job, run.unit), run.limits.cpu, run.limits.wall
+    )
     if o.record is None:
         return _killed_record(run, o, ctx.ev)
     child = {"child_cpu_s": o.cpu_s, "child_maxrss_mb": o.maxrss_mb, "child_wall_s": o.wall_s}
@@ -412,7 +421,7 @@ def _isolated(run: _UnitRun, ctx: _Context, state: _State, method: Method) -> Re
 
 
 def _in_process(run: _UnitRun, ctx: _Context, state: _State, method: Method) -> Record:
-    rec = run_one(method, _job(run, state))
+    rec = ctx.providers.execute(method, _job(run, state), run.unit)
     lim, u, cfg = run.limits, run.unit, run.config
     rss = rec.get("peak_rss_mb")
     if lim.cpu and rec.get("cpu_s") is not None and rec["cpu_s"] > lim.cpu:
@@ -504,5 +513,7 @@ def run_part(spec: Spec, shard: Shard, out: Path, opts: RunOptions | None = None
         "parts": shard.count,
     }
     budget = opts.budget if opts.budget is not None else spec.get("budget_cpu_s")
-    run_opts = dataclasses.replace(opts, budget=budget, skip_keys=frozenset(skip), stamp=stamp)
+    run_opts = dataclasses.replace(
+        opts, budget=budget, skip_keys=frozenset(skip), stamp={**(opts.stamp or {}), **stamp}
+    )
     return run_units(spec, mine, out, run_opts)

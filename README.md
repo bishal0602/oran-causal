@@ -40,7 +40,7 @@ Launchers: `oran-causal launch`, `colab`, `kaggle`, `vps`, `dispatch`. `oran-cau
 
 ## Traceability
 
-`spec/claims.yaml` registers every claim of the paper. `uv run oran-causal-trace check [--strict] [--verbose]` checks the registry against the tests, record hashes and manuscript tags. In `--strict` mode a failing rule blocks, except F4 (claims without a passing default-run test, unverified cited locators). F5 (Lean), F7 (record pointers) and F12 (code symbols) are not implemented and report "not checkable". `uv run oran-causal-trace matrix` rewrites `docs/TRACEABILITY.md` from the last full test run; rerun it after the tests change.
+`spec/claims.yaml` registers every claim of the paper. `uv run oran-causal-trace check [--strict] [--verbose]` checks the registry against the tests, record hashes and manuscript tags. In `--strict` mode a failing rule blocks, except F4 (claims without a passing default-run test, unverified cited locators). F7 (evidence pointers resolve in `data/records` and hold their `expect` values) and F12 (code symbols import) block; F7 reports "not checkable" when `data/records` is absent. F5 (Lean) is not implemented and reports "not checkable". `uv run oran-causal-trace matrix` rewrites `docs/TRACEABILITY.md` from the last full test run; rerun it after the tests change.
 
 ## Layout
 
