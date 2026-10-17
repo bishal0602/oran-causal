@@ -31,6 +31,9 @@
 \usepackage{subcaption}%
 \usepackage{array}%
 \usepackage{placeins}% \FloatBarrier keeps appendix floats in their appendix (W6, V2 B23)
+\usepackage{claims}%
+\showclaimsfalse
+\input{generated/values}
 %%%%
 
 \theoremstyle{thmstyleone}%
@@ -103,7 +106,7 @@ and logging their probabilities, and introduce the predictable matched-filter ra
 these decisions to test the sharp null that a parameter family never changes a KPI. Its false discovery rate control
 is asymptotic, needs no network model, and covers these nulls but not effect signs or the cells that carry an effect.
 In one simulated scenario, PMRT declared nothing on placebo logs and no wrong-sign edge. Its precision against a
-simulated ground truth, 0.92 on randomised and 0.86 on confounded logs, fell to 0.59 and 0.73 under a doubled
+simulated ground truth, \val{s1.map.pmrt.prec} on randomised and \val{s2.map.pmrt.prec} on confounded logs, fell to \val{s1.gt.dbl.pmrt.prec} and \val{s2.gt.dbl.pmrt.prec} under a doubled
 materiality threshold. A referee acting on the map alone breached a radio-link-failure guard. Behind an
 edge-certification gate, the referee met every guard and matched the best static rule, which never lets a pico cell
 sleep, and even the ground-truth map did no better. Randomised logging thus supports valid discovery, and the decision

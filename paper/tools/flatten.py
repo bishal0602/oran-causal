@@ -1,7 +1,9 @@
 """Package the manuscript for submission.
 
-Writes submission/sn-article.tex with every \\input expanded (the template forbids \\input) and internal LaTeX
-comments removed, and copies the class, style, bibliography, the figures it uses and Online Resource 1 next to it.
+Writes submission/sn-article.tex with every \\input expanded (the template forbids \\input), internal LaTeX
+comments removed, \\val{key} replaced by its literal from generated/values.tex and \\claim{ID} dropped (the
+submission uses no custom macros), and copies the class, style, bibliography, the figures it uses and Online
+Resource 1 next to it.
 Run after `uv run python paper/build.py sn-article supplementary`:  uv run python paper/tools/flatten.py
 """
 import re
@@ -12,6 +14,26 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'submission'
 INPUT = re.compile(r'^\s*\\input\{([^}]+)\}\s*$')
 COMMENT = re.compile(r'(?<!\\)%')
+DEFVAL = re.compile(r'^\\defval\{([^}]+)\}\{(.*)\}$')
+VAL = re.compile(r'\\val\{([^}]+)\}')
+CLAIM = re.compile(r'\\claim\{[^}]+\}')
+CLAIMS_SETUP = re.compile(r'^\s*(\\usepackage\{claims\}%?|\\showclaims(false|true))\s*$')
+
+
+def load_values(path):
+    """Reads the \\defval lines of generated/values.tex into a key -> literal mapping."""
+    values = {}
+    for line in path.read_text(encoding='utf-8').split('\n'):
+        m = DEFVAL.match(line)
+        if m:
+            values[m.group(1)] = m.group(2)
+    return values
+
+
+def strip_macros(line, values):
+    """Removes \\claim{ID} and replaces \\val{key} by its literal; an unknown key raises KeyError."""
+    line = CLAIM.sub('', line)
+    return VAL.sub(lambda m: values[m.group(1)], line)
 
 
 def strip_comment(line):
@@ -25,20 +47,24 @@ def strip_comment(line):
     return head + '%'
 
 
-def expand(path, depth=0):
+def expand(path, values, depth=0):
     assert depth < 5, path
     text = path.read_text(encoding='utf-8').replace('\r\n', '\n')
     out = []
     for line in text.split('\n'):
+        if CLAIMS_SETUP.match(line):
+            continue
         m = INPUT.match(line)
+        if m and m.group(1) == 'generated/values':
+            continue
         if m:
             name = m.group(1)
             sub = ROOT / (name if name.endswith('.tex') else name + '.tex')
-            out.extend(expand(sub, depth + 1))
+            out.extend(expand(sub, values, depth + 1))
             continue
         s = strip_comment(line)
         if s is not None:
-            out.append(s)
+            out.append(strip_macros(s, values))
     return out
 
 
@@ -46,9 +72,11 @@ def main():
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / 'figures').mkdir(parents=True)
-    lines = expand(ROOT / 'sn-article.tex')
+    values = load_values(ROOT / 'generated' / 'values.tex')
+    lines = expand(ROOT / 'sn-article.tex', values)
     body = re.sub(r'\n{3,}', '\n\n', '\n'.join(lines)) + '\n'
     assert '\\input{' not in body
+    assert not re.search(r'\\(val|claim|defval)\{', body)
     (OUT / 'sn-article.tex').write_text(body, encoding='utf-8', newline='\n')
     for f in ['sn-jnl.cls', 'sn-mathphys-num.bst', 'sn-bibliography.bib']:
         shutil.copy(ROOT / f, OUT / f)

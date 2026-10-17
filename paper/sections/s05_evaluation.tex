@@ -13,7 +13,7 @@ causal structure, which isolate the role of the logging design. This section des
 drawn from them, the ground truth, the baselines and metrics, and the evaluation protocol.
 
 \subsection{Simulation environment and scenario}
-\label{sec:scenario}
+\label{sec:scenario}\claim{DEF-SIM-CONST}
 
 The simulator models a near-RT RIC and the RAN it controls (Figure~\ref{fig:system_e6p}). The network has 24 cells: 21
 macro sectors on a seven-site hexagonal layout with wrap-around and an inter-site distance of 500~m~\cite{3gpp36814},
@@ -57,14 +57,14 @@ an eMBB UE-second when backlogged with a user-perceived throughput below 2~Mb/s,
 coverage. The other KPIs are energy, RLFs and served load in UE-seconds.
 
 \subsection{Datasets}
-\label{sec:datasets}
+\label{sec:datasets}\claim{PRO-TUNE}
 
 Table~\ref{tab:design_studies} lists the datasets. Discovery is evaluated on randomised and on confounded logs, each
 with 600 evaluation episodes and with placebo logs drawn in the same way, and validity is further checked on null
 outcomes, made by cyclically shifting the KPI series across episodes. Null outcomes exercise more of the design than
 placebo logs, because they keep the evaluation logs with their re-proposals and state-dependent propensities. The
-maps learned from the confounded logs then drive referees in closed-loop runs on 160 fresh seeds, first without and
-then with the gate; the gated runs use separate seeds and a gate calibrated on 40 development episodes. The
+maps learned from the confounded logs then drive referees in closed-loop runs on \val{s2.dec.seeds} fresh seeds, first without and
+then with the gate; the gated runs use separate seeds and a gate calibrated on \val{s3.gate.dev_episodes} development episodes. The
 controlled environments are described in Section~\ref{sec:envs}. All methods and baseline thresholds were tuned on
 development episodes, separate from the evaluation data.
 
@@ -86,14 +86,14 @@ Setting & Data & Size & Results \tabularnewline
 \end{table}
 
 \subsection{Knockout ground truth}
-\label{sec:gt}
+\label{sec:gt}\claim{DEF-GT-LABEL}
 
 The maps are scored against knockout rollouts, which estimate the effect of one unit's mode with every other unit
 accepted. This target differs from PMRT's $\tau_{\pi}$, so the scores measure agreement between two related
 quantities rather than the validity of the test.
 
 \begin{definition}[Knockout effect]
-\label{def:tau_aa}
+\label{def:tau_aa}\claim{DEF-EST-TAUAA}
 Let $u$ be a unit sampled on separate episodes. Its knockout effect $\tau_u^{\mathrm{AA}}$ is the accept-minus-reject
 difference of the KPI summed over the cells of $r$ in the 90~s after opening, in rollouts from the copied state with
 every other unit accepted. The knockout effect $\tau_{\mathrm{AA}}$ is the mean of $\mathrm{sgn}_u\,
@@ -101,7 +101,7 @@ every other unit accepted. The knockout effect $\tau_{\mathrm{AA}}$ is the mean 
 \end{definition}
 
 Each sampled unit is rolled out for 90~s twice from its opening state, once accepted and once rejected, with the same
-redrawn randomness, and the pair is repeated for three reseeds. Pooling the units of a family over 40 ground-truth episodes gives a mean
+redrawn randomness, and the pair is repeated for three reseeds. Pooling the units of a family over \val{s1.gt.episodes} ground-truth episodes gives a mean
 per hypothesis with a 95~\% episode-cluster bootstrap interval. A hypothesis is labelled
 true, with the sign of its mean, when the interval excludes zero and the absolute mean is at least a materiality
 threshold $\delta_k$. The threshold is 5~\% of the largest absolute mean of KPI $k$ over all families and relations, with a floor
@@ -112,7 +112,7 @@ on the floor or the interval level (Appendix~\ref{app:x11}). Table~\ref{tab:syst
 randomised logs.
 
 \subsection{Controlled environments}
-\label{sec:envs}
+\label{sec:envs}\claim{DEF-ENV}\claim{DEF-ENV-ARMS}\claim{ASM-S4-KNOWN}
 \label{sec:study4_design}
 \label{sec:study4_purpose}
 
@@ -147,7 +147,7 @@ unit weight, which raised the null rate on development data. The validity of the
 rests on its own null checks there (Section~\ref{sec:res_validity}).
 
 \subsection{Baselines and metrics}
-\label{sec:baselines_scores}
+\label{sec:baselines_scores}\claim{DEF-MET-MAP}\claim{DEF-MET-DEC}
 \label{sec:arms}
 
 In the simulator, PMRT is compared with seven associational baselines that ignore the logging design and run on the
@@ -156,12 +156,12 @@ threshold or under BY control (Granger~+~BY), SHAP-GBDT~\cite{Sharma_2025}, a tw
 network~\cite{santos2026conflictairan}, the intent-conflict statistic INT of PACIFISTA~\cite{PACIFISTA} and
 QACM~\cite{QACM2024}. Each threshold
 was set on development episodes so that the far relation received at most one declaration. Because the ground truth
-labels 8 of the 20 far hypotheses true on the randomised logs and 9 on the confounded logs, this rule caps the recall
+labels \val{s1.far.true} of the \val{s1.far.total} far hypotheses true on the randomised logs and \val{s2.far.true} on the confounded logs, this rule caps the recall
 a baseline can reach. On the randomised logs the modes are independent of the network state, so the baselines'
 placebo declarations there come from their thresholds rather than from confounding. On the confounded logs the
 baselines are also reported at thresholds calibrated on placebo logs.
 
-Maps are scored over the 60 hypotheses. Precision is the share of scored declarations that are true, whatever their
+Maps are scored over the \val{s1.gt.hypotheses} hypotheses. Precision is the share of scored declarations that are true, whatever their
 sign; recall is the share of true hypotheses that are declared; F1 is their harmonic mean; and sign accuracy is the
 share of declared true edges that carry the ground-truth sign. Referees are compared with static rules, such as
 accept-all, never-sleep, which rejects every request to put a pico to sleep, and the subsets of xApps run alone. They are also compared
@@ -175,7 +175,7 @@ one-sided or two-sided 90~\% paired seed-bootstrap intervals with 10\,000 resamp
 cluster-bootstrap intervals.
 
 \subsection{Evaluation protocol}
-\label{sec:protocol}
+\label{sec:protocol}\claim{PRO-FROZEN}\claim{PRO-SEEDS}\claim{PRO-POSTHOC}
 
 For each dataset, the analysis rules, seeds and pass criteria were fixed before the evaluation data were generated,
 and the analysis code, fixed at the same time, was run once on the fresh evaluation seeds. Seeds came from disjoint

@@ -12,7 +12,7 @@ The robustness analyses were chosen after the protocols were fixed and were decl
 stated otherwise; Online Resource~1, Section~S1.2, lists every analysis with its status and date of declaration.
 
 \subsection{Validity checks}
-\label{app:validity}
+\label{app:validity}\claim{EMP-S1-STRICT}
 \label{app:x8}
 
 Table~\ref{tab:validity} lists the validity checks of PMRT where no effect exists (Section~\ref{sec:res_validity}). The
@@ -46,7 +46,7 @@ Check & Result & Criterion & Met & Note \tabularnewline
 \end{table}
 
 \subsection{Map quality}
-\label{app:maps_full}
+\label{app:maps_full}\claim{EMP-GT-SENS}\claim{EMP-GT-EXIST}
 \label{app:x12}
 \label{app:x11}
 \label{app:x14}
@@ -180,7 +180,7 @@ at $p = 0.352$ matches the ungated referee's rejection rate.\par}
 \end{table}
 
 \subsection{Gate diagnosis}
-\label{app:gate}
+\label{app:gate}\claim{EMP-X16}
 \label{app:x16}
 
 Table~\ref{tab:gate_diag} lists, for each request class that the PMRT map allows the referee to reject, the guard edges
@@ -231,7 +231,7 @@ ground-truth harm; indet., indeterminate.\par}
 \end{table}
 
 \subsection{Replication of the ungated referee}
-\label{app:x15}
+\label{app:x15}\claim{EMP-X15}
 
 The ungated PMRT referee was rerun with the same maps, simulator and code on the seeds of the gated dataset, where it no
 longer outperformed never-sleep (Section~\ref{sec:res_decision}). The two seed blocks did not differ significantly at

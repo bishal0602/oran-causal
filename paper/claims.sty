@@ -1,0 +1,30 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{claims}[2026/10/15 claim tags and generated values]
+
+\newif\ifshowclaims
+\providecommand\occlaim[2]{}
+\providecommand\ocval[1]{}
+
+\newcommand\claims@writeclaim[1]{\protected@write\@auxout{}{\string\occlaim{#1}{\thepage}}}
+\newcommand\claims@writeval[1]{\protected@write\@auxout{}{\string\ocval{#1}}}
+
+\NewDocumentCommand\claim{m}{%
+  \claims@writeclaim{#1}%
+  \ifshowclaims\marginpar{\tiny\ttfamily #1}\fi}
+
+\ExplSyntaxOn
+\prop_new:N \g__claims_val_prop
+\msg_new:nnn { claims } { unknown-value } { Unknown~value~key~'#1'~(not~in~generated/values.tex). }
+\NewDocumentCommand \defval { m m } { \prop_gput:Nnn \g__claims_val_prop {#1} {#2} }
+\NewDocumentCommand \val { m }
+  {
+    \prop_if_in:NnTF \g__claims_val_prop {#1}
+      {
+        \claims@writeval {#1}
+        \prop_item:Nn \g__claims_val_prop {#1}
+      }
+      { \msg_error:nnn { claims } { unknown-value } {#1} }
+  }
+\ExplSyntaxOff
+
+\endinput

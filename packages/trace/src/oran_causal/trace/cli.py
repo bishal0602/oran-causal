@@ -9,6 +9,7 @@ from typing import Self
 
 from oran_causal.trace.manifests import read_manifests
 from oran_causal.trace.matrix import render
+from oran_causal.trace.paper import read_exemptions, read_generated, scan_paper
 from oran_causal.trace.registry import load_registry
 from oran_causal.trace.results import DEFAULT_PATH, read_results
 from oran_causal.trace.rules import Context, Finding, Rule, Status, run_rules
@@ -27,6 +28,9 @@ class Paths:
     tests: Path
     manifests: Path
     matrix: Path
+    paper: Path
+    exemptions: Path
+    records: Path
 
     @classmethod
     def under(cls, root: Path) -> Self:
@@ -38,6 +42,9 @@ class Paths:
             tests=root / DEFAULT_PATH,
             manifests=root / "data" / "manifests",
             matrix=root / "docs" / "TRACEABILITY.md",
+            paper=root / "paper",
+            exemptions=root / "spec" / "paper_exempt.yaml",
+            records=root / "data" / "records",
         )
 
 
@@ -61,6 +68,10 @@ def build_context(paths: Paths) -> Context:
         spec_labels=spec_labels(paths.sections),
         matrix_path=paths.matrix,
         matrix_text=render(registry, tests, manifests),
+        paper=scan_paper(paths.paper),
+        generated=read_generated(paths.paper),
+        exemptions=read_exemptions(paths.exemptions),
+        records_root=paths.records,
     )
 
 

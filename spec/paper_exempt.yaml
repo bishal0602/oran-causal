@@ -1,0 +1,166 @@
+# Decimals the paper prints without \val. F11 fails on any other bare decimal and on a stale entry.
+exempt:
+  - file: sections/app_a.tex
+    literal: "0.5"
+    count: 1
+    reason: constant of the method or design
+  - file: sections/app_b.tex
+    literal: "38.901"
+    count: 1
+    reason: simulator coordinate
+  - file: sections/app_c.tex
+    literal: "0.01"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/app_c.tex
+    literal: "0.22"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/app_c.tex
+    literal: "0.26"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/app_c.tex
+    literal: "0.30"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/app_c.tex
+    literal: "0.35"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/app_c.tex
+    literal: "0.37"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/app_c.tex
+    literal: "0.85"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/app_c.tex
+    literal: "1.00"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/app_c.tex
+    literal: "1.1"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/app_c.tex
+    literal: "3.5"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/app_c.tex
+    literal: "7.5"
+    count: 1
+    reason: constant of the method or design
+  - file: sections/s03_setting.tex
+    literal: "0.5"
+    count: 1
+    reason: constant of the method or design
+  - file: sections/s03_setting.tex
+    literal: "1.10"
+    count: 1
+    reason: constant of the method or design
+  - file: sections/s04_pmrt.tex
+    literal: "0.05"
+    count: 3
+    reason: constant of the method or design
+  - file: sections/s04_pmrt.tex
+    literal: "0.10"
+    count: 1
+    reason: constant of the method or design
+  - file: sections/s04_pmrt.tex
+    literal: "0.14"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s04_pmrt.tex
+    literal: "1.10"
+    count: 1
+    reason: constant of the method or design
+  - file: sections/s05_evaluation.tex
+    literal: "0.5"
+    count: 1
+    reason: constant of the method or design
+  - file: sections/s05_evaluation.tex
+    literal: "0.90"
+    count: 1
+    reason: constant of the method or design
+  - file: sections/s05_evaluation.tex
+    literal: "1.10"
+    count: 1
+    reason: constant of the method or design
+  - file: sections/s05_evaluation.tex
+    literal: "28.541"
+    count: 1
+    reason: simulator coordinate
+  - file: sections/s05_evaluation.tex
+    literal: "38.864"
+    count: 1
+    reason: simulator coordinate
+  - file: sections/s06_discovery.tex
+    literal: "0.02"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "0.042"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "0.05"
+    count: 3
+    reason: constant of the method or design
+  - file: sections/s06_discovery.tex
+    literal: "0.054"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "0.056"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "0.06"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "0.075"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "0.15"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "0.16"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "0.21"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "0.23"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "0.77"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "1.00"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "1.10"
+    count: 1
+    reason: constant of the method or design
+  - file: sections/s06_discovery.tex
+    literal: "4.5"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s06_discovery.tex
+    literal: "5.4"
+    count: 1
+    reason: result with no frozen record pointer yet
+  - file: sections/s10_discussion.tex
+    literal: "0.8"
+    count: 1
+    reason: constant of the method or design

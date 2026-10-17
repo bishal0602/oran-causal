@@ -32,7 +32,7 @@ cell's observable neighbour list, and on the remaining cells; these are the own,
 \end{figure}
 
 \subsection{Decision units and logging}
-\label{sec:units}
+\label{sec:units}\claim{DEF-SYS-UNIT}\claim{DEF-SYS-LOG}
 
 The referee decides per decision unit rather than per request. A unit $u$ is identified by a cell, an xApp and an
 opening time: it opens at the xApp's first request on that cell while no unit of the pair is active. Its mode
@@ -52,7 +52,7 @@ floor for protected-share requests. Placebo logs draw and record modes in the sa
 that no logged mode has any effect. % src: CP PI0_V4 (accept .5 / reject .5); CP incumbent_class, incumbent_pressure, IncumbentPolicy.accept_prob (INC_FLOOR .15); CPR s.3; CP PlaceboPolicy
 
 \subsection{Problem formulation}
-\label{sec:estimand}
+\label{sec:estimand}\claim{DEF-SYS-HYP}\claim{DEF-EST-H0}\claim{DEF-SYS-MITIG}
 
 A hypothesis $(f, r, k)$ concerns a parameter family $f$, a relation $r$ and a KPI $k$; in the scenario of
 Section~\ref{sec:design}, four families, three relations and five KPIs give $m = 60$ hypotheses. Because the referee
@@ -64,7 +64,7 @@ $\mathrm{sgn}_u$ of the opening request, which orients the contrast, so that a p
 request that raises the parameter raises the KPI. % src: units_p.py:236-261; crt_units.py docstring (y = post - pre, H = H_pre = 90); GT docstring (orientation); TERM s.4 (60 hypotheses); proposition_notes.md C5
 
 \begin{definition}[Policy-averaged assignment effect]
-\label{def:tau_pi}
+\label{def:tau_pi}\claim{DEF-EST-TAUPI}
 Let $u$ be a unit of family $f$. Its assignment effect is
 \begin{equation}
 \tau_u^{\pi} = \mathbb{E}_{\pi}\bigl[y_u \mid \mathcal{F}_{u-1}, W_u = \text{accept}\bigr]

@@ -22,7 +22,7 @@ what each of them guarantees.
 \end{figure}
 
 \subsection{Test statistic}
-\label{sec:pmrt}
+\label{sec:pmrt}\claim{DEF-PMRT-WEIGHT}\claim{EMP-ERLY}
 \label{sec:pmrt_idea}
 
 In logs written by a reactive controller, the network state drives both the decision and the KPIs
@@ -37,7 +37,7 @@ Take a family $f$ and its units $u$ in information order: episode, opening time,
 $L(\text{reject}) = 0$, the assignment score of unit $u$ is
 \begin{equation}
 v_u = \mathrm{sgn}_u \bigl( L(W_u) - \pi_u \bigr),
-\label{eq:score}
+\label{eq:score}\claim{DEF-PMRT-SCORE}
 \end{equation}
 where $\mathrm{sgn}_u$ is the direction of the opening request. Over the policy's draw, $v_u$ has mean zero and
 variance $\pi_u(1 - \pi_u)$, so an acceptance that was likely scores little and one against the odds scores more.
@@ -62,7 +62,7 @@ variance are
 S = \sum_u v_u w_u, \qquad
 \sigma^2 = \sum_u \pi_u (1 - \pi_u)\, w_u^2, \qquad
 z = S / \sigma,
-\label{eq:stat}
+\label{eq:stat}\claim{DEF-PMRT-STAT}
 \end{equation}
 where $\sigma^2$ is the variance of $S$ over redraws of the modes with the weights held. Since it is the same for every
 redraw, $z$ is normalised by the design variance rather than studentised. The reported sign is that of $S$ times an
@@ -70,7 +70,7 @@ orientation $o$, the sign of the training effect over 0--90~s, which is set only
 at least 2 in magnitude. Where $o$ is unset, the reported sign is that of the plain total of the residuals over 0--90~s.
 
 \subsection{Inference and false discovery rate control}
-\label{sec:inference}
+\label{sec:inference}\claim{DEF-PMRT-SUPPORT}\claim{DEF-FDR-WBY}\claim{ASM-A1-DESIGN}\claim{ASM-A2-NULL}\claim{ASM-A3-PRED}\claim{ASM-A4-REG}\claim{CIT-BY}\claim{CIT-RW}
 \label{sec:declaration}
 
 The modes of family $f$ are redrawn $B = 9999$ times from the logged propensities, with every other family fixed and
@@ -79,7 +79,7 @@ is set, a one-sided value $p_d$ for each effect direction $d \in \{+1, -1\}$:
 \begin{equation}
 p = \frac{1 + \#\{b : |z_b| \ge |z|\}}{B + 1}, \qquad
 p_d = \frac{1 + \#\{b : d\, o\, z_b \ge d\, o\, z\}}{B + 1},
-\label{eq:pval}
+\label{eq:pval}\claim{DEF-PMRT-PVAL}
 \end{equation}
 where $\#$ counts redraws. A hypothesis is tested only when it has at least 30 units, 5 accepted, 5 rejected and 3
 episodes. The sharp null $H_0(f, r, k)$ of Section~\ref{sec:estimand} states that the outcome a unit would have at any cell
@@ -104,7 +104,7 @@ requires enough logged units that none dominates $S$; in the simulator it holds 
 and $\sigma^2 / n$ settles to a positive limit.
 
 \begin{proposition}[Asymptotic validity of PMRT]
-\label{prop:pmrt}
+\label{prop:pmrt}\claim{ASM-ORIENT}\claim{THM-PMRT-ASY}
 Assume (A1) to (A3). Then $S = \sum_u v_u w_u$ is a martingale with respect to $(\mathcal{G}_u)$, and its predictable
 quadratic variation is $\sigma^2$. Let (A4) also hold and the number of episodes grow.
 \begin{enumerate}
@@ -132,7 +132,7 @@ from the training episodes alone~\cite{roeder2009weighted} (Table~\ref{tab:pipel
 hypothesis with its sign, $d_j$ where the one-sided value was used and otherwise the reported sign.
 
 \begin{corollary}[Asymptotic false discovery rate]
-\label{cor:fdr}
+\label{cor:fdr}\claim{ASM-FDR-FIXED}\claim{THM-FDR-ASY}
 Let $\mathcal{H}_0$ hold the true sharp nulls among the $m = 60$ hypotheses. Let (A1) to (A4) hold for each of them,
 and let the weighted step-up use weights $\omega_j \ge 0$ with $\sum_j \omega_j = m$ and directions $d_j$ fixed from
 data independent of the evaluation data. Then, whatever the dependence between the p-values,
@@ -147,7 +147,7 @@ Untested hypotheses count in $m$ and are never declared, which is conservative. 
 Appendix~\ref{app:proof}.
 
 \subsection{Scope of the guarantees}
-\label{sec:reading}
+\label{sec:reading}\claim{THM-SCOPE}
 
 A declared edge states that the modes of family $f$ change KPI $k$ somewhere in the cells that relation $r$ covers,
 and the FDR bound covers that claim asymptotically. It does not cover the sign: the reported sign is the direction of
@@ -182,8 +182,8 @@ Decisions & None & other scenarios \\
 
 \subsection{Map-driven referee}
 \label{sec:acting}
-\label{sec:slope}
-\label{sec:referee}
+\label{sec:slope}\claim{ASM-SLOPE-CENTRE}\claim{EMP-X16}
+\label{sec:referee}\claim{DEF-REF-RULES}
 
 The referee needs the size of each effect, not only its sign, and takes it from the design slope $\hat\beta$, which
 regresses each unit's centred outcome on its assignment score. Let $e_u = y_u - \tilde y_u$ be the outcome minus an
@@ -192,7 +192,7 @@ outcome centre $\tilde y_u$ computed from earlier units' outcomes and $u$'s pre-
 \hat\beta = \frac{\sum_u v_u e_u}{\sum_u v_u^2}
           = \frac{1}{N} \sum_u \mathrm{sgn}_u \Bigl( \frac{\mathbf{1}\{W_u = \text{accept}\}\, e_u}{\pi_u}
             - \frac{\mathbf{1}\{W_u = \text{reject}\}\, e_u}{1 - \pi_u} \Bigr),
-\label{eq:slope_ht}
+\label{eq:slope_ht}\claim{DEF-SLOPE}
 \end{equation}
 with $\pi_u = 0.5$, which is the Horvitz--Thompson estimator of $\tau_{\pi}$ and converges to it
 (Lemma~\ref{lem:slope}). Under a state-dependent policy such as the incumbent, it converges to the
@@ -223,7 +223,7 @@ accepted, so that a guard conflict delays a request by at most one unit.
 The constants were fixed before any evaluation run, but the structure of the rules was developed on earlier results.
 
 \subsection{Edge-certification gate}
-\label{sec:gate}
+\label{sec:gate}\claim{DEF-GATE}\claim{ASM-GATE-COV}\claim{THM-GATE-BUDGET}
 
 A map leaves some guard edges undeclared, and a referee acting on it can harm a guard KPI through such an edge. The
 gate prevents this by letting the referee reject a class of requests only when every undeclared guard edge of the

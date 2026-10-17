@@ -11,7 +11,7 @@ graphs. The finding that a valid map did not improve safe conflict mitigation, i
 scenario and a single referee rule.
 
 \subsection{Implications for causal discovery}
-\label{sec:disc_discovery}
+\label{sec:disc_discovery}\claim{EMP-POWER}
 
 The validity of the test derives from the logged design rather than from a model of the network, which makes it the
 property most likely to transfer to other networks. The randomisation distribution is generated from the logged
@@ -22,11 +22,11 @@ rate under a logged confounded policy. The statistic used in the simulator rests
 checks (Section~\ref{sec:res_validity}).
 
 Statistical power, in contrast, depends on the choice of statistic. In the controlled environment with latent
-confounding and a single true edge, the recall of PMRT-GBM did not exceed 0.075 at any sample size, whereas
-design-adjusted partial correlation reached 0.90 at the largest (Online Resource~1, Section~S4.2). On the randomised
-simulator logs, which contain no confounding, a post hoc and descriptive comparison gave pooled recalls of 0.72 for
-design-adjusted partial correlation, without a placebo declaration, 0.69 for partial correlation with context covariates
-alone, and 0.79 for PMRT (Online Resource~1, Section~S5.1). The matched filter and weights of PMRT therefore increase
+confounding and a single true edge, the recall of PMRT-GBM did not exceed \val{s4.e4.pmrtgbm.recall_max} at any sample size, whereas
+design-adjusted partial correlation reached \val{s4.e4.pcorr_eq.recall_24k} at the largest (Online Resource~1, Section~S4.2). On the randomised
+simulator logs, which contain no confounding, a post hoc and descriptive comparison gave pooled recalls of \val{br.pcorr_eq.recall} for
+design-adjusted partial correlation, without a placebo declaration, \val{br.pcorr_native.recall} for partial correlation with context covariates
+alone, and \val{s1.map.pmrt.rec} for PMRT (Online Resource~1, Section~S5.1). The matched filter and weights of PMRT therefore increase
 power rather than validity, and a simple design-adjusted test provides the same guarantee.
 
 \subsection{Implications for conflict mitigation}
@@ -43,7 +43,7 @@ rather than discovery limit safe mitigation in other scenarios, with other guard
 determined from a single scenario.
 
 \subsection{Deployment requirements}
-\label{sec:disc_deploy}
+\label{sec:disc_deploy}\claim{EMP-X3}\claim{EMP-RUNTIME}\claim{EMP-S1-STRICT}\claim{EMP-X4}
 
 The test requires a conflict-mitigation layer that draws each accept-or-reject decision with a known propensity and
 records that propensity exactly. A policy that changes over time does not violate this requirement, because the
@@ -67,14 +67,14 @@ did not examine; computation times are reported in Online Resource~1, Section~S5
 
 For operators who apply learned discovery methods to designed logs, a placebo check provides an inexpensive screening
 step. The pipeline is applied unchanged to an additional column drawn from the logged design, which by construction
-affects no KPI, and any edge declared from that column disqualifies its declarations as causal evidence. In this study, the check separated PMRT, which declared no placebo edge, from baselines that declared up to 29
+affects no KPI, and any edge declared from that column disqualifies its declarations as causal evidence. In this study, the check separated PMRT, which declared no placebo edge, from baselines that declared up to \val{s2.placebo.granger_by}
 (Section~\ref{sec:res_validity}). The check is necessary but not sufficient: a discovery stage whose threshold was
 calibrated to pass it still exceeded the nominal null-edge rate in 9 of 30 controlled conditions
 (Section~\ref{sec:study4_results}). A passed placebo check therefore excludes the most severe failures, whereas positive
 causal evidence still requires a test whose validity follows from the logged design.
 
 \subsection{Limitations}
-\label{sec:disc_limits}
+\label{sec:disc_limits}\claim{EMP-X15}\claim{EMP-X16}
 
 The first group of limitations concerns the scope of the evidence. The simulator results come from one scenario, one incumbent policy and one
 referee rule developed on earlier results, and none of them involves a real RIC, a testbed or a compliance claim. The
@@ -90,7 +90,7 @@ single 90~s horizon with every other unit accepted, so it targets $\tau_{\mathrm
 horizon could not be varied, and the labels of material effects, and with them the precision of PMRT, depend on the
 threshold $\delta_k$. The FDR bound applies to the edge, not to the relation to which the edge is attributed. The design
 slope and the bounds of the gate rest on an approximately predictable outcome centre. A strictly predictable centre
-changed the map slopes by $-2.9$ to $+6.5$~\% without a change of sign, moved the bounds by a median of 3.5~\% of their
+changed the map slopes by \val{x16.map.rel_min} to \val{x16.map.rel_max}~\% without a change of sign, moved the bounds by a median of \val{x16.gate.median_pct}~\% of their
 tolerance and altered no certification (Appendix~\ref{app:x16}). No guard covers the protected slice, and the gate
 bounds of the associational maps assume independent errors, so they can be too narrow on dependent KPI series by an
 amount that this study did not quantify.

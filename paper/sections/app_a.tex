@@ -112,7 +112,7 @@ $\mathcal{G}_{u-1}$-measurable when $\xi_u$ is, although it is observed after th
 $u$'s own post-window, and validity concerns that case alone.
 
 \begin{lemma}[Fresh draws]
-\label{lem:fresh}
+\label{lem:fresh}\claim{THM-FRESH}
 If $\xi_u$ and $\pi_u$ are $\mathcal{G}_{u-1}$-measurable and $\xi_u$ differs from
 $\xi_1, \dots, \xi_{u-1}$, then $U_{\xi_u}$ is Uniform$(0, 1)$ and independent of
 $\mathcal{G}_{u-1}$, so $\Pr(W_u = \text{accept} \mid \mathcal{G}_{u-1}) = \pi_u$.
@@ -152,7 +152,7 @@ $0 < \eta^2 < \infty$ almost surely, that $\max_u |w_u| / s_n \to 0$ in probabil
 integrable; Section~\ref{sec:inference} states what the four assumptions require in operational terms.
 
 \subsection{Proof of Proposition~\ref{prop:pmrt}}
-\label{app:proof_prop}
+\label{app:proof_prop}\claim{CIT-HH}\claim{CIT-DUR}
 
 \emph{Martingale.} By (A1), $\mathbb{E}[L_u \mid \mathcal{G}_{u-1}] = \pi_u$, so
 $\mathbb{E}[v_u \mid \mathcal{G}_{u-1}] = 0$ and
@@ -211,7 +211,7 @@ $\mathbb{E}[Q / B \mid \text{data}] = \Pi_n$.
 \label{app:proof_exact}
 
 \begin{lemma}[Exact case]
-\label{lem:exact}
+\label{lem:exact}\claim{THM-EXACT}\claim{CIT-PS}
 Suppose, in addition to (A1) and (A2), that the realised units, their order, $\mathrm{sgn}_u$,
 $\pi_u$ and $w_u$ are all $\mathcal{G}_0$-measurable. Then $\Pr(p \le t \mid \mathcal{G}_0) \le t$
 for every $t \in [0, 1]$, every $n$ and every $B$, and likewise for $p_d$.
@@ -243,7 +243,7 @@ Example~\ref{ex:adaptive} shows a two-unit design in which re-proposal alone mak
 anti-conservative. % src: W3 draft Example D.1; RULINGS 5
 
 \begin{example}[Re-proposal alone breaks finite-sample validity]
-\label{ex:adaptive}
+\label{ex:adaptive}\claim{THM-COUNTEREX}
 Let $\pi_u = 0.5$, $\mathrm{sgn}_u = +1$ and $o = +1$. Unit 1 has weight $w_1 = 1$. If it is
 rejected, the request is proposed again and opens unit 2 with weight $w_2 = a > 1$; if it is
 accepted, there is no unit 2. All weights are fixed in advance, so (A1) to (A3) hold. If unit 1 is
@@ -257,7 +257,7 @@ the martingale central limit theorem removes it.
 \end{example}
 
 \subsection{Proof of Corollary~\ref{cor:fdr}}
-\label{app:proof_cor}
+\label{app:proof_cor}\claim{THM-BY-FIN}\claim{CIT-BR}
 
 Let $c_m = \sum_{i=1}^m 1/i$ and $t_{j,i} = q\, \omega_j\, i / (m c_m)$ for $i = 1, \dots, m$, with $t_{j,0} = 0$. The
 declaration layer is the weighted step-up with the reshaping function $i \mapsto i / c_m$, which rejects exactly the hypotheses
@@ -287,7 +287,7 @@ evaluation data. \hfill$\square$
 \label{app:proof_slope}
 
 \begin{lemma}[Design slope]
-\label{lem:slope}
+\label{lem:slope}\claim{THM-SLOPE}
 Assume (A1) with the natural history $\mathcal{F}_{u-1}$ in place of $\mathcal{G}_{u-1}$, bounded
 outcomes, a centre $\tilde y_u$ that is $\mathcal{F}_{u-1}$-measurable, $N / n$ bounded away from 0 and
 infinity with probability tending to one. Then

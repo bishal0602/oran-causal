@@ -1,0 +1,3004 @@
+{
+ "values": {
+  "br.pcorr_eq.recall": {
+   "args": {
+    "v": {
+     "pointer": "/cells/pcorr_eq|pooled|by/rec/rate",
+     "record": "bridging/exp_b/exp_b_tables.json",
+     "sha256": "60137536ede5d04c696d0c7d347df94683275dcad7f7d48b4b54e347df842914",
+     "value": 0.7241379310344828
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.72"
+  },
+  "br.pcorr_native.recall": {
+   "args": {
+    "v": {
+     "pointer": "/cells/pcorr_native|pooled|by/rec/rate",
+     "record": "bridging/exp_b/exp_b_tables.json",
+     "sha256": "60137536ede5d04c696d0c7d347df94683275dcad7f7d48b4b54e347df842914",
+     "value": 0.6896551724137931
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.69"
+  },
+  "s1.ex.confirmed": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/levels/0.95/methods/loadsp_c+wby1s/pooled/ex_confirmed",
+     "record": "posthoc_x9_x16/revision/x14_existence.json",
+     "sha256": "3f15c3d4e1ff9e0c997914fbc2e3ad2caa77cef53a3f1472fd249466447a1127",
+     "value": 26
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "26"
+  },
+  "s1.ex.n_exists": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/levels/0.95/methods/loadsp_c+wby1s/pooled/ex_n_exists",
+     "record": "posthoc_x9_x16/revision/x14_existence.json",
+     "sha256": "3f15c3d4e1ff9e0c997914fbc2e3ad2caa77cef53a3f1472fd249466447a1127",
+     "value": 43
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "43"
+  },
+  "s1.far.total": {
+   "args": {
+    "i": {
+     "pointer": "/studies/S1/variants/frozen/counts_by_relation/far/INDET",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 4
+    },
+    "n": {
+     "pointer": "/studies/S1/variants/frozen/counts_by_relation/far/NULL",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 8
+    },
+    "t": {
+     "pointer": "/studies/S1/variants/frozen/counts_by_relation/far/TRUE",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 8
+    }
+   },
+   "expr": "t + n + i",
+   "fmt": "d",
+   "text": "20"
+  },
+  "s1.far.true": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/variants/frozen/counts_by_relation/far/TRUE",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 8
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "8"
+  },
+  "s1.gt.dbl.int.prec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/variants/delta_x2/methods/int/precision",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 0.875
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.88"
+  },
+  "s1.gt.dbl.int.rec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/variants/delta_x2/methods/int/recall",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 0.35
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.35"
+  },
+  "s1.gt.dbl.pmrt.prec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/variants/delta_x2/methods/loadsp_c+wby1s/precision",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 0.5925925925925926
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.59"
+  },
+  "s1.gt.dbl.pmrt.rec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/variants/delta_x2/methods/loadsp_c+wby1s/recall",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 0.8
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.80"
+  },
+  "s1.gt.dbl.qacm.prec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/variants/delta_x2/methods/qacm/precision",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 0.8
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.80"
+  },
+  "s1.gt.dbl.qacm.rec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/variants/delta_x2/methods/qacm/recall",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 0.4
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.40"
+  },
+  "s1.gt.dbl.tt.prec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/variants/delta_x2/methods/two_tower/precision",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 0.8333333333333334
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.83"
+  },
+  "s1.gt.dbl.tt.rec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/variants/delta_x2/methods/two_tower/recall",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 0.25
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.25"
+  },
+  "s1.gt.episodes": {
+   "args": {
+    "v": {
+     "pointer": "/v4/gt/n_episodes",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 40
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "40"
+  },
+  "s1.gt.half.prec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S1/variants/delta_x0.5/methods/loadsp_c+wby1s/precision",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 1.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s1.gt.hypotheses": {
+   "args": {
+    "v": {
+     "pointer": "/v4/K0/m",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 60
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "60"
+  },
+  "s1.k0.binom_level": {
+   "args": {
+    "v": {
+     "pointer": "/K0/rule/binom_level",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.01
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f",
+   "text": "0.01"
+  },
+  "s1.k0.binom_tail": {
+   "args": {
+    "v": {
+     "pointer": "/v4/K0/binom_tail",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0.0296941
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f",
+   "text": "0.03"
+  },
+  "s1.k0.m": {
+   "args": {
+    "v": {
+     "pointer": "/v4/K0/m",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 60
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "60"
+  },
+  "s1.k0.n_reject": {
+   "args": {
+    "v": {
+     "pointer": "/v4/K0/n_reject",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 7
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "7"
+  },
+  "s1.map.corr.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/v4/placebo_declarations/corr",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 3
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "3"
+  },
+  "s1.map.corr.prec": {
+   "args": {
+    "v": {
+     "pointer": "/v4/pooled/corr/ov_precision",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0.8571429
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.86"
+  },
+  "s1.map.corr.rec": {
+   "args": {
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/corr/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.20689655172413793
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/corr/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.8333333333333334
+    }
+   },
+   "expr": "r * s",
+   "fmt": ".2f|up",
+   "text": "0.17"
+  },
+  "s1.map.corr.wrong": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/corr/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.20689655172413793
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/corr/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.8333333333333334
+    }
+   },
+   "expr": "round(r * n * (1 - s))",
+   "fmt": "d",
+   "text": "1"
+  },
+  "s1.map.gby.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/v4/placebo_declarations/granger_by",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 13
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "13"
+  },
+  "s1.map.gby.prec": {
+   "args": {
+    "v": {
+     "pointer": "/v4/pooled/granger_by/ov_precision",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0.5945946
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.59"
+  },
+  "s1.map.gby.rec": {
+   "args": {
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/granger_by/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.7586206896551724
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/granger_by/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.7272727272727273
+    }
+   },
+   "expr": "r * s",
+   "fmt": ".2f|up",
+   "text": "0.55"
+  },
+  "s1.map.gby.wrong": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/granger_by/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.7586206896551724
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/granger_by/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.7272727272727273
+    }
+   },
+   "expr": "round(r * n * (1 - s))",
+   "fmt": "d",
+   "text": "6"
+  },
+  "s1.map.gr.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/v4/placebo_declarations/granger",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 1
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "1"
+  },
+  "s1.map.gr.prec": {
+   "args": {
+    "v": {
+     "pointer": "/v4/pooled/granger/ov_precision",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0.6923077
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.69"
+  },
+  "s1.map.gr.rec": {
+   "args": {
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/granger/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.6206896551724138
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/granger/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.7777777777777778
+    }
+   },
+   "expr": "r * s",
+   "fmt": ".2f|up",
+   "text": "0.48"
+  },
+  "s1.map.gr.wrong": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/granger/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.6206896551724138
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/granger/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.7777777777777778
+    }
+   },
+   "expr": "round(r * n * (1 - s))",
+   "fmt": "d",
+   "text": "4"
+  },
+  "s1.map.int.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/v4/placebo_declarations/int",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 6
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "6"
+  },
+  "s1.map.int.prec": {
+   "args": {
+    "v": {
+     "pointer": "/v4/pooled/int/ov_precision",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0.875
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.88"
+  },
+  "s1.map.int.rec": {
+   "args": {
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/int/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.2413793103448276
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/int/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 1.0
+    }
+   },
+   "expr": "r * s",
+   "fmt": ".2f|up",
+   "text": "0.24"
+  },
+  "s1.map.int.wrong": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/int/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.2413793103448276
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/int/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 1.0
+    }
+   },
+   "expr": "round(r * n * (1 - s))",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s1.map.pmrt.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/v4/placebo_declarations/loadsp_c+wby1s",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s1.map.pmrt.prec": {
+   "args": {
+    "v": {
+     "pointer": "/v4/pooled/loadsp_c+wby1s/ov_precision",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0.92
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.92"
+  },
+  "s1.map.pmrt.rec": {
+   "args": {
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/loadsp_c+wby1s/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.7931034482758621
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/loadsp_c+wby1s/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 1.0
+    }
+   },
+   "expr": "r * s",
+   "fmt": ".2f|up",
+   "text": "0.79"
+  },
+  "s1.map.pmrt.wrong": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/loadsp_c+wby1s/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.7931034482758621
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/loadsp_c+wby1s/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 1.0
+    }
+   },
+   "expr": "round(r * n * (1 - s))",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s1.map.qacm.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/v4/placebo_declarations/qacm",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 5
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "5"
+  },
+  "s1.map.qacm.prec": {
+   "args": {
+    "v": {
+     "pointer": "/v4/pooled/qacm/ov_precision",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0.8888889
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.89"
+  },
+  "s1.map.qacm.rec": {
+   "args": {
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/qacm/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.27586206896551724
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/qacm/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 1.0
+    }
+   },
+   "expr": "r * s",
+   "fmt": ".2f|up",
+   "text": "0.28"
+  },
+  "s1.map.qacm.wrong": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/qacm/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.27586206896551724
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/qacm/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 1.0
+    }
+   },
+   "expr": "round(r * n * (1 - s))",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s1.map.shap.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/v4/placebo_declarations/shap_gbdt",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 2
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "2"
+  },
+  "s1.map.shap.prec": {
+   "args": {
+    "v": {
+     "pointer": "/v4/pooled/shap_gbdt/ov_precision",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 1.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s1.map.shap.rec": {
+   "args": {
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/shap_gbdt/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.034482758620689655
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/shap_gbdt/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 1.0
+    }
+   },
+   "expr": "r * s",
+   "fmt": ".2f|up",
+   "text": "0.03"
+  },
+  "s1.map.shap.wrong": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/shap_gbdt/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.034482758620689655
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/shap_gbdt/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 1.0
+    }
+   },
+   "expr": "round(r * n * (1 - s))",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s1.map.tt.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/v4/placebo_declarations/two_tower",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 6
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "6"
+  },
+  "s1.map.tt.prec": {
+   "args": {
+    "v": {
+     "pointer": "/v4/pooled/two_tower/ov_precision",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 1.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s1.map.tt.rec": {
+   "args": {
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/two_tower/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.20689655172413793
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/two_tower/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.8333333333333334
+    }
+   },
+   "expr": "r * s",
+   "fmt": ".2f|up",
+   "text": "0.17"
+  },
+  "s1.map.tt.wrong": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/two_tower/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.20689655172413793
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/two_tower/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.8333333333333334
+    }
+   },
+   "expr": "round(r * n * (1 - s))",
+   "fmt": "d",
+   "text": "1"
+  },
+  "s1.p2.gby.wins120": {
+   "args": {
+    "v": {
+     "pointer": "/v4/P2/granger_by/wins120",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 4
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "4"
+  },
+  "s1.p2.gby.wins60": {
+   "args": {
+    "v": {
+     "pointer": "/v4/P2/granger_by/wins60",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 2
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "2"
+  },
+  "s1.p2.n120": {
+   "args": {
+    "a": {
+     "pointer": "/v4/P2/granger_by/win120",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": [
+      true,
+      true,
+      true,
+      true,
+      false
+     ]
+    }
+   },
+   "expr": "len(a)",
+   "fmt": "d",
+   "text": "5"
+  },
+  "s1.p2.n60": {
+   "args": {
+    "a": {
+     "pointer": "/v4/P2/granger_by/win60",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false
+     ]
+    }
+   },
+   "expr": "len(a)",
+   "fmt": "d",
+   "text": "10"
+  },
+  "s1.placebo.granger_by": {
+   "args": {
+    "v": {
+     "pointer": "/v4/placebo_declarations/granger_by",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 13
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "13"
+  },
+  "s1.pmrt.declared": {
+   "args": {
+    "v": {
+     "pointer": "/v4/pooled/loadsp_c+wby1s/n_declared",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 28
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "28"
+  },
+  "s1.pmrt.precision": {
+   "args": {
+    "v": {
+     "pointer": "/v4/pooled/loadsp_c+wby1s/ov_precision",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0.92
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.92"
+  },
+  "s1.pmrt.recall": {
+   "args": {
+    "r": {
+     "pointer": "/slices_result/pooled/metrics/loadsp_c+wby1s/ov_recall",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 0.7931034482758621
+    },
+    "s": {
+     "pointer": "/slices_result/pooled/metrics/loadsp_c+wby1s/sign_acc",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 1.0
+    }
+   },
+   "expr": "r * s",
+   "fmt": ".2f|up",
+   "text": "0.79"
+  },
+  "s2.dec.aa.dn": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.22147875543660103
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "-0.22"
+  },
+  "s2.dec.aa.dn_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.14012792520435327
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "-0.14"
+  },
+  "s2.dec.aa.dn_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.2959246159618396
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "-0.30"
+  },
+  "s2.dec.aa.dr": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.22147875543660103
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$-0.22$"
+  },
+  "s2.dec.aa.dr_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.14012792520435327
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$-0.14$"
+  },
+  "s2.dec.aa.dr_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.2959246159618396
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$-0.30$"
+  },
+  "s2.dec.aa.rcv": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/R",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.00"
+  },
+  "s2.dec.aa.ret": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/retention",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9956884897565536
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s2.dec.aa.rlf": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/guard_ratio/rlf",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s2.dec.aa.rlf_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/guard_ratio_ci90/rlf/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s2.dec.aa.rlf_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=noarb/guard_ratio_ci90/rlf/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s2.dec.gt.dn": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.02230400356864043
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.02"
+  },
+  "s2.dec.gt.dn_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.08839767739170092
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.09"
+  },
+  "s2.dec.gt.dn_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.04298879358578027
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "-0.04"
+  },
+  "s2.dec.gt.dr": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.02230400356864043
+    }
+   },
+   "expr": "v",
+   "fmt": "+.2f|up|math",
+   "text": "$+0.02$"
+  },
+  "s2.dec.gt.dr_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.08839767739170092
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$0.09$"
+  },
+  "s2.dec.gt.dr_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.04298879358578027
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$-0.04$"
+  },
+  "s2.dec.gt.rcv": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/R",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.24378275900524146
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.24"
+  },
+  "s2.dec.gt.ret": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/retention",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.3175459923200488
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.32"
+  },
+  "s2.dec.gt.rlf": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/guard_ratio/rlf",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0113472622478386
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.01"
+  },
+  "s2.dec.gt.rlf_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/guard_ratio_ci90/rlf/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0925558999575078
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.09"
+  },
+  "s2.dec.gt.rlf_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:GT/guard_ratio_ci90/rlf/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9425094257613438
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.94"
+  },
+  "s2.dec.ns.rcv": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=never_sleep/R",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.22147875543660103
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.22"
+  },
+  "s2.dec.ns.ret": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=never_sleep/retention",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.183127660484582
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.18"
+  },
+  "s2.dec.ns.rlf": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=never_sleep/guard_ratio/rlf",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9906340057636888
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.99"
+  },
+  "s2.dec.ns.rlf_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=never_sleep/guard_ratio_ci90/rlf/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0422716500598588
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.04"
+  },
+  "s2.dec.ns.rlf_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=never_sleep/guard_ratio_ci90/rlf/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9425080420165761
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.94"
+  },
+  "s2.dec.pmrt.dn": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.2485037730939371
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.25"
+  },
+  "s2.dec.pmrt.dn_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.3618438134915213
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.36"
+  },
+  "s2.dec.pmrt.dn_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.1385655236724055
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.14"
+  },
+  "s2.dec.pmrt.dr": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.2485037730939371
+    }
+   },
+   "expr": "v",
+   "fmt": "+.2f|up|math",
+   "text": "$+0.25$"
+  },
+  "s2.dec.pmrt.dr_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.3618438134915213
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$0.36$"
+  },
+  "s2.dec.pmrt.dr_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.1385655236724055
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$0.14$"
+  },
+  "s2.dec.pmrt.rcv": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/R",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.4699825285305381
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.47"
+  },
+  "s2.dec.pmrt.ret": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/retention",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.6710271245942536
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.67"
+  },
+  "s2.dec.pmrt.rlf": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/guard_ratio/rlf",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.307456772334294
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.31"
+  },
+  "s2.dec.pmrt.rlf_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/guard_ratio_ci90/rlf/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.5648131344614191
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.56"
+  },
+  "s2.dec.pmrt.rlf_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study2/rows/arm=MG:PMRT/guard_ratio_ci90/rlf/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0963961133691378
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.10"
+  },
+  "s2.dec.seeds": {
+   "args": {
+    "v": {
+     "pointer": "/study2/n_seeds",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 160
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "160"
+  },
+  "s2.defer.ptx_up.gt": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/eval/ptx_up_defer_units/MG:GT",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 2370
+    }
+   },
+   "expr": "v",
+   "fmt": ",d|thousands",
+   "text": "2\\,370"
+  },
+  "s2.defer.ptx_up.pmrt": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/eval/ptx_up_defer_units/MG:PMRT",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 8674
+    }
+   },
+   "expr": "v",
+   "fmt": ",d|thousands",
+   "text": "8\\,674"
+  },
+  "s2.ex.confirmed": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S2/levels/0.95/methods/MG:PMRT/pooled/ex_confirmed",
+     "record": "posthoc_x9_x16/revision/x14_existence.json",
+     "sha256": "3f15c3d4e1ff9e0c997914fbc2e3ad2caa77cef53a3f1472fd249466447a1127",
+     "value": 22
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "22"
+  },
+  "s2.ex.n_exists": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S2/levels/0.95/methods/MG:PMRT/pooled/ex_n_exists",
+     "record": "posthoc_x9_x16/revision/x14_existence.json",
+     "sha256": "3f15c3d4e1ff9e0c997914fbc2e3ad2caa77cef53a3f1472fd249466447a1127",
+     "value": 40
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "40"
+  },
+  "s2.far.true": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S2/variants/frozen/counts_by_relation/far/TRUE",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 9
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "9"
+  },
+  "s2.gt.dbl.pmrt.prec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S2/variants/delta_x2/methods/MG:PMRT/precision",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 0.7272727272727273
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.73"
+  },
+  "s2.gt.half.prec": {
+   "args": {
+    "v": {
+     "pointer": "/studies/S2/variants/delta_x0.5/methods/MG:PMRT/precision",
+     "record": "posthoc_x9_x16/revision/x11_gt_sensitivity.json",
+     "sha256": "fe60016ce7907620479e32d155a56a81b70cc1c52188079b4bd0df5f3af331d1",
+     "value": 1.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s2.k0.m": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/disc/K0/m",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 60
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "60"
+  },
+  "s2.k0.n_reject": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/disc/K0/n_reject",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s2.map.corr.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:corr@dev/placebo_edges",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 8
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "8"
+  },
+  "s2.map.corr.prec": {
+   "args": {
+    "n": {
+     "pointer": "/option_a/map_quality/MG:corr@dev/null",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 2
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:corr@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 6
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:corr@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 2
+    }
+   },
+   "expr": "(r + w) / (r + w + n)",
+   "fmt": ".2f|up",
+   "text": "0.80"
+  },
+  "s2.map.corr.rec": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:corr@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 6
+    }
+   },
+   "expr": "r / n",
+   "fmt": ".2f|up",
+   "text": "0.21"
+  },
+  "s2.map.corr.wrong": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:corr@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 2
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "2"
+  },
+  "s2.map.gby.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:granger_by/placebo_edges",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 29
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "29"
+  },
+  "s2.map.gby.prec": {
+   "args": {
+    "n": {
+     "pointer": "/option_a/map_quality/MG:granger_by/null",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 19
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:granger_by/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 16
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:granger_by/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 6
+    }
+   },
+   "expr": "(r + w) / (r + w + n)",
+   "fmt": ".2f|up",
+   "text": "0.54"
+  },
+  "s2.map.gby.rec": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:granger_by/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 16
+    }
+   },
+   "expr": "r / n",
+   "fmt": ".2f|up",
+   "text": "0.55"
+  },
+  "s2.map.gby.wrong": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:granger_by/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 6
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "6"
+  },
+  "s2.map.gr.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:granger@dev/placebo_edges",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 19
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "19"
+  },
+  "s2.map.gr.prec": {
+   "args": {
+    "n": {
+     "pointer": "/option_a/map_quality/MG:granger@dev/null",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 12
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:granger@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 12
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:granger@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 6
+    }
+   },
+   "expr": "(r + w) / (r + w + n)",
+   "fmt": ".2f|up",
+   "text": "0.60"
+  },
+  "s2.map.gr.rec": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:granger@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 12
+    }
+   },
+   "expr": "r / n",
+   "fmt": ".2f|up",
+   "text": "0.41"
+  },
+  "s2.map.gr.wrong": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:granger@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 6
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "6"
+  },
+  "s2.map.int.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:int@dev/placebo_edges",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 1
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "1"
+  },
+  "s2.map.int.prec": {
+   "args": {
+    "n": {
+     "pointer": "/option_a/map_quality/MG:int@dev/null",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 1
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:int@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 4
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:int@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "(r + w) / (r + w + n)",
+   "fmt": ".2f|up",
+   "text": "0.80"
+  },
+  "s2.map.int.rec": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:int@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 4
+    }
+   },
+   "expr": "r / n",
+   "fmt": ".2f|up",
+   "text": "0.14"
+  },
+  "s2.map.int.wrong": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:int@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s2.map.pmrt.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:PMRT/placebo_edges",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s2.map.pmrt.prec": {
+   "args": {
+    "n": {
+     "pointer": "/option_a/map_quality/MG:PMRT/null",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 3
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:PMRT/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 18
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:PMRT/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "(r + w) / (r + w + n)",
+   "fmt": ".2f|up",
+   "text": "0.86"
+  },
+  "s2.map.pmrt.rec": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:PMRT/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 18
+    }
+   },
+   "expr": "r / n",
+   "fmt": ".2f|up",
+   "text": "0.62"
+  },
+  "s2.map.pmrt.wrong": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:PMRT/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s2.map.qacm.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:qacm@dev/placebo_edges",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s2.map.qacm.prec": {
+   "args": {
+    "n": {
+     "pointer": "/option_a/map_quality/MG:qacm@dev/null",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 1
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:qacm@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 5
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:qacm@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "(r + w) / (r + w + n)",
+   "fmt": ".2f|up",
+   "text": "0.83"
+  },
+  "s2.map.qacm.rec": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:qacm@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 5
+    }
+   },
+   "expr": "r / n",
+   "fmt": ".2f|up",
+   "text": "0.17"
+  },
+  "s2.map.qacm.wrong": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:qacm@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s2.map.shap.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:shap_gbdt@dev/placebo_edges",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 2
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "2"
+  },
+  "s2.map.shap.prec": {
+   "args": {
+    "n": {
+     "pointer": "/option_a/map_quality/MG:shap_gbdt@dev/null",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 1
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:shap_gbdt@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 1
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:shap_gbdt@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "(r + w) / (r + w + n)",
+   "fmt": ".2f|up",
+   "text": "0.50"
+  },
+  "s2.map.shap.rec": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:shap_gbdt@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 1
+    }
+   },
+   "expr": "r / n",
+   "fmt": ".2f|up",
+   "text": "0.03"
+  },
+  "s2.map.shap.wrong": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:shap_gbdt@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s2.map.tt.placebo": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:two_tower@dev/placebo_edges",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 22
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "22"
+  },
+  "s2.map.tt.prec": {
+   "args": {
+    "n": {
+     "pointer": "/option_a/map_quality/MG:two_tower@dev/null",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 3
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:two_tower@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 5
+    },
+    "w": {
+     "pointer": "/option_a/map_quality/MG:two_tower@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "(r + w) / (r + w + n)",
+   "fmt": ".2f|up",
+   "text": "0.63"
+  },
+  "s2.map.tt.rec": {
+   "args": {
+    "n": {
+     "pointer": "/gt/counts/TRUE",
+     "record": "system_artifacts/decision/v4_analysis.json",
+     "sha256": "38d7d28c94859c43fe3aa10741f041c37c5aedde9ae3c9716c503bd0fad8b62a",
+     "value": 29
+    },
+    "r": {
+     "pointer": "/option_a/map_quality/MG:two_tower@dev/true_right",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 5
+    }
+   },
+   "expr": "r / n",
+   "fmt": ".2f|up",
+   "text": "0.17"
+  },
+  "s2.map.tt.wrong": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:two_tower@dev/true_wrong",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "0"
+  },
+  "s2.placebo.granger_by": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:granger_by/placebo_edges",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 29
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "29"
+  },
+  "s2.pmrt.declared": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/map_quality/MG:PMRT/edges",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 22
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "22"
+  },
+  "s2.ptx_nbr_rlf.primary_p": {
+   "args": {
+    "v": {
+     "pointer": "/option_a/ptx_nbr_rlf/primary_p",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 0.4872
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.49"
+  },
+  "s3.dec.aa.dn": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.25617825793382837
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "-0.26"
+  },
+  "s3.dec.aa.dn_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.16910424427200124
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "-0.17"
+  },
+  "s3.dec.aa.dn_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.33919218143731306
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "-0.34"
+  },
+  "s3.dec.aa.dr": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.25617825793382837
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$-0.26$"
+  },
+  "s3.dec.aa.dr_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.16910424427200124
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$-0.17$"
+  },
+  "s3.dec.aa.dr_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.33919218143731306
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$-0.34$"
+  },
+  "s3.dec.aa.rcv": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/R",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.00"
+  },
+  "s3.dec.aa.ret": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/retention",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9950576785564103
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s3.dec.aa.rlf": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/guard_ratio/rlf",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s3.dec.aa.rlf_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/guard_ratio_ci90/rlf/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s3.dec.aa.rlf_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=noarb/guard_ratio_ci90/rlf/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.00"
+  },
+  "s3.dec.gt.dn": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.03547795890807354
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "-0.04"
+  },
+  "s3.dec.gt.dn_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.02808647766178531
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.03"
+  },
+  "s3.dec.gt.dn_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.10247867405404135
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "-0.10"
+  },
+  "s3.dec.gt.dr": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.03547795890807354
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$-0.04$"
+  },
+  "s3.dec.gt.dr_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.02808647766178531
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$0.03$"
+  },
+  "s3.dec.gt.dr_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.10247867405404135
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$-0.10$"
+  },
+  "s3.dec.gt.rcv": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/R",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.22070029902575483
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.22"
+  },
+  "s3.dec.gt.ret": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/retention",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.2935074673677134
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.29"
+  },
+  "s3.dec.gt.rlf": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/guard_ratio/rlf",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9368195609494914
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.94"
+  },
+  "s3.dec.gt.rlf_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/guard_ratio_ci90/rlf/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9700246544337563
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.97"
+  },
+  "s3.dec.gt.rlf_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:GT/guard_ratio_ci90/rlf/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9032420130172103
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.90"
+  },
+  "s3.dec.ns.rcv": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=never_sleep/R",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.25617825793382837
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.26"
+  },
+  "s3.dec.ns.ret": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=never_sleep/retention",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.1460118708817753
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.15"
+  },
+  "s3.dec.ns.rlf": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=never_sleep/guard_ratio/rlf",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9605568445475638
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.96"
+  },
+  "s3.dec.ns.rlf_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=never_sleep/guard_ratio_ci90/rlf/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9874732361314209
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.99"
+  },
+  "s3.dec.ns.rlf_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=never_sleep/guard_ratio_ci90/rlf/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9307039569573332
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.93"
+  },
+  "s3.dec.pmrt.dn": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.00"
+  },
+  "s3.dec.pmrt.dn_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.00"
+  },
+  "s3.dec.pmrt.dn_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.00"
+  },
+  "s3.dec.pmrt.dr": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$0.00$"
+  },
+  "s3.dec.pmrt.dr_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/dR_vs_never_sleep_ci90/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$0.00$"
+  },
+  "s3.dec.pmrt.dr_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/dR_vs_never_sleep_ci90/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.0
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$0.00$"
+  },
+  "s3.dec.pmrt.rcv": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/R",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.25617825793382837
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.26"
+  },
+  "s3.dec.pmrt.ret": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/retention",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.1460118708817753
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.15"
+  },
+  "s3.dec.pmrt.rlf": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/guard_ratio/rlf",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9605568445475638
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.96"
+  },
+  "s3.dec.pmrt.rlf_hi": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/guard_ratio_ci90/rlf/1",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9874732361314209
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.99"
+  },
+  "s3.dec.pmrt.rlf_lo": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=CS:PMRT/guard_ratio_ci90/rlf/0",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 0.9307039569573332
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.93"
+  },
+  "s3.dec.seeds": {
+   "args": {
+    "v": {
+     "pointer": "/study3/n_seeds",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 160
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "160"
+  },
+  "s3.gate.dev_episodes": {
+   "args": {
+    "v": {
+     "pointer": "/certsafe/calib/n_dev",
+     "record": "system_artifacts/report_2026-10-02/figures_data.json",
+     "sha256": "85fe7cfffdad21b742763919c1f71b55fc611361ecd85b38eaa86918e15db74e",
+     "value": 40
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "40"
+  },
+  "s3.mgpmrt.dr": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=MG:PMRT/dR_vs_never_sleep",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": -0.05546445451914686
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up|math",
+   "text": "$-0.06$"
+  },
+  "s3.mgpmrt.rlf": {
+   "args": {
+    "v": {
+     "pointer": "/study3/rows/arm=MG:PMRT/guard_ratio/rlf",
+     "record": "posthoc_x9_x16/revision/x9_decision_e2e.json",
+     "sha256": "bf46b6a618a9c4779e939ff9c1e0623e3ebbe011910a038ab1f2b851912f7a72",
+     "value": 1.0496162769944672
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.05"
+  },
+  "s4.c1.r2_max": {
+   "args": {
+    "a": {
+     "pointer": "/tables/V4_verdicts/C1/arms/corr/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.7865
+    },
+    "b": {
+     "pointer": "/tables/V4_verdicts/C1/arms/granger_native/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.68625
+    },
+    "c": {
+     "pointer": "/tables/V4_verdicts/C1/arms/mscr_native/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.9441071428571428
+    },
+    "d": {
+     "pointer": "/tables/V4_verdicts/C1/arms/pcorr_hac_fb/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.4679285714285714
+    },
+    "e": {
+     "pointer": "/tables/V4_verdicts/C1/arms/pcorr_native/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.4712142857142857
+    },
+    "f": {
+     "pointer": "/tables/V4_verdicts/C1/arms/rcot2_native/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.32735714285714285
+    }
+   },
+   "expr": "max(a, b, c, d, e, f)",
+   "fmt": ".2f",
+   "text": "0.94"
+  },
+  "s4.c1.r2_min": {
+   "args": {
+    "a": {
+     "pointer": "/tables/V4_verdicts/C1/arms/corr/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.7865
+    },
+    "b": {
+     "pointer": "/tables/V4_verdicts/C1/arms/granger_native/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.68625
+    },
+    "c": {
+     "pointer": "/tables/V4_verdicts/C1/arms/mscr_native/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.9441071428571428
+    },
+    "d": {
+     "pointer": "/tables/V4_verdicts/C1/arms/pcorr_hac_fb/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.4679285714285714
+    },
+    "e": {
+     "pointer": "/tables/V4_verdicts/C1/arms/pcorr_native/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.4712142857142857
+    },
+    "f": {
+     "pointer": "/tables/V4_verdicts/C1/arms/rcot2_native/pooled_r2/null_raw/rate",
+     "record": "study4_eval/eval/report.json",
+     "sha256": "eaece26b759f80fad13c2d323ae5662af306ec26dc60cadced364fb6b3eab337",
+     "value": 0.32735714285714285
+    }
+   },
+   "expr": "min(a, b, c, d, e, f)",
+   "fmt": ".2f|up",
+   "text": "0.33"
+  },
+  "s4.e4.pcorr_eq.recall_24k": {
+   "args": {
+    "v": {
+     "pointer": "/arm=pcorr_eq&world=E4&regime=R2&n=24000/recall_mean",
+     "record": "study4_eval/eval/csv/recall_vs_n.csv",
+     "sha256": "fec13186b5d0454d50a5461a855ed071285f3ef49a570e5febebdf48ef9e2a76",
+     "value": 0.9
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.90"
+  },
+  "s4.e4.pmrtgbm.recall_max": {
+   "args": {
+    "a": {
+     "pointer": "/[arm=pmrt_nl_eq&world=E4&regime=R2]/recall_mean",
+     "record": "study4_eval/eval/csv/recall_vs_n.csv",
+     "sha256": "fec13186b5d0454d50a5461a855ed071285f3ef49a570e5febebdf48ef9e2a76",
+     "value": [
+      0.0,
+      0.05,
+      0.075,
+      0.0,
+      0.025
+     ]
+    }
+   },
+   "expr": "max(a)",
+   "fmt": ".3f",
+   "text": "0.075"
+  },
+  "x15.pooled.dr": {
+   "args": {
+    "v": {
+     "pointer": "/Q4/dR_MG:PMRT-never_sleep/dR",
+     "record": "posthoc_x9_x16/revision/x15_replication.json",
+     "sha256": "6ba72cf109a8eeccf7909273403ca2e0750df5098ca3f8fc9bf1d1b71a4f58ed",
+     "value": 0.09934965968363349
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "0.10"
+  },
+  "x15.pooled.rlf": {
+   "args": {
+    "v": {
+     "pointer": "/Q4/rlf_ratio_MG:PMRT/ratio",
+     "record": "posthoc_x9_x16/revision/x15_replication.json",
+     "sha256": "6ba72cf109a8eeccf7909273403ca2e0750df5098ca3f8fc9bf1d1b71a4f58ed",
+     "value": 1.1779471089197668
+    }
+   },
+   "expr": "v",
+   "fmt": ".2f|up",
+   "text": "1.18"
+  },
+  "x16.gate.median_pct": {
+   "args": {
+    "v": {
+     "pointer": "/gate_summary/median_abs_dub_over_tau",
+     "record": "posthoc_x9_x16/revision/x16_centre.json",
+     "sha256": "e06929bedc6e1e79d0576a163de3e7471421555de505301ae0a3e88dd40b378b",
+     "value": 0.034994650416180564
+    }
+   },
+   "expr": "v",
+   "fmt": ".1f|x100",
+   "text": "3.5"
+  },
+  "x16.map.rel_max": {
+   "args": {
+    "v": {
+     "pointer": "/max_map_change/rel_change",
+     "record": "posthoc_x9_x16/revision/x16_centre.json",
+     "sha256": "e06929bedc6e1e79d0576a163de3e7471421555de505301ae0a3e88dd40b378b",
+     "value": 0.0646779759565897
+    }
+   },
+   "expr": "v",
+   "fmt": "+.1f|x100|math",
+   "text": "$+6.5$"
+  },
+  "x16.map.rel_min": {
+   "args": {
+    "a": {
+     "pointer": "/maps/[*]/rel_change",
+     "record": "posthoc_x9_x16/revision/x16_centre.json",
+     "sha256": "e06929bedc6e1e79d0576a163de3e7471421555de505301ae0a3e88dd40b378b",
+     "value": [
+      0.0034247687890427655,
+      -0.006026831729638196,
+      0.005047055111279212,
+      0.0024646227071943895,
+      -0.0007311980665993846,
+      0.015463010974493081,
+      -0.006134457536218844,
+      0.03479838854784184,
+      0.0008738696635876726,
+      -0.003880636554524289,
+      0.009226987380528212,
+      -0.028592843094749795,
+      0.010874439824740765,
+      0.004478902470622667,
+      0.0020172701403081243,
+      0.0646779759565897,
+      0.007712613360931621,
+      -0.0010504772092689084,
+      0.0017587868660347043,
+      -0.0062369749618984005,
+      0.0018370942190194027,
+      -0.002993871359346
+     ]
+    }
+   },
+   "expr": "min(a)",
+   "fmt": ".1f|x100|math",
+   "text": "$-2.9$"
+  },
+  "x8.n_variants": {
+   "args": {
+    "v": {
+     "pointer": "/n_variants",
+     "record": "posthoc_x8/x8/summary.json",
+     "sha256": "a071f4642f4a5e6f77b73c0d31232af32f5891e54a9e0a98cfadaf84f9115a78",
+     "value": 590
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "590"
+  },
+  "x8.redraws": {
+   "args": {
+    "v": {
+     "pointer": "/B/0",
+     "record": "posthoc_x8/x8/summary.json",
+     "sha256": "a071f4642f4a5e6f77b73c0d31232af32f5891e54a9e0a98cfadaf84f9115a78",
+     "value": 9999
+    }
+   },
+   "expr": "v",
+   "fmt": ",d|thousands",
+   "text": "9\\,999"
+  },
+  "x8.tol_pct": {
+   "args": {
+    "v": {
+     "pointer": "/criteria/var_decl_frac_tol",
+     "record": "posthoc_x8/x8/summary.json",
+     "sha256": "a071f4642f4a5e6f77b73c0d31232af32f5891e54a9e0a98cfadaf84f9115a78",
+     "value": 0.075
+    }
+   },
+   "expr": "v",
+   "fmt": ".1f|x100",
+   "text": "7.5"
+  },
+  "x8.variants_with_decl": {
+   "args": {
+    "v": {
+     "pointer": "/combos/loadsp_c+wby1s/variants_with_decl",
+     "record": "posthoc_x8/x8/summary.json",
+     "sha256": "a071f4642f4a5e6f77b73c0d31232af32f5891e54a9e0a98cfadaf84f9115a78",
+     "value": 2
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "2"
+  }
+ },
+ "version": 1
+}
