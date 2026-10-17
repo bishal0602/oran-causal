@@ -1,7 +1,7 @@
 ---
 id: THM-SLOPE
 kind: lean
-status: todo
+status: needs clarity
 ---
 
 # 06 THM-SLOPE: Design slope
@@ -60,15 +60,16 @@ As in `README.md`: builds, no `sorry`, axioms limited to `propext`, `Classical.c
 
 ## Result
 
-Filled in by the agent.
+Completed with the author-approved bounded-centre correction and episode blocking.
+See `../SLOPE_REPORT.md` for the mathematical statements and source-to-Lean mapping.
 
 | Field | Value |
 |---|---|
-| Status | |
-| Main declaration(s) | |
-| Files | |
-| Deviation from the claim | |
-| Hypotheses not stated in the claim | |
-| `lake build` | |
-| `#print axioms` | |
-| Notes | |
+| Status | `needs clarity` |
+| Main declaration(s) | `OranCausal.Slope.unbounded_centre_counterexample`; `counterexample_not_convergent`; `half_propensity_identity`; `half_propensity_target`; `EpisodeDesign.corrected_convergence` (all in `OranCausal.Slope`) |
+| Files | `proofs/OranCausal/Slope.lean`; import in `proofs/OranCausal.lean`; `proofs/SLOPE_REPORT.md`; `proofs/task06-build.log`; `proofs/task06-axioms.log`; `proofs/task06-workspace-check.log` |
+| Deviation from the claim | added hypothesis: bounded centre (\|ỹ_u\| ≤ C); the paper's proof needs it for bounded increments; counterexample in `OranCausal.Slope.unbounded_centre_counterexample`. The half-propensity identity is proved without boundedness. Centred errors are grouped by episode, not treated as unit-level martingale differences. |
+| Hypotheses not stated in the claim | Explicit source facts authorised by the user: H1, each outcome is observed by its episode end; H2, at most `N_max` units per episode; H3, episodes are appended in order and the previous episode's history is contained in each unit's pre-opening history. Uniform boundedness and predictability of the centre. Named library obligation `BoundedMartingaleWeakLaw μ`: every integrable, uniformly bounded, adapted martingale-difference sequence has its sample average converge to zero in probability. This is a universal theorem premise, not an independence assumption or a new Lean axiom; its exact statement and variance/Chebyshev justification are in the report. |
+| `lake build` | PASS, exit 0, 3123 jobs; no errors. Two cosmetic tactic-linter warnings at `Slope.lean:427` concern `<;>` versus `;`. |
+| `#print axioms` | PASS for all eleven audited declarations, including the corrected convergence theorem: only `propext`, `Classical.choice`, `Quot.sound`; no `sorryAx`. See `task06-axioms.log`. |
+| Notes | Counterexample uses an explicitly constructed iid Bernoulli(1/2) assignment law, zero outcomes, direction +1, and centre `3^(u+1)` in zero-based Lean indices. Its lower bound holds on every assignment path; nonconvergence in probability is proved. No episode independence is assumed. `uv run oran-causal check` passed lint but stopped at an existing formatting issue in `packages/analysis/tests/test_system_stats.py:202`, outside the permitted edit scope; later checks did not run. Paper and task 05 unchanged; no commit or push. |
