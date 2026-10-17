@@ -41,7 +41,7 @@ class E1Env(ControlledEnv):
     kpi_thresholds = (0.5, 0.5, 0.75, 0.75)
     directions = (0, 0, 0, 0)
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         env_seed: int = 0,
         obs_noise_scale: float = 0.0,

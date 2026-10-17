@@ -72,7 +72,7 @@ def accept_rule(spec: Spec) -> Callable[[Record], bool]:
     return accept
 
 
-def integrity_stamp(  # noqa: PLR0913
+def integrity_stamp(
     spec: Spec,
     code: dict[str, Any],
     pins: dict[str, Any],

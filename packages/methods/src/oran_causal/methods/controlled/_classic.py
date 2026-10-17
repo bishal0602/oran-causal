@@ -401,7 +401,7 @@ def placebo_tau(results: list[Result]) -> dict[str, Any]:
 @contextlib.contextmanager
 def thread_limit(n: int) -> Generator[None]:
     """Pins BLAS / OpenMP and an already imported torch to `n` threads."""
-    from threadpoolctl import threadpool_limits  # noqa: PLC0415
+    from threadpoolctl import threadpool_limits
 
     torch = sys.modules.get("torch")
     old = torch.get_num_threads() if torch is not None else None

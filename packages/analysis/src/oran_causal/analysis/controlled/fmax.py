@@ -270,7 +270,7 @@ def _run(plan: _Plan, nsim: int, seed: int) -> _Tally:
     return tally
 
 
-def fmax_simulate(  # noqa: PLR0913
+def fmax_simulate(
     cells: Iterable[tuple[str, str, Any, int]],
     seeds: int,
     keys: Sequence[str],

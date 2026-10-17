@@ -280,7 +280,7 @@ class TraceRecorder:
             if k != "gran" and k not in _REPORT_TIMES:
                 g.setdefault(k, []).append(np.asarray(v, np.float32))
 
-    def request(  # noqa: PLR0913, PLR0917
+    def request(
         self, now: float, r: dict[str, Any], d: Any, out: str, applied: float, age: int
     ) -> None:
         """Record one offered request, its decision and its outcome."""

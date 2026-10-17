@@ -57,7 +57,7 @@ extend-exclude = ["archive", "data", "paper", "**/_vendor/**"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "PT", "RUF", "ERA", "D", "TID", "PL", "NPY", "PD"]
-ignore = ["PLR2004", "D100", "D104", "D105", "D107", "D203", "D213"]
+ignore = ["PLC0415", "PLR0913", "PLR0915", "PLR0917", "PLR2004", "D100", "D104", "D105", "D107", "D203", "D213"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["oran_causal"]
@@ -66,8 +66,8 @@ known-first-party = ["oran_causal"]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/**" = ["D", "PLR0911", "PLR0913"]
-"tests/**" = ["D", "PLR0911", "PLR0913"]
+"**/tests/**" = ["D", "PLR0911"]
+"tests/**" = ["D", "PLR0911"]
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -101,6 +101,18 @@ not-subscriptable = "ignore"
 unresolved-attribute = "ignore"
 unresolved-import = "ignore"
 unsupported-operator = "ignore"
+
+[[tool.ty.overrides]]
+include = ["packages/methods/src/oran_causal/methods/controlled/_cdl_model.py", "packages/methods/src/oran_causal/methods/controlled/two_tower.py"]
+
+[tool.ty.overrides.rules]
+invalid-mutable-override = "ignore"
+
+[[tool.ty.overrides]]
+include = ["packages/core/tests/test_unit_table.py"]
+
+[tool.ty.overrides.rules]
+invalid-assignment = "ignore"
 
 [tool.pytest.ini_options]
 addopts = ["-ra", "-m", "not slow", "--strict-markers", "--strict-config", "--import-mode=importlib"]

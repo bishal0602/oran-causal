@@ -158,7 +158,7 @@ def pl_umi(
     return los, nlos, p
 
 
-def antenna_db(  # noqa: PLR0913
+def antenna_db(
     az: np.ndarray,
     d2: np.ndarray,
     bore: float,

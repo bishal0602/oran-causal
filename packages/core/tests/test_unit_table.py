@@ -66,4 +66,4 @@ def test_subset_remaps_prev_and_keeps_shared_fields() -> None:
 
 def test_table_is_frozen() -> None:
     with pytest.raises(dataclasses.FrozenInstanceError):
-        make_table().H = 60  # ty: ignore[invalid-assignment]
+        make_table().H = 60

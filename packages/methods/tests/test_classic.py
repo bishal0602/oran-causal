@@ -207,7 +207,7 @@ def _vendored() -> ModuleType:
 
 
 def test_vendored_notears_is_byte_identical():
-    import hashlib  # noqa: PLC0415
+    import hashlib
 
     digests = {
         VENDORED: "39644acd5b5d5ebc5fb5be5783365137eaa3b309df73bc0a75bad1942a0a426f",
@@ -219,7 +219,7 @@ def test_vendored_notears_is_byte_identical():
 
 
 def test_notears_bk_equals_vendored_without_knowledge():
-    from oran_causal.methods.controlled.notears import notears_linear_bk  # noqa: PLC0415
+    from oran_causal.methods.controlled.notears import notears_linear_bk
 
     rng = np.random.default_rng(3)
     x = rng.normal(size=(200, 5))
@@ -235,11 +235,11 @@ def test_notears_bk_equals_vendored_without_knowledge():
 
 
 def test_pc_equals_causallearn_pc(make_classic):
-    from causallearn.graph.GraphClass import CausalGraph  # noqa: PLC0415
-    from causallearn.search.ConstraintBased.PC import pc  # noqa: PLC0415
-    from causallearn.utils.PCUtils.BackgroundKnowledge import BackgroundKnowledge  # noqa: PLC0415
+    from causallearn.graph.GraphClass import CausalGraph
+    from causallearn.search.ConstraintBased.PC import pc
+    from causallearn.utils.PCUtils.BackgroundKnowledge import BackgroundKnowledge
 
-    from oran_causal.methods.controlled.pc import PcSettings, run_pc  # noqa: PLC0415
+    from oran_causal.methods.controlled.pc import PcSettings, run_pc
 
     data, _ = make_classic(1500, 3_000_004, b=1.0)
     cols = columns(data)
@@ -285,8 +285,8 @@ def test_pc_native_matches_score_at_alpha(syn, arm):
 
 
 def test_granger_equals_statsmodels(make_classic):
-    import statsmodels.api as sm  # noqa: PLC0415
-    from statsmodels.tsa.stattools import grangercausalitytests  # noqa: PLC0415
+    import statsmodels.api as sm
+    from statsmodels.tsa.stattools import grangercausalitytests
 
     data, _ = make_classic(600, 3_000_005, b=1.0, burn=50)
     r = _run("granger", data, arm="native")
@@ -310,7 +310,7 @@ def test_corr_equals_numpy(syn):
 
 
 def test_shap_dag_hgbdt_option_equals_e2_port(make_classic):
-    from oran_causal.methods.controlled.shap_dag import fit_shap_importances  # noqa: PLC0415
+    from oran_causal.methods.controlled.shap_dag import fit_shap_importances
 
     data, _ = make_classic(300, 3_000_006, b=1.0)
     r = _run("shap_dag", data, seed=0, regressor="hgbdt")
@@ -323,8 +323,8 @@ def test_shap_dag_hgbdt_option_equals_e2_port(make_classic):
 
 
 def test_shap_dag_default_is_xgboost_package_defaults(make_classic):
-    import shap  # noqa: PLC0415
-    import xgboost  # noqa: PLC0415
+    import shap
+    import xgboost
 
     data, _ = make_classic(300, 3_000_006, b=1.0)
     r = _run("shap_dag", data, seed=0)
@@ -340,7 +340,7 @@ def test_shap_dag_default_is_xgboost_package_defaults(make_classic):
 
 
 def test_shap_dag_no_early_stopping_at_any_n():
-    from oran_causal.methods.controlled.shap_dag import make_regressor  # noqa: PLC0415
+    from oran_causal.methods.controlled.shap_dag import make_regressor
 
     assert make_regressor("hgbdt", 0).get_params()["early_stopping"] is False
     assert make_regressor("xgboost", 0).get_params()["early_stopping_rounds"] is None
@@ -349,9 +349,9 @@ def test_shap_dag_no_early_stopping_at_any_n():
 
 
 def test_two_tower_score_is_row_share_of_gate(make_classic):
-    import torch  # noqa: PLC0415
+    import torch
 
-    from oran_causal.methods.controlled.two_tower import (  # noqa: PLC0415
+    from oran_causal.methods.controlled.two_tower import (
         LABEL,
         TowerSizes,
         TrainConfig,
@@ -419,7 +419,7 @@ def test_cond_set_from_shared_helper(make_classic):
 
 @pytest.mark.claim("DEF-ENV-ARMS")
 def test_granger_eq_equals_statsmodels_ols(make_classic):
-    import statsmodels.api as sm  # noqa: PLC0415
+    import statsmodels.api as sm
 
     data, _ = make_classic(500, 3_000_010, b=1.0, regime="R2")
     r = _run("granger", data)

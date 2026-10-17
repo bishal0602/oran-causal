@@ -16,7 +16,7 @@ SEED = 3_000_000
 
 
 def _statsmodels(y, x, z, lags):
-    import statsmodels.api as sm  # noqa: PLC0415
+    import statsmodels.api as sm
 
     design = np.column_stack([hac.hac_design(z), x])
     kw = {"maxlags": lags, "use_correction": True}

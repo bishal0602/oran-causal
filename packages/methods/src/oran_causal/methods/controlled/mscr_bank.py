@@ -129,11 +129,11 @@ def resolve_device(device: str | None = None) -> str:
     if device != "auto":
         return _validate_torch_device(device)
     try:
-        import torch  # noqa: PLC0415
+        import torch
     except ImportError:
         return "cpu"
     if torch.cuda.is_available():
-        from oran_causal.methods.controlled.mscr_torch import device_selfcheck  # noqa: PLC0415
+        from oran_causal.methods.controlled.mscr_torch import device_selfcheck
 
         if device_selfcheck("cuda"):
             return "cuda"
@@ -146,7 +146,7 @@ def _validate_torch_device(device: str) -> str:
             f"MSCR device must be 'auto', 'cpu', 'cuda[:k]' or 'torch:<device>', got {device!r}"
         )
     try:
-        import torch  # noqa: PLC0415
+        import torch
     except ImportError as e:
         raise ValueError(f"MSCR device {device!r} needs torch, which is not installed") from e
     try:
@@ -321,7 +321,7 @@ def _rowsums(
     dev = resolve_device(run.device)
     if dev == "cpu":
         return rowsums_cpu(ys, plan, cfg, rngs, run)
-    from oran_causal.methods.controlled.mscr_torch import (  # noqa: PLC0415
+    from oran_causal.methods.controlled.mscr_torch import (
         device_selfcheck,
         rowsums_torch,
     )
@@ -405,7 +405,7 @@ def _check_inputs(x: np.ndarray, y: np.ndarray, n_params: int) -> None:
         )
 
 
-def discover_mscr(  # noqa: PLR0913
+def discover_mscr(
     x: np.ndarray,
     y: np.ndarray,
     n_params: int,

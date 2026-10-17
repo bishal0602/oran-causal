@@ -83,7 +83,7 @@ SPEC: dict[str, Any] = {
 }
 
 
-def make_record(  # noqa: PLR0917
+def make_record(
     arm: str,
     world: str,
     regime: str,

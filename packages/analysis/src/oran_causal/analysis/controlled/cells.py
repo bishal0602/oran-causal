@@ -394,7 +394,7 @@ def _infeasible_cost(arm: Arm, group: _Group, plan: Cell | None, unit: Unit) -> 
     return {}
 
 
-def _cell_entry(  # noqa: PLR0913
+def _cell_entry(
     spec: Spec,
     unit: Unit,
     group: _Group,

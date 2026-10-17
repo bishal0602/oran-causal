@@ -72,7 +72,7 @@ class TwoTower(nn.Module):
         """a[k, p] = softplus(<U_k, V_p>), shape `[K, P]`."""
         return torch.nn.functional.softplus(self.U @ self.V.t())
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:  # ty: ignore[invalid-mutable-override]
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Reconstructed KPIs, shape `[N, K]`."""
         n = x.shape[0]
         e = self.psi(x.reshape(n * self.num_params, 1)).reshape(n, self.num_params, self.d)

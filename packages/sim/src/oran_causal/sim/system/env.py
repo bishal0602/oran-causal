@@ -79,7 +79,7 @@ class E6Env:
         trace_snapshot_s: seconds between full configuration snapshots in the trace.
     """
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         cfg: C.E6Config,
         *,

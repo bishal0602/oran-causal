@@ -93,7 +93,7 @@ def rcot_pvalue_lpd4(
     return stat, max(p, 0.0), False, how
 
 
-def block_perm_sequential(  # noqa: PLR0913
+def block_perm_sequential(
     cand: np.ndarray,
     target: np.ndarray,
     z: np.ndarray,

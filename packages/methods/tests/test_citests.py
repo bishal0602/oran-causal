@@ -253,10 +253,10 @@ def test_placebo_conf_is_own_family_and_not_a_conditioner(make_ci):
 
 
 def test_rcot2_lpd4_null_and_frozen_hbe_match_momentchi2():
-    from momentchi2 import sw  # noqa: PLC0415
+    from momentchi2 import sw
 
-    from oran_causal.methods.controlled._rcot import _hbe_pvalue  # noqa: PLC0415
-    from oran_causal.methods.controlled.rcot2 import _momentchi2, rcot_pvalue_lpd4  # noqa: PLC0415
+    from oran_causal.methods.controlled._rcot import _hbe_pvalue
+    from oran_causal.methods.controlled.rcot2 import _momentchi2, rcot_pvalue_lpd4
 
     _, lpb4 = _momentchi2()
     rng = np.random.default_rng(11)

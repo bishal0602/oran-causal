@@ -86,7 +86,7 @@ def test_resolve_device_rejects_unknown():
 
 def test_torch_kernel_is_bit_identical_on_cpu():
     pytest.importorskip("torch")
-    from oran_causal.methods.controlled.mscr_torch import device_selfcheck  # noqa: PLC0415
+    from oran_causal.methods.controlled.mscr_torch import device_selfcheck
 
     assert device_selfcheck("torch:cpu")
     rng = np.random.default_rng(6)

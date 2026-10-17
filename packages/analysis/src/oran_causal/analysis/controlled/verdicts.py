@@ -155,7 +155,7 @@ def validity_component(ev: Evidence, planned: list[str], rate_keys: Sequence[str
     }
 
 
-def _c1_verdict(  # noqa: PLR0913
+def _c1_verdict(
     *,
     assessable: bool,
     r1_invalid: int,

@@ -448,7 +448,7 @@ def _assemble(
     )
 
 
-def generate_dataset(  # noqa: PLR0913
+def generate_dataset(
     world: str,
     regime: str,
     n: int,

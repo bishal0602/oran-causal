@@ -79,7 +79,7 @@ def cell_key(world: str, regime: str, lam: float | None, n: int, kappa: float | 
     return f"{world}|{regime}|{lam_part}{kappa_part(kappa)}n{n}"
 
 
-def job_key(  # noqa: PLR0913, PLR0917
+def job_key(
     arm: str,
     world: str,
     regime: str,

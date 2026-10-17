@@ -354,7 +354,7 @@ def _v9(cells: Cells) -> Table:
     ]
 
 
-def assemble(  # noqa: PLR0913
+def assemble(
     cells: Cells,
     rows: Rows,
     records: list[Record],

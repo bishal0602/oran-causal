@@ -47,7 +47,7 @@ class MLP(nn.Module):
         layers.append(nn.Linear(prev, output_dim))
         self.net = nn.Sequential(*layers)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:  # ty: ignore[invalid-mutable-override]
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Network output."""
         return self.net(x)
 
@@ -81,7 +81,7 @@ class StatePredictor(nn.Module):
         std = torch.exp(torch.clamp(log_std, -5, 2)) + 1e-4
         return mu, std
 
-    def forward(  # noqa: PLR0913, PLR0917  # ty: ignore[invalid-mutable-override]
+    def forward(
         self,
         s: Any,
         a: Any,
@@ -158,7 +158,7 @@ class CDL:
             tuple(parameters[name] for parameters in parameter_maps) for name in parameter_names
         )
 
-        def forward_one(  # noqa: PLR0913, PLR0917
+        def forward_one(
             parameters: Any,
             model_features: Any,
             model_pooled: Any,

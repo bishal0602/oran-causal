@@ -33,7 +33,7 @@ from oran_causal.methods.controlled._classic import (
 VENDOR_COMMIT = "xunzheng/notears@4a9ab19fe502e392503da331773c5223d82d3666"
 
 
-def notears_linear_bk(  # noqa: PLR0913, PLR0915, PLR0917
+def notears_linear_bk(
     X,
     lambda1,
     loss_type,

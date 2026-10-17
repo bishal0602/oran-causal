@@ -135,7 +135,7 @@ def test_config_validation_and_standardize():
 
 
 def test_gamma_sf_matches_scipy():
-    from scipy import stats  # noqa: PLC0415
+    from scipy import stats
 
     for x, k, theta in ((0.5, 2.0, 1.0), (3.0, 0.7, 2.0), (40.0, 5.0, 3.0), (1e-3, 1.5, 1.0)):
         assert _gamma_sf(x, k, theta) == pytest.approx(

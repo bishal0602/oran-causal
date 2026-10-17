@@ -71,7 +71,7 @@ class E5Env(ControlledEnv):
     _NS_DOACT = 5
     _DO_GRID = np.linspace(-100.0, 100.0, 201)
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         env_seed: int = 0,
         obs_noise_scale: float = 0.0,

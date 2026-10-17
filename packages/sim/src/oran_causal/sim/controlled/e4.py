@@ -53,7 +53,7 @@ class E4Env(ControlledEnv):
     _NS_ETA = 4
     _NS_DOACT = 5
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         env_seed: int = 0,
         obs_noise_scale: float = 0.0,

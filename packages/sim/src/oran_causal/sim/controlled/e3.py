@@ -48,7 +48,7 @@ class E3Env(ControlledEnv):
     panel_kpi_ids = (0, 2, 3)
     excluded_kpi_ids = (1, 4)
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         env_seed: int = 0,
         obs_noise_scale: float = 0.0,
