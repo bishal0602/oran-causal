@@ -419,14 +419,16 @@ for f in {jd}/out/log_*.txt; do [ -f "$f" ] && echo "-- $(basename $f): $(tail -
     def pull(self, name: str, dirs: Dirs) -> int:
         """Merges the job's out dir into `runs/<name>`.
 
-        A local file is never replaced by a smaller one.
+        A local file is never replaced by a smaller one. A running job's files may grow while
+        they are read (GNU tar exit 1); that snapshot is kept and the next pull completes it.
 
         Returns:
             Number of files written.
         """
         jd = self.job_dir(name)
         data = self.transport.fetch(
-            f"cd {jd} && tar -czf - out run.out $(ls exit_code 2>/dev/null)"
+            f"cd {jd} && {{ tar --warning=no-file-changed -czf - out run.out "
+            f"$(ls exit_code 2>/dev/null); [ $? -le 1 ]; }}"
         )
         dst = dirs.runs / name
         written = 0

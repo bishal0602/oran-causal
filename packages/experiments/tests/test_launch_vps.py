@@ -1,5 +1,6 @@
 import io
 import json
+import shutil
 import subprocess
 import tarfile
 from pathlib import Path
@@ -171,6 +172,17 @@ def test_pull_keeps_the_larger_local_file_and_ignores_escapes(tmp_path: Path):
     assert (dst / "res_0.jsonl").read_bytes() == b"1\n2\n3\n"
     assert (dst / "res_1.jsonl").exists()
     assert not (tmp_path / "escape.txt").exists()
+
+
+@pytest.mark.skipif(shutil.which("bash") is None, reason="needs bash")
+@pytest.mark.parametrize(("tar_rc", "ok"), [(0, True), (1, True), (2, False)])
+def test_pull_accepts_files_that_grew_while_tar_read_them(tmp_path: Path, tar_rc: int, ok: bool):
+    v, t = host()
+    t.tar = tar_of({})
+    v.pull("job-a", Dirs(tmp_path, tmp_path / "runs", tmp_path))
+    script = f"cd() {{ :; }}; tar() {{ return {tar_rc}; }}; {t.fetched[-1]}"
+    rc = subprocess.run([shutil.which("bash") or "bash", "-c", script], check=False).returncode
+    assert (rc == 0) is ok
 
 
 def test_ssh_runs_scripts_on_stdin_and_raises_on_failure():
