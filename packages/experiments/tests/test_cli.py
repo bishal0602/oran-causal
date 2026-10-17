@@ -71,8 +71,17 @@ def test_unknown_command_is_rejected() -> None:
 
 
 def test_check_command_dispatches_to_run_checks(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(cli, "run_checks", lambda runner: 7)
-    assert cli.main(["check"]) == 7
+    seen: list[object] = []
+    monkeypatch.setattr(cli, "run_checks", lambda runner, checks: seen.append(checks) or 7)
+    assert cli.main(["check", "--jobs", "2"]) == 7
+    assert seen == [cli.with_jobs(cli.CHECKS, 2)]
+
+
+def test_jobs_only_reaches_the_pytest_check() -> None:
+    assert cli.with_jobs(cli.CHECKS, None) == cli.CHECKS
+    jobbed = cli.with_jobs(cli.CHECKS, 2)
+    assert ("pytest", "-n", "2") in jobbed
+    assert [c for c in jobbed if c[0] != "pytest"] == [c for c in cli.CHECKS if c[0] != "pytest"]
 
 
 @pytest.mark.parametrize("args", PARSED_HELP + DELEGATED_HELP, ids=" ".join)

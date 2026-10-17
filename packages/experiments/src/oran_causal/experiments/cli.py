@@ -74,6 +74,22 @@ def run_check(args: Sequence[str], root: Path | None = None) -> int:
     return run_module(args)
 
 
+def with_jobs(checks: Sequence[Sequence[str]], jobs: int | None) -> tuple[tuple[str, ...], ...]:
+    """Adds `-n <jobs>` to the pytest check; other checks and `jobs=None` are unchanged.
+
+    Args:
+        checks: Ordered module invocations.
+        jobs: pytest-xdist worker count, or None to keep pytest's own default.
+
+    Returns:
+        The invocations with the worker option applied.
+    """
+    return tuple(
+        (*c, "-n", str(jobs)) if jobs is not None and tuple(c) == ("pytest",) else tuple(c)
+        for c in checks
+    )
+
+
 def run_checks(runner: Runner, checks: Sequence[Sequence[str]] = CHECKS) -> int:
     """Runs each check in order and stops at the first failure.
 
@@ -159,7 +175,10 @@ def build_parser() -> argparse.ArgumentParser:
     """Builds the argument parser."""
     parser = argparse.ArgumentParser(prog="oran-causal", description=__doc__.splitlines()[0])
     commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("check", help="ruff, ty, paper values, pytest, then the strict trace check")
+    check = commands.add_parser(
+        "check", help="ruff, ty, paper values, pytest, then the strict trace check"
+    )
+    check.add_argument("-n", "--jobs", type=int, default=None, help="pytest-xdist workers")
     _add_data(commands)
     _add_paper_values(commands)
     _add_reproduce(commands)
@@ -303,7 +322,7 @@ def main(argv: Sequence[str] | None = None, out: Out = print) -> int:
         return _delegate(args, out)
     a = build_parser().parse_args(args)
     if a.command == "check":
-        return run_checks(run_check)
+        return run_checks(run_check, with_jobs(CHECKS, a.jobs))
     handlers: dict[str, Callable[[], int]] = {
         "data": lambda: _data(a, out),
         "paper-values": lambda: _paper_values(a),

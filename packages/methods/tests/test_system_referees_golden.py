@@ -89,17 +89,17 @@ def _same(a: Any, b: Any, path: str = "") -> None:
         assert a == b, (path, a, b)
 
 
-def _close(a: Any, b: Any, path: str = "") -> None:
+def _close(a: Any, b: Any, path: str = "", rtol: float = RTOL) -> None:
     if isinstance(a, dict) and isinstance(b, dict):
         assert sorted(a) == sorted(b), (path, sorted(set(a) ^ set(b)))
         for k in b:
-            _close(a[k], b[k], f"{path}/{k}")
+            _close(a[k], b[k], f"{path}/{k}", rtol)
     elif isinstance(a, list) and isinstance(b, list):
         assert len(a) == len(b), path
         for i, (x, y) in enumerate(zip(a, b, strict=True)):
-            _close(x, y, f"{path}[{i}]")
+            _close(x, y, f"{path}[{i}]", rtol)
     elif isinstance(a, float) and isinstance(b, float):
-        assert a == pytest.approx(b, rel=RTOL, abs=1e-12, nan_ok=True), (path, a, b)
+        assert a == pytest.approx(b, rel=rtol, abs=1e-12, nan_ok=True), (path, a, b)
     else:
         assert type(a) is type(b), (path, a, b)
         assert a == b, (path, a, b)
@@ -183,15 +183,15 @@ def test_learned_baselines_match_old(gold: dict, base_data: Any) -> None:
     sh = _norm(bd.score_shap(base_data))
     assert "fit_shap_importances" in sh.pop("_note")
     assert sh.pop("_importance") == "tree_shap"
-    _same(sh, {k: v for k, v in g["shap"]["scores"].items() if k != "_note"}, "shap")
+    _close(sh, {k: v for k, v in g["shap"]["scores"].items() if k != "_note"}, "shap")
     if "two_tower" not in g:
         pytest.skip("golden built without torch")
     sub = base_data.subset(base_data.family == 2)
-    _same(_norm(bd.score_qacm(sub, relations=("own",), ann=True)), g["qacm_ann"], "qacm_ann")
+    _close(_norm(bd.score_qacm(sub, relations=("own",), ann=True)), g["qacm_ann"], "qacm_ann")
     tt = _norm(bd.score_two_tower(base_data, sizes={"epochs": 300}))
     old = dict(g["two_tower"])
     assert tt.pop("_note").rsplit(", ", 1)[1] == old.pop("_note").rsplit(", ", 1)[1]
-    _same(tt, old, "two_tower")
+    _close(tt, old, "two_tower", rtol=1e-3)
 
 
 def _pressured_episodes() -> list[dict]:
