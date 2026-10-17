@@ -454,7 +454,7 @@ claims:
     paper: [abstract, tab:rq, sec:res_map, tab:maps, tab:maps_full]
     spec: spec:met.map
     depends_on: [DEF-MET-MAP, DEF-GT-LABEL, DEF-FDR-WBY]
-    code: [oran_causal.analysis.system.report_data:pooled]
+    code: [oran_causal.analysis.system.report_data:v4]
     tests: {min: 1, tier: t0}
     evidence:
       - record: system_artifacts/report_2026-10-02/figures_data.json
@@ -514,7 +514,7 @@ claims:
     paper: [abstract, sec:res_validity, sec:res_map, tab:maps, tab:maps_full, fig:placebo]
     spec: spec:met.map
     depends_on: [DEF-MET-MAP, DEF-GT-LABEL]
-    code: [oran_causal.analysis.system.report_data:pooled]
+    code: [oran_causal.analysis.system.report_data:v4]
     tests: {min: 1, tier: t0}
     evidence:
       - record: system_artifacts/report_2026-10-02/figures_data.json
