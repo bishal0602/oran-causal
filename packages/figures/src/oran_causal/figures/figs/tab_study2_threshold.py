@@ -1,7 +1,7 @@
 """Post hoc analysis X12, threshold choice of the Study 2 baselines (Section 6.2; booktabs LaTeX +
 csv): each tuned design-blind baseline with its DEV-tuned threshold next to its placebo-calibrated
 one, with the declared edges, edges whose ground truth is TRUE with the right / wrong sign, GT-NULL
-edges, placebo edges and recall; the untuned Granger + BY and PMRT (no tuned threshold) close the
+edges, placebo edges and recall (whatever the sign); the untuned Granger + BY and PMRT (no tuned threshold) close the
 table, PMRT last. The placebo-calibrated threshold is set on the same placebo logs that give its
 placebo-edge count, so that count is in-sample. Not a figure (no SPEC): run ``uv run python -m
 oran_causal.figures.figs.tab_study2_threshold``.
@@ -10,8 +10,9 @@ Source: extras/revision/x12_threshold.json (X12, EXTRAS_PROTOCOL amendment 2026-
 reproduced conf_disc_conf.json edge_quality and FD option_a.map_quality for all 14 maps before
 writing), keys ``repro.ok``, ``gt.n_true`` and ``rows.<i>.{arm, method, variant, edges, true_right,
 true_wrong, null, indet, placebo_edges, recall_true_right}``. Cross-checked against FD
-``option_a.map_quality`` (the source of tab_study2_maps). Recall = TRUE right-sign edges / GT-TRUE
-cells (stored). Post hoc, descriptive, no verdict; Study 2 is unchanged.
+``option_a.map_quality`` (the source of tab_study2_maps). Recall = (right + wrong) / GT-TRUE cells,
+whatever the sign, as in Section 5; the stored right-sign recall stays in the csv as
+``recall_true_right``. Post hoc, descriptive, no verdict; Study 2 is unchanged.
 """
 
 import math
@@ -30,8 +31,9 @@ COLS = [
     ("true_wrong", "Wrong"),
     ("null", "NULL"),
     ("placebo_edges", "Plac."),
-    ("recall_true_right", "Recall"),
+    ("recall", "Recall"),
 ]
+CSV_ONLY = ("recall_true_right",)
 FD_KEYS = ("edges", "true_right", "true_wrong", "null", "indet", "placebo_edges")
 LAST = ["MG:granger_by", "MG:PMRT"]  # no tuned threshold; PMRT is the last row
 MAX_FP = 1  # the @plc rule's placebo budget (E6P_CONFOUNDED_PROTOCOL s.4.2)
@@ -45,7 +47,7 @@ def check(t: dict):
         if any(r[k] != mq[r["arm"]][k] for k in FD_KEYS):
             raise AssertionError(f"{r['arm']}: counts differ from FD option_a.map_quality")
         if not math.isclose(r["recall_true_right"], r["true_right"] / t["gt"]["n_true"]):
-            raise AssertionError(f"{r['arm']}: recall != right / GT-TRUE")
+            raise AssertionError(f"{r['arm']}: stored recall != right / GT-TRUE")
         if r["variant"] == "plc" and r["placebo_edges"] > MAX_FP:
             raise AssertionError(f"{r['arm']}: placebo-calibrated map exceeds the in-sample budget")
 
@@ -53,7 +55,8 @@ def check(t: dict):
 def rows() -> tuple[list[dict], dict]:
     t = load_json(*X12)
     check(t)
-    by = {r["arm"]: r for r in t["rows"]}
+    n_true = t["gt"]["n_true"]
+    by = {r["arm"]: r | {"recall": (r["true_right"] + r["true_wrong"]) / n_true} for r in t["rows"]}
     tuned = M.order(
         sorted({r["arm"].split("@")[0] for r in t["rows"] if r["variant"] in ("dev", "plc")})
     )
@@ -62,20 +65,20 @@ def rows() -> tuple[list[dict], dict]:
         d, p = by[f"{base}@dev"], by[f"{base}@plc"]
         row = {"arm": base, "label": M.resolve(f"{base}@dev").method.name, "tuned": True}
         for v, r in (("dev", d), ("plc", p)):
-            row.update({f"{k}_{v}": r[k] for k, _ in COLS})
+            row.update({f"{k}_{v}": r[k] for k in (*(c for c, _ in COLS), *CSV_ONLY)})
             row[f"indet_{v}"] = r["indet"]
         out.append(row)
     for arm in LAST:
         r = by[arm]
         row = {"arm": arm, "label": M.resolve(arm).method.name, "tuned": False}
-        row.update({f"{k}_dev": r[k] for k, _ in COLS})
+        row.update({f"{k}_dev": r[k] for k in (*(c for c, _ in COLS), *CSV_ONLY)})
         row["indet_dev"] = r["indet"]
         out.append(row)
     return out, {"n_true": t["gt"]["n_true"], "n_cells": t["gt"]["n_cells"]}
 
 
 def cell(k: str, x) -> str:
-    return A.prob(x, 2) if k == "recall_true_right" else str(x)
+    return A.prob(x, 2) if k == "recall" else str(x)
 
 
 def latex(rs: list[dict], meta: dict) -> str:
@@ -84,8 +87,8 @@ def latex(rs: list[dict], meta: dict) -> str:
         SOURCES,
         [
             "Post hoc analysis X12: descriptive, no verdict; Study 2 unchanged.",
-            f"Right / wrong = ground-truth TRUE edge with the right / wrong sign; recall = right / {meta['n_true']} "
-            f"GT-TRUE cells of {meta['n_cells']}; Plac. = edges declared on the 200 placebo episodes.",
+            f"Right / wrong = ground-truth TRUE edge with the right / wrong sign; recall = (right + wrong) / {meta['n_true']} "
+            f"GT-TRUE cells of {meta['n_cells']}, whatever the sign; Plac. = edges declared on the 200 placebo episodes.",
             "DEV-tuned: far-FPR rule on 20 DEV episodes. Placebo-calibrated: set on the placebo episodes themselves, so its "
             "placebo count is in-sample (at most 1 by construction).",
             "INDET edges in the csv.",
