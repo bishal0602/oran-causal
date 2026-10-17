@@ -19,7 +19,7 @@ exempt:
     reason: bound on the guard ratios to accept-all (protocol constant)
   - file: sections/s04_pmrt.tex
     literal: "0.05"
-    count: 3
+    count: 2
     reason: nominal level, FDR level q or guard-pressure constant of the method
   - file: sections/s04_pmrt.tex
     literal: "0.10"
