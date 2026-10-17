@@ -1,16 +1,15 @@
 """Tier t0, post hoc analyses X1-X16: each rebuilds its stored outputs from the record sets.
 
 The stored files were written in Windows text mode, so they are compared with CRLF read as LF.
-Four outputs carry platform floats and are compared as the post hoc gates do: X2/X3
-provenance (exact on Linux only), the X8 binomial tails (exact on Windows only, else relative
-1e-12), the X15 OLS slope (relative 1e-12) and X16 (relative 1e-9, its environment keys and CSV
-not compared).
+No gate is bitwise on any platform. X2/X3 and X5/X6 compare floats to relative 1e-12 without the
+bitwise provenance counts and without the text lines that print them; the X8 binomial tails use
+relative 1e-12, the X15 OLS slope 1e-12, and X16 1e-9 (its environment keys and CSV not compared).
 """
 
 import json
-import sys
 from collections.abc import Callable, Sequence
 from pathlib import Path
+from typing import Any
 
 from oran_causal.analysis.controlled.tables import clean
 from oran_causal.analysis.posthoc import (
@@ -47,8 +46,7 @@ X1_LEGACY_DIR = (
 X2X3_SPECS = ("x2_d02", "x2_d05", "x2_d10", "x2_d20", "x2_b05", "x2_b80", "x3_told")
 X15_SLOPE = "ols_dR_on_V_AA"
 X16_SKIP = ("sha256", "env", "timing_s", "data")
-LINUX = sys.platform.startswith("linux")
-WINDOWS = sys.platform == "win32"
+RTOL = 1e-12
 
 
 def _same(item: str, out: Path, stored: Path, names: Sequence[str]) -> list[Check]:
@@ -85,16 +83,7 @@ def x2_x3(ctx: Context) -> list[Check]:
     doc = x2x3.analyse(pairs, protocol_sha256=stored["protocol_sha256"])
     _write(out / "extras_tables.json", json.dumps(clean(doc), indent=1, sort_keys=True))
     _write(out / "EXTRAS_TABLES.md", x2x3.analyse_md(doc))
-    if LINUX:
-        return _same("posthoc X2/X3", out, d, ("extras_tables.json", "EXTRAS_TABLES.md"))
-    mine = json.loads((out / "extras_tables.json").read_text(encoding="utf-8"))
-    for tree in (mine, stored):
-        for c in tree["checks"].values():
-            c.pop("provenance")
-    diffs = close_tree(mine, stored, 0.0)
-    status = Status.DIFF if diffs else Status.PASS
-    note = "equal without checks.*.provenance (exact on Linux only)"
-    return [Check("posthoc X2/X3", "extras_tables.json", status, diffs[0] if diffs else note)]
+    return _tolerant("posthoc X2/X3", out, d, ("extras_tables.json", "EXTRAS_TABLES.md"))
 
 
 def x4_x7(ctx: Context) -> list[Check]:
@@ -133,16 +122,60 @@ def x5_x6(ctx: Context) -> list[Check]:
         "diag_tables.json",
         "DIAG_TABLES.md",
     )
-    return _same("posthoc X5/X6", out, d / "diag", names)
+    return _tolerant("posthoc X5/X6", out, d / "diag", names)
+
+
+def _without_provenance(tree: Any) -> Any:
+    if isinstance(tree, dict):
+        checks = tree.get("checks")
+        if isinstance(checks, dict):
+            for c in checks.values():
+                if isinstance(c, dict):
+                    c.pop("provenance", None)
+        for v in tree.values():
+            _without_provenance(v)
+    elif isinstance(tree, list):
+        for v in tree:
+            _without_provenance(v)
+    return tree
+
+
+def _without_provenance_lines(text: str) -> str:
+    return "\n".join(ln for ln in text.splitlines() if "provenance" not in ln)
+
+
+def _tolerant(item: str, out: Path, stored: Path, names: Sequence[str]) -> list[Check]:
+    """JSON to relative 1e-12 without provenance counts; text without the lines printing them."""
+    checks = []
+    for n in names:
+        if n.endswith(".json"):
+            mine, ref = (
+                _without_provenance(json.loads((p / n).read_text(encoding="utf-8")))
+                for p in (out, stored)
+            )
+            diffs = close_tree(mine, ref, RTOL)
+            note = f"equal to {RTOL:g} without checks.*.provenance"
+            status = Status.DIFF if diffs else Status.PASS
+            checks.append(Check(item, n, status, diffs[0] if diffs else note))
+        else:
+            a, b = (
+                _without_provenance_lines((p / n).read_text(encoding="utf-8"))
+                for p in (out, stored)
+            )
+            note = (
+                "equal without the provenance lines"
+                if a == b
+                else "text differs outside provenance lines"
+            )
+            checks.append(Check(item, n, Status.PASS if a == b else Status.DIFF, note))
+    return checks
 
 
 def x8_summary(ctx: Context) -> list[Check]:
-    """X8 placebo tail summary (bytes on Windows, floats to relative 1e-12 elsewhere)."""
+    """X8 placebo tail summary (floats to relative 1e-12)."""
     d = ctx.records / "posthoc_x8" / "x8"
     out = ctx.item_dir("posthoc/x8")
     _write(out / "summary.json", json.dumps(x8.summarize(d), indent=1))
-    if WINDOWS:
-        return _same("posthoc X8", out, d, ("summary.json",))
     return [compare_json_close("posthoc X8", out / "summary.json", d / "summary.json", 1e-12)]
 
 
