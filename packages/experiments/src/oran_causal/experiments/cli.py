@@ -17,12 +17,14 @@ Runner = Callable[[Sequence[str]], int]
 Out = Callable[[str], None]
 
 PAPER_VALUES_CHECK = ("oran_causal.analysis.paper_values", "--check")
+TRACE_CHECK = ("oran_causal.trace.cli", "check", "--strict")
 CHECKS: tuple[tuple[str, ...], ...] = (
     ("ruff", "check"),
     ("ruff", "format", "--check"),
     ("ty", "check"),
     PAPER_VALUES_CHECK,
     ("pytest",),
+    TRACE_CHECK,
 )
 TIERS = ("t0", "t1", "t2", "t3")
 STUDIES = ("study1", "study2", "study3", "study4")
@@ -152,7 +154,7 @@ def build_parser() -> argparse.ArgumentParser:
     """Builds the argument parser."""
     parser = argparse.ArgumentParser(prog="oran-causal", description=__doc__.splitlines()[0])
     commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("check", help="ruff check, ruff format --check, ty check, pytest")
+    commands.add_parser("check", help="ruff, ty, paper values, pytest, then the strict trace check")
     _add_data(commands)
     _add_paper_values(commands)
     _add_reproduce(commands)

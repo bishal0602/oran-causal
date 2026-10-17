@@ -75,16 +75,23 @@ def build_context(paths: Paths) -> Context:
     )
 
 
-def _label(status: Status, *, strict: bool) -> str:
-    if status is Status.FAIL and not strict:
+def _blocks(rule: Rule, finding: Finding) -> bool:
+    return finding.status is Status.FAIL and not rule.advisory
+
+
+def _label(rule: Rule, finding: Finding, *, strict: bool) -> str:
+    if finding.status is Status.FAIL and (rule.advisory or not strict):
         return "warn"
-    return str(status)
+    return str(finding.status)
 
 
 def _report(results: list[tuple[Rule, Finding]], *, strict: bool, verbose: bool) -> list[str]:
     lines = []
     for rule, finding in results:
-        lines.append(f"{rule.code:<4} {_label(finding.status, strict=strict):<14} {rule.title}")
+        label = _label(rule, finding, strict=strict)
+        lines.append(f"{rule.code:<4} {label:<14} {rule.title}")
+        if finding.status is Status.FAIL and rule.advisory:
+            lines.append(f"       non-blocking: {rule.advisory}")
         shown = finding.messages if verbose else finding.messages[:SHOWN_MESSAGES]
         lines += [f"       {message}" for message in shown]
         if len(finding.messages) > len(shown):
@@ -101,11 +108,11 @@ def check(paths: Paths, *, strict: bool, verbose: bool) -> int:
     """Run the rules and print the summary.
 
     Returns:
-        1 in strict mode when a rule fails, else 0.
+        1 in strict mode when a rule without an advisory reason fails, else 0.
     """
     results = run_rules(build_context(paths))
     print("\n".join(_report(results, strict=strict, verbose=verbose)))
-    failed = any(finding.status is Status.FAIL for _, finding in results)
+    failed = any(_blocks(rule, finding) for rule, finding in results)
     return 1 if strict and failed else 0
 
 

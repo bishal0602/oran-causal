@@ -52,11 +52,12 @@ class Context:
 
 @dataclass(frozen=True, slots=True)
 class Rule:
-    """A named check."""
+    """A named check; a rule with an `advisory` reason reports failures without blocking."""
 
     code: str
     title: str
     check: Callable[[Context], Finding]
+    advisory: str = ""
 
 
 def _finding(problems: list[str], *, unchecked: list[str] | None = None) -> Finding:
@@ -329,7 +330,7 @@ def bare_decimals(context: Context) -> Finding:
 
 
 def pending(reason: str) -> Callable[[Context], Finding]:
-    """A rule whose inputs do not exist yet in this phase of the migration."""
+    """A rule that cannot run yet, with the reason it reports."""
 
     def check(_: Context) -> Finding:
         return Finding(Status.NOT_CHECKABLE, (reason,))
@@ -341,23 +342,28 @@ RULES = (
     Rule("F1", "registry matches the schema, ids unique", schema_and_ids),
     Rule("F2", "references resolve, no dependency cycle", references),
     Rule("F3", "test markers name registered claims", markers),
-    Rule("F4", "required tests pass, assumptions probed, citations verified", coverage),
+    Rule(
+        "F4",
+        "required tests pass, assumptions probed, citations verified",
+        coverage,
+        advisory="some claims have no passing default-run test; cited locators are unverified",
+    ),
     Rule(
         "F5",
         "Lean declarations exist, axiom audit clean",
-        pending("proofs/ arrives with the Lean phase L"),
+        pending("waits for the Lean proofs in proofs/"),
     ),
     Rule("F6", "evidence sha256 equals the data manifest", record_hashes),
     Rule(
         "F7",
         "record pointers resolve, expect values hold",
-        pending("records are resolved from migration phase 9 on"),
+        pending("record pointer resolution is not implemented"),
     ),
     Rule("F8", "\\claim usages name registered claims", claim_tags_registered),
     Rule("F9", "every empirical and theorem claim is \\claim-ed", claims_tagged),
     Rule("F10", "\\val keys are generated and backed by evidence", values_generated),
     Rule("F11", "no bare decimals in paper prose", bare_decimals),
-    Rule("F12", "code symbols import", pending("members are ported in migration phases 2-9")),
+    Rule("F12", "code symbols import", pending("code symbol import check is not implemented")),
     Rule("F13", "docs/TRACEABILITY.md is current", matrix_fresh),
 )
 

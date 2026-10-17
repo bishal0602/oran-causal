@@ -4,7 +4,9 @@ from typing import Any
 
 import pytest
 
+from oran_causal.trace import cli
 from oran_causal.trace.cli import find_root, main
+from oran_causal.trace.rules import Finding, Rule, Status
 
 type Workspace = Callable[..., Path]
 type MakeClaim = Callable[..., dict[str, Any]]
@@ -23,6 +25,21 @@ def test_check_is_non_blocking_without_strict(
 def test_check_strict_fails_on_any_failure(workspace: Workspace, new_claim: MakeClaim) -> None:
     root = workspace([new_claim("DEF-A"), new_claim("DEF-A")])
     assert main(["--root", str(root), "check", "--strict"]) == 1
+
+
+def test_advisory_failure_is_reported_but_does_not_block(
+    monkeypatch: pytest.MonkeyPatch,
+    workspace: Workspace,
+    new_claim: MakeClaim,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    failing = Rule("F4", "advisory rule", lambda _: Finding(Status.FAIL, ("broken",)), "not yet")
+    monkeypatch.setattr(cli, "run_rules", lambda _: [(failing, Finding(Status.FAIL, ("broken",)))])
+    root = workspace([new_claim("DEF-A")])
+    assert main(["--root", str(root), "check", "--strict"]) == 0
+    output = capsys.readouterr().out
+    assert "F4   warn" in output
+    assert "non-blocking: not yet" in output
 
 
 def test_matrix_then_strict_check_passes(

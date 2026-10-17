@@ -1,6 +1,6 @@
 # Provenance
 
-oran-causal starts with fresh history. Code, protocols and records come from these sources, which stay unchanged.
+oran-causal starts with fresh history and stands alone as the paper's code. CDD-ORAN is reference only, frozen at `0c89106`. Code, protocols and records come from these sources, which stay unchanged.
 
 | Source | Reference |
 |---|---|
@@ -37,3 +37,4 @@ Per-area tables, one row per migrated file or record set:
 | `oran-causal` CLI, campaign commands and reproduce tiers (`oran_causal.experiments.{cli,reproduce}`) | [provenance/cli.md](provenance/cli.md) |
 | Per-study manifests and validator (`packages/experiments/manifests`, `oran_causal.experiments.manifests`) | [provenance/manifests.md](provenance/manifests.md) |
 | Generated paper values and claim tags (`oran_causal.analysis.paper_values`, `paper/generated/`) | [provenance/paper_values.md](provenance/paper_values.md) |
+| `shap_gbdt` rerun with TreeSHAP (`oran_causal.experiments.system.shap_rerun`, `oran_causal.methods.system.baselines`) | [provenance/shap_rerun.md](provenance/shap_rerun.md) |

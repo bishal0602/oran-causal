@@ -262,6 +262,11 @@ def test_check_runs_the_paper_values_step_before_pytest() -> None:
     assert cli.CHECKS.index(cli.PAPER_VALUES_CHECK) < cli.CHECKS.index(("pytest",))
 
 
+def test_check_ends_with_the_strict_trace_check() -> None:
+    assert cli.CHECKS[-1] == cli.TRACE_CHECK
+    assert "--strict" in cli.TRACE_CHECK
+
+
 def test_paper_values_check_is_skipped_without_records(
     tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
