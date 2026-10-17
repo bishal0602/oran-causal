@@ -1,5 +1,5 @@
 """Filesystem layout. Figures read the frozen record sets read-only and write PDFs and tables for
-the journal.
+the manuscript in ``paper/``.
 """
 
 import os
@@ -9,7 +9,7 @@ MEMBER_ROOT = Path(__file__).resolve().parents[3]
 WORKSPACE_ROOT = MEMBER_ROOT.parents[1]
 RECORDS = WORKSPACE_ROOT / "data" / "records"
 PROTOCOLS = WORKSPACE_ROOT / "packages" / "experiments" / "protocols"
-JOURNAL = WORKSPACE_ROOT.parent / "xApp-Journal-Discover-Telecommunications"
+PAPER = WORKSPACE_ROOT / "paper"
 PREVIEW = MEMBER_ROOT / "preview"
 DATA = MEMBER_ROOT / "data"
 OUT_ENV = "ORAN_CAUSAL_FIGURES_OUT"
@@ -21,15 +21,15 @@ def _out_root() -> Path | None:
 
 
 def figures_dir() -> Path:
-    r"""Directory of the LaTeX ``\includegraphics`` PDFs: the journal's ``figures/`` unless redirected."""
+    r"""Directory of the LaTeX ``\includegraphics`` PDFs: the manuscript's ``paper/figures`` unless redirected."""
     root = _out_root()
-    return root / "figures" if root else JOURNAL / "figures"
+    return root / "figures" if root else PAPER / "figures"
 
 
 def tables_dir() -> Path:
-    """Directory of the booktabs ``.tex`` and ``.csv`` tables: the journal's ``tables/`` unless redirected."""
+    """Directory of the booktabs ``.tex`` and ``.csv`` tables: the manuscript's ``paper/tables`` unless redirected."""
     root = _out_root()
-    return root / "tables" if root else JOURNAL / "tables"
+    return root / "tables" if root else PAPER / "tables"
 
 
 def preview_dir() -> Path:

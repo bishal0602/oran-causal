@@ -1,0 +1,9 @@
+criterion,rule,value,result
+"K0, K0n","Validity of the PMRT map, carried over from Study 2",--,PASS
+Elig,Edge-certified PMRT referee eligible: energy retention $\ge$ 0.90 and every guard ratio $\le$ 1.10 (point estimates),retention 1.15; guard ratios SVR 0.88; non-protected eMBB 0.88; LL 0.86; RLF 0.96,PASS
+D1,"$R^*$ minus the best gated associational map's $R^*$ (of 13, re-selected per resample) $\ge$ 0.10 and LB90 $>$ 0","$+0.161$ [0.094, 0.229] vs the correlation (DEV-tuned) map",PASS
+D2,"Beats each gated associational map: one-sided paired bootstrap per distinct map signature (identical rejection rules pooled), Holm at 0.05, all rejected",7 of 7 rejected,PASS
+D3,$R^*$ minus the never-sleep rule's $R^*$ $>$ 0 and paired LB90 $>$ 0,"$+0.000$ [0.000, 0.000]; identical to never-sleep on 160 of 160 seeds",FAIL
+RLF-UB,"Upper 90\,\% bound of the RLF ratio $\le$ 1.20",0.987,PASS
+R,"Recovery of the edge-certified PMRT referee (descriptive, no criterion)","0.256 [0.169, 0.339]",--
+Verdict,"Precedence: INVALID $>$ NOT ELIGIBLE (Elig) $>$ PASS (D1, D2, D3) $>$ PARTIAL $>$ FAIL",,PARTIAL

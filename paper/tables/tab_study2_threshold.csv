@@ -1,0 +1,9 @@
+arm,label,tuned,edges_dev,true_right_dev,true_wrong_dev,null_dev,placebo_edges_dev,recall_true_right_dev,indet_dev,edges_plc,true_right_plc,true_wrong_plc,null_plc,placebo_edges_plc,recall_true_right_plc,indet_plc
+MG:corr,Correlation,True,10,6,2,2,8,0.20689655172413793,0,4,3,0,1,1,0.10344827586206896,0
+MG:granger,Granger,True,32,12,6,12,19,0.41379310344827586,2,6,5,0,1,1,0.1724137931034483,0
+MG:shap_gbdt,SHAP-GBDT,True,5,1,0,1,2,0.034482758620689655,3,1,1,0,0,1,0.034482758620689655,0
+MG:two_tower,Two-tower,True,8,5,0,3,22,0.1724137931034483,0,0,0,0,0,1,0.0,0
+MG:qacm,QACM,True,6,5,0,1,0,0.1724137931034483,0,7,6,0,1,1,0.20689655172413793,0
+MG:int,INT,True,5,4,0,1,1,0.13793103448275862,0,7,4,1,2,1,0.13793103448275862,0
+MG:granger_by,Granger + BY,False,47,16,6,19,29,0.5517241379310345,6,,,,,,,
+MG:PMRT,PMRT,False,22,18,0,3,0,0.6206896551724138,1,,,,,,,

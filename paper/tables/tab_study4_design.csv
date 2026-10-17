@@ -1,0 +1,6 @@
+environment,mechanism,true,null,regimes,lambda
+E1,"Clean, identifiable linear graph",4,16,R1 R2,
+E2,"Gated edge, active only in a rare regime",16,38,R1 R2,
+E3,Delayed harm through lagged KPI cascades (depth 3),4,21,R1 R2,
+E4,Latent confounding; the associational sign is wrong at large confounding strength,1,1,R1 R2 R3 R4,0 .5 1 1.5
+E5,The E2--E4 mechanisms composed,6,14,R1 R2,

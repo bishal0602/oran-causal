@@ -1,0 +1,186 @@
+% Step 5 rewrite (2026-10-14): Experimental setup. Built from old 3.2 (simulator, scenario, xApps), old 5.1-5.4
+% (studies, knockout ground truth, baselines, protocol), old 7.1-7.2 (controlled environments) and old 8.4 (arms,
+% metrics). Study numbers replaced by plain names. Moved to the appendix: arms table (tab:arms), controlled-environment
+% design table (tab:study4_design), the status-marker list. Every number is copied from the old text or tables
+% (journal ec32c22: tab:design_studies, tab:xapps, tab:study4_design, Sections 3.2, 5.2-5.4, 7.2, 8.4).
+\section{Experimental setup}
+\label{sec:design}
+\label{sec:design_questions}
+
+The framework is evaluated in two settings: a system-level simulation of an O-RAN surge scenario, which provides the
+logs for discovery and the closed-loop runs for conflict mitigation, and controlled environments with known
+causal structure, which isolate the role of the logging design. This section describes both settings, the datasets
+drawn from them, the ground truth, the baselines and metrics, and the evaluation protocol.
+
+\subsection{Simulation environment and scenario}
+\label{sec:scenario}
+
+The simulator models a near-RT RIC and the RAN it controls (Figure~\ref{fig:system_e6p}). The network has 24 cells: 21
+macro sectors on a seven-site hexagonal layout with wrap-around and an inter-site distance of 500~m~\cite{3gpp36814},
+and three co-channel picos at traffic hotspots. Each of a fixed population of 300 UEs belongs to a low-latency (LL),
+an enhanced mobile broadband (eMBB) or a best-effort slice. Traffic, mobility and a hidden per-site load process come from an
+exogenous tape keyed by the seed, so that runs that act differently see the same tape; Appendix~\ref{app:simparams}
+gives the radio, scheduling, energy and timing parameters. In the surge scenario, a localised surge triples the
+file-arrival rate of the UEs within 250~m of a venue during the middle of the scored window, on a network whose
+offered load would fill 40~\% of the PRBs with every xApp inactive.
+
+Three xApps run on the RIC, each writing its own parameter families (Table~\ref{tab:xapps}). The Energy Saving (ES)
+xApp switches macro carriers and puts picos to sleep using the load-time thresholds of 3GPP TS 28.541~\cite{3gpp28541},
+and the Power ES xApp backs off the macro transmit power as in 3GPP TR 38.864~\cite{3gpp38864}. The Slice Guarantee
+xApp sets the protected minimum PRB share that serves a protected subset of 20~\% of the eMBB UEs with a per-UE floor
+of 2~Mb/s. The result is a three-way indirect conflict without a shared parameter: the energy-saving xApps act on the
+KPIs of neighbouring cells, and Slice Guarantee on the protected-slice violations of its own cell. The chain of
+interest runs from pico sleep to neighbour load and on to neighbour protected-slice and service violations, and the
+edge from pico sleep to neighbour protected-slice violations is the one on which the conflict rests. Since the protected share
+moves only its own cell's protected-slice violations, a referee that rejects Slice Guarantee's requests removes the
+protection that the energy-saving xApps erode.
+
+\begin{table}[tbp]
+\caption{xApps of the surge scenario.}
+\label{tab:xapps}
+% Cells condensed 2026-10-14; full triggers (thresholds, holds) in Appendix C.1 and the old table (journal ec32c22).
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{2.2cm} p{3.6cm} p{3.0cm} p{3.6cm}@{}}
+\toprule
+xApp & Parameter & Range & Acts when \tabularnewline
+\midrule
+\raggedright ES & \raggedright Macro carrier; pico sleep & \raggedright on/off; awake/asleep & \raggedright load low / high \tabularnewline
+\raggedright Power ES & \raggedright Macro transmit-power offset & \raggedright $-9$ to 0~dB & \raggedright load low / high \tabularnewline
+\raggedright Slice Guarantee & \raggedright Protected minimum PRB share & \raggedright 0 to 0.5 & \raggedright protected UEs below floor \tabularnewline
+\bottomrule
+\end{tabular}
+\end{table}
+
+Five KPIs are recorded per cell. Protected-slice violations count violated protected-UE seconds, and service
+violations count violated UE-seconds over all UEs, where an LL UE-second is violated above 100~ms head-of-line delay,
+an eMBB UE-second when backlogged with a user-perceived throughput below 2~Mb/s, and any UE-second in RLF or out of
+coverage. The other KPIs are energy, RLFs and served load in UE-seconds.
+
+\subsection{Datasets}
+\label{sec:datasets}
+
+Table~\ref{tab:design_studies} lists the datasets. Discovery is evaluated on randomised and on confounded logs, each
+with 600 evaluation episodes and with placebo logs drawn in the same way, and validity is further checked on null
+outcomes, made by cyclically shifting the KPI series across episodes. Null outcomes exercise more of the design than
+placebo logs, because they keep the evaluation logs with their re-proposals and state-dependent propensities. The
+maps learned from the confounded logs then drive referees in closed-loop runs on 160 fresh seeds, first without and
+then with the gate; the gated runs use separate seeds and a gate calibrated on 40 development episodes. The
+controlled environments are described in Section~\ref{sec:envs}. All methods and baseline thresholds were tuned on
+development episodes, separate from the evaluation data.
+
+\begin{table}[tbp]
+\caption{Datasets.}
+\label{tab:design_studies}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}p{3.3cm} p{4.2cm} p{3.7cm} p{1.4cm}@{}}
+\toprule
+Setting & Data & Size & Results \tabularnewline
+\midrule
+\raggedright Randomised logs & \raggedright Simulator, accept with probability 0.5 & \raggedright 600 episodes; 40 placebo & \raggedright \ref{sec:res_validity}, \ref{sec:res_map} \tabularnewline
+\raggedright Confounded logs & \raggedright Simulator, incumbent policy & \raggedright 600 episodes; 200 placebo & \raggedright \ref{sec:res_validity}, \ref{sec:res_map} \tabularnewline
+\raggedright Referee without gate & \raggedright Closed loop, maps from confounded logs & \raggedright 160 seeds per arm & \raggedright \ref{sec:res_decision} \tabularnewline
+\raggedright Referee with gate & \raggedright As above, behind the gate & \raggedright 160 other seeds per arm & \raggedright \ref{sec:res_decision} \tabularnewline
+\raggedright Controlled environments & \raggedright Five mechanisms, three logging designs & \raggedright 40 seeds per condition & \raggedright \ref{sec:study4} \tabularnewline
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Knockout ground truth}
+\label{sec:gt}
+
+The maps are scored against knockout rollouts, which estimate the effect of one unit's mode with every other unit
+accepted. This target differs from PMRT's $\tau_{\pi}$, so the scores measure agreement between two related
+quantities rather than the validity of the test.
+
+\begin{definition}[Knockout effect]
+\label{def:tau_aa}
+Let $u$ be a unit sampled on separate episodes. Its knockout effect $\tau_u^{\mathrm{AA}}$ is the accept-minus-reject
+difference of the KPI summed over the cells of $r$ in the 90~s after opening, in rollouts from the copied state with
+every other unit accepted. The knockout effect $\tau_{\mathrm{AA}}$ is the mean of $\mathrm{sgn}_u\,
+\tau_u^{\mathrm{AA}}$ over the sampled units.
+\end{definition}
+
+Each sampled unit is rolled out for 90~s twice from its opening state, once accepted and once rejected, with the same
+redrawn randomness, and the pair is repeated for three reseeds. Pooling the units of a family over 40 ground-truth episodes gives a mean
+per hypothesis with a 95~\% episode-cluster bootstrap interval. A hypothesis is labelled
+true, with the sign of its mean, when the interval excludes zero and the absolute mean is at least a materiality
+threshold $\delta_k$. The threshold is 5~\% of the largest absolute mean of KPI $k$ over all families and relations, with a floor
+of 0.5 violated UE-seconds for protected-slice violations. It is labelled null when the interval lies within
+$\pm\delta_k$, and is otherwise left unscored, as it is when fewer than 10 units or 3 episodes support it. A knockout
+null is therefore a small effect rather than a sharp null, and the labels depend materially on $\delta_k$, though hardly
+on the floor or the interval level (Appendix~\ref{app:x11}). Table~\ref{tab:system_hypotheses} gives the labels for the
+randomised logs.
+
+\subsection{Controlled environments}
+\label{sec:envs}
+\label{sec:study4_design}
+\label{sec:study4_purpose}
+
+The simulator runs one scenario with one logging design per dataset, and its ground truth is estimated. The controlled
+environments remove both limitations: each isolates one mechanism with a known causal graph, so that every null edge
+is null by construction, and the same mechanism is logged under several designs. The five environments contain a
+clean linear graph, an edge active only in a rare regime, delayed harm through lagged KPI cascades, latent
+confounding, and the three mechanisms composed (Figure~\ref{fig:envs}a; Appendix~\ref{app:envs}). Actions are logged in one of three ways:
+independent redraws per observation; a dithered setpoint, with 20 setpoints each held for a twentieth of the data plus
+a small independent dither; and, in the latent-confounding environment, a confounded behaviour policy with logged
+probabilities (Figure~\ref{fig:envs}b). Each method ran at 500 to 24\,000 observations, and each condition on 40 seeds, which suffices to put an
+interval on a null-edge rate.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{figures/fig_envs.pdf}
+\caption{Controlled environments and logging designs.}
+\label{fig:envs}
+\end{figure}
+
+Three groups of tests are compared. Design-based tests draw their p-value by redrawing the logged design; they are
+PMRT-GBM, the shared construction with a gradient-boosting statistic and plain BY control at $q = 0.05$, and PMRT-Lin,
+its linear counterpart. Design-adjusted tests are standard conditional-independence tests with the logged design
+variables as covariates: partial correlation, Granger and RCoT~\cite{strobl2019rcot}. Design-blind methods ignore the
+design: correlation, plain partial correlation, also with heteroskedasticity- and autocorrelation-consistent
+errors~\cite{newey1987hac,kiefer2005fixedb}, plain Granger and RCoT, and the structure learners PC~\cite{spirtes2000causation}
+and NOTEARS~\cite{zheng2018notears}. The design-blind group also includes SHAP-DAG after Sharma et al.~\cite{Sharma_2025,lundberg2017shap}, the two-tower
+network, the max-stratified correlation-ratio test of our earlier work, and the discovery stage of CDD
+O-RAN~\cite{dahal2026cddoran}. The controlled environments test the randomisation construction that PMRT shares, not
+its matched-filter statistic or its weighted declaration layer, and both PMRT variants there omit the Huber clip of the
+unit weight, which raised the null rate on development data. The validity of the PMRT used in the simulator therefore
+rests on its own null checks there (Section~\ref{sec:res_validity}).
+
+\subsection{Baselines and metrics}
+\label{sec:baselines_scores}
+\label{sec:arms}
+
+In the simulator, PMRT is compared with seven associational baselines that ignore the logging design and run on the
+same unit table (Appendix~\ref{app:baselines}). They are correlation, Granger~\cite{granger1969causal} with a tuned
+threshold or under BY control (Granger~+~BY), SHAP-GBDT~\cite{Sharma_2025}, a two-tower
+network~\cite{santos2026conflictairan}, the intent-conflict statistic INT of PACIFISTA~\cite{PACIFISTA} and
+QACM~\cite{QACM2024}. Each threshold
+was set on development episodes so that the far relation received at most one declaration. Because the ground truth
+labels 8 of the 20 far hypotheses true on the randomised logs and 9 on the confounded logs, this rule caps the recall
+a baseline can reach. On the randomised logs the modes are independent of the network state, so the baselines'
+placebo declarations there come from their thresholds rather than from confounding. On the confounded logs the
+baselines are also reported at thresholds calibrated on placebo logs.
+
+Maps are scored over the 60 hypotheses. Precision is the share of scored declarations that are true, whatever their
+sign; recall is the share of true hypotheses that are declared; F1 is their harmonic mean; and sign accuracy is the
+share of declared true edges that carry the ground-truth sign. Referees are compared with static rules, such as
+accept-all, never-sleep, which rejects every request to put a pico to sleep, and the subsets of xApps run alone. They are also compared
+with referees driven by the oracle map of true edges, a random map and the associational maps
+(Appendix~\ref{app:arms}). The objective is the protected-slice violations $V$, reported as the recovery
+$R = (V_{\mathrm{AA}} - V) / (V_{\mathrm{AA}} - V_{\mathrm{ref}})$, which is 0 for accept-all and 1 for the best
+single-xApp subset. A referee is eligible when it meets the two constraints of Section~\ref{sec:estimand}: an energy
+retention of at least 0.90 and four guard ratios to accept-all of at most 1.10. Never-sleep is the best eligible static
+rule, because the subset that sets $R = 1$ retains almost none of the energy saving. Intervals on decision metrics are
+one-sided or two-sided 90~\% paired seed-bootstrap intervals with 10\,000 resamples, and intervals on rates are 95~\%
+cluster-bootstrap intervals.
+
+\subsection{Evaluation protocol}
+\label{sec:protocol}
+
+For each dataset, the analysis rules, seeds and pass criteria were fixed before the evaluation data were generated,
+and the analysis code, fixed at the same time, was run once on the fresh evaluation seeds. Seeds came from disjoint
+blocks of an internal registry, and there was no public pre-registration. The gated referee was designed after the
+result of the ungated referee was known. Analyses chosen after a protocol was fixed are reported as post hoc and change
+no verdict. Online Resource~1, Section~S1, gives each protocol's criteria and verdicts, the status of every analysis and
+the one amendment to the fixed code, and the data and code availability statement lists the content hash of every
+protocol and fixed artefact.

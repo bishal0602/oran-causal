@@ -1,0 +1,17 @@
+table,study,family,gt_true,gt_null,gt_indet,scope,method_code,method,nbr_declared,nbr_gt_true,nbr_gt_null,nbr_gt_indet,nbr_own_attributable,far_declared,far_gt_true,far_gt_null,far_gt_indet,far_own_attributable
+far_hypotheses,S1,carrier,0,3,2,,,,,,,,,,,,,
+far_hypotheses,S1,sleep,5,0,0,,,,,,,,,,,,,
+far_hypotheses,S1,ptx,3,0,2,,,,,,,,,,,,,
+far_hypotheses,S1,prot_min,0,5,0,,,,,,,,,,,,,
+far_hypotheses,S1,all,8,8,4,,,,,,,,,,,,,
+far_hypotheses,S2,carrier,0,4,1,,,,,,,,,,,,,
+far_hypotheses,S2,sleep,5,0,0,,,,,,,,,,,,,
+far_hypotheses,S2,ptx,4,0,1,,,,,,,,,,,,,
+far_hypotheses,S2,prot_min,0,5,0,,,,,,,,,,,,,
+far_hypotheses,S2,all,9,9,2,,,,,,,,,,,,,
+declarations,S1,,,,,pooled,loadsp_c+wby1s,PMRT,9,9,0,0,0,4,3,0,1,1
+declarations,S1,,,,,pooled,granger_by,Granger + BY,16,8,6,2,3,10,3,4,3,4
+declarations,S1,,,,,slices,loadsp_c+wby1s,PMRT,94,91,3,0,0,30,28,1,1,2
+declarations,S1,,,,,slices,granger_by,Granger + BY,191,115,46,30,32,128,52,42,34,46
+declarations,S2,,,,,pooled,MG:PMRT,PMRT,6,6,0,0,0,1,1,0,0,0
+declarations,S2,,,,,pooled,MG:granger_by,Granger + BY,15,7,6,2,3,13,4,7,2,4

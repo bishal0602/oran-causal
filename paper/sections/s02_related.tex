@@ -1,0 +1,144 @@
+% Step 5 rewrite (2026-10-14): Background and Related Work. Subsections and table kept (user); gap labels G1-G3
+% removed from print; table cut to five columns with short cells and one note; formal subsection titles.
+\section{Background and related work}
+\label{sec:related}
+
+% Section 2 rewritten 2026-10-11 (W5) to outline v2 (s.2) and decision D8: three gaps, one comparison table (W4 draft
+% reviews/2026-10-10/drafts/related_work_table.tex, replacing the pre-v2 Table 1). Sources: RWS =
+% reviews/2026-10-10/drafts/related_work_sources.md (W4; bibliographic data checked against Crossref / arXiv records;
+% one-sentence content from the abstracts); prior-method facts already in the pre-v2 Sections 1-2 keep their checks
+% against archive/reference-papers (full texts, 2026-10-09). Sources marked "(content from prior knowledge)" in RWS
+% are cited only for what their titles say. TERM = TERMINOLOGY.md.
+
+This section reviews prior work in three areas: causal inference from logged data, the learning of conflict maps
+in O-RAN, and safe conflict mitigation. Table~\ref{tab:related} summarises the method families of each area and
+positions the proposed approach among them. % src: outline v2 s.2 (G1-G3); PAPER_PLAN.md D8; RWS (rows F1-F11)
+
+\subsection{Causal effects from feedback-driven logs}
+\label{sec:related_design}
+
+When a controller produced the logs, an edge test draws its validity either from assumptions about the
+data-generating process or from a known assignment mechanism. RIC logs leave the assumptions untestable, because
+requests react to the state that drives the KPIs, and no O-RAN work we found takes the mechanism from the RIC's own
+decisions. % src: RWS G1 (F7 model-based, F8 design-based); outline v2 s.2.1 (gap); P2b s.1 (no rhetorical question)
+Observational causal discovery rests on the first kind. Granger causality~\cite{granger1969causal} and the
+Peter--Clark (PC) algorithm~\cite{spirtes2000causation} assume that no common cause goes unmeasured, NOTEARS fits an
+acyclic structural equation model~\cite{zheng2018notears}, and the randomized conditional correlation test
+(RCoT)~\cite{strobl2019rcot} and PCMCI~\cite{runge2019pcmci} test conditional independence. % src: RWS G1 (granger1969causal, spirtes2000causation: causal sufficiency; zheng2018notears, strobl2019rcot, runge2019pcmci abstracts); W16 P2b (merged)
+
+Design-based inference takes its validity from the assignment mechanism instead: when the assignment probabilities
+are known, redrawing the assignments under a sharp null, which states that the assignment changes no unit's outcome, gives a
+p-value with no model of the
+outcomes~\cite{imbens2015causal}. % src: RWS G1 (imbens2015causal); pre-v2 Section 2.1
+Such tests reach sequential experiments on a single time series~\cite{bojinov2019timeseries}, switchback
+experiments~\cite{bojinov2023switchback} and response-adaptive designs, where re-running the adaptive assignment rule
+keeps the type I error only under conditions~\cite{simon2011randomization}. The conditional randomisation test keeps any test statistic
+valid~\cite{candes2018knockoffs}, and Benjamini--Yekutieli (BY) control keeps the FDR of many tests
+under arbitrary dependence~\cite{benjamini2001dependency}. % src: RWS G1 (bojinov2019timeseries abstract; bojinov2023switchback abstract: exact randomisation p-values, checked 2026-10-13; candes2018knockoffs, benjamini2001dependency); W16 P2b (shortened)
+Under known interference, design-based estimators~\cite{aronow2017interference} and randomisation
+tests~\cite{basse2019interference} also exist. In networks, A/B tests of congestion
+control are biased when the arms share a bottleneck~\cite{spang2021unbiased}, and CausalSim uses randomised trial
+data to debias network traces~\cite{alomar2023causalsim}. % src: RWS G1 (aronow2017interference: estimators and variance bounds; basse2019interference: tests; spang2021unbiased, alomar2023causalsim abstracts); reference audit 2026-10-13 (kohavi2009controlled dropped)
+Off-policy evaluation reweights logged rewards by the logged action probabilities, with doubly robust
+variants~\cite{dudik2014doubly} and intervals and M-estimation under adaptive logging~\cite{hadad2021adaptive,zhang2021mestimators}, but it estimates the
+value of a policy, not the edges of a map. % src: Dudik et al. abstract and s. 2-3; RWS G1 (hadad2021adaptive title); RWS positioning (F10 estimates policy values, not edges)
+% W20: moved here from the end of the CDD O-RAN paragraph, so that "these" cannot be read as CDD O-RAN (P4 s.1).
+These methods come from designed or bandit experiments, and none tests a signed map of many edges under a
+state-dependent policy. % src: RWS positioning (G1); outline v2 s.2.1 (gap); RWS (search for O-RAN causal discovery found none)
+
+Our conference work, CDD O-RAN, avoided confounding with an offline exploration phase in which a random policy
+perturbed every control parameter~\cite{dahal2026cddoran}. It kept each edge whose smoothed conditional mutual
+information (CMI) exceeded a threshold, so its graph was unsigned and without error control. % src: archive/xApp-Nana-Conference-2026/sections/03_proposed_method.tex (deployment model; CMI edge discovery, EMA, threshold); advisor 2026-10-09 (CDD O-RAN limits); TERM s.12 D5 (never "invalid")
+The present method draws its identification from operational accept-or-reject decisions
+instead. % src: TERM Paper identity (never "extension"); outline v2 s.2 (positioning sentence); W16 P2b (shortened)
+
+\subsection{Conflict maps in O-RAN}
+\label{sec:related_maps}
+
+Existing conflict maps mostly predict KPIs or explain a fitted model. None that we found declares signed,
+error-controlled effects of actions from logs whose actions the controller itself chose, and the one causal approach
+relies on a correct graph with every confounder measured. % src: RWS positioning (G2: F2 and F4 associations or attributions; F5 model-based); outline v2 s.2.2; P2b s.1
+Shapley additive explanations (SHAP) attribute a model's prediction to its inputs~\cite{lundberg2017shap}, and
+their tree form~\cite{lundberg2020trees} underlies our SHAP-GBDT baseline on gradient-boosted decision trees (GBDT). % W16 P2b: "make no causal claim by themselves" cut (the opener says it). src: RWS G2 (lundberg2017shap, lundberg2020trees); CDD-ORAN/cdd_oran/decision/baselines_disc.py docstring (HistGBDT + shap.TreeExplainer)
+In O-RAN, EXPLORA links a reinforcement-learning agent's actions to attributes of its input
+state~\cite{fiandrino2023explora}, and a survey covers explainable artificial intelligence for O-RAN
+control~\cite{brik2025xai}. % src: RWS G2 (fiandrino2023explora, brik2025xai abstracts)
+% W16 P2b: "Such attributions describe a fitted model, not the effect of an action" cut (restated the opener).
+
+% W16 P2b: "Conflict detectors differ mainly in where they get the knowledge of which parameter affects which KPI." cut.
+Rule-based conflict detectors take parameter groups configured by the operator~\cite{adamczyk2023conflict} or derived from
+conflict graphs~\cite{wadud2025mobility}. % src: Adamczyk s. III-C; Wadud abstract, Algorithm 1
+Learned detectors use a graph convolutional network trained on synthetic data~\cite{alshami2026conflict}, GraphSAGE
+reconstructions of conflict graphs~\cite{zolghadr2025conflict} or a two-tower encoder of a sparse parameter-KPI
+graph~\cite{santos2026conflictairan}, the last two trained on data from a known conflict model. % src: Al Shami arXiv v3 abstract; Zolghadr arXiv abstract; Two-tower.md (abstract, s. I, s. IV)
+XAI4C adds explainability-based detection and mitigation to the near-RT RIC~\cite{varshney2025xai4c}, and PACIFISTA
+profiles each application in a sandbox to rate conflicts before deployment~\cite{PACIFISTA}. % src: RWS G2 (varshney2025xai4c abstract); PACIFISTA abstract, Conclusions
+% W16 P2b: "All of them identify interactions by the fit of a learned model ..." cut (restated the opener).
+Sharma et al.\ go further: they assemble a causal directed acyclic graph (DAG) from a SHAP analysis and estimate signed
+average treatment effects, with refutation tests~\cite{Sharma_2025}. Their estimates are identified only if that
+graph is correct and no confounder is left unmeasured. Our SHAP-GBDT baseline keeps only their importance step. % src: Sharma s. IV-V; BD docstring (shap_gbdt); advisor 2026-10-09 (qualifier)
+
+\subsection{Safe conflict mitigation}
+\label{sec:related_decisions}
+
+Mitigation in the RIC takes the parameter-to-KPI relations as given or learns predictors of KPI levels. Safety
+guarantees come from data on a whole policy or from a model of the system. None certifies decisions from the
+uncertainty of a causal effect map. % src: advisor 2026-10-09 (positioning); RWS positioning (G3); outline v2 s.2.3 (gap); P2b s.1
+Once a conflict is found, mitigation decides what to apply~\cite{ORANConflictMit,polese2023oran}: the framework of
+Adamczyk and Kliks gives priority to one of the conflicting xApps~\cite{adamczyk2023conflict}. % src: pre-v2 Section 2.3; RWS G3 (polese2023oran: context); Adamczyk s. IV
+Quality-of-service-aware conflict mitigation (QACM) picks the configuration that satisfies the most xApps, using
+regression predictors of their KPIs~\cite{QACM2024}, and Wadud et al.\ compared it with priority and reset rules on a
+direct transmit-power conflict~\cite{wadud2025mobility}. % src: QACM abstract, s. IV-B; Wadud s. V (NC, SBD, P-ES, P-MRO, QACM; direct conflict over TXP)
+Other layers let two xApps learn as a team~\cite{iturria2022matl}, train a scheduler that selects which xApps
+act~\cite{cinemre2026scheduler}, or test conflicting actions in a network digital twin before applying
+them~\cite{giannopoulos2025comix}. % src: RWS G3 (iturria2022matl abstract); Cinemre arXiv v3 abstract; COMIX arXiv abstract
+
+Safe reinforcement learning (RL) keeps a learning controller away from harmful actions~\cite{gu2024safereview},
+for example by shielding~\cite{alshiekh2018shield}, and in RAN slicing its safety has been
+shown empirically~\cite{nagib2024safe}. % src: RWS G3 (gu2024safereview, alshiekh2018shield; nagib2024safe abstract: transfer learning; liu2021onslicing dropped, reference audit 2026-10-13)
+OpenTwin, a preprint, admits an xApp action only when a digital twin fitted online places its outcome in the safe
+region, and bounds false approvals by an operator budget~\cite{zhang2026opentwin}. % src: RWS G3 (zhang2026opentwin arXiv abstract; preprint, kept per W5 brief)
+High-confidence policy improvement bounds the probability that the returned policy falls below a baseline, by
+importance sampling on the behaviour probabilities~\cite{thomas2015hcpi}. % src: Thomas et al. abstract; s. 1-2
+Our edge-certification gate gives a weaker certificate, one per undeclared guard edge, and claims no policy-level
+guarantee: whether the whole referee keeps its guards was checked only on fresh simulator seeds. % src: Section 8.3 (edge-level); FD option_a.eval, certsafe.eval (160 seeds per arm, simulated); W16 P2b (two sentences to one)
+
+\begin{table}[tbp]
+\caption{Related method families.}
+\label{tab:related}
+% Cells condensed 2026-10-14 from the previous six-column table (every cell traced in
+% reviews/2026-10-10/drafts/related_work_sources.md, rows F1-F11). Merged: "multiple testing" and "signed map" into
+% one column; "adaptive" folded into the probabilities column. Former notes b-g are now cell text.
+\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}>{\raggedright}p{0.43\textwidth}>{\raggedright}p{0.13\textwidth}>{\raggedright}p{0.12\textwidth}>{\raggedright}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}@{}}
+\toprule
+Method family & Logged probabilities & Validity from & Signed map with error control & Safety certificate \\
+\midrule
+Priority, game-theoretic and team-learning mitigation~\cite{adamczyk2023conflict,wadud2025mobility,QACM2024,iturria2022matl}
+ & no & -- & no & no \\
+Learned conflict detection~\cite{alshami2026conflict,zolghadr2025conflict,santos2026conflictairan,varshney2025xai4c}
+ & no & -- & no & no \\
+Learned scheduling, twin and pre-deployment checks~\cite{cinemre2026scheduler,giannopoulos2025comix,PACIFISTA,zhang2026opentwin}
+ & no & -- & no & partial \\
+Feature attribution and explainability~\cite{lundberg2017shap,lundberg2020trees,fiandrino2023explora,brik2025xai}
+ & no & -- & attributions only & no \\
+Effect estimation on a learned causal graph~\cite{Sharma_2025}
+ & no & model & signed, no control & no \\
+CDD O-RAN~\cite{dahal2026cddoran}
+ & no & -- & no & no \\
+Observational causal discovery~\cite{granger1969causal,spirtes2000causation,zheng2018notears,strobl2019rcot,runge2019pcmci}
+ & no & model & per test, linear sign & no \\
+Design-based randomisation inference~\cite{imbens2015causal,bojinov2019timeseries,bojinov2023switchback,candes2018knockoffs}
+ & yes & design & FDR, unsigned & no \\
+Experiments under interference~\cite{aronow2017interference,basse2019interference,spang2021unbiased,alomar2023causalsim}
+ & yes & design & no & no \\
+Off-policy evaluation~\cite{dudik2014doubly,hadad2021adaptive}
+ & yes, adaptive & estimator & no & no \\
+Safe policy improvement and safe RL~\cite{thomas2015hcpi,gu2024safereview,alshiekh2018shield,nagib2024safe}
+ & partial & varies & no & policy-level \\
+\midrule
+This paper
+ & yes, adaptive & design & yes & edge-level \\
+\botrule
+\end{tabular*}
+\end{table}

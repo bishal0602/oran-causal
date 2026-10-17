@@ -1,0 +1,10 @@
+criterion,what,rule,value,result
+K0,placebo validity,"Placebo logs, 60 hypotheses: binomial tail of the rejections at $p$ $\le$ 0.05 is $\ge$ 0.01, and $\le$ 1 declaration",7 of 60 at $p$ $\le$ 0.05 (tail 0.0297); 0 declared,PASS
+K0n,null-outcome validity,"40 null-outcome variants (shifted KPI series): rate of $p$ $\le$ 0.05 is $\le$ 0.075, every family $\le$ 0.10, $\le$ 5 variants with a declaration",rate 0.0525 (families 0.047--0.060); 0 of 40 variants declared,PASS
+G,premise in ground truth,Ground truth labels the premise edge sleep $\rightarrow$ neighbour protected-slice violations true ($+$),"true ($+$), mean $+20.56$ [14.10, 28.87], 39 episodes",PASS
+K1,support,"$\ge$ 60 tested sleep units with $\ge$ 15 logged rejections, in every 120-episode subsample","545--655 units, 246--343 rejections (5 subsamples)",PASS
+P1,chain at 120 episodes,In $\ge$ 3 of 5 120-episode subsamples: premise declared ($+$) and $\ge$ 3 chain edges with the ground-truth sign,5 of 5 subsamples; chain 4 of 4 in each,PASS
+P2,small-subsample F1,"PMRT indirect F1 $\ge$ the baseline's in $\ge$ 6 of 10 60-episode and $\ge$ 3 of 5 120-episode subsamples, for each baseline","Correlation 10/10, 5/5; Granger 10/10, 5/5; Granger + BY 2/10, 4/5",FAIL
+P3,pooled discovery,"All 600 episodes: premise declared ($+$), $\ge$ 3 chain edges, overall precision $\ge$ 0.80, sign accuracy $\ge$ 0.90",premise ($+$); chain 4 of 4; precision 0.92; sign accuracy 1.00,PASS
+SA,sign,Overall sign accuracy $\ge$ 0.90 pooled and as the mean over the 120-episode subsamples,1.00 pooled; 1.00 mean,PASS
+Verdict,,"Precedence: INVALID (K0 or K0n) $>$ NO-CHAIN (G) $>$ UNDERPOWERED (K1) $>$ PASS (P1, P2, P3, SA); PARTIAL (P3, SA); KILL",,PARTIAL

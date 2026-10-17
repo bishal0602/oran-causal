@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import matplotlib
 import pytest
 
@@ -6,7 +8,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from oran_causal.figures import registry, style
-from oran_causal.figures.paths import JOURNAL, RECORDS, WORKSPACE_ROOT
+from oran_causal.figures.paths import PAPER, RECORDS
 
 PLANNED = {
     "fig_study1_discovery": [
@@ -96,7 +98,7 @@ HERMETIC = frozenset(
         "specimen_panels",
     }
 )
-DESIGN = WORKSPACE_ROOT.parent / "DESIGN.md"
+DESIGN = Path(__file__).resolve().parents[1] / "DESIGN.md"
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -127,15 +129,15 @@ def records():
 
 @pytest.fixture(scope="session")
 def journal():
-    if not (JOURNAL / "sections" / "app_c.tex").exists():
-        pytest.skip("journal repository not beside the workspace")
-    return JOURNAL
+    if not (PAPER / "sections" / "app_c.tex").exists():
+        pytest.skip("paper/ not in the workspace")
+    return PAPER
 
 
 @pytest.fixture(scope="session")
 def design():
     if not DESIGN.exists():
-        pytest.skip("DESIGN.md not beside the workspace")
+        pytest.skip("DESIGN.md missing")
     return DESIGN.read_text(encoding="utf-8")
 
 

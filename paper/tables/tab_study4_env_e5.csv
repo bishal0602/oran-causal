@@ -1,0 +1,141 @@
+world,regime,arm,method,n,validity,null_kind,null_rate,null_lo,null_hi,recall
+E5,R1,pmrt_nl_eq,PMRT-GBM,500,INCONCLUSIVE,null_raw,0.0325,0.015,0.0525,0.7
+E5,R1,pmrt_nl_eq,PMRT-GBM,1000,VALID,null_raw,0.0375,0.0225,0.0525,0.8375
+E5,R1,pmrt_nl_eq,PMRT-GBM,4000,INCONCLUSIVE,null_raw,0.035,0.02,0.0525,0.9916666666666668
+E5,R1,pmrt_nl_eq,PMRT-GBM,8000,INCONCLUSIVE,null_raw,0.0425,0.025,0.0625,1.0
+E5,R1,pmrt_nl_eq,PMRT-GBM,24000,INCONCLUSIVE,null_raw,0.0575,0.035,0.0875,1.0
+E5,R1,pmrt_eq,PMRT-Lin,500,VALID,null_raw,0.04,0.025,0.0575,0.35
+E5,R1,pmrt_eq,PMRT-Lin,1000,INCONCLUSIVE,null_raw,0.0575,0.035,0.08,0.3583333333333333
+E5,R1,pmrt_eq,PMRT-Lin,4000,INCONCLUSIVE,null_raw,0.06,0.0375,0.085,0.45
+E5,R1,pmrt_eq,PMRT-Lin,8000,INCONCLUSIVE,null_raw,0.05,0.0275,0.0725624999999996,0.5291666666666666
+E5,R1,pmrt_eq,PMRT-Lin,24000,INCONCLUSIVE,null_raw,0.04,0.02,0.06,0.6208333333333332
+E5,R1,pcorr_eq,Design-adjusted partial correlation,500,VALID,null_raw,0.045,0.025,0.0675,0.3458333333333333
+E5,R1,pcorr_eq,Design-adjusted partial correlation,1000,INCONCLUSIVE,null_raw,0.0525,0.0275,0.08,0.3583333333333333
+E5,R1,pcorr_eq,Design-adjusted partial correlation,4000,INCONCLUSIVE,null_raw,0.045,0.0275,0.0675,0.4458333333333333
+E5,R1,pcorr_eq,Design-adjusted partial correlation,8000,INCONCLUSIVE,null_raw,0.0475,0.0275,0.0725,0.5208333333333333
+E5,R1,pcorr_eq,Design-adjusted partial correlation,24000,INCONCLUSIVE,null_raw,0.0375,0.0175,0.0575,0.6249999999999999
+E5,R1,rcot2_eq,Design-adjusted RCoT,500,INCONCLUSIVE,null_raw,0.0725,0.05,0.0975,0.6833333333333333
+E5,R1,rcot2_eq,Design-adjusted RCoT,1000,INVALID,null_raw,0.085,0.0575,0.1125,nan
+E5,R1,rcot2_eq,Design-adjusted RCoT,4000,INCONCLUSIVE,null_raw,0.0625,0.0375,0.09,0.8
+E5,R1,rcot2_eq,Design-adjusted RCoT,8000,INCONCLUSIVE,null_raw,0.045,0.025,0.07,0.8708333333333333
+E5,R1,rcot2_eq,Design-adjusted RCoT,24000,VALID,null_raw,0.0375,0.0175,0.0625,0.9708333333333334
+E5,R1,corr,Correlation,500,VALID,null_raw,0.03,0.015,0.045,0.3458333333333333
+E5,R1,corr,Correlation,1000,VALID,null_raw,0.04,0.02,0.0625,0.3583333333333333
+E5,R1,corr,Correlation,4000,INCONCLUSIVE,null_raw,0.0475,0.0275,0.07,0.45
+E5,R1,corr,Correlation,8000,VALID,null_raw,0.0425,0.0225,0.0675,0.5291666666666666
+E5,R1,corr,Correlation,24000,VALID,null_raw,0.0375,0.0175,0.0575,0.6208333333333332
+E5,R1,pcorr_native,Plain partial correlation,500,VALID,null_raw,0.0475,0.025,0.0725,0.3458333333333333
+E5,R1,pcorr_native,Plain partial correlation,1000,INCONCLUSIVE,null_raw,0.0575,0.03,0.09,0.3583333333333333
+E5,R1,pcorr_native,Plain partial correlation,4000,INCONCLUSIVE,null_raw,0.05,0.03,0.075,0.4458333333333333
+E5,R1,pcorr_native,Plain partial correlation,8000,INCONCLUSIVE,null_raw,0.0475,0.0275,0.0725,0.5291666666666666
+E5,R1,pcorr_native,Plain partial correlation,24000,INCONCLUSIVE,null_raw,0.0375,0.0175,0.0575,0.6249999999999999
+E5,R1,pcorr_hac,"Plain partial correlation, HAC",500,VALID,null_raw,0.0475,0.0275,0.07,0.3416666666666667
+E5,R1,pcorr_hac,"Plain partial correlation, HAC",1000,INCONCLUSIVE,null_raw,0.06,0.0325,0.0925,0.3583333333333333
+E5,R1,pcorr_hac,"Plain partial correlation, HAC",4000,INCONCLUSIVE,null_raw,0.0525,0.03,0.0775624999999996,0.4458333333333333
+E5,R1,pcorr_hac,"Plain partial correlation, HAC",8000,INCONCLUSIVE,null_raw,0.0475,0.0275,0.0725,0.525
+E5,R1,pcorr_hac,"Plain partial correlation, HAC",24000,INCONCLUSIVE,null_raw,0.0375,0.0175,0.0575,0.6208333333333332
+E5,R1,pcorr_hac_fb,"Plain partial correlation, HAC (fixed-b)",500,VALID,null_raw,0.0475,0.0275,0.07,0.3416666666666667
+E5,R1,pcorr_hac_fb,"Plain partial correlation, HAC (fixed-b)",1000,INCONCLUSIVE,null_raw,0.06,0.0325,0.0925,0.3583333333333333
+E5,R1,pcorr_hac_fb,"Plain partial correlation, HAC (fixed-b)",4000,INCONCLUSIVE,null_raw,0.0525,0.03,0.0775624999999996,0.4458333333333333
+E5,R1,pcorr_hac_fb,"Plain partial correlation, HAC (fixed-b)",8000,INCONCLUSIVE,null_raw,0.0475,0.0275,0.0725,0.525
+E5,R1,pcorr_hac_fb,"Plain partial correlation, HAC (fixed-b)",24000,INCONCLUSIVE,null_raw,0.0375,0.0175,0.0575,0.6208333333333332
+E5,R1,rcot2_native,Plain RCoT,500,INVALID,null_raw,0.09,0.07,0.11,nan
+E5,R1,rcot2_native,Plain RCoT,1000,INCONCLUSIVE,null_raw,0.0525,0.03,0.08,0.7041666666666666
+E5,R1,rcot2_native,Plain RCoT,4000,INCONCLUSIVE,null_raw,0.065,0.04,0.095,0.8333333333333333
+E5,R1,rcot2_native,Plain RCoT,8000,INCONCLUSIVE,null_raw,0.06,0.04,0.0825,0.8958333333333334
+E5,R1,rcot2_native,Plain RCoT,24000,VALID,null_raw,0.045,0.025,0.0675,0.9875
+E5,R1,mscr_native,MSCR (n ≤ 1000),500,INCONCLUSIVE,null_raw,0.0475,0.0225,0.075,0.6749999999999999
+E5,R1,mscr_native,MSCR (n ≤ 1000),1000,INVALID,null_raw,0.05,0.0299375,0.0725,nan
+E5,R1,pc_native,PC,500,VALID,null_decl,0.0125,0.0025,0.0225,0.3958333333333333
+E5,R1,pc_native,PC,1000,VALID,null_decl,0.01,0.0025,0.02,0.3916666666666666
+E5,R1,pc_native,PC,4000,VALID,null_decl,0.0125,0.0025,0.0225,0.4958333333333333
+E5,R1,pc_native,PC,8000,VALID,null_decl,0.025,0.0125,0.0425,0.5416666666666666
+E5,R1,pc_native,PC,24000,VALID,null_decl,0.01,0.0025,0.02,0.525
+E5,R1,notears,NOTEARS,500,VALID,null_decl,0.0075,0.0,0.0175,0.3833333333333333
+E5,R1,notears,NOTEARS,1000,VALID,null_decl,0.0025,0.0,0.0075,0.3541666666666666
+E5,R1,notears,NOTEARS,4000,VALID,null_decl,0.0,0.0,0.0,0.3333333333333333
+E5,R1,notears,NOTEARS,8000,VALID,null_decl,0.0,0.0,0.0,0.3333333333333333
+E5,R1,notears,NOTEARS,24000,VALID,null_decl,0.0,0.0,0.0,0.3333333333333333
+E5,R1,shap_dag,SHAP-DAG,500,INCONCLUSIVE,null_decl,0.0525,0.0324375,0.0775,0.9208333333333334
+E5,R1,shap_dag,SHAP-DAG,1000,VALID,null_decl,0.01,0.0025,0.02,0.9416666666666668
+E5,R1,shap_dag,SHAP-DAG,4000,VALID,null_decl,0.0075,0.0,0.0175,1.0
+E5,R1,shap_dag,SHAP-DAG,8000,VALID,null_decl,0.015,0.005,0.025,1.0
+E5,R1,shap_dag,SHAP-DAG,24000,VALID,null_decl,0.045,0.03,0.06,1.0
+E5,R1,two_tower,Two-tower,500,INVALID,null_decl,0.0825,0.055,0.1125,nan
+E5,R1,two_tower,Two-tower,1000,VALID,null_decl,0.0525,0.0325,0.075,0.7125
+E5,R1,two_tower,Two-tower,4000,INVALID,null_decl,0.1025,0.07,0.1325,nan
+E5,R1,two_tower,Two-tower,8000,INVALID,null_decl,0.12,0.0875,0.1525,nan
+E5,R1,two_tower,Two-tower,24000,INVALID,null_decl,0.1125,0.08,0.145,nan
+E5,R1,cdl,CDD O-RAN discovery,500,VALID,null_decl,0.0125,0.0025,0.025,0.6666666666666666
+E5,R1,cdl,CDD O-RAN discovery,1000,VALID,null_decl,0.04,0.0225,0.06,0.6833333333333333
+E5,R1,cdl,CDD O-RAN discovery,4000,VALID,null_decl,0.0125,0.0025,0.0225,0.6833333333333332
+E5,R2,pmrt_nl_eq,PMRT-GBM,500,INCONCLUSIVE,null_raw,0.05,0.0325,0.0725,0.6791666666666666
+E5,R2,pmrt_nl_eq,PMRT-GBM,1000,VALID,null_raw,0.045,0.0275,0.065,0.6833333333333332
+E5,R2,pmrt_nl_eq,PMRT-GBM,4000,VALID,null_raw,0.0525,0.0324375,0.075,0.7583333333333333
+E5,R2,pmrt_nl_eq,PMRT-GBM,8000,INCONCLUSIVE,null_raw,0.0675,0.045,0.09,0.8041666666666668
+E5,R2,pmrt_nl_eq,PMRT-GBM,24000,INCONCLUSIVE,null_raw,0.0575,0.0375,0.08,0.9291666666666666
+E5,R2,pmrt_eq,PMRT-Lin,500,INCONCLUSIVE,null_raw,0.0425,0.02,0.0675,0.425
+E5,R2,pmrt_eq,PMRT-Lin,1000,INCONCLUSIVE,null_raw,0.0475,0.025,0.0700624999999996,0.4666666666666666
+E5,R2,pmrt_eq,PMRT-Lin,4000,INCONCLUSIVE,null_raw,0.045,0.025,0.0675,0.5583333333333333
+E5,R2,pmrt_eq,PMRT-Lin,8000,INCONCLUSIVE,null_raw,0.06,0.04,0.0825,0.5958333333333333
+E5,R2,pmrt_eq,PMRT-Lin,24000,INCONCLUSIVE,null_raw,0.0575,0.0375,0.0775,0.6375
+E5,R2,pcorr_eq,Design-adjusted partial correlation,500,INCONCLUSIVE,null_raw,0.0325,0.015,0.0525,0.4791666666666666
+E5,R2,pcorr_eq,Design-adjusted partial correlation,1000,INCONCLUSIVE,null_raw,0.0425,0.025,0.0625,0.5458333333333333
+E5,R2,pcorr_eq,Design-adjusted partial correlation,4000,VALID,null_raw,0.045,0.025,0.0675,0.6083333333333333
+E5,R2,pcorr_eq,Design-adjusted partial correlation,8000,VALID,null_raw,0.0525,0.035,0.0725,0.6375
+E5,R2,pcorr_eq,Design-adjusted partial correlation,24000,INCONCLUSIVE,null_raw,0.07,0.0425,0.0975624999999996,0.7375
+E5,R2,rcot2_eq,Design-adjusted RCoT,500,INVALID,null_raw,0.1075,0.08,0.1375,nan
+E5,R2,rcot2_eq,Design-adjusted RCoT,1000,INVALID,null_raw,0.14,0.1125,0.165,nan
+E5,R2,rcot2_eq,Design-adjusted RCoT,4000,INVALID,null_raw,0.23,0.1875,0.2725,nan
+E5,R2,rcot2_eq,Design-adjusted RCoT,8000,INVALID,null_raw,0.3825,0.3325,0.4300624999999996,nan
+E5,R2,rcot2_eq,Design-adjusted RCoT,24000,INVALID,null_raw,0.6225,0.575,0.6675624999999996,nan
+E5,R2,corr,Correlation,500,INVALID,null_raw,0.58,0.525,0.635,nan
+E5,R2,corr,Correlation,1000,INVALID,null_raw,0.6875,0.64,0.7325,nan
+E5,R2,corr,Correlation,4000,INVALID,null_raw,0.84,0.7975,0.8775,nan
+E5,R2,corr,Correlation,8000,INVALID,null_raw,0.875,0.8425,0.9075,nan
+E5,R2,corr,Correlation,24000,INVALID,null_raw,0.9325,0.9075,0.955,nan
+E5,R2,pcorr_native,Plain partial correlation,500,INVALID,null_raw,0.27,0.225,0.3125,nan
+E5,R2,pcorr_native,Plain partial correlation,1000,INVALID,null_raw,0.335,0.285,0.3825,nan
+E5,R2,pcorr_native,Plain partial correlation,4000,INVALID,null_raw,0.49,0.445,0.5325,nan
+E5,R2,pcorr_native,Plain partial correlation,8000,INVALID,null_raw,0.5575,0.5199375,0.59,nan
+E5,R2,pcorr_native,Plain partial correlation,24000,INVALID,null_raw,0.6125,0.5849375,0.64,nan
+E5,R2,pcorr_hac,"Plain partial correlation, HAC",500,INVALID,null_raw,0.27,0.225,0.315,nan
+E5,R2,pcorr_hac,"Plain partial correlation, HAC",1000,INVALID,null_raw,0.3275,0.2775,0.3725,nan
+E5,R2,pcorr_hac,"Plain partial correlation, HAC",4000,INVALID,null_raw,0.485,0.4425,0.525,nan
+E5,R2,pcorr_hac,"Plain partial correlation, HAC",8000,INVALID,null_raw,0.5425,0.5075,0.575,nan
+E5,R2,pcorr_hac,"Plain partial correlation, HAC",24000,INVALID,null_raw,0.5975,0.5625,0.63,nan
+E5,R2,pcorr_hac_fb,"Plain partial correlation, HAC (fixed-b)",500,INVALID,null_raw,0.2675,0.2249375,0.3125,nan
+E5,R2,pcorr_hac_fb,"Plain partial correlation, HAC (fixed-b)",1000,INVALID,null_raw,0.3225,0.275,0.3675,nan
+E5,R2,pcorr_hac_fb,"Plain partial correlation, HAC (fixed-b)",4000,INVALID,null_raw,0.485,0.4425,0.525,nan
+E5,R2,pcorr_hac_fb,"Plain partial correlation, HAC (fixed-b)",8000,INVALID,null_raw,0.5425,0.5075,0.575,nan
+E5,R2,pcorr_hac_fb,"Plain partial correlation, HAC (fixed-b)",24000,INVALID,null_raw,0.5975,0.5625,0.63,nan
+E5,R2,rcot2_native,Plain RCoT,500,INVALID,null_raw,0.1325,0.1025,0.165,nan
+E5,R2,rcot2_native,Plain RCoT,1000,INVALID,null_raw,0.1525,0.1224375,0.1825,nan
+E5,R2,rcot2_native,Plain RCoT,4000,INVALID,null_raw,0.2075,0.1725,0.2425,nan
+E5,R2,rcot2_native,Plain RCoT,8000,INVALID,null_raw,0.31,0.2675,0.355,nan
+E5,R2,rcot2_native,Plain RCoT,24000,INVALID,null_raw,0.595,0.54,0.6475,nan
+E5,R2,mscr_native,MSCR (n ≤ 1000),500,INVALID,null_raw,0.9675,0.9475,0.9825,nan
+E5,R2,mscr_native,MSCR (n ≤ 1000),1000,INVALID,null_raw,1.0,1.0,1.0,nan
+E5,R2,pc_native,PC,500,VALID,null_decl,0.0175,0.005,0.0325,0.45
+E5,R2,pc_native,PC,1000,VALID,null_decl,0.035,0.02,0.0525,0.4541666666666666
+E5,R2,pc_native,PC,4000,VALID,null_decl,0.0,0.0,0.0,0.0
+E5,R2,pc_native,PC,8000,VALID,null_decl,0.0,0.0,0.0,0.0
+E5,R2,pc_native,PC,24000,VALID,null_decl,0.0,0.0,0.0,0.0
+E5,R2,notears,NOTEARS,500,VALID,null_decl,0.0225,0.01,0.0375,0.4458333333333333
+E5,R2,notears,NOTEARS,1000,VALID,null_decl,0.0325,0.0175,0.0475,0.4458333333333333
+E5,R2,notears,NOTEARS,4000,VALID,null_decl,0.0275,0.0125,0.045,0.4416666666666666
+E5,R2,notears,NOTEARS,8000,VALID,null_decl,0.0325,0.0175,0.0475624999999996,0.4458333333333333
+E5,R2,notears,NOTEARS,24000,VALID,null_decl,0.0275,0.0125,0.045,0.4333333333333333
+E5,R2,shap_dag,SHAP-DAG,500,INCONCLUSIVE,null_decl,0.06,0.0325,0.0925,0.675
+E5,R2,shap_dag,SHAP-DAG,1000,VALID,null_decl,0.02,0.005,0.0375,0.6666666666666666
+E5,R2,shap_dag,SHAP-DAG,4000,INCONCLUSIVE,null_decl,0.05,0.0275,0.0775624999999996,0.6916666666666667
+E5,R2,shap_dag,SHAP-DAG,8000,VALID,null_decl,0.0275,0.0075,0.05,0.7333333333333333
+E5,R2,shap_dag,SHAP-DAG,24000,VALID,null_decl,0.01,0.0,0.025,0.8541666666666667
+E5,R2,two_tower,Two-tower,500,INCONCLUSIVE,null_decl,0.055,0.0275,0.085,0.6791666666666666
+E5,R2,two_tower,Two-tower,1000,VALID,null_decl,0.0275,0.01,0.0475,0.6791666666666666
+E5,R2,two_tower,Two-tower,4000,INVALID,null_decl,0.085,0.055,0.12,nan
+E5,R2,two_tower,Two-tower,8000,VALID,null_decl,0.03,0.0125,0.0525,0.75
+E5,R2,two_tower,Two-tower,24000,VALID,null_decl,0.02,0.005,0.04,0.7666666666666667
+E5,R2,cdl,CDD O-RAN discovery,500,VALID,null_decl,0.0,0.0,0.0,0.5708333333333333
+E5,R2,cdl,CDD O-RAN discovery,1000,VALID,null_decl,0.0125,0.0025,0.0225624999999996,0.7041666666666666
+E5,R2,cdl,CDD O-RAN discovery,4000,VALID,null_decl,0.025,0.0125,0.0375,0.7333333333333334

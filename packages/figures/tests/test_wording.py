@@ -12,7 +12,7 @@ import pytest
 from oran_causal.figures import paths, plots, registry, style, wording
 
 FIGS = registry.discover()
-TABLES = sorted((paths.JOURNAL / "tables").glob("*.tex"))
+TABLES = sorted((paths.PAPER / "tables").glob("*.tex"))
 
 
 def test_figure_text(build_figure, figure_name):

@@ -1,0 +1,25 @@
+claim,label,methods,regimes,environment,invalid,valid,inconclusive,counted,verdict
+C1,Design-blind tests invalid in R2,"Correlation; Plain Granger; MSCR (n ≤ 1000); Plain partial correlation, HAC (fixed-b); Plain partial correlation; Plain RCoT",R2,E1,22,0,0,22,
+C1,Design-blind tests invalid in R2,"Correlation; Plain Granger; MSCR (n ≤ 1000); Plain partial correlation, HAC (fixed-b); Plain partial correlation; Plain RCoT",R2,E2,22,0,0,22,
+C1,Design-blind tests invalid in R2,"Correlation; Plain Granger; MSCR (n ≤ 1000); Plain partial correlation, HAC (fixed-b); Plain partial correlation; Plain RCoT",R2,E3,27,0,0,27,
+C1,Design-blind tests invalid in R2,"Correlation; Plain Granger; MSCR (n ≤ 1000); Plain partial correlation, HAC (fixed-b); Plain partial correlation; Plain RCoT",R2,E4,2,7,13,22,
+C1,Design-blind tests invalid in R2,"Correlation; Plain Granger; MSCR (n ≤ 1000); Plain partial correlation, HAC (fixed-b); Plain partial correlation; Plain RCoT",R2,E5,22,0,0,22,
+C1,Design-blind tests invalid in R2,"Correlation; Plain Granger; MSCR (n ≤ 1000); Plain partial correlation, HAC (fixed-b); Plain partial correlation; Plain RCoT",R2,all,95,7,13,115,SUPPORTED
+C2a,PMRT-GBM valid in R1 and R2,PMRT-GBM,R1 + R2,E1,1,0,9,10,
+C2a,PMRT-GBM valid in R1 and R2,PMRT-GBM,R1 + R2,E2,0,7,3,10,
+C2a,PMRT-GBM valid in R1 and R2,PMRT-GBM,R1 + R2,E3,0,3,7,10,
+C2a,PMRT-GBM valid in R1 and R2,PMRT-GBM,R1 + R2,E4,0,5,5,10,
+C2a,PMRT-GBM valid in R1 and R2,PMRT-GBM,R1 + R2,E5,0,3,7,10,
+C2a,PMRT-GBM valid in R1 and R2,PMRT-GBM,R1 + R2,all,1,18,31,50,SUPPORTED
+C2b,Design-adjusted tests valid in R1 and R2,Design-adjusted Granger; Design-adjusted partial correlation,R1 + R2,E1,0,3,7,10,
+C2b,Design-adjusted tests valid in R1 and R2,Design-adjusted Granger; Design-adjusted partial correlation,R1 + R2,E2,0,6,4,10,
+C2b,Design-adjusted tests valid in R1 and R2,Design-adjusted Granger; Design-adjusted partial correlation,R1 + R2,E3,0,4,16,20,
+C2b,Design-adjusted tests valid in R1 and R2,Design-adjusted Granger; Design-adjusted partial correlation,R1 + R2,E4,0,5,5,10,
+C2b,Design-adjusted tests valid in R1 and R2,Design-adjusted Granger; Design-adjusted partial correlation,R1 + R2,E5,0,3,7,10,
+C2b,Design-adjusted tests valid in R1 and R2,Design-adjusted Granger; Design-adjusted partial correlation,R1 + R2,all,0,21,39,60,SUPPORTED
+C3,"PMRT-GBM valid under the logged confounded policy (R3, E4 only)",PMRT-GBM,R3,E1,0,0,0,0,
+C3,"PMRT-GBM valid under the logged confounded policy (R3, E4 only)",PMRT-GBM,R3,E2,0,0,0,0,
+C3,"PMRT-GBM valid under the logged confounded policy (R3, E4 only)",PMRT-GBM,R3,E3,0,0,0,0,
+C3,"PMRT-GBM valid under the logged confounded policy (R3, E4 only)",PMRT-GBM,R3,E4,0,6,14,20,
+C3,"PMRT-GBM valid under the logged confounded policy (R3, E4 only)",PMRT-GBM,R3,E5,0,0,0,0,
+C3,"PMRT-GBM valid under the logged confounded policy (R3, E4 only)",PMRT-GBM,R3,all,0,6,14,20,SUPPORTED

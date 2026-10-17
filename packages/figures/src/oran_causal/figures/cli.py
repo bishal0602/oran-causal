@@ -19,11 +19,11 @@ def main(argv: list[str] | None = None) -> int:
     b = sub.add_parser("build", help="build figures (all if no names given)")
     b.add_argument("names", nargs="*")
     b.add_argument(
-        "--preview", action="store_true", help="write PNG previews only, skip journal PDFs"
+        "--preview", action="store_true", help="write PNG previews only, skip the paper PDFs"
     )
     b.add_argument(
         "--out",
-        help="write figures/, tables/ and preview/ under this directory instead of the journal",
+        help="write figures/, tables/ and preview/ under this directory instead of paper/",
     )
     args = ap.parse_args(argv)
     matplotlib.use("Agg")

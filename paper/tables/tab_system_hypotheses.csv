@@ -1,0 +1,13 @@
+family,family_label,relation,pv,pv_status,pv_sign,v,v_status,v_sign,rlf,rlf_status,rlf_sign,e,e_status,e_sign,load,load_status,load_sign
+carrier,carrier (ES),own,true $-$,TRUE,-1,true $-$,TRUE,-1,indeterminate,INDET,0,true $+$,TRUE,1,null,NULL,0
+carrier,carrier (ES),neighbour,indeterminate,INDET,0,null,NULL,0,indeterminate,INDET,0,indeterminate,INDET,0,null,NULL,0
+carrier,carrier (ES),far,indeterminate,INDET,0,null,NULL,0,indeterminate,INDET,0,null,NULL,0,null,NULL,0
+sleep,sleep (ES),own,indeterminate,INDET,0,indeterminate,INDET,0,true $-$,TRUE,-1,null,NULL,0,true $-$,TRUE,-1
+sleep,sleep (ES),neighbour,true $+$,TRUE,1,true $+$,TRUE,1,true $+$,TRUE,1,true $+$,TRUE,1,true $+$,TRUE,1
+sleep,sleep (ES),far,true $+$,TRUE,1,true $+$,TRUE,1,true $+$,TRUE,1,true $+$,TRUE,1,true $+$,TRUE,1
+ptx,ptx (Power ES),own,true $+$,TRUE,1,true $+$,TRUE,1,true $+$,TRUE,1,true $+$,TRUE,1,true $+$,TRUE,1
+ptx,ptx (Power ES),neighbour,true $-$,TRUE,-1,true $-$,TRUE,-1,true $-$,TRUE,-1,true $-$,TRUE,-1,true $-$,TRUE,-1
+ptx,ptx (Power ES),far,indeterminate,INDET,0,true $-$,TRUE,-1,indeterminate,INDET,0,true $-$,TRUE,-1,true $-$,TRUE,-1
+prot_min,prot_min (Slice Guarantee),own,true $-$,TRUE,-1,null,NULL,0,null,NULL,0,null,NULL,0,null,NULL,0
+prot_min,prot_min (Slice Guarantee),neighbour,null,NULL,0,null,NULL,0,null,NULL,0,null,NULL,0,null,NULL,0
+prot_min,prot_min (Slice Guarantee),far,null,NULL,0,null,NULL,0,null,NULL,0,null,NULL,0,null,NULL,0

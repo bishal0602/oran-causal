@@ -1,0 +1,19 @@
+% Step 5 (2026-10-14, second version after user review): story sentences 7-10 and future directions; no study numbers,
+% no new numbers (jobs tmp bak5_s11_conclusion.tex holds the W22 version).
+\section{Conclusion}
+\label{sec:conclusion}
+
+This paper has shown that feedback-driven O-RAN logs can support causal claims about xApp conflicts, provided that the
+conflict-mitigation layer randomises its accept-or-reject decisions and logs the probability of each. On such logs, a
+test that redraws the logged decisions is valid for sharp nulls in large samples, without a model of the network. In a
+simulated O-RAN scenario it declared no effect where none existed and recovered most of the true conflict edges,
+whereas learned discovery methods declared effects on placebo data, and in controlled environments only tests that
+used the logging design retained their nominal error rate. A valid map did not, however, improve conflict mitigation:
+without a safety gate the map-driven referee breached a radio-link-failure limit, and with it the referee matched the
+rule of never letting the pico cell sleep, as did a referee given the true map. In this scenario the safety guards,
+rather than knowledge of the network, limited safe mitigation.
+
+Three directions for future work follow. Guard-aware referees should be studied with a statistic for the guard edges
+and a success criterion, such as energy retention at matched safety, fixed in advance. Further scenarios and incumbent policies would show
+whether the equivalence with the never-sleep rule holds more generally. Finally, testbed logs that record their
+propensities would test the logging requirement on which the approach rests.

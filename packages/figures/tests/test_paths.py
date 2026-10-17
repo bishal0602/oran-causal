@@ -35,8 +35,8 @@ def test_protocol_refuses_a_missing_file():
 
 def test_outputs_default_to_the_journal(monkeypatch):
     monkeypatch.delenv(paths.OUT_ENV, raising=False)
-    assert paths.figures_dir() == paths.JOURNAL / "figures"
-    assert paths.tables_dir() == paths.JOURNAL / "tables"
+    assert paths.figures_dir() == paths.PAPER / "figures"
+    assert paths.tables_dir() == paths.PAPER / "tables"
     assert paths.preview_dir() == paths.PREVIEW
 
 

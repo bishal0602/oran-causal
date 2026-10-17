@@ -7,7 +7,7 @@ oran-causal starts with fresh history. Code, protocols and records come from the
 | CDD-ORAN | `github.com/Adhyadeshdahal/CDD-ORAN`, branch `feat/v2` at `0c89106` |
 | Study 4 freeze and production | freeze `93856c2`; EVAL records produced at `5a95186` (amendment A-1) |
 | Figures project (`cddfig`) | workspace `figures/` |
-| Manuscript | journal repository at `ec32c22` |
+| Manuscript | journal repository at `8744ef6`, moved into `paper/` |
 | Raw system-simulator runs | Kaggle kernel outputs, `bishalpanta/*` |
 
 Per-area tables, one row per migrated file or record set:
@@ -27,3 +27,4 @@ Per-area tables, one row per migrated file or record set:
 | System-level plant (`oran_causal.sim.system`) | [provenance/sim_system.md](provenance/sim_system.md) |
 | System decision layer (`oran_causal.sim.system.decision`, `core.data.UnitTable`) | [provenance/sim_decision.md](provenance/sim_decision.md) |
 | Cloud and VPS launchers (`oran_causal.experiments.launch`) | [provenance/experiments_launch.md](provenance/experiments_launch.md) |
+| Manuscript, build entry point and figure design rules (`paper/`, `packages/figures/DESIGN.md`) | [provenance/paper.md](provenance/paper.md) |
