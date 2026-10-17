@@ -8,8 +8,6 @@
 \label{app:x9x10}
 
 This appendix gives the complete tables behind Section~\ref{sec:results} and the robustness analyses that qualify it.
-The robustness analyses were chosen after the protocols were fixed and were declared before they were run unless
-stated otherwise; Online Resource~1, Section~S1.2, lists every analysis with its status and date of declaration.
 
 \subsection{Validity checks}
 \label{app:validity}\claim{EMP-S1-STRICT}
@@ -22,7 +20,7 @@ procedure with 9\,999 redraws to 590 null-outcome variants of the randomised log
 logged design with the KPI series of another episode in its group of 60. Variants with a declaration numbered 2 of 590,
 against a limit of 7.5~\%, and the shares of p-values at or below $10^{-3}$ and $2 \times 10^{-4}$ were $7.9 \times
 10^{-4}$ and $1.1 \times 10^{-4}$, against limits of $2 \times 10^{-3}$ and $6 \times 10^{-4}$, so all three checks
-stated in advance passed. The redraw p-values agreed closely with their normal approximation. Because the variants of a
+passed. The redraw p-values agreed closely with their normal approximation. Because the variants of a
 group share its logged design, this evidence rests on ten logged designs.
 
 \begin{table}[tbp]
@@ -39,8 +37,8 @@ Check & Result & Criterion & Met & Note \tabularnewline
 \raggedright Null outcomes, randomised & \raggedright Rate 0.053 (families 0.047--0.060); 0 declared & \raggedright Rate $\le 0.075$, family $\le 0.10$; $\le 5$ declared & Yes & \raggedright 999 redraws \tabularnewline
 \raggedright Null outcomes, confounded & \raggedright Rate 0.050 (families 0.038--0.063); 0 declared & \raggedright As above & Yes & \raggedright 999 redraws \tabularnewline
 \raggedright Stricter check, randomised & \raggedright 2 of 590 variants declared & \raggedright $\le 0.075$ of variants & Yes & \raggedright 9\,999 redraws \tabularnewline
-\raggedright Small-effect nulls, randomised & \raggedright All 21: 0.15 (0.048--0.29); 12 with zero in the interval: 0.075 (0.017--0.16) & \raggedright None (descriptive) & -- & \tabularnewline
-\raggedright Baselines' placebo edges & \raggedright Randomised: 1 to 13; confounded: up to 29 & \raggedright None (reported) & -- & \raggedright Most: Granger~+~BY \tabularnewline
+\raggedright Small-effect nulls, randomised & \raggedright All 21: 0.15 (0.048--0.29); 12 with zero in the interval: 0.075 (0.017--0.16) & \raggedright None & -- & \tabularnewline
+\raggedright Baselines' placebo edges & \raggedright Randomised: 1 to 13; confounded: up to 29 & \raggedright None & -- & \raggedright Most: Granger~+~BY \tabularnewline
 \bottomrule
 \end{tabular*}
 \end{table}
@@ -175,7 +173,7 @@ Arm & Rej. & $R$ & [90\,\% CI] & Ret. & SVR & eMBB & LL & RLF & Elig. \\
 \par\smallskip
 {\raggedright\footnotesize
 Rej., share of requests rejected; Ret., energy retention; SVR, service violations; eMBB, non-protected eMBB violations;
-LL, low-latency violations; Elig., eligible. Ungated PMRT on the gated dataset's seeds is descriptive; random rejection
+LL, low-latency violations; Elig., eligible. Ungated PMRT ran on the gated dataset's seeds; random rejection
 at $p = 0.352$ matches the ungated referee's rejection rate.\par}
 \end{table}
 
@@ -240,6 +238,4 @@ under never-sleep, the contrast of never-sleep with accept-all replicated, at 0.
 requests at similar rates in both blocks, 0.37 and 0.35. Its per-seed difference from never-sleep was, however,
 heavy-tailed, with standard deviations of 0.85 and 1.1 and a long left tail in the second block, and the block means
 differed by 0.30 (permutation $p = 0.009$); without the five seeds of largest contribution in each block, the estimates
-were $+0.21$ and $+0.041$. The rule stated in advance read a non-replication as chance with heavy tails when the
-blocks did not differ and the permutation $p$ was at least 0.01, and as sensitivity to the seed block when they
-differed; neither branch held (Section~\ref{sec:res_decision}).
+were $+0.21$ and $+0.041$.

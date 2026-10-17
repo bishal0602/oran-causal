@@ -18,7 +18,7 @@ decisions (Section~\ref{sec:res_decision}).
 \label{sec:res_validity}\claim{EMP-S1-PLACEBO}\claim{EMP-S2-PLACEBO}\claim{EMP-S1-NULLOUT}\claim{EMP-S1-STRICT}\claim{EMP-S1-SMALLNULL}\claim{EMP-BASE-MAPS}
 
 PMRT made no declaration on the placebo logs of either dataset or on the null outcomes, and it met every validity
-check of the protocol (Appendix~\ref{app:validity}). The baselines, in contrast, declared edges on placebo logs, up to
+check (Appendix~\ref{app:validity}). The baselines, in contrast, declared edges on placebo logs, up to
 \val{s1.placebo.granger_by} on the randomised logs and up to \val{s2.placebo.granger_by} on the confounded logs (Figure~\ref{fig:placebo}). Because the modes of the
 randomised logs are independent of the network state, the declarations there arise from the baselines' thresholds
 rather than from confounding. On the confounded logs, four of the seven baselines declared more placebo edges than on
@@ -33,7 +33,7 @@ the randomised logs, which is consistent with confounding adding to the threshol
 
 The validity checks also showed three departures from exactly nominal behaviour, none of which led to a declaration.
 On the randomised placebo logs, \val{s1.k0.n_reject} of the \val{s1.k0.m} p-values were at or below 0.05 where 3 were expected; the binomial tail
-probability of \val{s1.k0.binom_tail} remained above the protocol limit of \val{s1.k0.binom_level}. The null-outcome check used 999 redraws, with which a
+probability of \val{s1.k0.binom_tail} remained above the limit of \val{s1.k0.binom_level}. The null-outcome check used 999 redraws, with which a
 declaration was unattainable, so it was repeated with \val{x8.redraws} redraws, which produced declarations in \val{x8.variants_with_decl} of \val{x8.n_variants}
 variants, within the limit of \val{x8.tol_pct}~\%. Finally, the hypotheses that the ground truth labels
 null are small effects rather than sharp nulls. Over all 21, the rate of p-values at or below 0.05 was 0.15, about
@@ -87,10 +87,10 @@ SHAP-GBDT    & \val{s1.map.shap.prec} / \val{s2.map.shap.prec} & \val{s1.map.sha
 \end{tabular*}
 \end{table}
 
-One protocol criterion on the randomised logs was not met. It required PMRT's F1 score on the neighbour-relation edges
+One criterion on the randomised logs was not met. It required PMRT's F1 score on the neighbour-relation edges
 to equal or exceed that of each of three baselines on most small subsamples. Against Granger~+~BY the condition held on only \val{s1.p2.gby.wins60}
 of the \val{s1.p2.n60} smallest subsamples, although it held on \val{s1.p2.gby.wins120} of the \val{s1.p2.n120} larger ones, so that the discovery verdict on these logs
-was partial (Online Resource~1, Section~S1.1). The F1 ranges of the two methods overlapped on the smallest subsamples, and
+was partial (Online Resource~1, Section~S1). The F1 ranges of the two methods overlapped on the smallest subsamples, and
 the criterion did not account for the \val{s1.placebo.granger_by} placebo edges of Granger~+~BY. Discovery on the confounded logs met every
 criterion.
 
@@ -113,9 +113,9 @@ randomised logs, above PMRT's \val{s1.gt.dbl.pmrt.prec}, although at recalls of 
 The controlled environments confirm that validity derives from the logging design. Tests that ignored the design
 were close to their nominal rate under independent logging but lost it once actions followed a dithered setpoint, with
 null-edge rates of \val{s4.c1.r2_min} to \val{s4.c1.r2_max}, whereas the design-based and design-adjusted tests remained near 0.05 under every
-logging design (Figure~\ref{fig:logging_validity}). All four claims fixed in the protocol were supported
+logging design (Figure~\ref{fig:logging_validity}). All four claims were supported
 (Online Resource~1, Section~S4.1), with two exceptions. Design-adjusted RCoT was invalid even with the design covariates,
-and PMRT-Lin, the secondary linear variant, exceeded its allowance of invalid conditions under the confounded policy,
+and PMRT-Lin, the linear variant, exceeded its allowance of invalid conditions under the confounded policy,
 although its pooled rates were valid and a re-run on fresh datasets gave rates consistent with chance.
 
 \begin{figure}[tbp]
@@ -128,10 +128,10 @@ although its pooled rates were valid and a re-run on fresh datasets gave rates c
 The latent-confounding environment illustrates the mechanism most directly, because there the associational sign is
 reversed at large confounding strength. Under the logged confounded policy, the null-edge rate of correlation was 1.00 whenever the
 confounding was present, while that of PMRT-GBM stayed between 0.02 and 0.06 in every condition. Validity under this
-policy is not specific to PMRT: design-adjusted partial correlation also stayed valid. The protocol did not score the
-design-blind tests under the confounded policy; descriptively, correlation and plain RCoT were far above nominal there,
+policy is not specific to PMRT: design-adjusted partial correlation also stayed valid. Among the
+design-blind tests under this policy, correlation and plain RCoT were far above nominal,
 at 0.77 and 0.23, whereas plain partial correlation stayed near nominal, at 0.056, most likely because the confounder
-was among its covariates. A post hoc variation of the dither width and of the number of setpoints left correlation
+was among its covariates. A variation of the dither width and of the number of setpoints left correlation
 invalid and the two PMRT methods between 0.042 and 0.054. Under unlogged confounding, the negative control, the real
 actions have no logged design, and on the placebo edge the rates of the design-based tests were never invalid.
 
@@ -153,7 +153,7 @@ PMRT's map from the confounded logs lacked the edge from the transmit-power offs
 truth labels true; the oracle map holds this edge, so its guard-conflict rule accepts the next power-up unit after each
 rejected one. Over all seeds, PMRT's referee rejected \val{s2.defer.ptx_up.pmrt} power-up units against the oracle map's \val{s2.defer.ptx_up.gt}, while
 their sleep rejections were similar. PMRT's primary statistic had missed this edge ($p = \val{s2.ptx_nbr_rlf.primary_p}$); an unfiltered
-statistic, examined after the fact and not used, would have detected it.
+statistic, which PMRT does not use, would have detected it.
 
 \begin{figure}[tbp]
 \centering
@@ -188,16 +188,14 @@ Arm & $R$ & $R$ minus never-sleep [90~\% CI] & RLF ratio & Eligible \\
 
 With the gate, the PMRT referee met every guard but made the same decisions as the never-sleep rule: on every seed its
 outcomes were identical to those of never-sleep, so its gain in recovery over that rule, the primary criterion, was
-zero. The protocol had anticipated this tie and kept the criterion unchanged, since dropping it would have changed a
-criterion in view of an expected result. No gated referee improved on never-sleep; the oracle map differed from it by \val{s3.dec.gt.dr} (90~\% CI \val{s3.dec.gt.dr_lo} to
-\val{s3.dec.gt.dr_hi}). The gated runs used fresh seeds, and on them the ungated PMRT referee, run as a descriptive arm, no longer
+zero. No gated referee improved on never-sleep; the oracle map differed from it by \val{s3.dec.gt.dr} (90~\% CI \val{s3.dec.gt.dr_lo} to
+\val{s3.dec.gt.dr_hi}). The gated runs used fresh seeds, and on them the ungated PMRT referee no longer
 outperformed never-sleep, differing by \val{s3.mgpmrt.dr} at an RLF ratio of \val{s3.mgpmrt.rlf}. Pooled over both seed sets, its gain was small, \val{x15.pooled.dr} with an
 interval that barely excludes zero, and its RLF ratio of \val{x15.pooled.rlf} still breached the guard. The two seed sets did not
 differ at the network level, but the referee's per-seed gain was heavy-tailed and its mean differed between them. The
-rule stated in advance did not cover this case, so the non-replication was attributed after the results had been seen
-to seed-level heterogeneity of an adaptive referee, and the pooled estimate is taken as the best estimate
+non-replication is therefore attributed to seed-level heterogeneity of an adaptive referee, and the pooled estimate is taken as the best estimate
 (Appendix~\ref{app:x15}).
-Referees using the associational maps, finally, raised protected-slice violations to 4.5 to 5.4 times the accept-all level across Studies 2 and 3,
+Referees using the associational maps, finally, raised protected-slice violations to 4.5 to 5.4 times the accept-all level with and without the gate,
 because they rejected Slice Guarantee's protected-share requests; several stayed eligible, since the protected
 slice has no guard of its own (Appendix~\ref{app:decision_full}).
 

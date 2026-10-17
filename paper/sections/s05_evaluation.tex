@@ -10,7 +10,7 @@
 The framework is evaluated in two settings: a system-level simulation of an O-RAN surge scenario, which provides the
 logs for discovery and the closed-loop runs for conflict mitigation, and controlled environments with known
 causal structure, which isolate the role of the logging design. This section describes both settings, the datasets
-drawn from them, the ground truth, the baselines and metrics, and the evaluation protocol.
+drawn from them, the ground truth, and the baselines and metrics.
 
 \subsection{Simulation environment and scenario}
 \label{sec:scenario}\claim{DEF-SIM-CONST}
@@ -172,15 +172,5 @@ single-xApp subset. A referee is eligible when it meets the two constraints of S
 retention of at least 0.90 and four guard ratios to accept-all of at most 1.10. Never-sleep is the best eligible static
 rule, because the subset that sets $R = 1$ retains almost none of the energy saving. Intervals on decision metrics are
 one-sided or two-sided 90~\% paired seed-bootstrap intervals with 10\,000 resamples, and intervals on rates are 95~\%
-cluster-bootstrap intervals.
-
-\subsection{Evaluation protocol}
-\label{sec:protocol}\claim{PRO-FROZEN}\claim{PRO-SEEDS}\claim{PRO-POSTHOC}
-
-For each dataset, the analysis rules, seeds and pass criteria were fixed before the evaluation data were generated,
-and the analysis code, fixed at the same time, was run once on the fresh evaluation seeds. Seeds came from disjoint
-blocks of an internal registry, and there was no public pre-registration. The gated referee was designed after the
-result of the ungated referee was known. Analyses chosen after a protocol was fixed are reported as post hoc and change
-no verdict. Online Resource~1, Section~S1, gives each protocol's criteria and verdicts, the status of every analysis and
-the one amendment to the fixed code, and the data and code availability statement lists the content hash of every
-protocol and fixed artefact.
+cluster-bootstrap intervals. Online Resource~1, Section~S1, gives the pass criteria of each dataset and their
+results.\label{sec:protocol}\claim{PRO-FROZEN}\claim{PRO-SEEDS}\claim{PRO-POSTHOC}

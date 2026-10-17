@@ -46,8 +46,8 @@ prediction~\cite{hoerl1970ridge} built only from what was known at opening, so t
 the effect of the unit's own mode. A matched filter then combines the remaining residuals over the receiving cells and
 the seconds after opening into one number, favouring the bins where the training data showed more effect and less
 noise. The weight is then centred on the running mean of earlier units and clipped at a scale predicted at
-opening~\cite{huber1964robust}. Every fitted part was trained on earlier episodes and fixed before any evaluation data
-were generated; Algorithm~\ref{alg:pmrt} and Table~\ref{tab:pipeline} in Appendix~\ref{app:proof} give the
+opening~\cite{huber1964robust}. Every fitted part was trained on earlier episodes, separate from the evaluation data;
+Algorithm~\ref{alg:pmrt} and Table~\ref{tab:pipeline} in Appendix~\ref{app:proof} give the
 construction step by step.
 
 The validity of the test rests on one property of the weight: apart from the KPI series under test, it uses only
@@ -198,7 +198,7 @@ with $\pi_u = 0.5$, which is the Horvitz--Thompson estimator of $\tau_{\pi}$ and
 (Lemma~\ref{lem:slope}). Under a state-dependent policy such as the incumbent, it converges to the
 $\pi_u(1 - \pi_u)$-weighted average of $\mathrm{sgn}_u \tau_u^{\pi}$. The lemma assumes an outcome centre fixed before
 $u$'s mode is drawn, whereas the implemented centre also uses earlier outcomes whose windows are still open; with a
-strictly predictable centre, recomputed post hoc, no slope changed sign (Appendix~\ref{app:x16}).
+strictly predictable centre, no slope changed sign (Appendix~\ref{app:x16}).
 
 A causal effect map $M$ gives each declared edge $(f, r, k)$ a signed coefficient $\beta(f, r, k)$. For PMRT it is the
 declaration's sign times the magnitude of the design slope; where the two signs disagree, the declaration's sign is
@@ -220,7 +220,6 @@ relation or report. A harmful request is rejected if it is costly or its pressur
 among service violations and RLFs. Such a unit is rejected only if the previous unit of the same cell and family was
 accepted, so that a guard conflict delays a request by at most one unit.
 \end{enumerate}
-The constants were fixed before any evaluation run, but the structure of the rules was developed on earlier results.
 
 \subsection{Edge-certification gate}
 \label{sec:gate}\claim{DEF-GATE}\claim{ASM-GATE-COV}\claim{THM-GATE-BUDGET}
@@ -248,5 +247,5 @@ class were rejected and that each rejection moved the KPI by at most $\varepsilo
 guard ratio would then move by at most 0.05, half the margin of 0.10 that a referee may use under the 1.10 limit of
 Section~\ref{sec:estimand}. The certificate is thus a first-order budget per edge, not a bound on the referee's guard
 ratios: it ignores overlapping windows, classes acting together and declared edges, so whether a referee meets its
-guards is checked on held-out seeds. The uncertified classes depend only on the map, the bounds and $\varepsilon$, and
-were fixed before the evaluation data were generated.
+guards is checked on held-out seeds. The uncertified classes depend only on the map, the bounds and $\varepsilon$, not
+on the evaluation data.

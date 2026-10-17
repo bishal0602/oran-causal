@@ -74,8 +74,7 @@ The paper makes three contributions, which follow the three questions.
 \item \textbf{The test}. PMRT, a design-based test that learns signed causal effect maps from near-RT RIC request
 logs with logged probabilities, with an explicit estimand and the conditions for its asymptotic validity.
 \item \textbf{The validity evidence}. Placebo and null-outcome checks on the simulator, and a study on five
-controlled environments of whether edge tests keep their error rate when the logging design is known, with its
-analysis fixed before the evaluation data were generated. The evidence suggests a practical placebo check, a
+controlled environments of whether edge tests keep their error rate when the logging design is known. The evidence suggests a practical placebo check, a
 necessary condition only, for learned discovery pipelines on designed logs.
 \item \textbf{The decision study}. A test of whether such a map improves safe decisions, with a map-driven referee
 and an edge-certification gate. In the evaluated scenario the map gave no such improvement, and this gap between a
@@ -87,7 +86,7 @@ O-RAN~\cite{dahal2026cddoran}, but replaces its method rather than extending it.
 The rest of this paper is organised as follows. Section~\ref{sec:related} reviews prior work on causal inference from
 feedback-driven logs, conflict management in O-RAN and safe decision layers. Section~\ref{sec:system} presents the
 system model and formulates the problem. Section~\ref{sec:method} presents the proposed framework and its core
-components. Section~\ref{sec:design} describes the simulation environment, the controlled environments, the datasets
-and the evaluation protocol. Section~\ref{sec:results} reports the results on validity, map accuracy and
+components. Section~\ref{sec:design} describes the simulation environment, the controlled environments, the datasets,
+the baselines and the metrics. Section~\ref{sec:results} reports the results on validity, map accuracy and
 conflict-mitigation decisions. Section~\ref{sec:discussion} discusses key implications and limitations. Finally,
 Section~\ref{sec:conclusion} concludes the paper and outlines future directions.

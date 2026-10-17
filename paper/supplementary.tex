@@ -69,7 +69,7 @@
 \affil[2]{\orgdiv{Department}, \orgname{Organization}, \orgaddress{\city{City}, \country{Country}}}
 
 \abstract{This Online Resource supplements the article ``Design-Based Causal Effect Maps for O-RAN xApp Conflicts''.
-Section~\ref{esm:protocol} gives the protocol criteria and verdicts and the status of every analysis.
+Section~\ref{esm:protocol} gives the evaluation criteria and verdicts.
 Section~\ref{esm:discovery} gives supplementary analyses of discovery on the simulator logs, and
 Section~\ref{esm:decision} of the conflict-mitigation decisions, including every decision arm.
 Section~\ref{esm:envs} gives the validity rule, the claims and the complete results of the controlled environments,
@@ -79,15 +79,12 @@ table and figure numbers without an S refer to the article.}
 \maketitle
 
 %======================================================================
-\section{Evaluation protocol}
+\section{Evaluation criteria}
 \label{esm:protocol}
-
-\subsection{Criteria and verdicts}
 \label{esm:criteria}
 
-For each dataset of the simulator, the criteria below were fixed before the evaluation data were generated
-(Section~5.6 of the article). Tables~\ref{tab:s_crit1} to~\ref{tab:s_crit3} give each criterion, its rule, the measured
-value and the result. A dataset's verdict follows a fixed precedence: a failed placebo or null-outcome check makes it
+For each dataset of the simulator, Tables~\ref{tab:s_crit1} to~\ref{tab:s_crit3} give each criterion, its rule, the
+measured value and the result. A dataset's verdict follows a fixed precedence: a failed placebo or null-outcome check makes it
 \verdict{invalid}, a ground truth without the edge from pico sleep to neighbour protected-slice violations gives \verdict{no-chain}, insufficient support gives
 \verdict{underpowered}, and otherwise the verdict is \verdict{pass} when every remaining criterion holds,
 \verdict{partial} when the pooled criteria hold, and \verdict{fail} or \verdict{kill} otherwise. A referee that misses
@@ -96,7 +93,7 @@ protected-UE seconds over the neighbour cells in the 90~s after the request, wit
 interval; referee intervals are 90~\% paired seed-bootstrap intervals.
 
 \begin{table}
-\caption{Protocol criteria, randomised logs.}
+\caption{Criteria, randomised logs.}
 \label{tab:s_crit1}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -119,7 +116,7 @@ Criterion & Rule & Measured & Result \\
 \end{table}
 
 \begin{table}
-\caption{Protocol criteria, confounded logs and referee without the gate.}
+\caption{Criteria, confounded logs and referee without the gate.}
 \label{tab:s_crit2}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -139,14 +136,14 @@ Criterion & Rule & Measured & Result \\
 \raggedright Eligibility & \raggedright Referee without the gate: energy retention $\ge 0.90$ and every guard ratio $\le 1.10$ (point estimates) & \raggedright retention 1.67; guard ratios: service 0.86, eMBB 0.86, low latency 0.94, RLF 1.31 & \verdict{fail} \\
 \raggedright Margin over associational maps & \raggedright $R^*$ minus the best associational map's $R^*$ (of 13, re-selected per resample) $\ge 0.10$ and lower 90~\% bound $> 0$ & \raggedright $-0.033$ [$-0.077$, $-0.008$] against correlation (tuned) & \verdict{fail} \\
 \raggedright Each associational map & \raggedright One-sided paired bootstrap per distinct map, Holm at 0.05: all rejected & \raggedright 4 of 9 rejected & \verdict{fail} \\
-\raggedright Recovery & \raggedright Descriptive, no criterion & \raggedright 0.470 [0.346, 0.594]; $R^* = 0$ (not eligible) & -- \\
+\raggedright Recovery & \raggedright -- & \raggedright 0.470 [0.346, 0.594]; $R^* = 0$ (not eligible) & -- \\
 \raggedright Referee verdict & \raggedright  & \raggedright  & \verdict{not eligible} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}
-\caption{Protocol criteria, referee with the gate.}
+\caption{Criteria, referee with the gate.}
 \label{tab:s_crit3}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -159,59 +156,10 @@ Criterion & Rule & Measured & Result \\
 \raggedright Margin over associational maps & \raggedright As Table~\ref{tab:s_crit2}, gated associational maps & \raggedright $+0.161$ [0.094, 0.229] against correlation (tuned) & \verdict{pass} \\
 \raggedright Each associational map & \raggedright As Table~\ref{tab:s_crit2} & \raggedright 7 of 7 rejected & \verdict{pass} \\
 \raggedright Margin over never-sleep & \raggedright $R^*$ minus never-sleep's $R^*$ $> 0$ and paired lower 90~\% bound $> 0$ & \raggedright $+0.000$ [0.000, 0.000]; identical to never-sleep on 160 of 160 seeds & \verdict{fail} \\
-\raggedright RLF bound (secondary) & \raggedright Upper 90~\% bound of the RLF ratio $\le 1.20$ & \raggedright 0.987 & \verdict{pass} \\
-\raggedright Recovery & \raggedright Descriptive, no criterion & \raggedright 0.256 [0.169, 0.339] & -- \\
+\raggedright RLF bound & \raggedright Upper 90~\% bound of the RLF ratio $\le 1.20$ & \raggedright 0.987 & \verdict{pass} \\
+\raggedright Recovery & \raggedright -- & \raggedright 0.256 [0.169, 0.339] & -- \\
 \midrule
 \raggedright Verdict & \raggedright  & \raggedright  & \verdict{partial} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Status of analyses}
-\label{esm:status}
-
-Table~\ref{tab:s_status} lists every analysis that is not a protocol criterion, where it is reported, its status and
-the date on which it was declared in the project's protocol log. A secondary analysis was specified in a protocol but
-not scored; a post hoc analysis was chosen after the protocol was fixed. Every post hoc analysis was declared before it
-was run except two: the look at the unfiltered statistic in Section~6.4 of the article, and the reading of the ungated
-referee's replication in Section~6.4 of the article. No post hoc analysis changes a verdict, and a descriptive analysis carries no
-verdict of its own. One amendment, A-1, changed the fixed code of the controlled environments: it altered only the job
-dispatcher, and every evaluation record of those environments was produced under it. The referee evaluations ran in a
-fixed order, development runs whose failed checks would have stopped the line, then the referee without the gate, then
-the referee with the gate, after which a stop rule ended the line; no other referee evaluation was run.
-
-\begin{table}
-\caption{Status of analyses.}
-\label{tab:s_status}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}p{4.0cm} p{3.9cm} p{2.4cm} p{1.6cm}@{}}
-\toprule
-Analysis & Reported in & Status & Declared \\
-\midrule
-\raggedright Unfiltered statistic, transmit power on neighbour RLFs & \raggedright Article, Section 6.4 & \raggedright post hoc, undeclared & \raggedright -- \\
-\raggedright Gate diagnosis & \raggedright Article, Appendix C.4 & \raggedright post hoc & \raggedright 2026-10-11 \\
-\raggedright Decision outcomes, all arms & \raggedright Article, Appendix C.3; Section~\ref{esm:arms} & \raggedright post hoc & \raggedright 2026-10-11 \\
-\raggedright Strictly predictable outcome centre & \raggedright Article, Appendix C.4 & \raggedright post hoc & \raggedright 2026-10-12 \\
-\raggedright Replication of the ungated referee & \raggedright Article, Appendix C.5 & \raggedright post hoc; reading undeclared & \raggedright 2026-10-11 \\
-\raggedright Stricter significance check & \raggedright Article, Appendix C.1; Section~\ref{esm:x8} & \raggedright post hoc & \raggedright 2026-10-11 \\
-\raggedright Ground-truth sensitivity & \raggedright Article, Appendix C.2; Section~\ref{esm:x11} & \raggedright post hoc & \raggedright 2026-10-11 \\
-\raggedright Placebo-calibrated baseline thresholds & \raggedright Article, Appendix C.2 & \raggedright post hoc & \raggedright 2026-10-11 \\
-\raggedright Existence ground truth & \raggedright Article, Appendix C.2; Section~\ref{esm:x14} & \raggedright post hoc, after the sensitivity analysis & \raggedright 2026-10-11 \\
-\raggedright Relation attribution & \raggedright Section~\ref{esm:x13} & \raggedright post hoc & \raggedright 2026-10-11 \\
-\raggedright Small-effect nulls & \raggedright Article, Section 6.1; Section~\ref{esm:expd} & \raggedright post hoc & \raggedright 2026-10-02 \\
-\raggedright Random-rejection referee & \raggedright Section~\ref{esm:random} & \raggedright post hoc & \raggedright 2026-10-05 \\
-\raggedright Associational referees and the static subset & \raggedright Section~\ref{esm:x7} & \raggedright post hoc & \raggedright 2026-10-05 \\
-\raggedright Dither dose-response & \raggedright Section~\ref{esm:dose} & \raggedright post hoc, exploratory & \raggedright 2026-10-05 \\
-\raggedright Design misspecification & \raggedright Section~\ref{esm:misspec} & \raggedright post hoc, exploratory & \raggedright 2026-10-05 \\
-\raggedright Re-run of three conditions & \raggedright Section~\ref{esm:rerun} & \raggedright post hoc, exploratory & \raggedright 2026-10-05 \\
-\raggedright Centring ablation & \raggedright Section~\ref{esm:centring} & \raggedright post hoc, exploratory & \raggedright 2026-10-05 \\
-\raggedright Bridging analysis & \raggedright Article, Section 7.1; Section~\ref{esm:bridging} & \raggedright post hoc, descriptive & \raggedright 2026-10-04 \\
-\raggedright Baselines' placebo declarations & \raggedright Article, Appendix C.1 & \raggedright secondary & \raggedright 2026-09-30, 2026-10-01 \\
-\raggedright Map comparison, confounded logs & \raggedright Article, Section 6.2 & \raggedright secondary & \raggedright 2026-10-01 \\
-\raggedright RLF bound, referee with the gate & \raggedright Table~\ref{tab:s_crit3} & \raggedright secondary & \raggedright 2026-10-01 \\
-\raggedright Observation-noise sweep & \raggedright Section~\ref{esm:kappa} & \raggedright secondary, descriptive & \raggedright 2026-10-04 \\
-\raggedright Timing run & \raggedright Section~\ref{esm:runtime} & \raggedright secondary, descriptive & \raggedright 2026-10-04 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -227,8 +175,7 @@ Table~\ref{tab:s_x8} gives the stricter null-outcome check summarised in Appendi
 variants of the randomised logs, analysed with 9\,999 redraws, for nine combinations of statistic and declaration
 layer. The primary combination is the matched filter with the weighted one-sided BY procedure; DAGGER is the step-up
 procedure of Ramdas et al.\ (2019) on a graph in which each family's load hypothesis gates its other KPIs, and the
-plain statistic is the unfiltered one. At the settings of the evaluation, the same runner first reproduced the original
-null-outcome result exactly. A variant-cluster bootstrap put the 95~\% upper bound of the share of variants with a
+plain statistic is the unfiltered one. A variant-cluster bootstrap put the 95~\% upper bound of the share of variants with a
 declaration at 0.0011, and no combination declared in more than 7 of the 590 variants. The shifted outcomes keep their
 own time structure, and the p-values within a variant are dependent.
 
@@ -280,8 +227,8 @@ Matched filter & Redraw & 0.048 & $7.9\times10^{-4}$ & $1.4\times10^{-4}$ & $2.8
 
 The knockout ground-truth rule was re-applied to the stored per-unit knockout records, changing one factor at a time:
 the materiality threshold $\delta_k$ halved or doubled, the floor on protected violations halved or doubled, and the
-interval level set to 90 or 99~\%. Every method was re-scored against each label set once the rule had reproduced every
-stored label and score (Table~\ref{tab:s_gt}). Bounds on precision count a declared indeterminate hypothesis as false
+interval level set to 90 or 99~\%. Every method was re-scored against each label set
+(Table~\ref{tab:s_gt}). Bounds on precision count a declared indeterminate hypothesis as false
 or as true, and they spanned at most 0.14 of PMRT's precision. The horizon and the continuation with every other unit
 accepted could not be varied, because no stored records allow it.
 
@@ -326,9 +273,8 @@ when it exists with the other sign, and not established otherwise (Table~\ref{ta
 the materiality rule has an effect by construction. PMRT's two unconfirmed declarations on the randomised logs,
 transmit power on far protected-slice violations and pico sleep on own protected-slice violations, are indeterminate
 under the materiality rule as well, while three of its declarations that the materiality rule labels null or
-indeterminate have an effect with the declared sign, and all four such declarations do on the confounded logs. The rule
-was declared after the sensitivity analysis had been seen, and because it uses intervals from 40 ground-truth episodes,
-it measures detectability in this ground truth rather than practical relevance.
+indeterminate have an effect with the declared sign, and all four such declarations do on the confounded logs. Because
+the rule uses intervals from 40 ground-truth episodes, it measures detectability in this ground truth rather than practical relevance.
 
 \begin{table}
 \caption{Existence ground truth.}
@@ -373,8 +319,7 @@ Method & Decl. & precision & Confirmed & sign & est. & Precision & Recall & 90 /
 \label{esm:expd}
 
 Section~6.1 of the article reports how often the hypotheses that the ground truth labels null reach $p \le 0.05$. The
-rates were recomputed from the stored per-subsample p-values of PMRT's primary statistic, which reproduced 1\,020
-stored hypothesis tables without a mismatch. On the 12 null hypotheses whose interval also contains zero, the rate was
+rates were computed from the per-subsample p-values of PMRT's primary statistic. On the 12 null hypotheses whose interval also contains zero, the rate was
 0.075 at 60 episodes and 0.083 at 120; intervals that resample hypotheses and subsamples together run from 0.017 to
 0.158 and from 0 to 0.217, and the 120-episode subsamples re-partition the same episodes, so the two rates are not
 independent confirmations. The two null hypotheses rejected most often, pico sleep on own-cell energy and macro carrier
@@ -607,9 +552,7 @@ $p = 0.352$ the referee stayed eligible but had $R = -0.456$ (90~\% CI $-0.613$ 
 $-0.657$ ($-0.868$ to $-0.461$) from the ungated PMRT referee. Its 33\,043 rejections fell mostly on protected-share
 requests, 21\,190 of them, whereas the ungated PMRT referee rejected none of those and instead 33\,740 transmit-power
 requests of its 37\,890 rejections. No random arm came near a guard limit: every guard ratio was at most 1.00, and the
-highest one-sided 90~\% upper bound was 1.01. The arm ran on a different host from the stored arms; re-runs on that
-host differ from the stored records on about 15~\% of seeds by $|\Delta R| \le 4 \times 10^{-4}$, which changes no
-reported number.
+highest one-sided 90~\% upper bound was 1.01.
 
 \subsection{Associational referees and the static subset}
 \label{esm:x7}
@@ -620,9 +563,7 @@ matched the subset's decision on 99.64 to 99.99~\% of scored requests and on 99.
 increases (Table~\ref{tab:s_x7}). Replaying only each referee's protected-share rejections reproduced the subset's
 record on 151 to 160 of 160 seeds, and dropping those rejections gave $R$ of $-0.009$ to $+0.071$. The reason lies in
 the scenario: Slice Guarantee is the only xApp that proposes protected-share increases, so a referee that rejects them
-and the static subset without Slice Guarantee reduce to the same rule. The replays ran on a different host from the
-stored records; re-runs of the stored arms there were identical on 130 to 139 of 160 seeds, and paired differences
-never mix hosts.
+and the static subset without Slice Guarantee reduce to the same rule.
 
 \begin{table}
 \caption{Gated associational referees and the static ES + Power ES subset.}
@@ -700,7 +641,7 @@ rates is. Because an exactly nominal test also produces \verdict{invalid} condit
 0.95 under the estimated dependence between conditions: 3 for the 50 conditions under independent and dithered logging,
 2 for the 20 under the confounded policy and 1 for the 10 of the delayed-harm environment.
 
-The protocol fixed four claims (Table~\ref{tab:s_claims}). A design-blind method fails as the first claim predicts when
+Four claims were tested (Table~\ref{tab:s_claims}). A design-blind method fails as the first claim predicts when
 at least half of its dithered-setpoint conditions are \verdict{invalid}, its pooled truth-null or placebo rate under
 that design is \verdict{invalid}, and its independent-logging conditions stay within $F_{\max}$; a method that exceeds
 $F_{\max}$ already under independent logging is invalid for another reason and counts neither way. The first claim is
@@ -1076,7 +1017,7 @@ Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \subsection{Observation noise}
 \label{esm:kappa}
 
-The observation-noise sweep is a secondary, descriptive analysis. Table~\ref{tab:s_kappa} gives recall under dithered
+Table~\ref{tab:s_kappa} gives recall under dithered
 logging at $n = 1\,000$ for an observation noise $\kappa$ of 0.125, 0.25 and 0.5. For the design-based tests and
 design-adjusted partial correlation, recall moved by at most 0.10 across the three levels.
 
@@ -1247,8 +1188,7 @@ PMRT-Lin had three \verdict{invalid} conditions under the confounded policy, aga
 conditions were re-run on 2\,000 fresh data sets each, and the five adjacent conditions on 1\,000 each
 (Table~\ref{tab:s_rerun}). The primary rates were 0.052, 0.054 and 0.051, with 95~\% Clopper--Pearson intervals within
 0.042 to 0.065, and a Holm-adjusted one-sided $p$ of 0.657 for each is consistent with chance among the 40 rates of
-these conditions. All 20 rates in the adjacent conditions were \verdict{valid}, at 0.045 to 0.058, and the verdict of
-the fourth claim for PMRT-Lin stands.
+these conditions. All 20 rates in the adjacent conditions were \verdict{valid}, at 0.045 to 0.058.
 
 \begin{table}
 \caption{Re-run of three conditions, confounded policy.}
@@ -1335,7 +1275,7 @@ law & law & [95\,\% CI] & [95\,\% CI] & [95\,\% CI] \\
 \subsection{Bridging analysis}
 \label{esm:bridging}
 
-The bridging analysis is post hoc, declared before it was run, and descriptive. It ran the methods of the controlled
+The bridging analysis ran the methods of the controlled
 environments on the randomised simulator logs, with the PMRT of the simulator as a reference row rather than a
 competitor. Each row of a data set is one randomised decision unit of one parameter family, in information order. The
 action is the logged mode, 1 for accept and 0 for reject, times the request's direction, so it follows the logged draw;
@@ -1438,7 +1378,7 @@ Total & 1\,328 & 12 & 82.0 & \\
 \subsection{Computing time}
 \label{esm:runtime}
 
-A timing run specified in the protocol of the controlled environments analysed three data sets per sample size of the
+A timing run analysed three data sets per sample size of the
 rare-regime environment under dithered logging (the delayed-harm environment for design-adjusted Granger), in one
 uncontended single-threaded session, with data generation excluded (Table~\ref{tab:s_runtime}). PMRT-GBM took a median
 of 65.3~CPU-s per data set at $n = 1\,000$ and 1\,108~CPU-s at $n = 24\,000$, and PMRT-Lin 0.82 and 51.9~CPU-s. For

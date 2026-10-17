@@ -593,7 +593,7 @@ claims:
 
   - id: EMP-S2-ASSOC
     kind: empirical
-    statement: "Referees using the associational maps raised protected-slice violations to 4.5 to 5.4 times the accept-all level across Studies 2 and 3, and several stayed eligible."
+    statement: "Referees using the associational maps raised protected-slice violations to 4.5 to 5.4 times the accept-all level with and without the gate, and several stayed eligible."
     paper: [sec:res_decision, tab:decision_full]
     spec: spec:met.decision
     depends_on: [DEF-REF-RULES, DEF-MET-DEC]

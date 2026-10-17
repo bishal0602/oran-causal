@@ -43,7 +43,7 @@ and the proofs below use the notation of Section~\ref{sec:inference}. % src: pla
 \end{algorithmic}
 \end{algorithm}
 
-Table~\ref{tab:pipeline} lists the construction of the weight $w_u$ of unit $u$ for hypothesis $(f, r, k)$ (steps 1 to 7, in order) and the inputs of the declaration layer (step 8). Training used 480 earlier and 20 development episodes. Step 8 runs steps 1 to 7 on the 480 earlier episodes and uses their $z$ of Equation~\eqref{eq:stat}; $z_{\mathrm{train}}$ is the $z$ of the plain 0--90~s total of the step-3 residuals on the training episodes. Every fitted part was fixed before any evaluation data were generated.
+Table~\ref{tab:pipeline} lists the construction of the weight $w_u$ of unit $u$ for hypothesis $(f, r, k)$ (steps 1 to 7, in order) and the inputs of the declaration layer (step 8). Training used 480 earlier and 20 development episodes. Step 8 runs steps 1 to 7 on the 480 earlier episodes and uses their $z$ of Equation~\eqref{eq:stat}; $z_{\mathrm{train}}$ is the $z$ of the plain 0--90~s total of the step-3 residuals on the training episodes.
 
 \begin{table}[tbp]
 \caption{Weight construction.}

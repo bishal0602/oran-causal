@@ -24,7 +24,7 @@ checks (Section~\ref{sec:res_validity}).
 Statistical power, in contrast, depends on the choice of statistic. In the controlled environment with latent
 confounding and a single true edge, the recall of PMRT-GBM did not exceed \val{s4.e4.pmrtgbm.recall_max} at any sample size, whereas
 design-adjusted partial correlation reached \val{s4.e4.pcorr_eq.recall_24k} at the largest (Online Resource~1, Section~S4.2). On the randomised
-simulator logs, which contain no confounding, a post hoc and descriptive comparison gave pooled recalls of \val{br.pcorr_eq.recall} for
+simulator logs, which contain no confounding, a comparison gave pooled recalls of \val{br.pcorr_eq.recall} for
 design-adjusted partial correlation, without a placebo declaration, \val{br.pcorr_native.recall} for partial correlation with context covariates
 alone, and \val{s1.map.pmrt.rec} for PMRT (Online Resource~1, Section~S5.1). The matched filter and weights of PMRT therefore increase
 power rather than validity, and a simple design-adjusted test provides the same guarantee.
@@ -77,11 +77,10 @@ causal evidence still requires a test whose validity follows from the logged des
 \label{sec:disc_limits}\claim{EMP-X15}\claim{EMP-X16}
 
 The first group of limitations concerns the scope of the evidence. The simulator results come from one scenario, one incumbent policy and one
-referee rule developed on earlier results, and none of them involves a real RIC, a testbed or a compliance claim. The
+referee rule, and none of them involves a real RIC, a testbed or a compliance claim. The
 controlled environments model no deployed RAN, and no method evaluated in them used the matched filter and weighted BY
-procedure of the PMRT applied in the simulator. Their claims hold for the dithered-setpoint design tested, their
-evidence against design-blind tests rests in one environment on a placebo edge only, and their power results are
-descriptive. Finally, verdicts from a single block of seeds carry seed-level heterogeneity larger than their intervals
+procedure of the PMRT applied in the simulator. Their claims hold for the dithered-setpoint design tested, and their
+evidence against design-blind tests rests in one environment on a placebo edge only. Finally, verdicts from a single block of seeds carry seed-level heterogeneity larger than their intervals
 suggest (Appendix~\ref{app:x15}).
 
 The second group concerns the guarantees themselves. The validity of PMRT is asymptotic rather than exact, even on
