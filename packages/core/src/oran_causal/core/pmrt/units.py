@@ -9,13 +9,17 @@ training episodes and frozen before it touches evaluation units.
 """
 
 import dataclasses
-from collections.abc import Mapping
+import time
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 from sklearn.ensemble import HistGradientBoostingRegressor
 
-from oran_causal.core.ridge import ridge_gcv
+from oran_causal.core.data import UnitTable
+from oran_causal.core.design import v_design, v_var
+from oran_causal.core.ridge import ResidualConfig, predictable_residuals, ridge_gcv
 
 VARIANTS = ("plain", "plain4", "gls1", "full", "rank1", "loadsp", "prof")
 MODS = ("", "_h", "_c")
@@ -28,6 +32,10 @@ COMBOS = {
     "max_plain_plain4_best": ("plain", "plain4", "best"),
 }
 F32 = np.float32
+PMRT_VERSION = "pmrt-v1"
+LEGACY_VERSION = "mscr-crt-units-plus-v0"
+NSLOT = {"own": 1, "nbr": 4, "far": 2}
+LOAD = "load"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -523,3 +531,401 @@ def fit_gb(
     )
     m.fit(xs(core, x), demean(k, st))
     return m
+
+
+Hyp = tuple[str, str, str]
+
+
+@dataclasses.dataclass(frozen=True)
+class PmrtData:
+    """Per-unit features of a unit table for the decision-unit statistic.
+
+    Attributes:
+        ud: The unit table.
+        post: Per-bin post-window sums, shape `[n, K, C, 4]` (float32); NaN where a bin does
+            not fit the episode.
+        pre: Per-bin pre-window sums, same shape.
+        ctx: Observation-only context at t0, shape `[n, J]`; NaN where missing.
+        ctx_keys: Names of the context columns.
+        hist: Past design-centred modes per family at the unit's cell, then at its exposure
+            neighbours, shape `[n, 2 F]`.
+        tfrac: t0 / T.
+    """
+
+    ud: UnitTable
+    post: np.ndarray
+    pre: np.ndarray
+    ctx: np.ndarray
+    ctx_keys: list[str]
+    hist: np.ndarray
+    tfrac: np.ndarray
+
+    @property
+    def n(self) -> int:
+        """Number of units."""
+        return self.ud.n
+
+    def subset(self, rows: npt.ArrayLike) -> PmrtData:
+        """The features restricted to `rows` (indices or a boolean mask)."""
+        rows = np.asarray(rows)
+        if rows.dtype == bool:
+            rows = np.nonzero(rows)[0]
+        return PmrtData(
+            ud=self.ud.subset(rows),
+            post=self.post[rows],
+            pre=self.pre[rows],
+            ctx=self.ctx[rows],
+            ctx_keys=list(self.ctx_keys),
+            hist=self.hist[rows],
+            tfrac=self.tfrac[rows],
+        )
+
+
+def unit_order(ud: UnitTable, rows: npt.ArrayLike) -> np.ndarray:
+    """`rows` in information order (episode, t0, cell)."""
+    rows = np.asarray(rows, int)
+    return rows[np.lexsort((ud.c[rows], ud.t0[rows], ud.episode[rows]))]
+
+
+def strata(ud: UnitTable, rows: np.ndarray) -> np.ndarray:
+    """Stratum code episode * 2 + (sgn > 0) of `rows`."""
+    return ud.episode[rows].astype(np.int64) * 2 + (ud.sgn[rows] > 0)
+
+
+def align_ctx(pd: PmrtData, rows: np.ndarray, keys: Sequence[str] | None = None) -> np.ndarray:
+    """Context columns of `rows` in the order of `keys`; a key absent from `pd` gives NaN."""
+    if keys is None or list(keys) == list(pd.ctx_keys):
+        return pd.ctx[rows]
+    out = np.full((len(rows), len(keys)), np.nan)
+    ix = {k: j for j, k in enumerate(pd.ctx_keys)}
+    for j, k in enumerate(keys):
+        if k in ix:
+            out[:, j] = pd.ctx[rows, ix[k]]
+    return out
+
+
+def _post_targets(
+    pd: PmrtData, rows: np.ndarray, a: np.ndarray, ki: int
+) -> tuple[np.ndarray, np.ndarray]:
+    post = pd.post[rows, ki]
+    okp = np.isfinite(post[:, 0, :])
+    p = np.einsum("usc,ucb->usb", a, np.nan_to_num(post)).astype(float)
+    p[~np.repeat(okp[:, None, :], a.shape[1], 1)] = np.nan
+    return p.reshape(len(rows), -1), okp
+
+
+def _pre_covariates(
+    pd: PmrtData, rows: np.ndarray, a: np.ndarray, hyp: Hyp
+) -> tuple[list[np.ndarray], np.ndarray]:
+    ud = pd.ud
+    _, rel, kpi = hyp
+    ki = ud.kpis.index(kpi)
+    pre = pd.pre[rows]
+    okq = np.isfinite(pre[:, 0, 0, :])
+    pre = np.nan_to_num(pre)
+    q = np.einsum("usc,ucb->usb", a, pre[:, ki]).astype(float)
+    miss = ~okq[:, 3]
+    q[miss, :, 3] = 2.0 * q[miss, :, 2]
+    cols = [q.reshape(len(rows), -1)]
+    relm = ud.rel_mask[rel][rows].astype(F32)
+    for j in range(len(ud.kpis)):
+        if j == ki:
+            continue
+        s = np.einsum("uc,ucb->ub", relm, pre[:, j]).astype(float)
+        cols.append(np.column_stack([s[:, 0], s[:, 1] + s[:, 2]]))
+    if rel != "own":
+        own = ud.rel_mask["own"][rows].astype(F32)
+        cols.append(np.einsum("uc,ukcb->uk", own, pre[:, :, :, :3]).astype(float))
+    return cols, miss
+
+
+def hyp_design(
+    pd: PmrtData,
+    rows: np.ndarray,
+    hyp: Hyp,
+    rho: Mapping[str, np.ndarray],
+    ctx_keys: Sequence[str] | None = None,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Design of hypothesis (family, relation, KPI) on `rows`.
+
+    Args:
+        pd: Unit features.
+        rows: Rows of the family, in information order.
+        hyp: (family, relation, KPI).
+        rho: Receiver score table per family, shape `[C, C]`.
+        ctx_keys: Training context keys; None keeps the order of `pd`.
+
+    Returns:
+        `P`, the post bins per receiver slot, shape `[n, S * 4]` (NaN where missing); `X`, the
+        raw predictable covariates; `okp`, which post bins fit, shape `[n, 4]`.
+    """
+    ud = pd.ud
+    f, rel, kpi = hyp
+    a = slot_matrix(ud.c[rows], ud.rel_mask[rel][rows], rho[f], NSLOT[rel])
+    p, okp = _post_targets(pd, rows, a, ud.kpis.index(kpi))
+    cols, miss = _pre_covariates(pd, rows, a, hyp)
+    cols += [
+        align_ctx(pd, rows, ctx_keys),
+        pd.hist[rows],
+        pd.tfrac[rows, None],
+        miss[:, None].astype(float),
+    ]
+    return p, np.column_stack(cols), okp
+
+
+def _cell_z(c: np.ndarray, v: np.ndarray, y: np.ndarray, n_cells: int) -> np.ndarray:
+    z = np.zeros((n_cells, n_cells))
+    for cell in range(n_cells):
+        m = c == cell
+        if m.sum() < 5:
+            continue
+        vv = float(v[m] @ v[m])
+        if vv <= 0:
+            continue
+        b = v[m] @ y[m] / vv
+        res = y[m] - np.outer(v[m], b)
+        se = np.sqrt((v[m] ** 2) @ (res**2)) / vv
+        z[cell] = np.where(se > 0, b / np.where(se > 0, se, 1), 0.0)
+    return z
+
+
+def receiver_table(pd: PmrtData, family: str, levels: np.ndarray) -> np.ndarray:
+    """Receiver scores rho_f, shape `[C, C]`.
+
+    Row c holds the design-centred z of the family's effect, at cells c', on the per-cell load
+    change of units at cell c, signed so that the pooled neighbour-load effect is >= 0.
+    """
+    ud = pd.ud
+    rows = ud.rows_of(family)
+    li = ud.kpis.index(LOAD)
+    v = v_design(ud.mode[rows], ud.probs[rows], ud.sgn[rows], levels)
+    y = np.nan_to_num(pd.post[rows, li, :, :3].sum(-1) - pd.pre[rows, li, :, :3].sum(-1))
+    y = demean(y.astype(float), strata(ud, rows))
+    c = ud.c[rows]
+    z = _cell_z(c, v, y, ud.n_cells)
+    nbr = ud.rel_mask["nbr"][rows]
+    tot = 0.0
+    for cell in range(ud.n_cells):
+        m = c == cell
+        if m.any():
+            tot += float(z[cell][nbr[m].any(0)].sum())
+    return (1.0 if tot >= 0 else -1.0) * z
+
+
+@dataclasses.dataclass(frozen=True)
+class _FitRun:
+    params: dict[str, Any]
+    rho: Mapping[str, np.ndarray]
+    levels: np.ndarray
+    cfg: PmrtConfig
+    log: Callable[[str], None] | None
+
+
+@dataclasses.dataclass(frozen=True)
+class _Family:
+    rows: np.ndarray
+    v: np.ndarray
+    var: np.ndarray
+    st: np.ndarray
+    load_a: dict[str, np.ndarray]
+
+
+def _hyp_rng(ud: UnitTable, hyp: Hyp, seed: int) -> np.random.Generator:
+    f, rel, kpi = hyp
+    idx = [ud.families.index(f), ud.relations.index(rel), ud.kpis.index(kpi)]
+    return np.random.default_rng([seed, 6616, 31, *idx])
+
+
+def _fit_hyp(pd: PmrtData, fam: _Family, hyp: Hyp, run: _FitRun) -> None:
+    t = time.time()
+    ud, cfg = pd.ud, run.cfg
+    _, rel, kpi = hyp
+    ep, sg = ud.episode[fam.rows], ud.sgn[fam.rows]
+    p, x, okp = hyp_design(pd, fam.rows, hyp, run.rho, run.params["ctx_keys"])
+    s = NSLOT[rel]
+    la = fam.load_a.get(rel) if kpi != LOAD else None
+    train = TrainSet(p, x, okp, fam.v, fam.st)
+    sel = cv_select(CvData(train, fam.var, ep, sg), s, cfg, la, _hyp_rng(ud, hyp, cfg.seed))
+    core = fit_core(train, s, cfg, la)
+    if kpi == LOAD:
+        fam.load_a[rel] = core["load_a"]
+    k = variant_scores(core, p, x, okp)
+    r = center_all(core, k, ep, sg, cfg)
+    best = sel["best"]
+    bvar, _ = split_arm(best)
+    run.params["hyp"]["|".join(hyp)] = {
+        "core": core,
+        "h": {nm: fit_hmodel(r[nm], x, core, cfg) for nm in r},
+        "cv": sel["cv"],
+        "best": best,
+        "z_in": {nm: lin_z(fam.v, r[nm], fam.var) for nm in r},
+        "gb": fit_gb(k[bvar], x, fam.st, core) if cfg.gb else None,
+    }
+    if run.log:
+        cvs = {k2: round(v2, 2) for k2, v2 in sel["cv"].items()}
+        name = "|".join(hyp)
+        run.log(
+            f"fit {name}: n {len(fam.rows)} lam {core['lam']:g} lw "
+            f"{core['lw_shrink']:.2f} z_plain {core['z_plain']:.2f} best {best} cv {cvs} "
+            f"({time.time() - t:.1f} s)"
+        )
+
+
+def _fit_family(pd: PmrtData, family: str, run: _FitRun) -> None:
+    ud = pd.ud
+    rows = unit_order(ud, ud.rows_of(family))
+    if len(rows) < run.cfg.min_units:
+        return
+    fam = _Family(
+        rows=rows,
+        v=v_design(ud.mode[rows], ud.probs[rows], ud.sgn[rows], run.levels),
+        var=v_var(ud.probs[rows], run.levels),
+        st=strata(ud, rows),
+        load_a={},
+    )
+    for rel in ud.relations:
+        for kpi in (LOAD, *(k for k in ud.kpis if k != LOAD)):
+            _fit_hyp(pd, fam, (family, rel, kpi), run)
+
+
+def fit_pmrt(
+    pd: PmrtData,
+    levels: np.ndarray,
+    cfg: PmrtConfig | None = None,
+    families: Sequence[str] | None = None,
+    log: Callable[[str], None] | None = None,
+) -> dict[str, Any]:
+    """Learns every hypothesis' frozen parameters on training units.
+
+    Args:
+        pd: Training unit features (episodes never used for evaluation).
+        levels: Design dose of every mode, for the assignment score.
+        cfg: Statistic settings; None uses the defaults.
+        families: Families to fit; None fits every family of the unit table.
+        log: Progress callback.
+
+    Returns:
+        Params: `version`, `config`, receiver tables `rho`, training `ctx_keys` and unit
+        counts, and per hypothesis `"f|rel|kpi"` the fitted `core`, log-variance models `h`,
+        CV scores `cv`, the chosen arm `best`, in-sample z `z_in` and the boosted correction
+        `gb`.
+    """
+    cfg = cfg or PmrtConfig()
+    ud = pd.ud
+    families = ud.families if families is None else families
+    params: dict[str, Any] = {
+        "version": PMRT_VERSION,
+        "legacy_version": LEGACY_VERSION,
+        "config": dataclasses.asdict(cfg),
+        "rho": {},
+        "hyp": {},
+        "n_train_units": int(ud.n),
+        "n_train_eps": len(np.unique(ud.episode)),
+        "ctx_keys": pd.ctx_keys,
+    }
+    for f in families:
+        params["rho"][f] = receiver_table(pd, f, levels).tolist()
+    rho = {f: np.array(params["rho"][f]) for f in params["rho"]}
+    run = _FitRun(params, rho, levels, cfg, log)
+    for f in families:
+        _fit_family(pd, f, run)
+    return params
+
+
+def arm_direction(variant: str, core: Mapping[str, Any]) -> float:
+    """Orientation of an arm's sign: 1 for plain-type kernels, else the training kernel sign.
+
+    Returns 0 (use the plain arm's sign) when the training plain effect has |z| < 2.
+    """
+    if variant in ("pred", *SIGN_FROM_S):
+        return 1.0
+    if abs(core["z_plain"]) < 2.0:
+        return 0.0
+    return float(core["sdir"][variant] or 0.0)
+
+
+def pred_weights(y: np.ndarray, pre: np.ndarray, ep: np.ndarray, sg: np.ndarray) -> np.ndarray:
+    """Weights of arm `pred`: the predictable residual of y, zero over the burn-in units."""
+    rc = ResidualConfig()
+    rp, _ = predictable_residuals(y, pre if np.all(np.isfinite(pre)) else None, ep, sg, rc)
+    rp = rp.copy()
+    rp[: rc.burn] = 0.0
+    return rp
+
+
+@dataclasses.dataclass(frozen=True)
+class _Columns:
+    params: Mapping[str, Any]
+    rho: Mapping[str, np.ndarray]
+    cfg: PmrtConfig
+    arms: Sequence[str]
+
+
+def _gb_weights(
+    hp: Mapping[str, Any], k: np.ndarray, x: np.ndarray, ep_sg: tuple, cfg: PmrtConfig
+) -> np.ndarray:
+    core = hp["core"]
+    bvar, bmod = split_arm(hp["best"])
+    kg = k - hp["gb"].predict(xs(core, x))
+    prior = {1: [core["prior"][bvar][1]], -1: [core["prior"][bvar][-1]]}
+    rg = running_center(kg, *ep_sg, Shrinkage(cfg.n0, cfg.n1, prior))
+    return modified(rg, bmod, Fitted(core, hp["h"][bvar], cfg), x)
+
+
+def _target_columns(
+    pd: PmrtData, rows: np.ndarray, hyp: Hyp, ctx: _Columns
+) -> tuple[np.ndarray, dict[str, Any] | None]:
+    ud, cfg = pd.ud, ctx.cfg
+    _, rel, kpi = hyp
+    hp = ctx.params["hyp"].get("|".join(hyp))
+    y, pre = ud.y[(rel, kpi)][rows], ud.pre[(rel, kpi)][rows]
+    if hp is None or not np.all(np.isfinite(y)):
+        return np.zeros((len(rows), len(ctx.arms))), None
+    core = hp["core"]
+    ep, sg = ud.episode[rows], ud.sgn[rows]
+    p, x, okp = hyp_design(pd, rows, hyp, ctx.rho, ctx.params["ctx_keys"])
+    k = variant_scores(core, p, x, okp)
+    r = center_all(core, k, ep, sg, cfg)
+    best = hp["best"]
+    bvar, _ = split_arm(best)
+    w = {"pred": pred_weights(y, pre, ep, sg)}
+    for nm in VARIANTS:
+        for mod in MODS:
+            w[nm + mod] = modified(r[nm], mod, Fitted(core, hp["h"][nm], cfg), x)
+    w["best"] = w[best]
+    w["best_gb"] = (
+        _gb_weights(hp, k[bvar], x, (ep, sg), cfg) if hp.get("gb") is not None else w["best"]
+    )
+    sdir = {
+        a: arm_direction(bvar if a in ("best", "best_gb") else split_arm(a)[0], core)
+        for a in ctx.arms
+    }
+    meta = {"best": best, "sdir": sdir, "z_plain_train": core["z_plain"]}
+    return np.column_stack([w[a] for a in ctx.arms]), meta
+
+
+def family_columns(
+    pd: PmrtData,
+    family: str,
+    params: Mapping[str, Any],
+    cfg: PmrtConfig,
+    arms: Sequence[str] = ARMS,
+) -> tuple[np.ndarray, np.ndarray, list[tuple[str, str]], list[dict[str, Any] | None]]:
+    """Predictable weights of every (target, arm) of one family.
+
+    Returns:
+        `rows` in information order; `W`, shape `[n, n_targets * n_arms]`, column
+        `t * n_arms + a`; the targets (relation, KPI); per target its meta (`best`, arm sign
+        directions `sdir`, `z_plain_train`), or None when it is not testable.
+    """
+    ud = pd.ud
+    rows = unit_order(ud, ud.rows_of(family))
+    rho = {g: np.array(params["rho"][g]) for g in params["rho"]}
+    ctx = _Columns(params, rho, cfg, tuple(arms))
+    targets = [(r, k) for r in ud.relations for k in ud.kpis]
+    cols, meta = [], []
+    for rel, kpi in targets:
+        col, m = _target_columns(pd, rows, (family, rel, kpi), ctx)
+        cols.append(col)
+        meta.append(m)
+    return rows, np.column_stack(cols), targets, meta
