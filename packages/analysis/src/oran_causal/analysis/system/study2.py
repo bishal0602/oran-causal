@@ -560,3 +560,22 @@ def recompute_disc(rep: Mapping[str, Any]) -> dict[str, Any]:
     out["data"] = data_status(rep["record_checks"], rep["gt"]["seeds"], dry=False)
     out["mode"] = disc_mode(out, dry=False)
     return out
+
+
+TESTS_ONLY = ("placebo_decl", "disc_decl", "K0n_raw")
+
+
+def disc_from_tests(tests: Mapping[str, Any]) -> dict[str, Any]:
+    """The discovery analysis (`disc_conf.json`) of the discovery tests (`tests_conf.json`).
+
+    `placebo_combos` is K0 of every combination's placebo declarations, `K0n` the primary
+    combination's null-outcome check and `K0n_descriptive` every combination's (with the number
+    of episode groups); then `recompute_disc`.
+    """
+    blocks = study1.placebo_null_blocks(dict(tests) | {"placebo_baselines": {}})
+    rep = {k: v for k, v in tests.items() if k not in TESTS_ONLY}
+    rep["placebo_combos"] = blocks["placebo_descriptive"]
+    if "K0n_descriptive" in blocks:
+        rep["K0n_descriptive"] = blocks["K0n_descriptive"] | {"groups": tests["K0n_raw"]["groups"]}
+    rep["K0n"] = blocks["K0n"]
+    return recompute_disc(rep)

@@ -253,3 +253,57 @@ def test_arm_sets() -> None:
     assert study3.CAL_ARM not in study3.ALL_ARMS
     assert study2.stage_seeds("eval") == list(range(187000, 187160))
     assert study3.stage_seeds("eval") == list(range(191100, 191260))
+
+
+def test_placebo_null_blocks_from_the_tests() -> None:
+    plc = {
+        "carrier|own|e": {"declared": True, "p": 0.001, "status": "tested"},
+        "ptx|own|e": {"declared": False, "p": 0.4, "status": "tested"},
+    }
+    raw = {
+        "variants": ["g0:shift1", "g0:shift2"],
+        "combos": {
+            study1.PRIMARY_NAME: {
+                "p": [0.01, 0.5, 0.6, 0.7],
+                "fam": list("aabb"),
+                "var_decl": [0, 1],
+            },
+            "other": {"p": [0.9], "fam": ["a"], "var_decl": [0]},
+        },
+    }
+    tests = {
+        "primary": study1.PRIMARY_NAME,
+        "placebo_decl": {study1.PRIMARY_NAME: plc},
+        "placebo_baselines": {"corr": {"n_declared": 3}},
+        "K0n_raw": raw,
+    }
+    out = study1.placebo_null_blocks(tests)
+    k0 = out["placebo_descriptive"][study1.PRIMARY_NAME]
+    assert (k0["m"], k0["n_reject"], k0["declared"]) == (2, 1, ["carrier|own|e"])
+    assert out["placebo_descriptive"]["corr"] == {"n_declared": 3}
+    assert out["K0n"] == study1.k0n_check([0.01, 0.5, 0.6, 0.7], list("aabb"), [0, 1])
+    assert out["K0n"]["rate05_family"] == {"a": 0.5, "b": 0.0}
+    assert out["K0n_descriptive"]["variants"] == raw["variants"]
+    assert set(out["K0n_descriptive"]["combos"]) == {study1.PRIMARY_NAME, "other"}
+    assert study1.placebo_null_blocks(tests | {"K0n_raw": None})["K0n"] is None
+
+
+def test_disc_from_tests_adds_the_placebo_and_null_blocks(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(study2, "recompute_disc", dict)
+    raw = {
+        "variants": ["g0:shift1"],
+        "groups": 10,
+        "combos": {study1.PRIMARY_NAME: {"p": [0.2], "fam": ["a"], "var_decl": [0]}},
+    }
+    tests = {
+        "primary": study1.PRIMARY_NAME,
+        "placebo_decl": {study1.PRIMARY_NAME: {"a|own|e": {"declared": False, "p": 0.3}}},
+        "disc_decl": {},
+        "K0n_raw": raw,
+        "units": {},
+    }
+    rep = study2.disc_from_tests(tests)
+    assert set(rep) == {"primary", "units", "placebo_combos", "K0n", "K0n_descriptive"}
+    assert rep["placebo_combos"][study1.PRIMARY_NAME]["m"] == 1
+    assert rep["K0n"]["n_variants"] == 1
+    assert rep["K0n_descriptive"]["groups"] == 10

@@ -530,3 +530,61 @@ def recompute(rep: Mapping[str, Any]) -> dict[str, Any]:
         frozen=rep["protocol"]["frozen"],
     )
     return {k: out[k] for k in rep}
+
+
+ANALYSIS_KEYS = (
+    "schema",
+    "protocol",
+    "primary",
+    "artifact",
+    "gt",
+    "G",
+    "data",
+    "slices",
+    "baseline_tau",
+    "desc_tau",
+    "desc_errors",
+    "K0",
+    "placebo_descriptive",
+    "placebo_units",
+    "placebo_hyp",
+    "slices_result",
+    "K0n",
+    "K0n_descriptive",
+    "mode",
+    "K1",
+    "P1",
+    "P2",
+    "P3",
+    "S",
+    "verdict",
+    "timing_s",
+)
+
+
+def placebo_null_blocks(tests: Mapping[str, Any]) -> dict[str, Any]:
+    """The placebo and null-outcome blocks of an analysis from the tests (`tests_v4.json`).
+
+    `placebo_descriptive` is K0 of every combination's placebo declarations plus the baselines'
+    placebo checks; `K0n` is the primary combination's check over the null-outcome variants and
+    `K0n_descriptive` every combination's. Without null-outcome tests K0n is None.
+    """
+    plc = {
+        c: k0_check({tuple(h.split("|")): v for h, v in d.items()})
+        for c, d in tests["placebo_decl"].items()
+    }
+    out: dict[str, Any] = {"placebo_descriptive": plc | dict(tests["placebo_baselines"])}
+    raw = tests.get("K0n_raw")
+    if raw is None:
+        return out | {"K0n": None}
+    combos = {c: k0n_check(o["p"], o["fam"], o["var_decl"]) for c, o in raw["combos"].items()}
+    return out | {
+        "K0n": combos[tests["primary"]],
+        "K0n_descriptive": {"variants": raw["variants"], "combos": combos},
+    }
+
+
+def from_tests(tests: Mapping[str, Any]) -> dict[str, Any]:
+    """The Study 1 analysis (`analysis_v4.json`) of the discovery tests (`tests_v4.json`)."""
+    rep = dict(tests) | placebo_null_blocks(tests)
+    return recompute({k: rep.get(k) for k in ANALYSIS_KEYS})
