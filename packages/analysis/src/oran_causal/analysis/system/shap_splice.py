@@ -5,8 +5,9 @@ set `shap_rerun` holds the same baseline scored with TreeSHAP and the Study 2 / 
 its maps; `ShapSources` names every file of it that the figures use. `spliced_v4` and `splice_fd`
 replace the `shap_gbdt` entries of the recorded Study 1 analysis and of the asserted figure data
 (`report_data.build`) and leave every other entry as recorded. `OVERLAY_FILES` lists the recorded
-files that carry `shap_gbdt` entries; their TreeSHAP copies sit at the same path under `OVERLAY`,
-and `overlaid` is the one rule every reader (figures, `spec/values.toml`) follows.
+files that carry `shap_gbdt` entries; their TreeSHAP copies sit at the same path under `OVERLAY`.
+`overlaid` is the one rule: the figures resolve every record through it, and each
+`spec/values.toml` alias must equal `overlaid` of its recorded path (held by a test).
 """
 
 import copy

@@ -174,10 +174,9 @@ def test_overlaid_reads_the_overlay_copy_of_listed_files_only() -> None:
     assert shap_splice.overlaid("posthoc_x8/x8/summary.json") == "posthoc_x8/x8/summary.json"
 
 
-def test_values_read_every_shap_file_from_the_overlay() -> None:
+def test_values_aliases_equal_overlaid_recorded_paths() -> None:
     aliases = tomllib.loads((ROOT / "spec" / "values.toml").read_text(encoding="utf-8"))["records"]
     prefix = f"{shap_splice.OVERLAY}/"
+    assert any(rel.startswith(prefix) for rel in aliases.values())
     for name, rel in aliases.items():
-        assert shap_splice.overlaid(rel) == rel, name
-        if rel.startswith(prefix):
-            assert rel.removeprefix(prefix) in shap_splice.OVERLAY_FILES, name
+        assert rel == shap_splice.overlaid(rel.removeprefix(prefix)), name
