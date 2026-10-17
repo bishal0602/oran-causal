@@ -98,3 +98,14 @@ PRINTED = {
 def test_traced_values_equal_the_numbers_the_manuscript_prints(key: str, text: str) -> None:
     tex = (REPO / "paper" / "generated" / "values.tex").read_text(encoding="utf-8")
     assert rf"\defval{{{key}}}{{{text}}}" in tex.splitlines()
+
+
+def test_declared_edges_on_indeterminate_hypotheses_are_counted() -> None:
+    cells = [
+        {"family": "a", "relation": "own", "kpi": "pv", "status": "TRUE"},
+        {"family": "a", "relation": "own", "kpi": "v", "status": "INDET"},
+        {"family": "b", "relation": "nbr", "kpi": "e", "status": "INDET"},
+        {"family": "b", "relation": "far", "kpi": "e", "status": "NULL"},
+    ]
+    declared = [["a|own|pv", 1], ["a|own|v", -1], ["b|far|e", 1]]
+    assert pd.indeterminate_declared_count(declared, cells) == 1

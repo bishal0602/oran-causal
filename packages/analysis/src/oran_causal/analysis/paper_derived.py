@@ -64,10 +64,19 @@ def unestablished_null_rejection_rate(
     return _rate_at_alpha(_unestablished_nulls(cells), slices)
 
 
+def indeterminate_declared_count(
+    declared: Iterable[Iterable[Any]], cells: Iterable[Mapping[str, Any]]
+) -> int:
+    """Declared edges (`[hypothesis, sign]` pairs) whose knockout label is indeterminate."""
+    status = {f"{c['family']}|{c['relation']}|{c['kpi']}": c["status"] for c in cells}
+    return sum(status[name] == "INDET" for name, _sign in declared)
+
+
 FUNCTIONS: dict[str, Callable[..., Any]] = {
     "flat": flat,
     "null_hypothesis_count": null_hypothesis_count,
     "unestablished_null_count": unestablished_null_count,
     "null_rejection_rate": null_rejection_rate,
     "unestablished_null_rejection_rate": unestablished_null_rejection_rate,
+    "indeterminate_declared_count": indeterminate_declared_count,
 }
