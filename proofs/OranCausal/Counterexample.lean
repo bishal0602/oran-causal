@@ -259,7 +259,170 @@ theorem exact_tail_violates_validity (a : ℝ) (ha : 1 < a) :
   rw [exact_tail_rejection a ha]
   norm_num
 
+/-- Binomial second moment in doubled, centred count coordinates. -/
+lemma choose_centered_second_moment (B : ℕ) :
+    (∑ k ∈ range (B + 1), (B.choose k : ℝ) * (2 * k - B) ^ 2) = (B : ℝ) * 2 ^ B := by
+  induction B with
+  | zero => norm_num
+  | succ B ih =>
+    have hr := sum_choose_succ_mul
+      (fun k _ : ℕ => (2 * (k : ℝ) - ((B : ℝ) + 1)) ^ 2) B
+    have hs : (∑ k ∈ range (B + 1), (B.choose k : ℝ)) = 2 ^ B := by
+      exact_mod_cast Nat.sum_range_choose B
+    push_cast at hr ⊢
+    rw [show B + 1 + 1 = B + 2 by omega]
+    rw [hr, ← sum_add_distrib]
+    calc
+      _ = 2 * (∑ k ∈ range (B + 1), (B.choose k : ℝ) * (2 * k - B) ^ 2) +
+          2 * ∑ k ∈ range (B + 1), (B.choose k : ℝ) := by
+        rw [mul_sum, mul_sum, ← sum_add_distrib]
+        apply sum_congr rfl
+        intro k _
+        ring
+      _ = _ := by rw [ih, hs, pow_succ]; ring
+
+lemma fair_count_second_moment (B : ℕ) :
+    (∑ k ∈ range (B + 1), binomialMass B k (1 / 2) * (2 * k - B) ^ 2) = (B : ℝ) := by
+  have he : (∑ k ∈ range (B + 1), binomialMass B k (1 / 2) * (2 * k - B) ^ 2) =
+      (∑ k ∈ range (B + 1), (B.choose k : ℝ) * (2 * k - B) ^ 2) / 2 ^ B := by
+    rw [sum_div]
+    apply sum_congr rfl
+    intro k hk
+    rw [binomialMass_half B k (by simpa using mem_range.mp hk)]
+    ring
+  rw [he, choose_centered_second_moment]
+  field_simp
+
+/-- A second-moment bound for the actual plus-one p-value, valid also at B=0. -/
+lemma plus_one_second_moment_bound (B : ℕ) :
+    (∑ k ∈ range (B + 1), binomialMass B k (1 / 2) * (monteCarloP B k - 1 / 2) ^ 2)
+      ≤ 1 / (2 * ((B : ℝ) + 1)) := by
+  have hB : 0 < (B : ℝ) + 1 := by positivity
+  calc
+    _ ≤ ∑ k ∈ range (B + 1), binomialMass B k (1 / 2) *
+        ((2 * (2 * k - B) ^ 2 + 2) / (4 * ((B : ℝ) + 1) ^ 2)) := by
+      apply sum_le_sum
+      intro k _
+      apply mul_le_mul_of_nonneg_left _ (binomialMass_nonneg B k (by norm_num) (by norm_num))
+      have he : monteCarloP B k - 1 / 2 = (2 * k - B + 1) / (2 * ((B : ℝ) + 1)) := by
+        unfold monteCarloP
+        field_simp
+        ring
+      rw [he, div_pow, mul_pow]
+      norm_num only [show (2 : ℝ) ^ 2 = 4 by norm_num]
+      apply (div_le_div_iff_of_pos_right (by positivity : 0 < 4 * ((B : ℝ) + 1) ^ 2)).mpr
+      nlinarith [sq_nonneg (2 * (k : ℝ) - B - 1)]
+    _ = (2 * (B : ℝ) + 2) / (4 * ((B : ℝ) + 1) ^ 2) := by
+      simp_rw [← mul_div_assoc, mul_add]
+      rw [← sum_div, sum_add_distrib]
+      have h1 := fair_count_second_moment B
+      have h0 := binomialMass_sum B (1 / 2)
+      have he : (∑ k ∈ range (B + 1), binomialMass B k (1 / 2) *
+          (2 * (2 * k - B) ^ 2)) = 2 * (B : ℝ) := by
+        calc
+          _ = 2 * ∑ k ∈ range (B + 1), binomialMass B k (1 / 2) * (2 * k - B) ^ 2 := by
+            rw [mul_sum]; apply sum_congr rfl; intros; ring
+          _ = _ := by rw [h1]
+      rw [he, ← sum_mul, h0]
+      ring
+    _ = _ := by field_simp; ring
+
+noncomputable def binomialRejectionAt (B : ℕ) (p t : ℝ) : ℝ :=
+  ∑ k ∈ range (B + 1), if monteCarloP B k ≤ t then binomialMass B k p else 0
+
+noncomputable def monteCarloRejectionAt (a t : ℝ) (B : ℕ) : ℝ :=
+  (∑ ω : Outcome, binomialRejectionAt B (pInfinity a ω) t) / 4
+
+theorem monteCarloRejectionAt_half (a : ℝ) (B : ℕ) :
+    monteCarloRejectionAt a (1 / 2) B = monteCarloRejection a B := by
+  unfold monteCarloRejectionAt binomialRejectionAt monteCarloRejection
+  rfl
+
+lemma fair_nonrejection_bound (B : ℕ) (t : ℝ) (ht : 1 / 2 < t) :
+    0 ≤ 1 - binomialRejectionAt B (1 / 2) t ∧
+    1 - binomialRejectionAt B (1 / 2) t ≤
+      (1 / (2 * ((B : ℝ) + 1))) / (t - 1 / 2) ^ 2 := by
+  have hε : 0 < t - 1 / 2 := sub_pos.mpr ht
+  have he : 1 - binomialRejectionAt B (1 / 2) t =
+      ∑ k ∈ range (B + 1), if t < monteCarloP B k then binomialMass B k (1 / 2) else 0 := by
+    conv_lhs => lhs; rw [← binomialMass_sum B (1 / 2)]
+    unfold binomialRejectionAt
+    rw [← sum_sub_distrib]
+    apply sum_congr rfl
+    intro k _
+    by_cases h : monteCarloP B k ≤ t
+    · simp [h, not_lt_of_ge h]
+    · simp [h, lt_of_not_ge h]
+  rw [he]
+  constructor
+  · apply sum_nonneg
+    intro k _
+    split_ifs
+    · exact binomialMass_nonneg B k (by norm_num) (by norm_num)
+    · exact le_rfl
+  · calc
+      _ ≤ (∑ k ∈ range (B + 1), binomialMass B k (1 / 2) *
+          (monteCarloP B k - 1 / 2) ^ 2) / (t - 1 / 2) ^ 2 := by
+        rw [sum_div]
+        apply sum_le_sum
+        intro k _
+        have hm := binomialMass_nonneg B k (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num)
+        split_ifs with hk
+        · apply (le_div_iff₀ (sq_pos_of_pos hε)).mpr
+          apply mul_le_mul_of_nonneg_left _ hm
+          nlinarith
+        · positivity
+      _ ≤ _ := div_le_div_of_nonneg_right (plus_one_second_moment_bound B) (sq_nonneg _)
+
+lemma fair_rejection_above_half (t : ℝ) (ht : 1 / 2 < t) :
+    Tendsto (fun B => binomialRejectionAt B (1 / 2) t) atTop (𝓝 1) := by
+  have hz : Tendsto (fun B => 1 - binomialRejectionAt B (1 / 2) t) atTop (𝓝 0) := by
+    apply squeeze_zero (fun B => (fair_nonrejection_bound B t ht).1)
+      (fun B => (fair_nonrejection_bound B t ht).2)
+    have h := (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)).div_const
+      (2 * (t - 1 / 2) ^ 2)
+    simpa only [zero_div] using h.congr (fun B => by
+      rw [div_div, div_div]
+      congr 1
+      ring)
+  have h := tendsto_const_nhds.sub hz (a := (1 : ℝ))
+  simpa only [sub_sub_cancel, sub_zero] using h
+
+lemma certain_nonrejection_below_one (B : ℕ) (t : ℝ) (ht : t < 1) :
+    binomialRejectionAt B 1 t = 0 := by
+  unfold binomialRejectionAt
+  apply sum_eq_zero
+  intro k hk
+  by_cases he : k = B
+  · subst k
+    have hp : monteCarloP B B = 1 := by unfold monteCarloP; field_simp; ring
+    simp [hp, not_le.mpr ht]
+  · have hsub : B - k ≠ 0 := by have := mem_range.mp hk; omega
+    simp [binomialMass, hsub]
+
+theorem monteCarloRejectionAt_eq (a t : ℝ) (ha : 1 < a) (ht : t < 1) (B : ℕ) :
+    monteCarloRejectionAt a t B = (3 / 4 : ℝ) * binomialRejectionAt B (1 / 2) t := by
+  simp only [monteCarloRejectionAt, pInfinity_values a ha,
+    Fintype.sum_prod_type, Fintype.sum_bool, Bool.false_or, Bool.true_or,
+    Bool.or_false, Bool.false_eq_true, ite_true, ite_false]
+  rw [certain_nonrejection_below_one B t ht]
+  ring
+
+/-- Away from the atom at one half, the actual finite-redraw test has rejection limit 3/4. -/
+theorem finite_redraw_rejection_limit_above_half (a t : ℝ) (ha : 1 < a)
+    (ht : 1 / 2 < t) (ht1 : t < 1) :
+    Tendsto (monteCarloRejectionAt a t) atTop (𝓝 (3 / 4)) := by
+  have h := tendsto_const_nhds.mul (fair_rejection_above_half t ht) (a := (3 / 4 : ℝ))
+  simpa only [mul_one] using h.congr (fun B => (monteCarloRejectionAt_eq a t ha ht1 B).symm)
+
+theorem finite_redraw_rejection_limit_between_half_and_three_quarters (a t : ℝ)
+    (ha : 1 < a) (ht : 1 / 2 < t) (htq : t < 3 / 4) :
+    Tendsto (monteCarloRejectionAt a t) atTop (𝓝 (3 / 4)) :=
+  finite_redraw_rejection_limit_above_half a t ha ht (by linarith)
+
 end OranCausal.Counterexample
 
 #print axioms OranCausal.Counterexample.exact_tail_rejection
 #print axioms OranCausal.Counterexample.finite_redraw_rejection_limit
+#print axioms OranCausal.Counterexample.finite_redraw_rejection_limit_above_half
+#print axioms OranCausal.Counterexample.finite_redraw_rejection_limit_between_half_and_three_quarters

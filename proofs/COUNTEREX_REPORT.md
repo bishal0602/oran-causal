@@ -92,3 +92,59 @@ Build completed successfully (2703 jobs).
 ```
 
 The source has no forbidden proof constructs.
+
+## Deferred item: fixed cutoffs above one half
+
+The follow-up theorem
+`OranCausal.Counterexample.finite_redraw_rejection_limit_between_half_and_three_quarters`
+states, for every real a>1 and fixed 1/2<t<3/4,
+
+\[
+ \Pr\left\{\frac{1+K_B}{B+1}\leq t\right\}\longrightarrow\frac34.
+\]
+
+The stronger theorem `finite_redraw_rejection_limit_above_half` allows any
+1/2<t<1. `monteCarloRejectionAt` is the actual finite-redraw rejection
+probability at a general threshold, summing over the observed assignment and
+its conditional binomial redraw-count law. `monteCarloRejectionAt_half` proves
+that at t=1/2 this is exactly the original `monteCarloRejection` definition.
+
+No weak law is assumed. The proof establishes the finite combinatorial identity
+
+\[
+ \sum_{k=0}^B {B\choose k}(2k-B)^2=B\,2^B
+\]
+
+by induction using Pascal's recurrence. Dividing by 2^B gives the centred
+second moment of Binomial(B,1/2). The elementary inequality
+(x+1)^2≤2x^2+2 then bounds the second moment of the **plus-one** p-value:
+
+\[
+ E[(p_B-1/2)^2]\leq\frac1{2(B+1)}.
+\]
+
+`fair_nonrejection_bound` applies the finite-sum form of Chebyshev/Markov to get
+
+\[
+ 0\leq\Pr(p_B>t\mid p_\infty=1/2)
+ \leq\frac1{2(B+1)(t-1/2)^2}\longrightarrow0.
+\]
+
+Thus `fair_rejection_above_half` proves rejection probability tends to one on
+the branches of total probability 3/4 with exact tail 1/2. On the remaining
+branch the redraw count is B and p_B=1, so it never rejects when t<1.
+`monteCarloRejectionAt_eq` proves the exact mixture identity for every B.
+
+For t<3/4, the limit strictly exceeds the nominal cutoff. This establishes
+the deferred anti-conservatism result for the actual plus-one procedure while
+preserving the different, already proved boundary limit 3/8 at t=1/2.
+The original task status remains `needs clarity` because the pinned source
+still states the incorrect 3/4 limit **at** the boundary. The follow-up result
+itself requires no additional hypotheses or unproved probability lemmas.
+
+Follow-up validation: `lake build` passed with exit 0 (3123 jobs), without errors
+or task-02 warnings. Existing cosmetic warnings from task 06 were replayed.
+All four audited declarations, including both new limit theorems, depend only
+on `propext`, `Classical.choice`, and `Quot.sound`. There are no forbidden proof
+constructs. Evidence is in the task 02 result table and
+`task02-followup-build.log` / `task02-followup-axioms.log`.
