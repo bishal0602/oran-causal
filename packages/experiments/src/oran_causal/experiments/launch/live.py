@@ -60,11 +60,9 @@ class LiveBackend:
         """Downloads the kernel output."""
         kaggle.pull(job, self._kaggle(), self.dirs.runs)
 
-    def vps_pull(self, job: str) -> None:
-        """Merges the VPS job's outputs."""
-        if self.targets.vps_host is None:
-            raise ValueError("no VPS")
-        self.targets.vps_host.pull(job, self.dirs)
+    def ssh_pull(self, platform: plan.Platform, job: str) -> None:
+        """Merges the outputs of `job` on the SSH host `platform`."""
+        self.targets.ssh_host(platform).pull(job, self.dirs)
 
     def launch(self, request: plan.LaunchRequest) -> None:
         """Plans the request and launches it on its platform."""
@@ -77,3 +75,10 @@ class LiveBackend:
 def default_ssh_vps() -> vps.Vps:
     """The shared production VPS over SSH."""
     return vps.Vps(vps.Ssh(vps.remote_env(hosts.VPS_BASE)), hosts.VPS_SHARED)
+
+
+def default_instabox() -> vps.Vps:
+    """The instabox host over SSH, scopes in the login user's systemd instance."""
+    return vps.Vps(
+        vps.Ssh(vps.remote_env(hosts.INSTABOX_BASE), host=vps.INSTABOX_HOST), hosts.INSTABOX
+    )

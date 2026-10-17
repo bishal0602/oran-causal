@@ -14,7 +14,7 @@ from oran_causal.experiments.launch.colab_session import Colab
 from oran_causal.experiments.launch.runner import Dirs
 from oran_causal.experiments.launch.schedule import TaskScheduler
 
-PLATFORMS = ("kaggle", "colab", "vps")
+PLATFORMS = ("kaggle", "colab", "vps", "instabox")
 COLAB_ACTIONS = ("tick", "status", "pull", "stop", "schedule", "unschedule")
 DISPATCH_ACTIONS = ("init", "tick", "show", "schedule", "unschedule")
 VPS_ACTIONS = ("status", "pull", "stop", "probe")
@@ -24,13 +24,14 @@ type TargetsFactory = Callable[[], plan.Targets]
 
 
 def default_targets() -> plan.Targets:
-    """Real clients: Kaggle CLI, Colab CLI with Task Scheduler, the shared VPS over SSH."""
+    """Real clients: Kaggle CLI, Colab CLI with Task Scheduler, the VPS and instabox over SSH."""
     dirs = Dirs(WORK_DIR)
     return plan.Targets(
         dirs,
         kaggle.KaggleClient(),
         colab.ColabEnv(Colab(), dirs, TaskScheduler()),
         live.default_ssh_vps(),
+        instabox_host=live.default_instabox(),
     )
 
 
@@ -54,7 +55,11 @@ def build_parser() -> argparse.ArgumentParser:
     launch.add_argument("--procs", type=int, default=None)
     launch.add_argument("--dry-run", action="store_true")
 
-    for platform, actions in (("colab", COLAB_ACTIONS), ("vps", VPS_ACTIONS)):
+    for platform, actions in (
+        ("colab", COLAB_ACTIONS),
+        ("vps", VPS_ACTIONS),
+        ("instabox", VPS_ACTIONS),
+    ):
         p = sub.add_parser(platform)
         p.add_argument("action", choices=actions)
         p.add_argument("name", nargs="?")
@@ -75,6 +80,9 @@ def build_parser() -> argparse.ArgumentParser:
     d.add_argument("--colab-chunk", type=int, default=dispatch.COLAB_CHUNK)
     d.add_argument("--skip-complete-from", nargs="*", default=[])
     d.add_argument("--vps", action="store_true")
+    d.add_argument("--instabox", action="store_true")
+    d.add_argument("--vps-chunk", type=int, default=dispatch.VPS_CHUNK)
+    d.add_argument("--instabox-chunk", type=int, default=dispatch.INSTABOX_CHUNK)
     d.add_argument("--only", nargs="+", choices=PLATFORMS, default=None)
     d.add_argument("--every", type=int, default=15)
     d.add_argument("--dry-run", action="store_true")
@@ -172,15 +180,16 @@ def run_kaggle(
 
 
 def run_vps(a: argparse.Namespace, make_targets: TargetsFactory, out: Callable[[str], None]) -> int:
-    """`vps probe | status|pull|stop NAME`."""
+    """`vps|instabox probe | status|pull|stop NAME`."""
     targets = make_targets()
-    host = targets.vps_host
-    if host is None:
-        raise SystemExit("no VPS")
+    try:
+        host = targets.ssh_host(a.command)
+    except ValueError as e:
+        raise SystemExit(str(e)) from None
     if a.action == "probe":
         out(host.probe())
     elif not a.name:
-        raise SystemExit("vps: a job NAME is required")
+        raise SystemExit(f"{a.command}: a job NAME is required")
     elif a.action == "status":
         out(host.status(a.name))
     elif a.action == "pull":
@@ -219,6 +228,9 @@ def run_dispatch(
                     a.colab_chunk,
                     a.skip_complete_from,
                     a.vps,
+                    a.instabox,
+                    a.vps_chunk,
+                    a.instabox_chunk,
                     a.only,
                 ),
             )
@@ -256,7 +268,7 @@ def main(
             return run_colab(a, make_targets, out)
         case "kaggle":
             return run_kaggle(a, make_targets, out)
-        case "vps":
+        case "vps" | "instabox":
             return run_vps(a, make_targets, out)
         case "dispatch":
             return run_dispatch(a, make_targets, out)

@@ -3,6 +3,7 @@
 import dataclasses
 
 VPS_BASE = "/opt/oran-causal"
+INSTABOX_BASE = "/data/home/oran-causal"
 UNIT_PREFIX = "oran-causal-"
 GIB_KB = 1024 * 1024
 
@@ -35,6 +36,8 @@ class HostProfile:
         wall_s: Default per-process timeout so the session ends before the platform's own limit.
         base: Directory every remote file of a job lives under, or None.
         unit_prefix: Prefix of the job's systemd scope unit.
+        user_scope: Run scopes in the login user's systemd instance (`systemd-run --user`), for
+            a host where the SSH user is not root.
     """
 
     name: str
@@ -45,6 +48,17 @@ class HostProfile:
     wall_s: int
     base: str | None = None
     unit_prefix: str = UNIT_PREFIX
+    user_scope: bool = False
+
+    @property
+    def systemctl(self) -> str:
+        """`systemctl` for the scopes of this host."""
+        return "systemctl --user" if self.user_scope else "systemctl"
+
+    @property
+    def systemd_run(self) -> str:
+        """`systemd-run` for the scopes of this host."""
+        return "systemd-run --user" if self.user_scope else "systemd-run"
 
     def check_procs(self, procs: int) -> int:
         """Returns `procs` when it is within 1..`max_procs`.
@@ -83,6 +97,17 @@ VPS_SHARED = HostProfile(
     VPS_BASE,
 )
 
+INSTABOX = HostProfile(
+    "instabox",
+    4,
+    "6500M",
+    "0",
+    LoadGuard(6 * GIB_KB, 1.0, True),
+    23 * 3600,
+    INSTABOX_BASE,
+    user_scope=True,
+)
+
 PROFILES: dict[str, HostProfile] = {
-    p.name: p for p in (KAGGLE_CPU, COLAB_CPU, VPS_DEDICATED, VPS_SHARED)
+    p.name: p for p in (KAGGLE_CPU, COLAB_CPU, VPS_DEDICATED, VPS_SHARED, INSTABOX)
 }

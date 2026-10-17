@@ -3,8 +3,8 @@
 Each tick pulls finished jobs, checks which of their parts are incomplete (those are requeued, at
 most three attempts per part), and launches at most one chunk of parts on the first platform with
 room, except that every free Kaggle slot is filled in one tick. Order: Kaggle (long unattended),
-the VPS (one job at a time), Colab. State is `dispatch.json` and `dispatch.log` in
-`runs/<queue>/`.
+the SSH hosts (the VPS, then instabox; one job at a time each), Colab. State is `dispatch.json`
+and `dispatch.log` in `runs/<queue>/`.
 """
 
 import dataclasses
@@ -27,6 +27,7 @@ COLAB_MAX = 2
 KAGGLE_CHUNK = 8
 COLAB_CHUNK = 4
 VPS_CHUNK = 7
+INSTABOX_CHUNK = 4
 COLAB_WALL_S = 39600
 COLAB_BACKOFF_S = 7200
 VPS_BACKOFF_S = 1800
@@ -35,12 +36,12 @@ LOCK_STALE_S = 7200
 MINE_PREFIXES = ("xm-dev-", "xm-eval-")
 COLAB_REFUSED = "Allocation refused"
 VPS_REFUSED = "refused:"
-PLATFORMS: tuple[plan.Platform, ...] = ("kaggle", "vps", "colab")
+PLATFORMS: tuple[plan.Platform, ...] = ("kaggle", "vps", "instabox", "colab")
 STATE_FILE = "dispatch.json"
 LOG_FILE = "dispatch.log"
 DONE_DIR = "done"
 
-type Outcome = Literal["kaggle", "vps", "colab", "priority"] | None
+type Outcome = plan.Platform | Literal["priority"] | None
 
 
 class Backend(Protocol):
@@ -58,8 +59,8 @@ class Backend(Protocol):
         """Downloads the kernel output into `runs/<job>`."""
         ...
 
-    def vps_pull(self, job: str) -> None:
-        """Merges the VPS job's outputs into `runs/<job>`."""
+    def ssh_pull(self, platform: plan.Platform, job: str) -> None:
+        """Merges the outputs of `job` on the SSH host `platform` into `runs/<job>`."""
         ...
 
     def launch(self, request: plan.LaunchRequest) -> None:
@@ -95,6 +96,9 @@ class Queue:
         colab_chunk: Parts per Colab job.
         skip_from: Globs of earlier shard files whose complete datasets are skipped.
         vps: The VPS lane is enabled.
+        instabox: The instabox lane is enabled.
+        vps_chunk: Parts (one process each) per VPS job.
+        instabox_chunk: Parts (one process each) per instabox job.
         only: Restrict the queue to these platforms; None means all.
         mine_prefixes: Slug prefixes that count as this account's own sessions.
         next: First part not yet launched.
@@ -106,6 +110,7 @@ class Queue:
         parts_end: Last part (exclusive) to launch, or None for `parts`.
         vps_backoff_until: Epoch seconds before which the VPS is not tried.
         colab_backoff_until: Epoch seconds before which Colab is not tried.
+        instabox_backoff_until: Epoch seconds before which instabox is not tried.
     """
 
     spec: str
@@ -116,6 +121,9 @@ class Queue:
     colab_chunk: int = COLAB_CHUNK
     skip_from: list[str] = dataclasses.field(default_factory=list)
     vps: bool = False
+    instabox: bool = False
+    vps_chunk: int = VPS_CHUNK
+    instabox_chunk: int = INSTABOX_CHUNK
     only: list[str] | None = None
     mine_prefixes: list[str] = dataclasses.field(default_factory=lambda: list(MINE_PREFIXES))
     next: int = 0
@@ -127,6 +135,7 @@ class Queue:
     parts_end: int | None = None
     vps_backoff_until: float = 0.0
     colab_backoff_until: float = 0.0
+    instabox_backoff_until: float = 0.0
 
     @property
     def end(self) -> int:
@@ -136,6 +145,25 @@ class Queue:
     def allows(self, platform: str) -> bool:
         """Whether the queue may use `platform`."""
         return platform in (self.only or PLATFORMS)
+
+    def ssh_enabled(self, platform: plan.Platform) -> bool:
+        """Whether the lane of the SSH host `platform` is enabled."""
+        return self.instabox if platform == "instabox" else self.vps
+
+    def ssh_chunk(self, platform: plan.Platform) -> int:
+        """Parts per job on the SSH host `platform`."""
+        return self.instabox_chunk if platform == "instabox" else self.vps_chunk
+
+    def backoff_until(self, platform: plan.Platform) -> float:
+        """Epoch seconds before which the SSH host `platform` is not tried."""
+        return self.instabox_backoff_until if platform == "instabox" else self.vps_backoff_until
+
+    def back_off(self, platform: plan.Platform, until: float) -> None:
+        """Pauses the SSH host `platform` until `until`."""
+        if platform == "instabox":
+            self.instabox_backoff_until = until
+        else:
+            self.vps_backoff_until = until
 
     def exhausted(self) -> bool:
         """No part left to launch, requeue or run with priority."""
@@ -225,6 +253,7 @@ class Dispatcher:
     def init(self, name: str, queue: Queue) -> None:
         """Creates the queue."""
         queue.vps = queue.vps or "vps" in (queue.only or ())
+        queue.instabox = queue.instabox or "instabox" in (queue.only or ())
         queue.kaggle_mine_max = min(queue.kaggle_mine_max, KAGGLE_MAX)
         self.save(name, queue)
         self.event(name, "init", dataclasses.asdict(queue))
@@ -325,10 +354,10 @@ class Dispatcher:
 
     def _pull_one(self, name: str, queue: Queue, job: dict[str, Any]) -> str | None:
         run = self.dirs.runs / job["job"]
-        if job["platform"] == "vps":
-            self.backend.vps_pull(job["job"])
+        if job["platform"] in plan.SSH_PLATFORMS:
+            self.backend.ssh_pull(job["platform"], job["job"])
             code = run / "exit_code"
-            return f"vps exit {code.read_text().strip()}" if code.exists() else None
+            return f"{job['platform']} exit {code.read_text().strip()}" if code.exists() else None
         if job["platform"] == "colab":
             path = run / colab.STATE_FILE
             meta = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
@@ -381,7 +410,9 @@ class Dispatcher:
             skip_from=skip_from,
             wall_s=COLAB_WALL_S if platform == "colab" else None,
             selftest=True,
-            procs=min(VPS_CHUNK, len(ids)) if platform == "vps" else None,
+            procs=min(queue.ssh_chunk(platform), len(ids))
+            if platform in plan.SSH_PLATFORMS
+            else None,
             root=root,
         )
 
@@ -448,21 +479,17 @@ class Dispatcher:
         if queue.priority:
             return self._priority(name, queue, info, kaggle_room)
         now = self.clock.now()
-        vps_free = (
-            queue.vps
-            and not any(j["platform"] == "vps" and not j.get("pulled") for j in queue.jobs)
-            and now >= queue.vps_backoff_until
-        )
+        ssh_free = [p for p in plan.SSH_PLATFORMS if self._ssh_free(queue, p, now)]
         if queue.requeue:
             kag = kaggle_room and queue.allows("kaggle")
-            if kag or vps_free:
-                return self._requeue(name, queue, info, kag)
+            if kag or ssh_free:
+                return self._requeue(name, queue, info, "kaggle" if kag else ssh_free[0])
             if queue.next >= queue.end:
                 self.event(name, "no-room-requeue", info)
                 return None
         lanes = (
             ("kaggle", kaggle_room, queue.kaggle_chunk),
-            ("vps", vps_free, VPS_CHUNK),
+            *((p, p in ssh_free, queue.ssh_chunk(p)) for p in plan.SSH_PLATFORMS),
             ("colab", colab_n < COLAB_MAX and now >= queue.colab_backoff_until, queue.colab_chunk),
         )
         for platform, room, chunk in lanes:
@@ -470,6 +497,10 @@ class Dispatcher:
                 return self._chunk(name, queue, info, platform, chunk)
         self.event(name, "no-room", info)
         return None
+
+    def _ssh_free(self, queue: Queue, platform: plan.Platform, now: float) -> bool:
+        busy = any(j["platform"] == platform and not j.get("pulled") for j in queue.jobs)
+        return queue.ssh_enabled(platform) and not busy and now >= queue.backoff_until(platform)
 
     def _priority(
         self, name: str, queue: Queue, info: dict[str, Any], kaggle_room: bool
@@ -513,9 +544,11 @@ class Dispatcher:
         self.save(name, queue)
         return "priority"
 
-    def _requeue(self, name: str, queue: Queue, info: dict[str, Any], kaggle: bool) -> Outcome:
-        platform: plan.Platform = "kaggle" if kaggle else "vps"
-        ids = queue.requeue[: queue.kaggle_chunk if kaggle else VPS_CHUNK]
+    def _requeue(
+        self, name: str, queue: Queue, info: dict[str, Any], platform: plan.Platform
+    ) -> Outcome:
+        kaggle = platform == "kaggle"
+        ids = queue.requeue[: queue.kaggle_chunk if kaggle else queue.ssh_chunk(platform)]
         job = self.job_name(name, queue, "requeue")
         self.save(name, queue)
         rc, tail = self.launch(self.request(name, queue, Chunk(platform, ids, job), requeue=True))
@@ -561,8 +594,8 @@ class Dispatcher:
         if rc and lane == "colab" and COLAB_REFUSED in tail:
             queue.colab_backoff_until = self.clock.now() + COLAB_BACKOFF_S
             self.save(name, queue)
-        if rc and lane == "vps" and VPS_REFUSED in tail:
-            queue.vps_backoff_until = self.clock.now() + VPS_BACKOFF_S
+        if rc and lane in plan.SSH_PLATFORMS and VPS_REFUSED in tail:
+            queue.back_off(lane, self.clock.now() + VPS_BACKOFF_S)
             self.save(name, queue)
         if rc:
             return None

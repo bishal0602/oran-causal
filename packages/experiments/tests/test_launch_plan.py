@@ -80,6 +80,20 @@ def test_procs_beyond_the_profile_are_refused(ws: Path, launch_kit):
         make(ws, "vps", launch_kit, part_ids=[0], procs=9)
 
 
+def test_instabox_is_an_ssh_platform_with_its_own_host(ws: Path, launch_kit):
+    p = make(ws, "instabox", launch_kit, part_ids=[0, 1])
+    assert "uv sync" not in p.cmd
+    assert p.out_dir == "{OUT}"
+    assert p.profile.max_procs == 4
+    steps = "\n".join(plan.describe(p))
+    assert "instabox launch job-a --procs 2" in steps
+    assert "MemoryMax=6500M" in steps
+    with pytest.raises(plan.LaunchRefused, match="one process per part"):
+        make(ws, "instabox", launch_kit, parts=8, procs=2)
+    with pytest.raises(ValueError, match="no instabox host"):
+        plan.Targets(Dirs(ws, ws, ws)).ssh_host("instabox")
+
+
 def test_paths_and_skip_globs_join_the_bundle(ws: Path, launch_kit):
     (ws / "d").mkdir()
     (ws / "d" / "a.jsonl").write_text("{}\n")
@@ -177,7 +191,7 @@ class FakeBackend:
     def kaggle_pull(self, job):
         self.pulled.append(job)
 
-    def vps_pull(self, job):
+    def ssh_pull(self, platform, job):
         self.pulled.append(job)
 
     def launch(self, request):
@@ -237,6 +251,26 @@ def test_a_refused_lane_backs_off(ws: Path, tmp_path: Path):
     backend.launched.clear()
     assert d.tick("q") == "none"
     assert not backend.launched
+
+
+def test_the_instabox_lane_follows_the_vps_with_its_own_chunk(ws: Path, tmp_path: Path):
+    d, backend, _ = dispatcher(ws, tmp_path)
+    backend.kaggle = (5, 0)
+    d.init("q", queue(only=["vps", "instabox"], vps_chunk=6))
+    assert d.tick("q") == "vps"
+    assert d.tick("q") == "instabox"
+    assert [(r.platform, r.procs, len(r.part_ids or [])) for r in backend.launched] == [
+        ("vps", 6, 6),
+        ("instabox", 4, 4),
+    ]
+    assert d.tick("q") == "none"
+    q = d.load("q")
+    q.jobs[1]["pulled"] = "instabox exit 0"
+    q.jobs[1]["incomplete_parts"] = []
+    d.save("q", q)
+    backend.fail = {"instabox": "refused: load"}
+    assert d.tick("q") == "none"
+    assert d.load("q").instabox_backoff_until == 1_700_000_000.0 + dispatch.VPS_BACKOFF_S
 
 
 def test_only_restricts_the_lanes(ws: Path, tmp_path: Path):

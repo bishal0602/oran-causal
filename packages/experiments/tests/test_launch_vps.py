@@ -196,3 +196,24 @@ def test_status_and_stop_touch_only_the_jobs_own_scope():
     v.stop("job-a")
     assert "systemctl stop oran-causal-job-a.scope" in t.scripts[-1]
     assert "pkill" not in "".join(t.scripts)
+
+
+def test_instabox_scopes_run_in_the_users_systemd_instance():
+    t = FakeTransport()
+    v = vps.Vps(t, hosts.INSTABOX)
+    sh = v.launch_script("job-a", "#!/bin/bash\necho x", 4)
+    assert "systemd-run --user --scope --quiet --unit oran-causal-job-a" in sh
+    assert "-p CPUQuota=400%" in sh
+    assert "-p MemoryMax=6500M" in sh
+    assert "systemctl --user is-active oran-causal-job-a.scope" in sh
+    assert v.job_dir("job-a") == "/data/home/oran-causal/jobs/job-a"
+    v.state()
+    v.stop("job-a")
+    assert "systemctl --user list-units" in t.scripts[0]
+    assert "systemctl --user stop oran-causal-job-a.scope" in t.scripts[-1]
+
+
+def test_instabox_caps_procs_at_four(tmp_path: Path):
+    v = vps.Vps(FakeTransport(), hosts.INSTABOX)
+    with pytest.raises(ValueError, match=r"--procs must be 1\.\.4"):
+        v.launch("job-a", "x", 5, Dirs(tmp_path, tmp_path, tmp_path))

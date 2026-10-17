@@ -2,8 +2,9 @@
 
 Everything lives under the profile's base directory: uv, the managed Python, caches, one venv and
 one bundle per job. Compute runs only as `systemd-run --scope` with the profile's limits, after the
-profile's pre-launch refusals. Host-level changes (packages, services, containers, reboots) are
-never made, and `stop` stops only the job's own scope.
+profile's pre-launch refusals; a `user_scope` profile uses the login user's systemd instance.
+Host-level changes (packages, services, containers, reboots) are never made, and `stop` stops
+only the job's own scope.
 """
 
 import dataclasses
@@ -23,6 +24,7 @@ from oran_causal.experiments.launch.hosts import VPS_SHARED, HostProfile
 from oran_causal.experiments.launch.runner import Dirs
 
 HOST = "root@vps.brihatech.com"
+INSTABOX_HOST = "instabox"
 UV_TARGET = "uv-x86_64-unknown-linux-gnu"
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]{1,48}$")
 OUT_PLACEHOLDER = "{OUT}"
@@ -171,11 +173,11 @@ def check_launch(profile: HostProfile, state: HostState) -> None:
 STATE_SCRIPT = """
 read l1 l5 l15 rest < /proc/loadavg
 ma=$(awk '/MemAvailable/ {{print $2}}' /proc/meminfo)
-units=$(systemctl list-units --type=scope --state=active --no-legend --plain '{prefix}*' \
+units=$({systemctl} list-units --type=scope --state=active --no-legend --plain '{prefix}*' \
 | awk '{{print $1}}')
 ours=0
 for u in $units; do
-  cg=/sys/fs/cgroup$(systemctl show -p ControlGroup --value $u)/cgroup.procs
+  cg=/sys/fs/cgroup$({systemctl} show -p ControlGroup --value $u)/cgroup.procs
   if [ -f $cg ]; then ours=$((ours + $(wc -l < $cg))); fi
 done
 echo "{{\\"load1\\": $l1, \\"mem_available_kb\\": $ma, \\"our_procs\\": $ours, \
@@ -212,7 +214,10 @@ class Vps:
 
     def state(self) -> HostState:
         """Host load, memory and our running scopes."""
-        out = self.transport.script(STATE_SCRIPT.format(prefix=self.profile.unit_prefix), 120)
+        script = STATE_SCRIPT.format(
+            prefix=self.profile.unit_prefix, systemctl=self.profile.systemctl
+        )
+        out = self.transport.script(script, 120)
         raw = json.loads(out.strip().splitlines()[-1])
         return HostState(
             float(raw["load1"]),
@@ -338,6 +343,7 @@ du -sh {vd}
         """Writes `run.sh` and starts it in a capped scope; fails if the scope is not active."""
         jd, unit = self.job_dir(name), self.unit(name)
         limits = " ".join(self.profile.scope_limits(procs))
+        run, ctl = self.profile.systemd_run, self.profile.systemctl
         return f"""
 cat > {jd}/run.sh <<'ORAN_CAUSAL_EOF'
 {run_sh}
@@ -345,11 +351,11 @@ ORAN_CAUSAL_EOF
 chmod 0755 {jd}/run.sh
 rm -f {jd}/exit_code
 cd {jd}
-nohup setsid systemd-run --scope --quiet --unit {unit} {limits} nice -n 19 ionice -c3 {jd}/run.sh \\
+nohup setsid {run} --scope --quiet --unit {unit} {limits} nice -n 19 ionice -c3 {jd}/run.sh \\
   >> {jd}/run.out 2>&1 < /dev/null &
 sleep 5
-systemctl is-active {unit}.scope || (echo NOT-ACTIVE; tail -20 {jd}/run.out; exit 1)
-systemctl show {unit}.scope -p CPUQuotaPerSecUSec -p MemoryMax -p MemorySwapMax
+{ctl} is-active {unit}.scope || (echo NOT-ACTIVE; tail -20 {jd}/run.out; exit 1)
+{ctl} show {unit}.scope -p CPUQuotaPerSecUSec -p MemoryMax -p MemorySwapMax
 """
 
     def launch(
@@ -395,9 +401,9 @@ systemctl show {unit}.scope -p CPUQuotaPerSecUSec -p MemoryMax -p MemorySwapMax
 
     def status(self, name: str) -> str:
         """Scope state, exit code, shard line counts and log tails of a job."""
-        jd, unit = self.job_dir(name), self.unit(name)
+        jd, unit, ctl = self.job_dir(name), self.unit(name), self.profile.systemctl
         body = f"""
-echo "scope: $(systemctl is-active {unit}.scope 2>/dev/null || true)"
+echo "scope: $({ctl} is-active {unit}.scope 2>/dev/null || true)"
 [ -f {jd}/exit_code ] && echo "exit_code: $(cat {jd}/exit_code)" || echo "exit_code: none"
 for f in {jd}/out/*res_*.jsonl; do [ -f "$f" ] && echo "$(basename $f) $(wc -l < $f)"; done
 for f in {jd}/out/rc_*.txt; do [ -f "$f" ] && echo "$(basename $f .txt) exit $(cat $f)"; done
@@ -440,9 +446,9 @@ for f in {jd}/out/log_*.txt; do [ -f "$f" ] && echo "-- $(basename $f): $(tail -
 
     def stop(self, name: str) -> str:
         """Stops the job's own scope."""
-        unit = self.unit(name)
+        unit, ctl = self.unit(name), self.profile.systemctl
         return self.transport.script(
-            f"systemctl stop {unit}.scope && echo stopped {unit} || echo 'not active: {unit}'",
+            f"{ctl} stop {unit}.scope && echo stopped {unit} || echo 'not active: {unit}'",
             300,
             check=False,
         )

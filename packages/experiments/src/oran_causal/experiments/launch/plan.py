@@ -14,7 +14,9 @@ from oran_causal.experiments.launch.colab_session import Colab
 from oran_causal.experiments.launch.runner import Dirs
 from oran_causal.experiments.paths import WORKSPACE_ROOT
 
-type Platform = Literal["kaggle", "colab", "vps"]
+type Platform = Literal["kaggle", "colab", "vps", "instabox"]
+
+SSH_PLATFORMS: tuple[Platform, ...] = ("vps", "instabox")
 
 KAGGLE_OUT = "$JOB_OUT"
 COLAB_OUT = "xm_out"
@@ -25,6 +27,7 @@ PROFILES: dict[str, hosts.HostProfile] = {
     "kaggle": hosts.KAGGLE_CPU,
     "colab": hosts.COLAB_CPU,
     "vps": hosts.VPS_SHARED,
+    "instabox": hosts.INSTABOX,
 }
 
 
@@ -48,7 +51,7 @@ class LaunchRequest:
         wall_s: Per-process timeout; None means the platform default.
         selftest: Run the campaign tests after the install.
         gpu: GPU session with the CUDA torch build.
-        procs: VPS processes; None means the profile maximum.
+        procs: Processes on an SSH host; None means the profile maximum.
         torch: Install torch.
         root: The workspace.
     """
@@ -158,8 +161,9 @@ def make_plan(
     ids = list(req.part_ids) if req.part_ids is not None else list(range(req.parts))
     profile = PROFILES[req.platform]
     procs = profile.check_procs(req.procs or profile.max_procs)
-    if req.platform == "vps" and len(ids) > procs and not ev:
-        raise LaunchRefused(f"{len(ids)} parts > --procs {procs}: one process per part on the VPS")
+    ssh = req.platform in SSH_PLATFORMS
+    if ssh and len(ids) > procs and not ev:
+        raise LaunchRefused(f"{len(ids)} parts > --procs {procs}: one process per part over SSH")
     spec_rel = rel(req.spec, root)
     cost_rel = rel(req.cost_table, root) if req.cost_table else None
     out = session_out(req.platform, ev)
@@ -175,19 +179,19 @@ def make_plan(
         cost_rel,
         "eval_res" if ev else "res",
         registry=not ev,
-        gpu=req.gpu and req.platform != "vps",
+        gpu=req.gpu and not ssh,
         skip_from=skip,
         one_per_cpu=ev,
     )
     run = commands.cloud_cmd(parts)
-    if req.platform == "vps":
+    if ssh:
         cmd = run
     else:
         setup = commands.SetupPlan(out, req.gpu, req.torch, req.selftest)
         cmd = commands.setup_cmd(setup) + run
     extra = [spec_rel, *([cost_rel] if cost_rel else []), *expand_globs(req.paths, root)]
     extra += expand_globs(skip, root) if skip else []
-    extra += SELFTEST_EXTRA if req.selftest and req.platform != "vps" else ()
+    extra += SELFTEST_EXTRA if req.selftest and not ssh else ()
     frozen = bundle.frozen_protocol(spec, root) if ev else None
     return SessionPlan(
         req,
@@ -212,6 +216,7 @@ class Targets:
         colab_env: Colab job environment (account, scheduler).
         vps_host: The VPS.
         git: Git runner for the manifests.
+        instabox_host: The instabox host.
     """
 
     dirs: Dirs
@@ -219,6 +224,18 @@ class Targets:
     colab_env: colab.ColabEnv | None = None
     vps_host: vps.Vps | None = None
     git: GitRunner | None = None
+    instabox_host: vps.Vps | None = None
+
+    def ssh_host(self, platform: Platform) -> vps.Vps:
+        """The SSH host of `platform`.
+
+        Raises:
+            ValueError: If it is not configured.
+        """
+        host = self.instabox_host if platform == "instabox" else self.vps_host
+        if host is None:
+            raise ValueError(f"no {platform} host")
+        return host
 
 
 def kaggle_job(plan: SessionPlan) -> kaggle.KaggleJob:
@@ -258,11 +275,11 @@ def describe(plan: SessionPlan) -> list[str]:
     """The steps a launch would take, one line each (the dry run)."""
     r = plan.request
     steps = [f"bundle {r.name}: base + {len(plan.extra)} extra: {' '.join(plan.extra)}"]
-    if r.platform == "vps":
+    if r.platform in SSH_PLATFORMS:
         steps += [
-            f"vps push {r.name}",
-            f"vps venv {r.name}",
-            f"vps launch {r.name} --procs {plan.procs} "
+            f"{r.platform} push {r.name}",
+            f"{r.platform} venv {r.name}",
+            f"{r.platform} launch {r.name} --procs {plan.procs} "
             f"limits {' '.join(plan.profile.scope_limits(plan.procs))}",
         ]
     elif r.platform == "kaggle":
@@ -291,9 +308,7 @@ def execute(plan: SessionPlan, targets: Targets) -> dict[str, Any]:
             raise ValueError("no Colab environment")
         env = dataclasses.replace(targets.colab_env, colab=colab_for(plan, targets.colab_env.colab))
         return colab.launch_job(colab_job(plan), env, r.root)
-    if targets.vps_host is None:
-        raise ValueError("no VPS")
-    host = targets.vps_host
+    host = targets.ssh_host(r.platform)
     pushed = host.push(r.name, vps_request(plan), targets.dirs, targets.git)
     python = (r.root / ".python-version").read_text().strip()
     venv = host.venv(r.name, python)
