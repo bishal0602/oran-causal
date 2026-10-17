@@ -95,3 +95,9 @@ sets:
     files: 9
     bytes: 92480
     doi: null
+  - name: shap_rerun
+    description: "shap_gbdt rerun with TreeSHAP: Study 1-3 maps, bounds, referee evaluation and reports"
+    manifest: manifests/shap_rerun.sha256
+    files: 137
+    bytes: 12400164
+    doi: null
