@@ -40,6 +40,31 @@ def test_null_rejection_rates_use_only_the_60_episode_slices() -> None:
     assert pd.unestablished_null_rejection_rate(CELLS, SLICES) == pytest.approx(2 / 4)
 
 
+def test_null_rejection_bounds_resample_hypotheses_and_subsamples() -> None:
+    low, high = (
+        pd.null_rejection_bound(CELLS, SLICES, unestablished=False, upper=upper)
+        for upper in (False, True)
+    )
+    assert 0.0 <= low <= 3 / 6 <= high <= 1.0
+    assert pd.null_rejection_bound(CELLS, SLICES, unestablished=False, upper=True) == high
+    uniform = {k: _slice(0.9, 0.9, 0.9) for k in ("s60_0", "s60_1")}
+    assert pd.null_rejection_bound(CELLS, uniform, unestablished=True, upper=True) == 0.0
+
+
+def test_high_violation_ratios_keep_map_arms_far_above_accept_all() -> None:
+    arms = {
+        "MG:mild": {"V": 110.0},
+        "MG:bad": {"V": 480.0},
+        "MG:worse": {"V": 540.0},
+        "sub:ES": {"V": 600.0},
+    }
+    assert pd.high_violation_ratios(arms, {"V_AA": 100.0}, "MG:") == [4.8, 5.4]
+
+
+def test_nonzero_count_counts_the_directed_hypotheses() -> None:
+    assert pd.nonzero_count({"a": 1, "b": 0, "c": -1}) == 2
+
+
 def test_derived_functions_are_available_to_value_expressions() -> None:
     names = {"cells": CELLS, "slices": SLICES}
     assert pv.evaluate("null_hypothesis_count(cells)", names) == 3
