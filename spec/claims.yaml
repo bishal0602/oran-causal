@@ -437,6 +437,7 @@ claims:
     paper: [sec:res_validity, app:validity, tab:validity, sec:disc_deploy]
     spec: spec:met.validity
     depends_on: [DEF-PMRT-PVAL, DEF-FDR-WBY]
+    code: [oran_causal.analysis.posthoc.x8:summarize]
     tests: {min: 1, tier: t0}
     posthoc: true
 
@@ -545,6 +546,7 @@ claims:
     paper: [abstract, sec:res_map, app:maps_full, tab:maps_full]
     spec: spec:gt.label
     depends_on: [DEF-GT-LABEL, DEF-MET-MAP]
+    code: [oran_causal.analysis.posthoc.x11:run]
     tests: {min: 1, tier: t0}
     posthoc: true
 
@@ -554,6 +556,7 @@ claims:
     paper: [sec:res_map, app:maps_full, tab:maps_full]
     spec: spec:gt.exist
     depends_on: [DEF-GT-LABEL, DEF-MET-MAP]
+    code: [oran_causal.analysis.posthoc.x14:run]
     tests: {min: 1, tier: t0}
     posthoc: true
 
@@ -644,6 +647,7 @@ claims:
     paper: [sec:res_decision, app:x15, sec:disc_limits]
     spec: spec:pro.x15
     depends_on: [DEF-MET-DEC]
+    code: [oran_causal.analysis.posthoc.x15:run]
     tests: {min: 1, tier: t0}
     posthoc: true
 
@@ -653,6 +657,7 @@ claims:
     paper: [sec:slope, sec:disc_limits, app:gate]
     spec: spec:asm.centre
     depends_on: [DEF-SLOPE, DEF-GATE]
+    code: [oran_causal.analysis.posthoc.x16:analyse]
     tests: {min: 1, tier: t0}
     posthoc: true
 
@@ -662,6 +667,7 @@ claims:
     paper: [sec:disc_decision, sec:disc_deploy, tab:decision_full]
     spec: spec:met.decision
     depends_on: [DEF-MET-DEC]
+    code: [oran_causal.analysis.posthoc.x4:analyse]
     tests: {min: 1, tier: t0}
     posthoc: true
 
@@ -716,6 +722,7 @@ claims:
     paper: [sec:disc_deploy]
     spec: spec:asm.known
     depends_on: [DEF-ENV, DEF-ENV-ARMS]
+    code: [oran_causal.analysis.posthoc.x2x3:analyse]
     tests: {min: 1, tier: t0}
     posthoc: true
 
@@ -732,6 +739,7 @@ claims:
     statement: "Computation times per method and sample size are reported in Online Resource 1, Section S5.2."
     paper: [sec:disc_deploy]
     spec: spec:met.cost
+    code: [oran_causal.analysis.posthoc.x1_runtime:build]
     tests: {min: 0, tier: t0}
     posthoc: true
 

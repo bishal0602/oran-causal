@@ -33,3 +33,4 @@ Per-area tables, one row per migrated file or record set:
 | Studies 1-3 analysis (`oran_causal.analysis.system`) | [provenance/analysis_system.md](provenance/analysis_system.md) |
 | Studies 1-3 drivers, discovery tests and referee artifacts (`oran_causal.experiments.system`) | [provenance/experiments_system.md](provenance/experiments_system.md) |
 | Experiment B bridging study (`oran_causal.experiments.bridging`, `oran_causal.analysis.bridging`) | [provenance/bridging.md](provenance/bridging.md) |
+| Post hoc analyses X1-X16 (`oran_causal.analysis.posthoc`, `oran_causal.experiments.posthoc`) | [provenance/posthoc.md](provenance/posthoc.md) |
