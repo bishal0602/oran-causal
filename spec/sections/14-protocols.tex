@@ -1,17 +1,23 @@
 \section{Protocols}
 \label{spec:pro}
 
-For each dataset the analysis rules, seeds and pass criteria were fixed before the evaluation data were generated, and the analysis code, fixed at the same time, was run once; one amendment changed the fixed code.\claim{PRO-FROZEN}
+For each dataset the analysis rules, seeds and pass criteria were fixed before the evaluation data were generated. The analysis documents (\texttt{FrozenDoc}) are pinned by the SHA-256 of their LF-normalised bytes, the evaluation is released only by the campaign guard \texttt{eval\_authorised}, and the fixed analysis code was run once; one amendment changed the fixed code.\claim{PRO-FROZEN}
+
+\coderef{oran_causal.experiments.campaign.spec:eval_authorised, oran_causal.experiments.campaign.spec:expand, oran_causal.experiments.campaign.shard:assignment, oran_causal.experiments.system.common:FrozenDoc, oran_causal.experiments.system.study2:guard}
 
 \subsection{Seed blocks}
 \label{spec:pro.seeds}
 
-Seeds came from disjoint blocks of an internal registry.\claim{PRO-SEEDS}
+Seeds come from disjoint blocks of a registry that is checked for overlaps. The randomised-log study uses the block $188000$--$189999$: development $188000$--$188019$, evaluation $188100$--$188699$, placebo $188700$--$188739$ and knockout ground truth $188800$--$188839$ (units with $t_0 \ge 90$). Records follow the schema \texttt{e6p-disc-rec/1}.\claim{PRO-SEEDS}
+
+\coderef{oran_causal.experiments.campaign.spec:validate_spec, oran_causal.experiments.system.common:check_layout, oran_causal.experiments.system.common:SeedRegistry}
 
 \subsection{Tuning data}
 \label{spec:pro.tune}
 
-All methods and baseline thresholds were tuned on development episodes separate from the evaluation data, and the gate was calibrated on 40 development episodes.\claim{PRO-TUNE}
+All methods and baseline thresholds were tuned on development episodes separate from the evaluation data; the weight construction is trained on $480$ earlier episodes and $20$ development episodes, and the gate is calibrated on $40$ development episodes (all-accept calibration), which fixes $G_k$ of Section~\ref{spec:gate.tol}.\claim{PRO-TUNE}
+
+\coderef{oran_causal.experiments.campaign.aggregate:aggregate}
 
 \subsection{Post hoc status}
 \label{spec:pro.status}
@@ -26,9 +32,9 @@ The protocol criterion comparing PMRT's neighbour-relation F1 with Granger + BY 
 \subsection{Referee with the gate}
 \label{spec:pro.study3}
 
-With the gate, the PMRT referee met every guard but its outcomes were identical to never-sleep on every seed, so its gain over that rule was zero (R = 0.26, RLF ratio 0.96).\claim{EMP-S3-GATED}
+With the gate, the PMRT referee met every guard but its outcomes were identical to never-sleep on every seed, so its gain over that rule was zero ($R = 0.26$, RLF ratio 0.96).\claim{EMP-S3-GATED}
 
 \subsection{Replication of the ungated referee}
 \label{spec:pro.x15}
 
-On the gated dataset's seeds the ungated PMRT referee no longer outperformed never-sleep (-0.06 at an RLF ratio of 1.05); pooled over both seed sets its gain was 0.10 with an interval that barely excludes zero, at an RLF ratio of 1.18.\claim{EMP-X15}
+On the gated dataset's seeds the ungated PMRT referee no longer outperformed never-sleep ($-0.06$ at an RLF ratio of 1.05); pooled over both seed sets its gain was 0.10 with an interval that barely excludes zero, at an RLF ratio of 1.18.\claim{EMP-X15}

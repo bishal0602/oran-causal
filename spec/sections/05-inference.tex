@@ -4,21 +4,27 @@
 \subsection{Redraw p-values}
 \label{spec:inf.pval}
 
-\begin{equation*}
-p = \frac{1 + \#\{b : |z_b| \ge |z|\}}{B + 1}, \qquad
-p_d = \frac{1 + \#\{b : d\, o\, z_b \ge d\, o\, z\}}{B + 1}
-\end{equation*}
+Fix the observed units, their order, $\sgn_u$, the logged probability tables, the weights $w_u$ and $\sigma$. A \emph{redraw} $b = 1, \dots, B$ replaces the mode of every unit of the tested family by a fresh draw from its logged table (cumulative inversion of a new uniform); the modes of the other families are kept. It gives $z_b = S_b/\sigma$ with $S_b = \sum_u v_u^{(b)} w_u$. The generator for family index $i$ and split $s$ is seeded by $[\text{seed}, 6616, 3, i, s]$.
 
-The two-sided p-value is (1 + \#{b : |z\_b| $\ge$ |z|}) / (B + 1) with B = 9999 redraws of the family's modes, with one-sided values p\_d where o is set; the code counts |z\_b| $\ge$ |z| - 1e-9 (1 + |z|).\claim{DEF-PMRT-PVAL}
+\begin{definition}[Redraw p-values]
+With $B = 9999$ and $\epsilon = 10^{-9}(1 + \abs{z})$,
+\begin{equation*}
+p = \frac{1 + \#\{b : \abs{z_b} \ge \abs{z} - \epsilon\}}{B + 1}, \qquad
+p_d = \frac{1 + \#\{b : d\, o\, z_b \ge d\, o\, z - \epsilon\}}{B + 1},
+\end{equation*}
+where $d \in \{-1, +1\}$ is the direction (Section~\ref{spec:fdr.directions}) and $o$ the orientation (Section~\ref{spec:pmrt.weight}); $p_d$ is formed only where $o$ is set.
+\end{definition}
+
+\noindent The smallest attainable value is $1/(B+1) = 10^{-4}$. The p-value counts the observed statistic among $B+1$ values and is valid for every $B$ when these are exchangeable (Section~\ref{spec:thm.exact}).\claim{DEF-PMRT-PVAL}
+
+\coderef{oran_causal.core.pmrt.engine:crt}
 
 \subsection{Sequential stopping}
 \label{spec:inf.bc}
 
-Controlled environments: the p-value comes from at most $B = 9999$ redraws of the action's
-random part (two-sided, $|z|$) with Besag--Clifford sequential stopping: stop at 20 exceedances,
-$p = 20 / k$.
+The controlled environments use the Besag--Clifford rule. Redraws are generated one at a time up to $B = 9999$; with $h = 20$, stop at the first $k$ at which the number of exceedances reaches $h$ and set $p = h/k$ (two-sided, on $\abs{z}$). If the loop ends with a count below $h$, $p = (1 + \text{count})/(B + 1)$. The system studies use the fixed-$B$ rule above.
 
 \subsection{Comparison tolerance}
 \label{spec:inf.tolerance}
 
-The code counts $|z_b| \ge |z| - 10^{-9}(1 + |z|)$; the tolerance can only increase $p$.
+The count uses $\abs{z_b} \ge \abs{z} - 10^{-9}(1 + \abs{z})$ (and the one-sided analogue), so values that differ only by rounding count as ties. The tolerance can only increase the count and hence $p$; the test is never less conservative than the exact tie rule.

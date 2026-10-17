@@ -4,19 +4,42 @@
 \subsection{Weighted Benjamini--Yekutieli step-up}
 \label{spec:fdr.wby}
 
-The 60 hypotheses of one analysis are declared together by a weighted Benjamini-Yekutieli step-up at q = 0.05, with Roeder-Wasserman weights (floor 0.2, cap 5, mean 1) and one-sided p-values in the prior direction where |z\_prior| $\ge$ 3.\claim{DEF-FDR-WBY}
+Let $m = 60$, $q = 0.05$, $\cm = \sum_{i=1}^m 1/i$, $p_j$ the p-value of hypothesis $j$ and $\omega_j \ge 0$ its weight, $\sum_j \omega_j = m$ (checked within $10^{-6}$).
+
+\begin{definition}[Weighted step-up]
+Let $r_j = p_j/\omega_j$, set to $+\infty$ if $p_j$ is NaN or $\omega_j = 0$, with order statistics $r_{(1)} \le \dots \le r_{(m)}$ (stable sort). Let
+\begin{equation*}
+k^* = \max\Bigl\{k : r_{(k)} \le \frac{q\,k}{m\,\cm}\Bigr\}, \qquad k^* = 0 \text{ if the set is empty,}
+\end{equation*}
+and reject the $k^*$ hypotheses with the smallest $r_j$.
+\end{definition}
+
+\noindent With $\omega_j \equiv 1$ this is the Benjamini--Yekutieli step-up. For hypotheses with $d_j \neq 0$ the one-sided p-value $p_{d_j}$ replaces $p_j$, falling back to the two-sided value where it is NaN. The sign of a declared edge is $d_j$ if $d_j \neq 0$ and the sign of $z_j$ otherwise.\claim{DEF-FDR-WBY}
+
+\coderef{oran_causal.core.multiplicity:weighted_step_up, oran_causal.core.declare:prior_weights, oran_causal.core.declare:prior_directions, oran_causal.core.declare:declare}
 
 \subsection{Prior weights}
 \label{spec:fdr.weights}
 
-Roeder-Wasserman weights for weighted multiple testing.\claim{CIT-RW}
+The weights follow Roeder and Wasserman and come from the statistics $z_j^{\mathrm{prior}}$ of the $n_{\mathrm{prior}} = 480$ training episodes, fixed before the evaluation data exist. With $n_{\mathrm{target}}$ the number of target episodes,
+\begin{equation*}
+\xi_j = \sqrt{\max\bigl((z_j^{\mathrm{prior}})^2 - 1,\, 0\bigr)}\,\sqrt{n_{\mathrm{target}}/n_{\mathrm{prior}}}, \qquad
+w_j^{\mathrm{RW}} = \frac{m}{\alpha}\, \Phibar\Bigl(\frac{\xi_j}{2} + \frac{c}{\xi_j}\Bigr),
+\end{equation*}
+where $c$ is found by bisection so that $\sum_j w_j^{\mathrm{RW}} = m$, $\alpha = q\,k_0/\cm$, and $k_0$ is the fixed point of $k = \max\bigl(1, \sum_j \Phi(\xi_j - z_{1-a})\bigr)$ with $a = \min(q k/(m \cm), 0.5)$. The weights are capped by a mean-preserving map at $(\mathrm{cap} - \mathrm{floor})/(1 - \mathrm{floor})$ and shrunk towards one,
+\begin{equation*}
+\omega_j = \mathrm{floor} + (1 - \mathrm{floor})\, w_j^{\mathrm{RW}}, \qquad \mathrm{floor} = 0.2,\ \mathrm{cap} = 5,
+\end{equation*}
+so $\omega_j \in [0.2, 5]$ and $\sum_j \omega_j = m$.\claim{CIT-RW}
+
+\coderef{oran_causal.core.multiplicity:rw_weights}
 
 \subsection{Prior directions}
 \label{spec:fdr.directions}
 
-Direction $d_j$: the sign of $z$ on the training episodes where $|z| \ge 3$.
+$d_j = \sgn(z_j^{\mathrm{prior}})$ if $\abs{z_j^{\mathrm{prior}}} \ge 3$ and $d_j = 0$ otherwise. A hypothesis with $d_j = 0$ is tested two-sided.
 
 \subsection{Untested hypotheses}
 \label{spec:fdr.untested}
 
-Untested hypotheses count in $m$ and are never declared, which is conservative.
+Untested hypotheses (Section~\ref{spec:pmrt.support}) count in $m$ and $\cm$ and are never declared. This is conservative: the thresholds $q k/(m \cm)$ are those of $m = 60$ hypotheses, not of the tested ones only.

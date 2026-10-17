@@ -1,15 +1,21 @@
 \section{Controlled environments}
 \label{spec:env}
 
-The controlled environments are five mechanisms with known causal graphs (linear graph, rare regime, delayed harm, latent confounding, composed), logged by independent redraws, a dithered setpoint, a confounded policy or unlogged confounding, at n from 500 to 24,000.\claim{DEF-ENV}
+A controlled environment has a known causal graph over $d$ variables and a logging design that chooses the action. The worlds are E1 linear graph, E2 rare regime, E3 delayed harm, E4 latent confounding (confounding strength $\lambda \in \{0, 0.5, 1, 1.5\}$) and E5 composed. The \emph{regimes} are R1 independent redraws of the action, R2 a dithered setpoint, R3 a logged confounded policy (E4 only) and R4 unlogged confounding (E4 only). Under R2 the setpoint takes $20$ values within $\pm 25\,\%$ of the range around the midpoint, each held for $n/20$ rows, plus an independent dither of $\pm 10\,\%$ of the range. The sample size runs from $n = 500$ to $24\,000$. The ground truth is the edge set of the graph.\claim{DEF-ENV}
+
+\coderef{oran_causal.sim.controlled.datasets.generate:generate_dataset, oran_causal.sim.controlled.datasets.truth:truth_for, oran_causal.sim.controlled.base:ControlledEnv, oran_causal.experiments.campaign.estimand:run}
 
 \subsection{Arms}
 \label{spec:env.arms}
 
-In the controlled environments, the design-based tests are PMRT-GBM and PMRT-Lin with plain BY at q = 0.05 and without the Huber clip; design-adjusted and design-blind tests are compared against them.\claim{DEF-ENV-ARMS}
+PMRT-Lin and PMRT-GBM use the PMRT core with the linear and gradient-boosted statistic respectively (the assignment score of Section~\ref{spec:pmrt.score} against a fitted predictable outcome), the Besag--Clifford p-value of Section~\ref{spec:inf.bc}, plain Benjamini--Yekutieli at $q = 0.05$ ($\omega_j \equiv 1$, no prior directions) and no Huber clip. Design-adjusted and design-blind tests (correlation, partial correlation, RCoT, Granger, \dots) are compared against them with the same step-up.\claim{DEF-ENV-ARMS}
+
+\coderef{oran_causal.core.pmrt.rows:PmrtCore, oran_causal.methods.registry:resolve}
 
 \subsection{Validity}
 \label{spec:env.validity}
+
+A condition is classified from the null-edge rate $\hat\alpha$ (rate of declared edges among true-null edges) and its $95\,\%$ bootstrap interval ($2000$ resamples by seed): \textsc{invalid} if the lower end exceeds $0.05$; \textsc{valid} if the upper end is at most $0.075$; \textsc{inconclusive} otherwise. The claims are C1 (design-blind tests lose validity under dither), C2a, C2b (design-based and design-adjusted tests stay valid) and C3 (allowance of invalid conditions).
 
 Tests that ignored the design were close to their nominal rate under independent logging but lost it under a dithered setpoint, with null-edge rates of 0.33 to 0.94.\claim{EMP-S4-C1}
 

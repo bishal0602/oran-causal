@@ -1,23 +1,68 @@
 \section{Notation}
 \label{spec:notation}
 
-\begin{tabular}{@{}ll@{}}
+Sections~\ref{spec:sys} to~\ref{spec:gt} define the objects and the exact computations; Section~\ref{spec:met} defines the scores; Sections~\ref{spec:env} to~\ref{spec:pro} cover the controlled environments, the assumptions, the theorems and the protocols. Statements tagged \verb|\claim| are registered in \verb|spec/claims.yaml|; each is checked against the code symbol listed there.
+
+\subsection*{Symbols}
+
+\begin{tabular}{@{}p{0.34\textwidth}p{0.62\textwidth}@{}}
 \toprule
 Symbol & Meaning \\
 \midrule
-$W_u$, $\pi_u$, $\sgn_u$ & mode, propensity and request direction of unit $u$ \\
-$L(\accept) = 1$, $L(\reject) = 0$ & mode indicator \\
+$u$, $c_u$, $x_u$, $t_u$ & decision unit; its cell, xApp and opening second \\
+$W_u$, $\pi_u$, $\sgn_u$ & mode, propensity (probability of the logged mode) and request direction of unit $u$ \\
+$L(\accept) = 1$, $L(\reject) = 0$ & dose of a mode \\
+$\xi_u$, $U_\xi$ & key of unit $u$ and the uniform draw behind its mode \\
+$f$, $r$, $k$, $\hyp$ & parameter family, relation, KPI; hypothesis ($m = 60$) \\
+$y_u$, $e_u$ & outcome of unit $u$ for $(r, k)$; outcome minus its predictable centre \\
 $v_u$, $w_u$ & assignment score and weight of unit $u$ \\
 $S$, $\sigma^2$, $z$ & statistic, design variance, normalised statistic \\
 $B$, $z_b$, $p$, $p_d$, $o$ & redraws, redrawn statistic, two-sided and one-sided p-values, orientation \\
-$\Hnull(f, r, k)$, $\Hset$ & sharp null of a hypothesis; set of true sharp nulls \\
-$\Gpast{u-1}$, $\Fpast{u-1}$ & history before unit $u$ draws its mode; natural history \\
+$\Hnull\hyp$, $\Hset$ & sharp null of a hypothesis; set of true sharp nulls \\
+$\Gpast{u-1}$, $\Fpast{u-1}$ & history before unit $u$ draws its mode (family-$f$ draws only); natural history \\
 $\taupi$, $\tauAA$ & policy-averaged assignment effect; knockout effect \\
-$m$, $q$, $\omega_j$, $d_j$, $\cm$ & hypotheses, FDR level, weights, prior directions, $\sum_{i=1}^m 1/i$ \\
+$q$, $\omega_j$, $d_j$, $\cm$ & FDR level, declaration weights, prior directions, $\sum_{i=1}^m 1/i$ \\
 $\pimin$ & lower bound of the propensities \\
-$\hat\beta$, $e_u$ & design slope, centred outcome \\
+$\hat\beta$, $\mathrm{se}$ & design slope and its standard error \\
 $\varepsilon(f, d, k)$, $G_k$, $N(f, d)$ & gate tolerance, per-episode guard total, units per class \\
-$\delta_k$ & materiality threshold of the ground truth \\
+$\delta_k$ & materiality threshold of the knockout ground truth \\
 $R$, $V$, $\VAA$, $\Vref$ & recovery, protected-slice violations, accept-all and reference values \\
+\bottomrule
+\end{tabular}
+
+\subsection*{Conventions}
+
+\begin{itemize}
+\item Units of one family are in \emph{information order}: episode, then opening second, then cell index. ``Earlier'' and ``past'' refer to this order; a statement about $u$ that uses only earlier units is $\Gpast{u-1}$-measurable.
+\item A p-value that is NaN marks an untested hypothesis. It counts in $m$ and is never rejected (treated as $+\infty$).
+\item Counting comparisons of a redrawn statistic with the observed one use the relative tolerance $10^{-9}(1 + |\text{observed}|)$ in the direction that can only increase the count.
+\item $\sgn(0) = 0$; the request direction $\sgn_u$ maps a zero step to $+1$.
+\end{itemize}
+
+\subsection*{Constants}
+
+\begin{tabular}{@{}p{0.3\textwidth}p{0.18\textwidth}p{0.46\textwidth}@{}}
+\toprule
+Constant & Value & Section \\
+\midrule
+unit hold $T$ & 60 s & \ref{spec:sys.unit} \\
+outcome windows $H$, $H_{\mathrm{pre}}$ & 90 s, 90 s & \ref{spec:sys.hyp} \\
+weight bins & $[0,30)$, $[30,60)$, $[60,90)$, $[90,150)$ s & \ref{spec:pmrt.weight} \\
+receiver slots (own, nbr, far) & 1, 4, 2 & \ref{spec:pmrt.weight} \\
+centre shrinkage $n_0$, $n_1$ & 20, 50 & \ref{spec:pmrt.weight} \\
+Huber clip $c$ & 2.5 predicted sd & \ref{spec:pmrt.weight} \\
+orientation threshold & $|z_{\mathrm{train}}| \ge 2$ & \ref{spec:pmrt.weight} \\
+support & 30 units, 5 accepted, 5 rejected, 3 episodes & \ref{spec:pmrt.support} \\
+redraws $B$ & 9999 & \ref{spec:inf.pval} \\
+Besag--Clifford count $h$ & 20 & \ref{spec:inf.bc} \\
+FDR level $q$ & 0.05 & \ref{spec:fdr.wby} \\
+weight floor, cap, prior size & 0.2, 5, 480 episodes & \ref{spec:fdr.weights} \\
+direction threshold & $|z_{\mathrm{prior}}| \ge 3$ & \ref{spec:fdr.directions} \\
+referee pressure threshold $\theta$ & 0.05 & \ref{spec:ref.rules} \\
+gate level, target ratio $\rho$ & 90 \% ($1.2816$), 1.05 & \ref{spec:gate} \\
+GT bootstrap draws, interval & 4000, $[2.5, 97.5]$ \% & \ref{spec:gt.label} \\
+GT relative threshold, floor ($\sfn{pv}$) & 0.05, 0.5 & \ref{spec:gt.label} \\
+decision bootstrap draws & 10\,000 & \ref{spec:met.decision} \\
+energy retention, guard ratio & 0.90, 1.10 & \ref{spec:met.eligible} \\
 \bottomrule
 \end{tabular}

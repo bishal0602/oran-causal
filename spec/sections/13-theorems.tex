@@ -1,63 +1,120 @@
 \section{Theorems}
 \label{spec:thm}
 
+Each statement lists the hypotheses under which it is proved. \emph{Lean} names a declaration in \texttt{proofs/OranCausal}; where none is given the statement is a pen-and-paper argument in the paper.
+
 \subsection{Fresh draws}
 \label{spec:thm.fresh}
 
-If xi\_u and pi\_u are G\_{u-1}-measurable and xi\_u differs from the earlier keys, then U\_{xi\_u} is Uniform(0, 1) and independent of G\_{u-1}, so Pr(W\_u = accept | G\_{u-1}) = pi\_u (Lemma 1).\claim{THM-FRESH}
+\begin{lemma}[Fresh draw]
+Let $(U_\xi)_{\xi \in K}$, $K$ countable, be jointly independent uniforms on $(0,1)$ and independent of $\Gpast{0}$. Let $\xi_u$ and $\pi_u \in [0,1]$ be $\Gpast{u-1}$-measurable, with $\xi_u$ different from the earlier keys $\xi_1, \dots, \xi_{u-1}$, and let the keys be recursively predictable (each $\xi_i$ is determined by $\Gpast{i-1}$). Then $U_{\xi_u}$ is uniform on $(0,1)$ and independent of $\Gpast{u-1}$, hence $\Prob(W_u = \accept \mid \Gpast{u-1}) = \pi_u$ for $W_u = \accept \iff U_{\xi_u} < \pi_u$.
+\end{lemma}
+
+\noindent Only the current key needs to be fresh; later keys may repeat it.\claim{THM-FRESH}
+
+\lean{OranCausal.Fresh.fresh_draw}
 
 \subsection{Asymptotic validity of PMRT}
 \label{spec:thm.pmrt}
 
-Under (A1) to (A3), S is a martingale with predictable quadratic variation sigma\^{}2; with (A4), z converges to N(0, 1), the redraw distribution converges uniformly to Phi in probability, and limsup Pr(p $\le$ t) $\le$ floor(t (B + 1)) / (B + 1) $\le$ t (Proposition 1).\claim{THM-PMRT-ASY}
+\begin{proposition}[Asymptotic validity]
+Under (A1)--(A3), $(S_j)$ with $S_j = \sum_{u \le j} v_u w_u$ is a martingale with respect to $(\Gpast{j})$ with predictable quadratic variation $\sigma^2$. Under (A1)--(A4), $z = S/\sigma \Rightarrow \Normal(0,1)$, the conditional distribution of $z_b$ given the data converges to $\Phi$ uniformly in probability, and
+\begin{equation*}
+\limsup_{n \to \infty} \Prob(p \le t) \le \frac{\floor{t\,(B + 1)}}{B + 1} \le t \qquad \text{for every } t \in [0,1].
+\end{equation*}
+\end{proposition}
+
+\noindent The martingale property needs $w_u$ square integrable (Lean \texttt{Asymptotic.pmrt\_martingale}, a draft not yet part of the imported library); the central limit theorems for the statistic and its redraws rely on (A4) with $\sigma^2/s_n^2 \to \eta^2 \in (0,\infty)$ and are not formalised. The conclusion is not exact for finite $n$; see Section~\ref{spec:thm.exact} for the case with fixed design.\claim{THM-PMRT-ASY}
+
+\coderef{oran_causal.core.pmrt.engine:crt}
 
 The martingale central limit theorem with a random limiting variance and its self-normalised form.\claim{CIT-HH}
 
-The Lindeberg-Feller theorem and Polya's theorem on uniform convergence of distribution functions.\claim{CIT-DUR}
+The Lindeberg--Feller theorem and P\'olya's theorem on uniform convergence of distribution functions.\claim{CIT-DUR}
 
 \subsection{Exact case}
 \label{spec:thm.exact}
 
-If, in addition to (A1) and (A2), the realised units, their order, sgn\_u, pi\_u and w\_u are all G\_0-measurable, then Pr(p $\le$ t | G\_0) $\le$ t for every t, n and B, and likewise for p\_d (Lemma 2).\claim{THM-EXACT}
+\begin{lemma}[Exact validity]
+Assume (A1) and (A2) and that the realised units, their order, $\sgn_u$, $\pi_u$ and $w_u$ are $\Gpast{0}$-measurable. Let the redraws use fresh keys. Then for every $t \in [0,1]$, every number of units $n$ and every number of redraws $B \ge 0$ (including ties, zero variance and an empty unit set),
+\begin{equation*}
+\Prob(p \le t \mid \Gpast{0}) \le t,
+\end{equation*}
+and likewise for $p_d$ with a direction $d$ fixed and an orientation $o$ that is $\Gpast{0}$-measurable.
+\end{lemma}
 
-The Monte Carlo p-value that counts ties against the observed statistic is valid for every B when the B + 1 values are exchangeable.\claim{CIT-PS}
+\noindent The observed statistic and the $B$ redrawn statistics are exchangeable given $\Gpast{0}$ under $\Hnull$, and the plus-one p-value of an exchangeable vector is super-uniform.\claim{THM-EXACT}
+
+\lean{OranCausal.Exact.fixed_design_exact, OranCausal.Exact.exact_redraw_pvalues}
+\coderef{oran_causal.core.pmrt.engine:crt}
+
+The Monte Carlo p-value that counts ties against the observed statistic is valid for every $B$ when the $B + 1$ values are exchangeable.\claim{CIT-PS}
 
 \subsection{Re-proposal counterexample}
 \label{spec:thm.counterex}
 
-In a two-unit design where a rejected unit is proposed again, Pr(p\_{+1} $\le$ 1/2) = 3/4 > 1/2, so re-proposal alone breaks finite-sample validity (Example 1).\claim{THM-COUNTEREX}
+\begin{proposition}[Re-proposal breaks finite-sample validity]
+In a two-unit design in which a rejected unit is proposed again, the exact tail probability of the redraw distribution gives $\Prob(p \le 1/2) = 3/4 > 1/2$ (Lean \texttt{exact\_tail\_rejection}). For the finite-$B$ plus-one p-value $p_{+1}$, the limit as $B \to \infty$ is $\Prob(p_{+1} \le 1/2) \to 3/8$ (\texttt{finite\_redraw\_rejection\_limit}), with exactly $3/8$ for odd $B$ and $(3/8)\bigl(1 - \binom{2n}{n}/4^n\bigr)$ for $B = 2n$ (\texttt{finite\_redraw\_rejection\_formula}), and $3/8$ for $B = 1$ (\texttt{one\_redraw\_rejection}).
+\end{proposition}
 
-\subsection{Weighted BY under arbitrary dependence (Lean)}
+\noindent Thus re-proposal alone breaks finite-sample validity of the exact-tail test; the tail value $3/4$ refers to that test, not to the finite-$B$ p-value.\claim{THM-COUNTEREX}
+
+\lean{OranCausal.Counterexample.exact_tail_rejection, OranCausal.Counterexample.finite_redraw_rejection_limit, OranCausal.Counterexample.finite_redraw_rejection_formula, OranCausal.Counterexample.one_redraw_rejection}
+
+\subsection{Weighted BY under arbitrary dependence}
 \label{spec:thm.byfin}
 
-Let $c_m = \sum_{i=1}^m 1/i$ and $t_{j,i} = q\, \omega_j\, i / (m c_m)$ for $i = 1, \dots, m$, with
-$t_{j,0} = 0$. With $F_j(t) = \Pr(p_j \le t)$, whatever the joint law of the p-values,
+Let $\cm = \sum_{i=1}^m 1/i$ and $t_{j,i} = q\,\omega_j\, i/(m\,\cm)$, $t_{j,0} = 0$.
+
+\begin{theorem}[Finite weighted BY]
+Let $m \ge 1$, $q \ge 0$ and $\omega_j \ge 0$ deterministic, the p-values $p_j$ and the rejection set $\mathcal{S}$ measurable, and suppose every $j \in \mathcal{S}$ satisfies $p_j \le t_{j,\abs{\mathcal{S}}}$. Let $\rho = \abs{\mathcal{S}}$. For a null $j$ with $F_j(t) = \Prob(p_j \le t)$ and any joint law,
 \begin{equation*}
-\mathbb{E}\Bigl[\frac{\mathbf{1}\{p_j \le t_{j,\rho}\}}{\max(\rho, 1)}\Bigr]
+\Ex\Bigl[\frac{\Ind\{p_j \le t_{j,\rho}\}}{\max(\rho, 1)}\Bigr]
 \le \sum_{i=1}^{m-1} F_j(t_{j,i}) \Bigl(\frac{1}{i} - \frac{1}{i+1}\Bigr) + \frac{F_j(t_{j,m})}{m}.
 \end{equation*}
+Hence if every null p-value has $F_j(t_{j,i}) \le t_{j,i} + \delta$ for $i = 1, \dots, m$,
+\begin{equation*}
+\FDR \le \frac{q}{m}\sum_{j \in \Hset} \omega_j + \abs{\Hset}\,\delta .
+\end{equation*}
+\end{theorem}
 
-For any rejection set S with p\_j $\le$ t\_j(|S|) for every j in S, where t\_j(k) = q w\_j k / (m c\_m), the false discovery rate is at most (q/m) sum\_{j in H0} w\_j + |H0| delta whenever every null p-value satisfies Pr(p\_j $\le$ t\_j(i)) $\le$ t\_j(i) + delta for i = 1..m, whatever the dependence between the p-values.\claim{THM-BY-FIN}
+\noindent No independence and no $\sum_j \omega_j = m$ is needed for the displayed bound; $\sum_j \omega_j = m$ gives $\FDR \le q$ when $\delta = 0$.\claim{THM-BY-FIN}
 
-The Benjamini-Yekutieli step-up controls the FDR under arbitrary dependence.\claim{CIT-BY}
+\lean{OranCausal.StepUp.fdr_le_of_selfConsistent}
+\coderef{oran_causal.core.multiplicity:weighted_step_up}
 
-The weighted step-up with a reshaping function controls the FDR at q sum\_{H0} w\_j / m under arbitrary dependence when the null p-values are super-uniform.\claim{CIT-BR}
+The Benjamini--Yekutieli step-up controls the FDR under arbitrary dependence.\claim{CIT-BY}
+
+The weighted step-up with a reshaping function controls the FDR at $q \sum_{\Hset} \omega_j / m$ under arbitrary dependence when the null p-values are super-uniform.\claim{CIT-BR}
 
 \subsection{Asymptotic false discovery rate}
 \label{spec:thm.fdr}
 
+\begin{corollary}[Asymptotic FDR]
+If (A1)--(A4) hold for every true sharp null, and the weights and directions are fixed from independent data, then
 \begin{equation*}
-\limsup_{n \to \infty} \mathrm{FDR} \le \frac{q}{m} \sum_{j \in \mathcal{H}_0} \omega_j \le q
+\limsup_{n \to \infty} \FDR \le \frac{q}{m} \sum_{j \in \Hset} \omega_j \le q
 \end{equation*}
+whatever the dependence between the p-values.
+\end{corollary}
 
-If (A1) to (A4) hold for every true sharp null and the weights and directions are fixed from independent data, then limsup FDR $\le$ (q/m) sum\_{j in H0} omega\_j $\le$ q whatever the dependence between the p-values (Corollary 1).\claim{THM-FDR-ASY}
+\noindent The step from the finite bound requires that the null p-values satisfy $\limsup_n \sup_t \bigl(F_j(t) - t\bigr) \le 0$ \emph{uniformly in $t$} (so $\delta_n \to 0$ in the theorem above), and weights $\omega_j \ge 0$ with $\sum_j \omega_j = m$ for the bound $q$. This is not formalised.\claim{THM-FDR-ASY}
+
+\coderef{oran_causal.core.multiplicity:weighted_step_up}
 
 \subsection{Design slope}
 \label{spec:thm.slope}
 
-Under (A1) with the natural history, bounded outcomes and a predictable centre, beta\_hat converges to the pi\_u (1 - pi\_u)-weighted average of sgn\_u tau\_u\^{}pi; at pi\_u = 0.5 it is the Horvitz-Thompson estimator as an identity (Lemma 3).\claim{THM-SLOPE}
+\begin{theorem}[Design slope]
+Assume (A1) with natural history, outcomes bounded by $M$, a predictable centre $\hat m_u$ bounded by $C$, overlap $\pi_u \in [\eta, 1-\eta]$, \emph{episode-level} adaptedness (the increments of an episode $e$ are measurable between $\Fpast{e}$ and $\Fpast{e+1}$), a unit count $N_n \ge \rho n$ with probability tending to one, and the bounded-martingale weak law as a hypothesis. Then $\hat\beta$ converges in probability to the $\pi_u(1-\pi_u)$-weighted average of $\sgn_u \tau_u^\pi$.
+\end{theorem}
+
+\noindent Boundedness of the centre is necessary (Lean \texttt{unbounded\_centre\_counterexample}). At $\pi_u = 1/2$ the slope is the Horvitz--Thompson estimator as an identity (\texttt{half\_propensity\_identity}). The paper argues at the unit level; the proof is at the episode level.\claim{THM-SLOPE}
+
+\lean{OranCausal.Slope.EpisodeDesign.corrected_convergence, OranCausal.Slope.unbounded_centre_counterexample, OranCausal.Slope.half_propensity_identity}
+\coderef{oran_causal.core.gate:design_slope_se}
 
 \subsection{Scope of the guarantees}
 \label{spec:thm.scope}
 
-The FDR bound covers the declared edge, not its sign, relation or magnitude; when f affects its own cells, the neighbour and far hypotheses of f are false and declaring them is correct.\claim{THM-SCOPE}
+The FDR bound covers the declared edge $\hyp$ (that $\Hnull\hyp$ is false), not its sign, relation or magnitude. When $f$ affects its own cells the neighbour and far hypotheses of $f$ are false in the sense of the sharp null and declaring them is correct, even if the effect is only propagated. No proof is given beyond this reading of the definitions.\claim{THM-SCOPE}

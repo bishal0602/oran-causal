@@ -4,19 +4,43 @@
 \subsection{Policy-averaged assignment effect}
 \label{spec:est.taupi}
 
+For a hypothesis $\hyp$ and a unit $u$ of family $f$, the unit-level assignment effect is
 \begin{equation*}
-\tau_u^{\pi} = \mathbb{E}_{\pi}\bigl[y_u \mid \mathcal{F}_{u-1}, W_u = \text{accept}\bigr]
-             - \mathbb{E}_{\pi}\bigl[y_u \mid \mathcal{F}_{u-1}, W_u = \text{reject}\bigr]
+\tau_u^{\pi} = \Ex_{\pi}\bigl[y_u \mid \Fpast{u-1}, W_u = \accept\bigr]
+             - \Ex_{\pi}\bigl[y_u \mid \Fpast{u-1}, W_u = \reject\bigr],
 \end{equation*}
+where $\Fpast{u-1}$ is the natural history (the delivered state before $u$ opens) and $\Ex_\pi$ averages over the later draws of the logging policy.
 
-The policy-averaged assignment effect tau\_pi of hypothesis (f, r, k) is the limit of the mean of sgn\_u tau\_u\^{}pi over the units of f as the number of episodes grows (Definition 1).\claim{DEF-EST-TAUPI}
+\begin{definition}[Policy-averaged assignment effect]
+With $\mathcal{U}_n(f)$ the units of family $f$ in $n$ episodes,
+\begin{equation*}
+\taupi\hyp = \lim_{n \to \infty} \frac{1}{\abs{\mathcal{U}_n(f)}} \sum_{u \in \mathcal{U}_n(f)} \sgn_u\, \tau_u^{\pi}
+\end{equation*}
+when the limit exists. The sign $\sgn_u$ orients every unit towards the direction of its request, so raising and lowering requests do not cancel.
+\end{definition}
+
+\noindent $\taupi$ is not a property of the plant alone: it depends on the logging policy through the units that follow $u$. It is estimated by the design slope (Section~\ref{spec:ref.slope}).\claim{DEF-EST-TAUPI}
 
 \subsection{Sharp null}
 \label{spec:est.sharp}
 
-The sharp null H0(f, r, k) states that the outcome a unit of f would have at any cell and opening time is the same under any assignment of f's modes; it is stated over keys, not realised units.\claim{DEF-EST-H0}
+A \emph{key} is $\xi = (\text{seed}, c, x, \lfloor t \rfloor)$ (Section~\ref{spec:sys.unit}); every unit that could open has a key, whether or not it opens in the realised run.
+
+\begin{definition}[Sharp null]
+$\Hnull\hyp$: for every key $\xi$ of family $f$, the outcome $Y_\xi^{r,k}$ of a unit with key $\xi$ is the same under every assignment of the modes of the units of $f$. Equivalently, $Y_\xi^{r,k}$ is $\Gpast{0}$-measurable, where $\Gpast{0}$ holds the plant, the arrival tape and the draws of the other families but none of the family-$f$ draws.
+\end{definition}
+
+\noindent The statement is over keys, not realised units: a redraw of the modes changes which units open and when, and the hypothesis must say what the outcome of a unit that now opens would have been. $\Hset$ is the set of hypotheses whose sharp null holds. $\Hnull\hyp$ implies $\taupi\hyp = 0$ and is stronger.\claim{DEF-EST-H0}
 
 \subsection{Knockout effect}
 \label{spec:est.tauaa}
 
-The knockout effect tau\_AA is the mean of sgn\_u tau\_u\^{}AA, the accept-minus-reject difference of the 90 s post-window KPI sum in rollouts from the copied state with every other unit accepted (Definition 2).\claim{DEF-EST-TAUAA}
+For a unit $u = (c, x, t_0)$, copy the episode state at second $t_0$ and run two rollouts of $90$ s, \emph{hold-accept} and \emph{hold-reject}. In both, every unit other than $u$ is accepted; the requests of $u$'s pair $(c, x)$ are accepted or rejected for $T = 60$ s, then accepted. The contrasts of $3$ reseeds $k = 1, 2, 3$ of the stochastic part of the plant are averaged. Let $\Delta_u^{r,k}$ be the accept-minus-reject difference of the post-window sums $K^{k}_{\mathcal{C}_r(c)}(t_0, t_0 + 90)$.
+
+\begin{definition}[Knockout effect]
+$\tauAA\hyp$ is the mean of $\sgn_u \Delta_u^{r,k}$ over the knockout units of family $f$. The units have $t_0 \ge 90$ and are sampled with rate $1.0$ for carrier, sleep and ptx and $0.3$ for prot\_min.
+\end{definition}
+
+\noindent $\tauAA$ is a ground-truth quantity of the simulator, computed by intervention; it differs from $\taupi$ in that the other units are accept-all rather than following the logging policy. The code returns the accept-minus-reject contrast per unit.\claim{DEF-EST-TAUAA}
+
+\coderef{oran_causal.sim.system.decision.gt:unit_delta}

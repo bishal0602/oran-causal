@@ -1,7 +1,20 @@
 \section{Edge-certification gate}
 \label{spec:gate}
 
-The edge-certification gate lets the referee reject a class only when every undeclared guard edge of the class has a one-sided 90 \% upper bound of h beta at most the tolerance epsilon(f, d, k) = 0.05 G\_k / (3 max{N(f, d), 1}).\claim{DEF-GATE}
+A \emph{class} is a pair $(f, d)$ of a family and a request direction, with $N(f, d)$ units. The guard KPIs are $k \in \{\sfn{v}, \sfn{rlf}\}$ over the three relations, so a class has $6$ \emph{guard edges}.
+
+\begin{definition}[Upper bound and certification]
+With $h = -d$, the one-sided $90\,\%$ upper bound of the harm $h\,\beta$ of an edge is
+\begin{equation*}
+\mathrm{UB} = h\,\hat\beta + 1.2816\,\mathrm{se} \quad (\text{slope}), \qquad
+\mathrm{UB} = \max(h\,\mathrm{lo},\, h\,\mathrm{hi}) \quad (\text{interval}),
+\end{equation*}
+and $\mathrm{UB} = +\infty$ if an input is missing. A guard edge is \emph{resolved} if the map declares it or $\mathrm{UB} \le \varepsilon(f, d, k)$. A class is \emph{certified} iff none of its guard edges is unresolved. Only classes that the referee would reject are checked.
+\end{definition}
+
+\noindent The gate lets the referee reject a class only when every undeclared guard edge of the class has $\mathrm{UB} \le \varepsilon(f, d, k)$.\claim{DEF-GATE}
+
+\coderef{oran_causal.core.gate:tau_table, oran_causal.core.gate:bound_ub, oran_causal.core.gate:classify_edge, oran_causal.core.gate:certify}
 
 The gate certified only pico-sleep rejections (899 units) and withheld transmit-power-up rejections (2,579 units) because their two unresolved guard edges are true with harm above tolerance; the deciding bound was 0.148 against a tolerance of 0.036.\claim{EMP-S3-GATEDIAG}
 
@@ -9,10 +22,18 @@ The gate certified only pico-sleep rejections (899 units) and withheld transmit-
 \label{spec:gate.tol}
 
 \begin{equation*}
-\varepsilon(f, d, k) = \frac{0.05\, G_k}{3\, \max\{N(f, d), 1\}}
+\varepsilon(f, d, k) = \frac{(\rho - 1)\, G_k}{\max\{N(f, d), 1\}\,\abs{\mathcal{R}}} = \frac{0.05\, G_k}{3\,\max\{N(f, d), 1\}},
 \end{equation*}
+with $\rho = 1.05$ the target guard ratio, $\abs{\mathcal{R}} = 3$ relations, and $G_k$ the per-episode guard total under accept-all measured on $40$ development episodes ($G_{\sfn{v}} = 19\,953.65$, $G_{\sfn{rlf}} = 35.025$).
 
 \subsection{First-order budget}
 \label{spec:gate.budget}
 
-If every unit of a class were rejected and each rejection moved a guard KPI by at most epsilon on each of the three relations, the guard ratio would move by at most 0.05.\claim{THM-GATE-BUDGET}
+\begin{theorem}[Gate budget]
+Let a class have $N$ units. Assume (a) the effect on a guard KPI of rejecting a set of units is the sum of the effects of rejecting each (first-order additivity); (b) the same guard total $G > 0$ in every held-out episode; (c) the mean over held-out episodes of the number of rejected units of the class is at most $\max(N, 1)$. If rejecting a unit moves the guard KPI by at most $\varepsilon(f,d,k)$ on each of the three relations, the guard ratio moves by at most $\rho - 1 = 0.05$.
+\end{theorem}
+
+\noindent Condition (c) concerns the \emph{mean} count, not the count in each held-out episode; without it the conclusion fails, e.g.\ $G = 100$, $N = 1$ and a count of $2$ move the ratio by $0.10 > 0.05$. The result is first-order and does not cover interactions between classes.\claim{THM-GATE-BUDGET}
+
+\lean{OranCausal.GateBudget.budget_bound, OranCausal.GateBudget.mean_count_budget, OranCausal.GateBudget.additive_guard_budget, OranCausal.GateBudget.count_overrun_example}
+\coderef{oran_causal.core.gate:tau_table}

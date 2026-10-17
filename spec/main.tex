@@ -3,11 +3,28 @@
 \usepackage[margin=25mm,marginparwidth=20mm]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{amsthm}
 \usepackage{booktabs}
+\usepackage{url}
 \usepackage{notation}
 \usepackage{claims}
 
+\urlstyle{tt}
 \showclaimstrue
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{assumption}[definition]{Assumption}
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{corollary}[definition]{Corollary}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\coderef}[1]{\par\smallskip\noindent{\footnotesize\textit{Code:}\ \path{#1}}\par}
+\newcommand{\lean}[1]{\par\smallskip\noindent{\footnotesize\textit{Lean:}\ \path{#1}}\par}
 
 \title{oran-causal: mathematical specification}
 \author{}

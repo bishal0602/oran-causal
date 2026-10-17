@@ -4,31 +4,67 @@
 \subsection{Assignment score}
 \label{spec:pmrt.score}
 
+\begin{definition}[Assignment score]
+For a unit $u$ with logged mode $W_u$ and propensity $\pi_u = \Prob(W_u = \accept \mid \Gpast{u-1})$,
 \begin{equation*}
-v_u = \mathrm{sgn}_u \bigl( L(W_u) - \pi_u \bigr)
+v_u = \sgn_u \bigl( L(W_u) - \pi_u \bigr).
 \end{equation*}
+\end{definition}
 
-The assignment score of unit u is v\_u = sgn\_u (L(W\_u) - pi\_u), with mean zero and variance pi\_u (1 - pi\_u) over the policy's draw.\claim{DEF-PMRT-SCORE}
+\noindent For a two-mode table $L(W_u) = \Ind\{W_u = \accept\}$, so $\Ex[v_u \mid \Gpast{u-1}] = 0$ and $\Var(v_u \mid \Gpast{u-1}) = \pi_u(1 - \pi_u)$. For a table over modes $m$ with probabilities $\pi_{um}$ and doses $L_m$ (\texttt{LEVEL\_V2}),
+\begin{equation*}
+v_u = \sgn_u \Bigl( L(W_u) - \sum_m \pi_{um} L_m \Bigr), \qquad
+\Var(v_u \mid \Gpast{u-1}) = \sum_m \pi_{um} L_m^2 - \Bigl(\sum_m \pi_{um} L_m\Bigr)^{2},
+\end{equation*}
+which is $\pi_u(1 - \pi_u)$ for binary doses.\claim{DEF-PMRT-SCORE}
+
+\coderef{oran_causal.core.design:v_design}
 
 \subsection{Weight construction}
 \label{spec:pmrt.weight}
 
-The weight w\_u is built in seven steps: target bins, receiver slots, ridge adjustment, matched filter psi = Sigma\^{}-1 mu, running score centre, Huber clip at a predicted scale, and orientation set where |z\_train| $\ge$ 2.\claim{DEF-PMRT-WEIGHT}
+The weight $w_u$ is a $\Gpast{u-1}$-measurable function of the data of earlier units, of the training units, and of the context of $u$. For a hypothesis $\hyp$ the construction has seven steps.
 
-An earlier construction that centred the score over each episode's realised units had a rate of p $\le$ 0.05 of 0.14 for sleep hypotheses on null outcomes.\claim{EMP-ERLY}
+\begin{enumerate}
+\item \emph{Target bins.} The outcome window is split into the post-opening bins $[0,30)$, $[30,60)$, $[60,90)$, $[90,150)$ s (Section~\ref{spec:sys.hyp}); the kernel weights bins, not seconds. A unit without the fourth bin (the episode ends first) uses the kernel on bins $1$ to $3$.
+\item \emph{Receiver slots.} The cells of relation $r$ are mapped to slots: own $1$, neighbours $4$, far $2$. Cells are ranked by the receiver score $\rho_f$ of the family (descending, ties to the lower cell index); the first slots of each group take the top-ranked cells one each, and the last slot holds the sum of the remaining cells.
+\item \emph{Ridge adjustment.} On the training units each slot-by-bin outcome $E$ is regressed on covariates $X$ with a ridge penalty chosen by generalised cross-validation over $\lambda/n \in [10^{-3}, 100]$, after demeaning within episode and sign. $X$ holds the pre-opening bins (a missing fourth bin imputed as twice the third), the pre-opening sums of the other KPIs, the pre-opening value of the own cell if $r \neq \sfn{own}$, the unit context, the history of past design-centred modes, $t_0/T_{\mathrm{ep}}$ and a missing-bin flag. The residual $\tilde E$ removes what is predictable from $\Gpast{u-1}$.
+\item \emph{Matched filter.} With $\mu = \tilde E^\top v / \sum_u v_u^2$ the effect profile over slot-by-bin cells, $\Sigma$ the Ledoit--Wolf covariance of $\tilde E$ and $p$ the profile length,
+\begin{equation*}
+\psi = \bigl(\Sigma + 10^{-8}\, \mathrm{tr}(\Sigma)/p\; I\bigr)^{-1} \mu .
+\end{equation*}
+The \emph{loadsp} kernel replaces $\psi$ by the rank-one product of a same-signed spatial profile and a least-squares time profile fitted to $\mu$; the \emph{plain} kernel uses $\psi$.
+\item \emph{Running score centre.} The score residual is centred with the running mean of earlier units of the same sign, shrunk towards the training mean with pseudo-counts $n_0 = 20$ and $n_1 = 50$ (the plain running mean once a sign has $n_1$ units) and with per-sign training intercepts.
+\item \emph{Huber clip.} A predicted scale $s_u = \kappa\, e^{h_u/2}$ is formed with $h_u$ the ridge (penalty $30\, n/100$) prediction of $\log(r^2 + 10^{-3}\,\overline{r^2})$ from standardised covariates and $\kappa = \mathrm{median}(\abs{r}/e^{h/2})/0.6745$. The matched-filter response $\hat w_u$ is clipped,
+\begin{equation*}
+w_u = \clip\bigl(\hat w_u,\; -c\, s_u,\; c\, s_u\bigr), \qquad c = 2.5 .
+\end{equation*}
+\item \emph{Orientation.} With $z_{\mathrm{train}}$ the plain statistic on the training units, if $\abs{z_{\mathrm{train}}} \ge 2$ the orientation is $o = \sgn(\Ind_{<3}^\top \mu)$, where $\Ind_{<3}$ selects the bins $1$ to $3$; otherwise $o$ is unset and the sign of an edge comes from the plain arm.
+\end{enumerate}
+
+\noindent The paper's PMRT is the loadsp arm with the Huber clip (\emph{loadsp\_c}) declared as in Section~\ref{spec:fdr.wby}. The code also computes the plain clipped arm (\emph{plain\_c}) and the larger of the two statistics; these are not the reported method.\claim{DEF-PMRT-WEIGHT}
+
+\coderef{oran_causal.core.pmrt.units:fit_pmrt, oran_causal.core.pmrt.units:fit_core, oran_causal.core.pmrt.units:slot_matrix, oran_causal.core.pmrt.units:running_center, oran_causal.core.pmrt.units:h_weights, oran_causal.core.pmrt.units:modified}
+
+An earlier construction that centred the score over each episode's realised units had a rate of $p \le 0.05$ of 0.14 for sleep hypotheses on null outcomes: the centre then depends on later draws of the episode, so $w_u$ is not $\Gpast{u-1}$-measurable.\claim{EMP-ERLY}
 
 \subsection{Statistic}
 \label{spec:pmrt.stat}
 
+\begin{definition}[PMRT statistic]
+For the tested units $\mathcal{U}$ of a hypothesis,
 \begin{equation*}
-S = \sum_u v_u w_u, \qquad
-\sigma^2 = \sum_u \pi_u (1 - \pi_u)\, w_u^2, \qquad
-z = S / \sigma
+S = \sum_{u \in \mathcal{U}} v_u w_u, \qquad
+\sigma^2 = \sum_{u \in \mathcal{U}} \pi_u (1 - \pi_u)\, w_u^2, \qquad
+z = S / \sigma .
 \end{equation*}
+\end{definition}
 
-The statistic is S = sum\_u v\_u w\_u with design variance sigma\^{}2 = sum\_u pi\_u (1 - pi\_u) w\_u\^{}2 and z = S / sigma; when sigma = 0 the code sets z = 0 and p = 1.\claim{DEF-PMRT-STAT}
+\noindent \emph{Edge cases.} If $\sigma = 0$ (all weights zero) the code sets $z = 0$ and $p = 1$; the engine divides by $\sigma$ replaced by $1$, where also $S = 0$, with the same outcome. If an outcome is not finite the hypothesis is \emph{undetermined} (\texttt{degenerate\_outcome}) and not tested.\claim{DEF-PMRT-STAT}
+
+\coderef{oran_causal.core.pmrt.units:lin_z}
 
 \subsection{Support rule}
 \label{spec:pmrt.support}
 
-A hypothesis is tested only when it has at least 30 units, 5 accepted, 5 rejected and 3 episodes; untested hypotheses count in m and are never declared.\claim{DEF-PMRT-SUPPORT}
+A hypothesis is tested only if its unit table has at least $30$ units, $5$ accepted, $5$ rejected and units from at least $3$ episodes. Otherwise its p-value is NaN (untested): it counts in $m = 60$ and is never declared.\claim{DEF-PMRT-SUPPORT}

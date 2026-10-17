@@ -4,15 +4,36 @@
 \subsection{Design slope}
 \label{spec:ref.slope}
 
+\begin{definition}[Design slope]
+Let $e_u = y_u - \hat m_u$ with $\hat m_u$ the predictable outcome centre. For the units $\mathcal{U}$ of a class,
 \begin{equation*}
-\hat\beta = \frac{\sum_u v_u e_u}{\sum_u v_u^2}
-          = \frac{1}{N} \sum_u \mathrm{sgn}_u \Bigl( \frac{\mathbf{1}\{W_u = \text{accept}\}\, e_u}{\pi_u}
-            - \frac{\mathbf{1}\{W_u = \text{reject}\}\, e_u}{1 - \pi_u} \Bigr)
+\hat\beta = \frac{\sum_u v_u e_u}{\sum_u v_u^2}, \qquad
+\mathrm{se} = \frac{\bigl(\sum_u v_u^2 (e_u - \hat\beta v_u)^2\bigr)^{1/2}}{\sum_u v_u^2}.
 \end{equation*}
+With fewer than $2$ units or $\sum_u v_u^2 = 0$, $\hat\beta = 0$ and $\mathrm{se}$ is missing.
+\end{definition}
 
-The design slope regresses each unit's centred outcome on its assignment score, beta\_hat = sum\_u v\_u e\_u / sum\_u v\_u\^{}2, which at pi\_u = 0.5 is the Horvitz-Thompson estimator of tau\_pi.\claim{DEF-SLOPE}
+\noindent The centre $\hat m_u$ is the running mean of the (episode, sign) stratum of earlier units, shrunk with $K = 20$ pseudo-units towards the pooled same-sign mean, plus the pooled within-stratum pre-opening slope $b$ times the pre-opening value. The first unit has $e_u = 0$. The centre uses earlier outcomes, including units whose window is still open (Section~\ref{spec:asm.centre}).
+
+The Horvitz--Thompson estimator
+\begin{equation*}
+\hat\tau^{\mathrm{HT}} = \frac{1}{N} \sum_u \sgn_u \Bigl(\frac{\Ind\{W_u = \accept\}\, e_u}{\pi_u} - \frac{\Ind\{W_u = \reject\}\, e_u}{1 - \pi_u}\Bigr)
+\end{equation*}
+equals $\hat\beta$ only at $\pi_u = 1/2$ (Lean \texttt{half\_propensity\_identity}); for general $\pi_u$ the slope weights by $\pi_u(1 - \pi_u)$ (Section~\ref{spec:thm.slope}).\claim{DEF-SLOPE}
+
+\coderef{oran_causal.core.gate:design_slope_se}
 
 \subsection{Referee rules}
 \label{spec:ref.rules}
 
-The map-driven referee applies four rules with the same constants for every map: effects, harm, rejection (costly or pressure above 0.05) and guard conflict.\claim{DEF-REF-RULES}
+The map-driven referee (\texttt{MapGateV2}) decides each request from the map. Write $\hat\beta(f, r, k)$ for the signed map effect and $d = \sgn_u$; let $D_k = d \sum_r \hat\beta(f, r, k)$.
+\begin{enumerate}
+\item \emph{Effects.} Let $k^*$ be the first of (pv, v, rlf) with $D_k \neq 0$. The request is \emph{harmful} iff $D_{k^*} > 0$ and \emph{costly} iff $D_e > 0$.
+\item \emph{Harm relations.} Only the relations own and nbr with $d\,\hat\beta > 0$ count.
+\item \emph{Pressure.} From the context: \texttt{own\_prot\_below\_frac} for own, \texttt{nbr\_max\_prot\_below\_frac} for nbr.
+\item \emph{Rejection.} Reject iff harmful and (costly or $\mathrm{pressure} > \theta$), $\theta = 0.05$.
+\item \emph{Guard conflict.} Let $g$ be the first of (v, rlf) with $D_g \neq 0$. The request is in \emph{conflict} iff harmful and $D_g < 0$. A conflicted rejection is released if the previous unit of the same (cell, family) was also rejected ($K_{\mathrm{conf}} = 1$).
+\end{enumerate}
+Opening follows the feasible rule of Section~\ref{spec:sys.unit}. The constants are the same for every map. In the gated variant a rejection of a class applies only if the class is certified (Section~\ref{spec:gate}).\claim{DEF-REF-RULES}
+
+\coderef{oran_causal.methods.system.referees:MapGateV2}

@@ -4,19 +4,72 @@
 \subsection{Decision units}
 \label{spec:sys.unit}
 
-A decision unit is identified by a cell, an xApp and an opening time; its mode W\_u, accept or reject, is drawn once at opening and holds for every request of the pair for 60 s.\claim{DEF-SYS-UNIT}
+Time is in seconds on the control grid ($1$ s control interval, $40$ ms tick). At each control second $t$ an xApp $x$ sends requests; a request acts on a knob $(f, c)$ of family $f$ at cell $c$, with current value $\mathrm{cur}$ and proposed value $\mathrm{prop}$. Its direction is $\sgn_u = \sgn(\mathrm{prop} - \mathrm{cur})$ with $\sgn_u = +1$ for a zero step.
+
+\begin{definition}[Decision unit]
+Let $T = 60$ s. A request of $x$ on cell $c$ at second $t$ \emph{opens} a unit $u = (c, x, t)$ when no unit $(c, x, t')$ with $t' + T > t$ is active and, under the \emph{feasible} opening rule used by every study, the knob has not changed less than its actuator minimum interval before $t$. A request that meets an active unit of its pair is decided by that unit; a request blocked by the feasibility rule is accepted and opens no unit. The unit is active on $[t, t + T)$. At opening the logging policy returns a mode $W_u$ and its propensity $\pi_u$, and every request of the pair during the hold inherits the mode: an accepted unit applies the request, a rejected unit rejects it.
+\end{definition}
+
+A unit is recorded with its cell, xApp, opening second, family, step, mode, propensity, the logged mode probabilities, and an observation-only context (the opening request, the cell's recent reports and applied configuration, and aggregates of both over the neighbours $N(c)$). No privileged counter enters the context. Units open from $t = 0$ (no arbiter warm-up) while the KPI counters run over the warm-up too.\claim{DEF-SYS-UNIT}
+
+\paragraph{Modes.} The arbiter implements the modes accept, half, reject and lock, each with an optional rollback flag. The studies log only accept and reject, with doses $L(\accept) = 1$ and $L(\reject) = 0$. The dose vector used by the statistic (\texttt{LEVEL\_V2}) maps accept, half and accept-with-rollback to $1$ and reject to $0$.
+
+\paragraph{Keyed draws.} Unit $u$ has key $\xi_u = (\text{seed}, c, x, \lfloor t \rfloor)$. Its mode is a function of one uniform $U_{\xi_u}$, the first output of the generator seeded by $[\text{seed}, \text{tag}, c, \text{index}(x), \lfloor t \rfloor]$, with tag $6612$ (randomised) or $6622$ (incumbent). Draws are therefore a field indexed by key, independent over keys, and a unit that re-opens at the same second inside a rollout draws the same mode. For a two-mode table the unit is accepted if and only if $U_{\xi_u} < \pi_u^{\accept}$; for a table over modes ordered (accept, half, reject, accept+rb) the mode is the first whose cumulative probability exceeds $U_{\xi_u}$.
+
+\coderef{oran_causal.sim.system.decision.units:HoldPolicy, oran_causal.sim.system.decision.units:T_UNIT, oran_causal.sim.system.decision.units:UnitArbiter}
 
 \subsection{Logging policies}
 \label{spec:sys.logging}
 
-Three logging policies are considered: randomised (accept with probability 0.5), incumbent (propensity within [0.15, 0.85], depending on the request class and the cell state) and placebo (modes drawn and recorded, every request applied).\claim{DEF-SYS-LOG}
+\begin{definition}[Logging policies]
+\begin{enumerate}
+\item \emph{Randomised.} $\pi_u^{\accept} = \pi_u^{\reject} = 1/2$ for the xApps ES, PowerES and SliceGuarantee, whatever the context.
+\item \emph{Incumbent.} Let $d = +1$ if the step is nonnegative and $-1$ otherwise. The request class is $\kappa_u = \text{saving}$ if $f \in \{\sfn{carrier}, \sfn{sleep}, \sfn{ptx}\}$ and $d = \delta_f$ with $\delta_{\sfn{carrier}} = -1$, $\delta_{\sfn{sleep}} = +1$, $\delta_{\sfn{ptx}} = -1$; $\text{restore}$ for the same families with $d \neq \delta_f$; $\text{sg\_raise}$ for $f = \sfn{prot\_min}$ and $d > 0$; $\text{sg\_lower}$ for $f = \sfn{prot\_min}$ and $d < 0$. Let $s_u = \max$ of the finite values among $\mathrm{own\_prb\_util}$ and $\mathrm{nbr\_max\_prb\_util}$ ($0$ if neither is finite) and $b_u$ the finite part of $\mathrm{own\_prot\_below\_frac}$ ($0$ otherwise). The accept probability is
+\begin{equation*}
+\pi_u^{\accept} = \min\{\max\{a_{\kappa_u, \ell_u}, 0.15\}, 0.85\}, \qquad \pi_u^{\reject} = 1 - \pi_u^{\accept},
+\end{equation*}
+with $\ell_u = \mathrm{hi}$ if $s_u \ge 0.6$ and $\mathrm{lo}$ otherwise for saving and restore; $\ell_u = \mathrm{met}$ if $b_u > 0.05$ and $\mathrm{else}$ otherwise for sg\_raise; $\ell_u = \mathrm{met}$ if $b_u = 0$ and $\mathrm{else}$ otherwise for sg\_lower; and
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+$\kappa$ & first key & second key \\
+\midrule
+saving & lo: $0.85$ & hi: $0.15$ \\
+restore & lo: $0.35$ & hi: $0.85$ \\
+sg\_raise & met: $0.85$ & else: $0.30$ \\
+sg\_lower & met: $0.85$ & else: $0.20$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The full row $(\pi_u^{\accept}, \pi_u^{\reject})$ is logged.
+\item \emph{Placebo.} The draw of the randomised (or incumbent) policy is made and logged as the unit's mode and propensity, and accept is applied to every request.
+\end{enumerate}
+\end{definition}
+
+\noindent The incumbent depends on the delivered state only through $\mathrm{ctx}$, so its propensities are $\Gpast{u-1}$-measurable and lie in $[0.15, 0.85]$, which is $\pimin = 0.15$ of (A1). The randomised policy has $\pimin = 0.5$.\claim{DEF-SYS-LOG}
+
+\coderef{oran_causal.sim.system.decision.collect:RandomizedUnitPolicy, oran_causal.sim.system.decision.collect:IncumbentPolicy, oran_causal.sim.system.decision.collect:PlaceboPolicy}
 
 \subsection{Hypotheses and outcomes}
 \label{spec:sys.hyp}
 
-A hypothesis (f, r, k) concerns a parameter family f, a relation r and a KPI k; four families, three relations and five KPIs give m = 60 hypotheses, and the outcome y\_u is the KPI summed over the cells of r in the 90 s after opening minus the same sum in the 90 s before.\claim{DEF-SYS-HYP}
+The families are $\mathcal{F} = \{\sfn{carrier}, \sfn{sleep}, \sfn{ptx}, \sfn{prot\_min}\}$ (ES writes carrier and sleep, PowerES writes ptx, SliceGuarantee writes prot\_min), the relations $\mathcal{R} = \{\sfn{own}, \sfn{nbr}, \sfn{far}\}$ and the KPIs $\mathcal{K} = \{\sfn{pv}, \sfn{v}, \sfn{e}, \sfn{rlf}, \sfn{load}\}$ (protected-slice violated UE-seconds, service violated UE-seconds, energy, radio-link failures, served UE-seconds). A hypothesis is $\hyp \in \mathcal{F} \times \mathcal{R} \times \mathcal{K}$, so $m = 4 \cdot 3 \cdot 5 = 60$.
+
+The exposure set of cell $c$ is $N(c) = \{c\} \cup \{c' : c' \text{ is an out- or in-neighbour of } c\}$, taken from the static cell graph. The cells of relation $r$ for a unit at $c$ are
+\begin{equation*}
+\mathcal{C}_{\sfn{own}}(c) = \{c\}, \qquad \mathcal{C}_{\sfn{nbr}}(c) = N(c) \setminus \{c\}, \qquad \mathcal{C}_{\sfn{far}}(c) = \{1, \dots, C\} \setminus N(c).
+\end{equation*}
+With $K_{c'}(a, b)$ the sum of the per-second counter of KPI $k$ at cell $c'$ over seconds $[a, b)$, the outcome of unit $u = (c, x, t)$ is
+\begin{equation*}
+y_u^{r,k} = \sum_{c' \in \mathcal{C}_r(c)} \bigl\{ K_{c'}^{k}(t, t + 90) - K_{c'}^{k}(t - 90, t) \bigr\}.
+\end{equation*}
+A unit enters the unit table only if $t - 90 \ge 0$ and $t + 90 \le T_{\mathrm{ep}}$; its weight bins (Section~\ref{spec:pmrt.weight}) use $[t, t + 150)$ where the episode allows and are missing otherwise. The orientation of the contrast is the request direction $\sgn_u$.\claim{DEF-SYS-HYP}
+
+\coderef{oran_causal.sim.system.decision.vocab:HYPOTHESES, oran_causal.core.data:UnitTable}
 
 \subsection{Simulator constants}
 \label{spec:sys.sim}
 
-The simulator has 24 cells and 300 UEs, a 40 ms tick and 120 s warm-up plus 600 s scored time; the gate tolerances used G\_v = 19,953.65 violated UE-seconds and G\_RLF = 35.025 RLFs.\claim{DEF-SIM-CONST}
+The plant has $24$ cells ($21$ macro sectors on a seven-site wrap-around layout with inter-site distance $500$ m, and $3$ picos), $300$ UEs, a $40$ ms tick and a $1$ s control interval. Every study runs the P3 pair (ES with PowerES and SliceGuarantee) in the surge scenario at load factor L40 with $120$ s of warm-up and $600$ s of scored time (the library default of $300$ s and $1800$ s is overridden by the frozen scenario). The simulator fixes the arrival tape by seed, so runs that act differently see the same exogenous tape. The gate tolerances use the per-episode guard totals under accept-all measured on development episodes, $G_{\sfn{v}} = 19\,953.65$ violated UE-seconds and $G_{\sfn{rlf}} = 35.025$ radio-link failures.\claim{DEF-SIM-CONST}
+
+\coderef{oran_causal.sim.system.config:E6Config, oran_causal.sim.system.config:TICK_S, oran_causal.sim.system.env:E6Env, oran_causal.core.gate:tau_table}
