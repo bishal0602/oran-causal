@@ -35,7 +35,7 @@ SPEC = FigSpec(
     "linear below 0.01; dashed line = nominal 0.05; series dodged horizontally. This is a degradation curve showing where the known-design "
     "assumption breaks; it is not evidence against C2a, which assumes the design is known. "
     + C.COLOUR_NOTE
-    + "; PMRT-Lin with confounder covariates is dotted",
+    + "; PMRT-Lin with R3 covariates is dotted",
 )
 
 ARMS = ["pmrt_nl_eq", "pmrt_eq", "pmrt_r3", "pcorr_eq"]

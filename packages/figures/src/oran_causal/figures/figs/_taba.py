@@ -25,18 +25,16 @@ def nan(x) -> bool:
 
 
 def prob(x, nd: int = 3) -> str:
-    """A rate in [0, 1] without the leading zero (.052); '--' when missing."""
+    """A rate in [0, 1] with three decimals (0.052); '--' when missing."""
     if nan(x):
         return DASH
-    s = f"{x:.{nd}f}"
-    return s[1:] if s.startswith("0.") else s
+    return f"{x:.{nd}f}"
 
 
 def short_prob(x: float) -> str:
-    """A design probability with at least two decimals and no trailing zero beyond: .25, .352, .50."""
+    """A design probability with at least two decimals and no trailing zero beyond: 0.25, 0.352, 0.50."""
     s = f"{x:.3f}".rstrip("0")
-    s = s[1:] if s.startswith("0.") else s
-    return s + "0" * max(0, 3 - len(s))
+    return s + "0" * max(0, 4 - len(s))
 
 
 def signed(x, nd: int = 3, plus: bool = True) -> str:

@@ -89,9 +89,7 @@ METHODS = {
     "pmrt": Method("PMRT", "based", "o", color=P.BLUE),  # frozen test, Studies 1-3
     "pmrt_gbm": Method("PMRT-GBM", "based", "D", color=P.BLUE),
     "pmrt_lin": Method("PMRT-Lin", "based", "D", color=P.PMRT_LIN),
-    "pmrt_lin_r3": Method(
-        "PMRT-Lin, confounder covariates", "based", "H", color=P.PMRT_LIN, filled=True
-    ),
+    "pmrt_lin_r3": Method("PMRT-Lin, R3 covariates", "based", "H", color=P.PMRT_LIN, filled=True),
     # design-adjusted tests (Study 4)
     "pcorr_adj": Method("Design-adjusted partial correlation", "adjusted", "^", color=P.PURPLE),
     "granger_adj": Method("Design-adjusted Granger", "adjusted", "s", color=P.TERRACOTTA),

@@ -69,10 +69,14 @@ def test_figure_data_equals_the_cddfig_build(built, name):
     assert built[name] == GOLDEN["figures"][name]
 
 
-def test_the_same_table_files_are_written(tables):
-    assert sorted(tables) == sorted(GOLDEN["tables"])
+PAPER_TABLES = sorted(p.name for p in (paths.PAPER / "tables").iterdir())
 
 
-@pytest.mark.parametrize("name", sorted(GOLDEN["tables"]))
-def test_table_text_equals_the_cddfig_build(tables, name):
-    assert tables[name] == GOLDEN["tables"][name]
+def test_the_paper_tables_are_written(tables):
+    assert sorted(tables) == PAPER_TABLES
+
+
+@pytest.mark.parametrize("name", PAPER_TABLES)
+def test_table_text_equals_the_paper(tables, name):
+    paper = (paths.PAPER / "tables" / name).read_text(encoding="utf-8")
+    assert tables[name] == plotted.table_digest(paper)

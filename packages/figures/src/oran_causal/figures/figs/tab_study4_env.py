@@ -64,8 +64,7 @@ def short(arm: str) -> str:
 
 
 def _fmt(x: float, nd: int) -> str:
-    s = f"{x:.{nd}f}"
-    return s[1:] if s.startswith("0.") else s
+    return f"{x:.{nd}f}"
 
 
 def rows_for(world: str) -> list[dict]:
@@ -168,6 +167,6 @@ def write(world: str) -> list[str]:
 
 
 if __name__ == "__main__":
-    for world in sys.argv[1:] or ["E1"]:
+    for world in sys.argv[1:] or ["E1", "E2", "E3", "E4", "E5"]:
         for p in write(world):
             print("wrote", p)

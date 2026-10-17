@@ -83,7 +83,7 @@ def ret(x) -> str:
     -0.002) [G6].
     """
     if not A.nan(x) and x != 0 and abs(x) < 0.005:
-        return A.signed(x, 3, plus=False).replace("0.", ".", 1)
+        return A.signed(x, 3, plus=False)
     return A.prob(x, 2)
 
 
@@ -131,12 +131,8 @@ def _sg_row(study: str, n_seeds: int) -> dict:
 
 
 def num(x, plus: bool = False) -> str:
-    """R-scale number without the leading zero: three decimals, two when |x| >= 1 (the associational
-    arms' large negative R).
-    """
-    if abs(x) < 1:
-        return A.signed(x, 3, plus=plus).replace("0.", ".", 1)
-    return A.signed(x, 2, plus=plus)
+    """R-scale number: three decimals, two when |x| >= 1 (the associational arms' large negative R)."""
+    return A.signed(x, 3 if abs(x) < 1 else 2, plus=plus)
 
 
 def _row(arm: str, r: dict, study: str) -> dict:

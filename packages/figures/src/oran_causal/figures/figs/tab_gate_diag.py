@@ -32,13 +32,12 @@ ARM = "CS:PMRT"
 
 
 def num(x) -> str:
-    """Three significant digits, math minus, no leading zero below 1 (.0364, 20.8, 34.9, 112)."""
+    """Three significant digits, math minus, leading zero below 1 (0.0364, 20.8, 34.9, 112)."""
     if A.nan(x):
         return A.DASH
     if x == 0:
         return "0"
     s = f"{abs(x):.{max(0, 2 - math.floor(math.log10(abs(x))))}f}"
-    s = s[1:] if s.startswith("0.") else s
     return (A.MINUS if x < 0 else "") + s
 
 

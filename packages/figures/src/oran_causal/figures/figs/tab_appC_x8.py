@@ -21,7 +21,7 @@ SOURCES = [source_note(*X8)]
 STATS = [("plain_c", "Plain"), ("loadsp_c", "Matched filter"), ("max", "Maximum")]
 LAYERS = [("by", "BY"), ("wby1s", "Weighted one-sided BY"), ("dagger1s", "One-sided DAGGER")]
 ALPHAS = [
-    ("0.05", ".05"),
+    ("0.05", "0.05"),
     ("0.001", r"$10^{-3}$"),
     ("0.0002", r"$2\times10^{-4}$"),
     ("0.0001", r"$10^{-4}$"),
