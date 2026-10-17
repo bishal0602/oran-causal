@@ -426,9 +426,11 @@ def run(
     short: float | None = None,
     max_labels: int | None = None,
     arms: frozenset[str] | None = None,
-    maps_path: Path = MAPS.path,
+    maps_doc: FrozenDoc = MAPS,
 ) -> int:
     """Runs a Study 2 stage (shard `part`) into `out` and returns the number of jobs run.
+
+    `maps_doc` is the pinned maps artifact of the eval stage (the frozen one by default).
 
     Raises:
         ValueError: `short` or `max_labels` without `smoke`.
@@ -436,9 +438,8 @@ def run(
     if (short or max_labels) and not smoke:
         raise ValueError("short / max_labels are smoke-only")
     part = part or Part()
-    maps_doc = dataclasses.replace(MAPS, path=maps_path)
     st = guard(stage, smoke, maps_doc)
-    maps = load_maps(maps_path) if stage == "eval" else None
+    maps = load_maps(maps_doc.path) if stage == "eval" else None
     head = header(
         "study2",
         stage,

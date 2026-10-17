@@ -8,7 +8,9 @@ target y = the relation's KPI post - pre, pre = the pre-window value.
 - granger: OLS post = a + b pre + c x, F(1, n - 3) test of c; score -log10 p. "granger_by" is BY
   at q = .05 over the scorable hypotheses (untuned).
 - shap_gbdt (Sharma et al. 2025): HistGBDT + TreeSHAP per hypothesis on [x, sgn, pre]; score
-  mean|SHAP(x)| / std(y), sign = sign(corr(x, y)).
+  mean|SHAP(x)| / std(y), sign = sign(corr(x, y)). Needs `shap`; never falls back.
+- gbdt_perm: the same score with a sklearn GBDT and permutation importance, the importance of
+  the frozen Study 1 and 2 `shap_gbdt` records (their sessions could not import `shap`).
 - two_tower: the controlled two-tower with 4 family inputs and 15 targets, `TT_SIZES` (l1 0.5
   fixed a priori on synthetic data); score = the gate a[target, family].
 - int (PACIFISTA, del Prever et al. 2025): INT distance of y * sgn between accepted and rejected
@@ -42,8 +44,10 @@ from oran_causal.sim.system.decision.vocab import (
 
 __all__ = [
     "DECL_RELATIONS",
+    "IMPORTANCE",
     "MAX_FAR_DEV",
     "SCORERS",
+    "SEEDED",
     "SUPPORT",
     "TAU_RULES",
     "TT_SIZES",
@@ -57,6 +61,7 @@ __all__ = [
     "method_baseline",
     "run_baselines",
     "score_corr",
+    "score_gbdt_perm",
     "score_int",
     "score_qacm",
     "score_shap",
@@ -69,6 +74,7 @@ TT_SIZES = {"d": 16, "r": 8, "hidden": 32, "epochs": 400, "lr": 0.01, "l1": 0.5}
 MAX_FAR_DEV = 1
 TAU_RULES = ("far_fpr", "physics_f1")
 TUNED = ("shap_gbdt", "corr", "granger", "two_tower", "int", "qacm")
+SEEDED = frozenset({"shap_gbdt", "gbdt_perm", "two_tower", "qacm"})
 
 Scores = dict[Any, Any]
 
@@ -174,25 +180,26 @@ def granger_by(scores: Scores, q: float = 0.05) -> dict[Any, dict[str, Any]]:
     return out
 
 
-def _shap_fn() -> tuple[Callable[..., tuple[np.ndarray, float]], str]:
-    try:
-        from oran_causal.methods.controlled.shap_dag import fit_shap_importances
-    except ImportError as e:
-        from sklearn.ensemble import GradientBoostingRegressor
-        from sklearn.inspection import permutation_importance
-
-        def fit(X: np.ndarray, y: np.ndarray, seed: int = 0) -> tuple[np.ndarray, float]:
-            m = GradientBoostingRegressor(random_state=seed).fit(X, y)
-            pi = permutation_importance(m, X, y, n_repeats=5, random_state=seed)
-            return np.abs(pi.importances_mean), float(m.score(X, y))
-
-        return fit, f"FALLBACK sklearn GBDT + permutation importance (shap not importable: {e!r})"
-    return fit_shap_importances, "shap_dag.fit_shap_importances (HistGBDT + shap.TreeExplainer)"
+IMPORTANCE = {"shap_gbdt": "tree_shap", "gbdt_perm": "permutation"}
 
 
-def score_shap(data: UnitTable, sup: Support = SUPPORT, seed: int = 0) -> Scores:
-    """mean|SHAP(x)| / std(y) of a HistGBDT on [x, sgn, pre]; sign = sign(corr(x, y))."""
-    fit, note = _shap_fn()
+def _fit_gbdt_perm(X: np.ndarray, y: np.ndarray, seed: int = 0) -> tuple[np.ndarray, float]:
+    from sklearn.ensemble import GradientBoostingRegressor
+    from sklearn.inspection import permutation_importance
+
+    m = GradientBoostingRegressor(random_state=seed).fit(X, y)
+    pi = permutation_importance(m, X, y, n_repeats=5, random_state=seed)
+    return np.abs(pi.importances_mean), float(m.score(X, y))
+
+
+def _score_importance(
+    data: UnitTable,
+    sup: Support,
+    seed: int,
+    fit: Callable[..., tuple[np.ndarray, float]],
+    importance: str,
+    note: str,
+) -> Scores:
     out = _empty()
     for _f, rows, h in _each(data, sup):
         y = data.y[h[1:]][rows]
@@ -204,7 +211,30 @@ def score_shap(data: UnitTable, sup: Support = SUPPORT, seed: int = 0) -> Scores
         c = _corr(data.x[rows], y)
         out[h] = {"score": float(imp[0]) / sd, "sign": _sign_of(c), "r2": float(r2)}
     out["_note"] = note
+    out["_importance"] = importance
     return out
+
+
+def score_shap(data: UnitTable, sup: Support = SUPPORT, seed: int = 0) -> Scores:
+    """mean|SHAP(x)| / std(y) of a HistGBDT on [x, sgn, pre]; sign = sign(corr(x, y)).
+
+    Raises:
+        ImportError: `shap` (or its numba) is not importable; there is no fallback.
+    """
+    from oran_causal.methods.controlled.shap_dag import fit_shap_importances
+
+    note = "tree_shap: shap_dag.fit_shap_importances (HistGBDT + shap.TreeExplainer)"
+    return _score_importance(data, sup, seed, fit_shap_importances, "tree_shap", note)
+
+
+def score_gbdt_perm(data: UnitTable, sup: Support = SUPPORT, seed: int = 0) -> Scores:
+    """mean|permutation importance(x)| / std(y) of a sklearn GBDT on [x, sgn, pre].
+
+    The importance the frozen Study 1 and 2 `shap_gbdt` records carry: their Kaggle sessions
+    could not import `shap` and took this path.
+    """
+    note = "permutation: sklearn GradientBoostingRegressor + permutation_importance (5 repeats)"
+    return _score_importance(data, sup, seed, _fit_gbdt_perm, "permutation", note)
 
 
 def score_two_tower(
@@ -428,6 +458,7 @@ def declare(
 
 SCORERS: dict[str, Callable[..., Scores]] = {
     "shap_gbdt": score_shap,
+    "gbdt_perm": score_gbdt_perm,
     "corr": score_corr,
     "granger": granger_pvalues,
     "two_tower": score_two_tower,
@@ -443,7 +474,7 @@ def _keys(scores: Scores) -> dict[str, Any]:
 
 def _scorer_kw(m: str, sup: Support, seed: int, ann: bool) -> tuple[dict, dict]:
     kw: dict[str, Any] = {"sup": sup}
-    if m in ("shap_gbdt", "two_tower", "qacm"):
+    if m in SEEDED:
         kw["seed"] = seed
     if m == "qacm":
         kw["ann"] = ann
@@ -497,6 +528,8 @@ def run_baselines(
             "dev_scores": _keys(dev_scores),
             "splits": {},
         }
+        if "_importance" in dev_scores:
+            res["importance"] = dev_scores["_importance"]
         for name, d in splits.items():
             sc = dev_scores if d is dev else fn(d, **kw)
             res["splits"][name] = {
@@ -564,7 +597,7 @@ def method_baseline(name: str, dev: UnitTable) -> Tuned:
 def desc_method(name: str, dev: UnitTable, seed: int = 0) -> Tuned:
     """A descriptive baseline with the DEV far-FPR tau, as `run_baselines` tunes it."""
     fn = SCORERS[name]
-    kw = {"seed": seed} if name in ("shap_gbdt", "two_tower", "qacm") else {}
+    kw = {"seed": seed} if name in SEEDED else {}
     dev_kw = dict(kw, relations=("own", "far")) if name == "qacm" else kw
     tau = tune_tau(fn(dev, **dev_kw), "far_fpr")
     rels = DECL_RELATIONS.get(name, RELATIONS)

@@ -12,7 +12,6 @@ artifact (nothing is re-discovered). Stages and seeds (block 191000-191999, prot
 Records are schema `e6p-optaka2-rec/1`, sub "certsafe".
 """
 
-import dataclasses
 import json
 import sys
 from collections.abc import Mapping
@@ -153,7 +152,9 @@ def registry_status(reg: SeedRegistry | None = None) -> dict[str, bool]:
     }
 
 
-def guard(stage: str, smoke: bool, art_doc: FrozenDoc = CERTSAFE) -> dict[str, Any]:
+def guard(
+    stage: str, smoke: bool, art_doc: FrozenDoc = CERTSAFE, maps_doc: FrozenDoc = study2.MAPS
+) -> dict[str, Any]:
     """Checks the protocol's refusals (smoke runs are exempt) and returns the statuses.
 
     Raises:
@@ -162,7 +163,7 @@ def guard(stage: str, smoke: bool, art_doc: FrozenDoc = CERTSAFE) -> dict[str, A
     """
     if stage not in LAYOUT:
         raise ValueError(f"stage in {tuple(LAYOUT)}")
-    fz, reg, ms = PROTOCOL.status(), registry_status(), study2.MAPS.status()
+    fz, reg, ms = PROTOCOL.status(), registry_status(), maps_doc.status()
     ar = art_doc.status() if stage == "eval" else None
     st = {"freeze": fz, "registry": reg, "maps": ms, "artifact": ar}
     if smoke:
@@ -187,9 +188,13 @@ def run(
     smoke: bool = False,
     short: float | None = None,
     arms: frozenset[str] | None = None,
-    artifact_path: Path = CERTSAFE.path,
+    art_doc: FrozenDoc = CERTSAFE,
+    maps_doc: FrozenDoc = study2.MAPS,
 ) -> int:
     """Runs a Study 3 stage (shard `part`) into `out` and returns the number of jobs run.
+
+    `art_doc` and `maps_doc` are the pinned certsafe and maps artifacts (the frozen ones by
+    default).
 
     Raises:
         ValueError: `short` without `smoke`.
@@ -197,8 +202,8 @@ def run(
     if short and not smoke:
         raise ValueError("short is smoke-only")
     part = part or Part()
-    st = guard(stage, smoke, dataclasses.replace(CERTSAFE, path=artifact_path))
-    art = load_artifact(artifact_path) if stage == "eval" else None
+    st = guard(stage, smoke, art_doc, maps_doc)
+    art = load_artifact(art_doc.path) if stage == "eval" else None
     head = header(
         "study3",
         stage,

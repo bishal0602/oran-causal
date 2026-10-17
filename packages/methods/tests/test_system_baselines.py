@@ -1,4 +1,5 @@
 import dataclasses
+import sys
 
 import numpy as np
 import pytest
@@ -41,7 +42,26 @@ def test_fast_baselines_recover_the_planted_edge(data: UnitTable, name: str) -> 
 def test_shap_gbdt_recovers_the_planted_edge(data: UnitTable) -> None:
     sc = bd.score_shap(data)
     assert "fit_shap_importances" in sc["_note"]
+    assert sc["_importance"] == bd.IMPORTANCE["shap_gbdt"] == "tree_shap"
     _recovers(sc)
+
+
+def test_shap_gbdt_never_falls_back(data: UnitTable, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(sys.modules, "oran_causal.methods.controlled.shap_dag", None)
+    with pytest.raises(ImportError):
+        bd.score_shap(data)
+    with pytest.raises(ImportError):
+        bd.run_baselines(data, {"pooled": data}, ("shap_gbdt",))
+
+
+@pytest.mark.slow
+def test_gbdt_perm_is_selected_by_name_and_recorded(data: UnitTable) -> None:
+    sc = bd.SCORERS["gbdt_perm"](data, seed=0)
+    assert sc["_importance"] == bd.IMPORTANCE["gbdt_perm"] == "permutation"
+    assert sc[PLANT]["score"] > 0
+    sub = data.subset(data.family == 2)
+    rb = bd.run_baselines(sub, {"pooled": sub}, ("gbdt_perm",))
+    assert rb["gbdt_perm"]["importance"] == "permutation"
 
 
 def test_two_tower_recovers_the_planted_edge(data: UnitTable) -> None:

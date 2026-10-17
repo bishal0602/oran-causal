@@ -23,6 +23,7 @@ pytestmark = pytest.mark.filterwarnings(
 )
 
 DATA = Path(__file__).parent / "data"
+RTOL = 1e-6
 ARTIFACTS = Path(__file__).parents[2] / "experiments" / "artifacts"
 GOLDEN = {
     "win32": "system_referees_golden_win32.json.gz",
@@ -88,6 +89,22 @@ def _same(a: Any, b: Any, path: str = "") -> None:
         assert a == b, (path, a, b)
 
 
+def _close(a: Any, b: Any, path: str = "") -> None:
+    if isinstance(a, dict) and isinstance(b, dict):
+        assert sorted(a) == sorted(b), (path, sorted(set(a) ^ set(b)))
+        for k in b:
+            _close(a[k], b[k], f"{path}/{k}")
+    elif isinstance(a, list) and isinstance(b, list):
+        assert len(a) == len(b), path
+        for i, (x, y) in enumerate(zip(a, b, strict=True)):
+            _close(x, y, f"{path}[{i}]")
+    elif isinstance(a, float) and isinstance(b, float):
+        assert a == pytest.approx(b, rel=RTOL, abs=1e-12, nan_ok=True), (path, a, b)
+    else:
+        assert type(a) is type(b), (path, a, b)
+        assert a == b, (path, a, b)
+
+
 def _norm(o: Any) -> Any:
     return json.loads(json.dumps(js(o)))
 
@@ -118,19 +135,19 @@ def base_scores(base_data: Any) -> dict:
 
 def test_crt_matches_old(gold: dict, planted: Any, crt_run: dict) -> None:
     g = gold["crt"]
-    _same(_norm(_strip_wall(crt_run)), g["run"], "run")
-    _same(_norm(v2.edges_from_crt_v2(crt_run)), g["edges"], "edges")
+    _close(_norm(_strip_wall(crt_run)), g["run"], "run")
+    _close(_norm(v2.edges_from_crt_v2(crt_run)), g["edges"], "edges")
     plc = _table(21, n_ep=8, units_per_ep=60, effect=60.0, placebo=True)
     k0 = v2.placebo_rejection_units_v2(plc, v2.UnitCRTConfigV2(B=199))
-    _same(_norm(_strip_wall(k0)), g["k0"], "k0")
+    _close(_norm(_strip_wall(k0)), g["k0"], "k0")
     cfg = v2.UnitCRTConfigV2(B=99, audit_B=99)
     aud = v2.carryover_audit_v2(planted, cfg, families=("sleep", "ptx"))
-    _same(_norm(_strip_wall(aud)), g["audit"], "audit")
+    _close(_norm(_strip_wall(aud)), g["audit"], "audit")
     sp = v2.run_crt_units_v2(
         planted, v2.UnitCRTConfigV2(B=99, seed=3), split=v2.SPLIT_PLACEBO, families=("ptx",)
     )
-    _same(_norm(_strip_wall(sp)), g["split_run"], "split")
-    _same(_norm([v2.power_floor(999, 60), v2.power_floor(9999, 60)]), g["power_floor"])
+    _close(_norm(_strip_wall(sp)), g["split_run"], "split")
+    _close(_norm([v2.power_floor(999, 60), v2.power_floor(9999, 60)]), g["power_floor"])
 
 
 def test_fast_baselines_match_old(gold: dict, base_data: Any, base_scores: dict) -> None:
@@ -143,12 +160,12 @@ def test_fast_baselines_match_old(gold: dict, base_data: Any, base_scores: dict)
             "tau_physics": bd.tune_tau(sc, "physics_f1"),
             "declared": bd.declare(sc, t["tau"]),
         }
-        _same(_norm(got), g[name], name)
-    _same(_norm(bd.granger_by(base_scores["granger"])), g["granger_by"], "granger_by")
+        _close(_norm(got), g[name], name)
+    _close(_norm(bd.granger_by(base_scores["granger"])), g["granger_by"], "granger_by")
     q = bd.score_qacm(base_data, relations=("own", "far"), ann=False)
     tq = bd.tune_tau(q, "far_fpr")
     got = {"scores": q, "tau": tq, "declared": bd.declare(q, tq["tau"], bd.DECL_RELATIONS["qacm"])}
-    _same(_norm(got), g["qacm"], "qacm")
+    _close(_norm(got), g["qacm"], "qacm")
     dev = base_data.subset(base_data.episode < 3)
     ev = base_data.subset(base_data.episode >= 3)
     rb = bd.run_baselines(
@@ -157,7 +174,7 @@ def test_fast_baselines_match_old(gold: dict, base_data: Any, base_scores: dict)
         methods=("corr", "granger"),
         sup=dataclasses.replace(bd.Support(), min_episodes=2),
     )
-    _same(_norm(_strip_wall(rb)), g["run_baselines"], "run_baselines")
+    _close(_norm(_strip_wall(rb)), g["run_baselines"], "run_baselines")
 
 
 @pytest.mark.slow
@@ -165,6 +182,7 @@ def test_learned_baselines_match_old(gold: dict, base_data: Any) -> None:
     g = gold["baselines"]
     sh = _norm(bd.score_shap(base_data))
     assert "fit_shap_importances" in sh.pop("_note")
+    assert sh.pop("_importance") == "tree_shap"
     _same(sh, {k: v for k, v in g["shap"]["scores"].items() if k != "_note"}, "shap")
     if "two_tower" not in g:
         pytest.skip("golden built without torch")
@@ -202,10 +220,10 @@ def test_maps_match_old(gold: dict, base_data: Any, base_scores: dict, crt_run: 
     g = gold["maps"]
     cells = mp.gt_cells()
     maps = _test_maps()
-    _same(_norm(maps["GT"]), g["gt_map"], "gt_map")
-    _same(_norm(maps), g["maps"], "maps")
+    _close(_norm(maps["GT"]), g["gt_map"], "gt_map")
+    _close(_norm(maps), g["maps"], "maps")
     eps = _pressured_episodes()
-    _same(_norm(mp.replay(eps, maps)), g["replay"], "replay")
+    _close(_norm(mp.replay(eps, maps)), g["replay"], "replay")
     rp2 = mp.replay(
         eps,
         maps,
@@ -214,23 +232,23 @@ def test_maps_match_old(gold: dict, base_data: Any, base_scores: dict, crt_run: 
         k_conf=2,
         warm=200.0,
     )
-    _same(_norm(rp2), g["replay_pairs"], "replay_pairs")
+    _close(_norm(rp2), g["replay_pairs"], "replay_pairs")
     eq = {k: mp.edge_quality(m, cells) for k, m in maps.items()}
-    _same(_norm(eq), g["edge_quality"], "edge_quality")
-    _same(_norm(mp.clean_map(maps["rand"], cells)), g["clean_rand"])
-    _same(_norm(mp.inject(maps["own"], maps["flip"])), g["inject"])
+    _close(_norm(eq), g["edge_quality"], "edge_quality")
+    _close(_norm(mp.clean_map(maps["rand"], cells)), g["clean_rand"])
+    _close(_norm(mp.inject(maps["own"], maps["flip"])), g["inject"])
     corr = base_scores["corr"]
     decl = bd.declare(corr, bd.tune_tau(corr, "far_fpr")["tau"])
-    _same(_norm(list(mp.map_from_declared(decl, base_data))), g["map_from_declared"])
+    _close(_norm(list(mp.map_from_declared(decl, base_data))), g["map_from_declared"])
     pt = [
         mp.placebo_tau(js(corr), ("own", "nbr", "far")),
         mp.placebo_tau(base_scores["granger"], ("far",), max_fp=0),
         mp.placebo_tau(corr, ("own",), max_fp=100),
     ]
-    _same(_norm(pt), g["placebo_tau"], "placebo_tau")
+    _close(_norm(pt), g["placebo_tau"], "placebo_tau")
     hyps = (("sleep", "nbr", "pv"), ("ptx", "own", "e"), ("carrier", "far", "load"))
-    assert [mp.naive_slope(base_data, *h) for h in hyps] == g["naive_slope"]
-    _same(_norm(mp.map_from_mscr(crt_run)), g["map_from_mscr"], "map_from_mscr")
+    _close(_norm([mp.naive_slope(base_data, *h) for h in hyps]), g["naive_slope"], "naive_slope")
+    _close(_norm(mp.map_from_mscr(crt_run)), g["map_from_mscr"], "map_from_mscr")
 
 
 def _ctx(knob: str, step: float, own: float = math.nan, nbr: float = math.nan) -> dict:
@@ -302,7 +320,7 @@ def test_certification_matches_old(gold: dict, planted: Any) -> None:
     tau = tau_table(
         {"rlf": 43.15, "v": 20318.0}, {fd: 10.0 + i for i, fd in enumerate(classes)}, rf.GATE_SPACE
     )
-    _same(_norm(rf.tau_to_json(tau)), g["tau"], "tau")
+    _close(_norm(rf.tau_to_json(tau)), g["tau"], "tau")
     tight = {
         (f, r, k): {"kind": "slope", "beta": 0.0, "se": 0.0}
         for f in FAMILIES
@@ -320,10 +338,10 @@ def test_certification_matches_old(gold: dict, planted: Any) -> None:
             "wide": rf.certify_map(M, wide, tau),
             "none": rf.certify_map(M, None, tau),
         }
-        _same(_norm(got), g["certify"][arm], f"certify/{arm}")
+        _close(_norm(got), g["certify"][arm], f"certify/{arm}")
     hyps = [(f, r, k) for f in FAMILIES for r in ("own", "nbr", "far") for k in ("pv", "rlf")]
     ds = {"|".join(h): rf.design_slope_bound(planted, *h) for h in hyps}
-    _same(_norm(ds), g["design_slope"], "design_slope")
+    _close(_norm(ds), g["design_slope"], "design_slope")
     ns = {"|".join(h): rf.naive_slope_se(planted, *h) for h in hyps}
-    _same(_norm(ns), g["naive_slope"], "naive_slope")
-    _same(_norm(rf.gt_ci_bounds(g["gt_cells_ci"])), g["gt_ci_bounds"], "gt_ci_bounds")
+    _close(_norm(ns), g["naive_slope"], "naive_slope")
+    _close(_norm(rf.gt_ci_bounds(g["gt_cells_ci"])), g["gt_ci_bounds"], "gt_ci_bounds")

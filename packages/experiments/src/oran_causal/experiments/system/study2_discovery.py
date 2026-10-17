@@ -652,7 +652,7 @@ def step1_maps(
         if m == "granger_by":
             continue
         fn = bl.SCORERS[m]
-        kw: dict[str, Any] = {"seed": 0} if m in ("shap_gbdt", "two_tower", "qacm") else {}
+        kw: dict[str, Any] = {"seed": 0} if m in bl.SEEDED else {}
         if m == "qacm":
             kw["ann"] = s.ann
         dkw = dict(kw, relations=("own", "far")) if m == "qacm" else kw

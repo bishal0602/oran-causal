@@ -147,9 +147,12 @@ def build_maps(disc: Mapping[str, Any], disc_sha: str, allow_dry: bool = False) 
 
 
 def verify_maps(
-    path: Path = study2.MAPS.path, disc_json: Path | None = None, allow_dry: bool = False
+    path: Path = study2.MAPS.path,
+    disc_json: Path | None = None,
+    allow_dry: bool = False,
+    doc: FrozenDoc = study2.MAPS,
 ) -> dict[str, Any]:
-    """Re-derives the maps artifact's signatures and aliases and checks every pin."""
+    """Re-derives the maps artifact's signatures and aliases and checks every pin (`doc`'s)."""
     a = read_json(path)
     sha = sha_lf(path)
     maps = {arm: rf.map_from_json(v["map"]) for arm, v in a["arms"].items()}
@@ -176,8 +179,8 @@ def verify_maps(
         "sha256": sha,
         "checks": chk,
         "ok": all(chk.values()),
-        "pinned": study2.MAPS.want,
-        "matches_pin": sha == study2.MAPS.want,
+        "pinned": doc.want,
+        "matches_pin": sha == doc.want,
     }
 
 
@@ -334,7 +337,7 @@ def build_certsafe(
     calib: Mapping[str, Any],
     disc: Mapping[str, Any],
     sha: Mapping[str, str],
-    maps_path: Path = study2.MAPS.path,
+    maps_doc: FrozenDoc = study2.MAPS,
     protocol: FrozenDoc = study3.PROTOCOL,
     allow_partial: bool = False,
 ) -> Record:
@@ -345,7 +348,7 @@ def build_certsafe(
         calib: `certsafe_calib.json`.
         disc: Study 2 `disc_conf.json` (its GT cells give the GT bounds).
         sha: LF sha256 of the three inputs, keyed by their file names.
-        maps_path: The Study 2 maps artifact.
+        maps_doc: The pinned Study 2 maps artifact.
         protocol: The Study 3 protocol document.
         allow_partial: Accept partial inputs (never a frozen artifact).
 
@@ -359,10 +362,10 @@ def build_certsafe(
         raise ValueError("bounds: the DISC unit table does not reproduce the frozen map betas")
     if (bounds["mode"] != "full" or calib["mode"] != "full") and not allow_partial:
         raise ValueError(f"partial bounds ({bounds['mode']}) / calib ({calib['mode']})")
-    maps_sha = sha_lf(maps_path)
-    pinned = read_json(maps_path)["sha256"]["disc_conf.json"]
+    maps_sha = sha_lf(maps_doc.path)
+    pinned = read_json(maps_doc.path)["sha256"]["disc_conf.json"]
     if not allow_partial and (
-        maps_sha != study2.MAPS.want
+        maps_sha != maps_doc.want
         or sha["disc_conf.json"] != pinned
         or bounds["sha256"]["maps_artifact"] != maps_sha
     ):
@@ -378,7 +381,7 @@ def build_certsafe(
         "ols": rf.bounds_from_json(bounds["ols"]),
         "gt": rf.gt_ci_bounds(disc["gt"]["cells"]),
     }
-    tables = rf.cs_tables(maps_from_artifact(maps_path), bset, tau)
+    tables = rf.cs_tables(maps_from_artifact(maps_doc.path), bset, tau)
     al = rf.cs_alias_table(tables, rf.THETA, bool(calib["noarb_alias"]))
     arms = {
         arm: {
@@ -397,7 +400,7 @@ def build_certsafe(
         "schema": SCHEMA_CERTSAFE,
         "mode": "full" if bounds["mode"] == calib["mode"] == "full" else "partial",
         "protocol": fz,
-        "maps_artifact": {"path": study2.MAPS.name, "sha256": maps_sha},
+        "maps_artifact": {"path": maps_doc.name, "sha256": maps_sha},
         "constants": {
             "rho": RHO,
             "z90": Z90,
@@ -429,8 +432,15 @@ def build_certsafe(
     }
 
 
-def verify_certsafe(path: Path = study3.CERTSAFE.path) -> dict[str, Any]:
-    """Re-derives the certsafe artifact's tables, tau and aliases and checks every pin."""
+def verify_certsafe(
+    path: Path = study3.CERTSAFE.path,
+    maps_doc: FrozenDoc = study2.MAPS,
+    doc: FrozenDoc = study3.CERTSAFE,
+) -> dict[str, Any]:
+    """Re-derives the certsafe artifact's tables, tau and aliases and checks every pin.
+
+    `maps_doc` is the maps artifact it is built on and `doc` its own pin.
+    """
     a = read_json(path)
     sha = sha_lf(path)
     loaded = rf.load_certsafe(a)
@@ -447,10 +457,10 @@ def verify_certsafe(path: Path = study3.CERTSAFE.path) -> dict[str, Any]:
         ),
         "tau_rule": rf.tau_to_json(rf.tau_from_accept_all(a["calib"]["G"], calib_n)) == a["tau"],
         "arms_complete": sorted(a["arms"]) == sorted(rf.CS_ARMS),
-        "maps_artifact": a["maps_artifact"]["sha256"]
-        == study2.MAPS.want
-        == sha_lf(study2.MAPS.path),
-        "maps_equal": all(maps[k] == m for k, m in maps_from_artifact().items() if k in maps),
+        "maps_artifact": a["maps_artifact"]["sha256"] == maps_doc.want == sha_lf(maps_doc.path),
+        "maps_equal": all(
+            maps[k] == m for k, m in maps_from_artifact(maps_doc.path).items() if k in maps
+        ),
         "mapgate_sha": a["mapgate"]["sha256"] == LEGACY_SHA256[MAPGATE],
         "certsafe_sha": a["sha256"][CERTSAFE_CODE] == LEGACY_SHA256[CERTSAFE_CODE],
         "analyzer_sha": a["sha256"][CS_ANALYZER] == LEGACY_SHA256[CS_ANALYZER],
@@ -463,8 +473,8 @@ def verify_certsafe(path: Path = study3.CERTSAFE.path) -> dict[str, Any]:
         "sha256": sha,
         "checks": chk,
         "ok": all(chk.values()),
-        "pinned": study3.CERTSAFE.want,
-        "matches_pin": sha == study3.CERTSAFE.want,
+        "pinned": doc.want,
+        "matches_pin": sha == doc.want,
     }
 
 
