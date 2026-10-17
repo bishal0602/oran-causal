@@ -14,7 +14,7 @@ namespace OranCausal.Fresh
 variable {Ω K : Type*} [Countable K] [MeasurableSpace K] [MeasurableSingletonClass K]
 
 /-- Information before draw `n`; indices start at zero. -/
-@[instance_reducible] def history (G0 : MeasurableSpace Ω) (U : K → Ω → ℝ) (key : ℕ → Ω → K) :
+@[expose, instance_reducible] def history (G0 : MeasurableSpace Ω) (U : K → Ω → ℝ) (key : ℕ → Ω → K) :
     ℕ → MeasurableSpace Ω
   | 0 => G0
   | n + 1 => history G0 U key n ⊔ (borel ℝ).comap (fun ω => U (key n ω) ω)
@@ -368,6 +368,15 @@ theorem fresh_draw (G0 : MeasurableSpace Ω) (U : K → Ω → ℝ) (key : ℕ �
   have hI := selected_independent G0 U key μ hG0 hU hind hlaw hkey n hfresh
   have hC := conditional_acceptance_of_uniform _ μ hG _ π hV hπ hbound hL hI
   exact ⟨hL, hI, ConditionalAcceptance.condExp_eq _ μ hG _ π hV hπ hbound hC⟩
+
+omit [Countable K] [MeasurableSpace K] [MeasurableSingletonClass K] in
+lemma history_zero (G0 : MeasurableSpace Ω) (U : K → Ω → ℝ) (key : ℕ → Ω → K) :
+    history G0 U key 0 = G0 := rfl
+
+omit [Countable K] [MeasurableSpace K] [MeasurableSingletonClass K] in
+lemma history_succ (G0 : MeasurableSpace Ω) (U : K → Ω → ℝ) (key : ℕ → Ω → K) (n : ℕ) :
+    history G0 U key (n + 1) =
+      history G0 U key n ⊔ (borel ℝ).comap (fun ω => U (key n ω) ω) := rfl
 
 end OranCausal.Fresh
 

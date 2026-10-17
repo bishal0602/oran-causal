@@ -161,6 +161,7 @@ claims:
     statement: "Referees are compared by the recovery R = (V_AA - V) / (V_AA - V_ref) and eligibility, with 90 % paired seed-bootstrap intervals (10,000 resamples) on decision metrics and 95 % cluster-bootstrap intervals on rates; an ineligible arm scores R* = min(R, 0)."
     paper: [sec:baselines_scores, app:arms, tab:arms]
     spec: spec:met.decision
+    code: [oran_causal.analysis.system.stats:gate_a]
     tests: {min: 1, tier: unit}
 
   - id: DEF-ENV
@@ -282,7 +283,7 @@ claims:
 
   - id: THM-EXACT
     kind: theorem-paper
-    statement: "If, in addition to (A1) and (A2), the realised units, their order, sgn_u, pi_u and w_u are all G_0-measurable, then Pr(p <= t | G_0) <= t for every t, n and B, and likewise for p_d (Lemma 2)."
+    statement: "If, in addition to (A1) and (A2), the realised units, their order, sgn_u, pi_u and w_u are all G_0-measurable, then Pr(p <= t | G_0) <= t for every t in [0, 1], every n and every B, and likewise for p_d with the direction d fixed and the orientation o G_0-measurable (set from training data) (Lemma 2)."
     paper: [lem:exact]
     spec: spec:thm.exact
     depends_on: [ASM-A1-DESIGN, ASM-A2-NULL, THM-FRESH, CIT-PS]
