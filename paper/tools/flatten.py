@@ -2,7 +2,7 @@
 
 Writes submission/sn-article.tex with every \\input expanded (the template forbids \\input) and internal LaTeX
 comments removed, and copies the class, style, bibliography, the figures it uses and Online Resource 1 next to it.
-Run from the journal folder after a build:  uv run --no-project python tools/flatten.py
+Run after `uv run python paper/build.py sn-article supplementary`:  uv run python paper/tools/flatten.py
 """
 import re
 import shutil
@@ -57,7 +57,7 @@ def main():
         if not src.suffix:
             src = src.with_suffix('.pdf')
         shutil.copy(src, OUT / 'figures' / src.name)
-    esm = ROOT.parent / 'build' / 'ADV' / 'supplementary.pdf'
+    esm = ROOT / 'build' / 'supplementary.pdf'
     shutil.copy(esm, OUT / 'ESM_1.pdf')
     print('wrote', OUT / 'sn-article.tex', len(body.split('\n')), 'lines')
 
