@@ -47,8 +47,8 @@ the arithmetic mean of the signed assignment effects at propensity 1/2.
 
 `EpisodeDesign.corrected_convergence` states convergence in probability of the
 actual slope minus the propensity-variance-weighted policy effect to zero.
-It is conditional on the explicitly named generic library obligation
-`BoundedMartingaleWeakLaw`, stated below.
+The generic bounded martingale weak law is now proved in Lean; this theorem
+has no weak-law premise.
 
 `EpisodeDesign` represents an arbitrary probability space and an infinite
 ordered sequence of episodes. Episode e has K=N_max candidate slots. A slot's
@@ -105,7 +105,7 @@ centre does not change the numerator conditional mean.
 `episode_blocking` uses Mathlib's tower property and finite-sum linearity.
 If a slot error X has E[X|H]=0, then E[X|F_e]=0. The sum over K slots is
 F_(e+1)-measurable and bounded by K times the slot bound. This supplies every
-premise of the named martingale-difference weak law.
+premise of the proved martingale-difference weak law.
 
 `EpisodeDesign.errors_weak_law` applies this argument twice:
 
@@ -126,32 +126,33 @@ also bounds the *realised* squared score away from zero on existing units.
 the two weak laws. The proof uses the conservative overlap bound eta²;
 it does not require the sharper eta(1-eta) bound in the manuscript.
 
-## Explicit library obligation
+## Proved bounded martingale weak law
 
-`BoundedMartingaleWeakLaw mu` is a named theorem parameter, **not a Lean axiom**
-and not an independence or model-specific convergence assumption. It quantifies
-over every filtration F, sequence D_e, and fixed bound B on the probability
-space, and asserts
+`bounded_martingale_weak_law` proves `BoundedMartingaleWeakLaw mu` for
+an arbitrary probability space. For a filtration F and real increments D_e,
+it assumes D_e is F_(e+1)-measurable, integrable, has conditional mean zero
+given F_e, and satisfies |D_e| ≤ K almost surely, for one fixed real K.
+It concludes n⁻¹ sum_(e<n) D_e → 0 in probability. No independence is assumed.
 
-\[
-\begin{gathered}
- D_e\in\mathcal F_{e+1},\quad E|D_e|<\infty,\quad
- E[D_e\mid\mathcal F_e]=0,\quad |D_e|\leq B\ \text{a.s.}
- \\
- \Longrightarrow\quad n^{-1}\sum_{e<n}D_e\longrightarrow0
- \quad\text{in probability}.
-\end{gathered}
-\]
+The Lean proof establishes each step:
 
-This is exactly the bounded-increment variance/Chebyshev step in task 06's
-pinned `sources/app_a.tex`, `app:proof_slope`, now applied to episodes as
-authorised by the user. Its standard justification is martingale-difference
-orthogonality, E[(sum D_e)²]≤n B², and Chebyshev's inequality, giving a tail
-bound B²/(n epsilon²). Mathlib v4.35.0 has Chebyshev's inequality in
-`Probability/Moments/Variance.lean`, but inspection of its martingale modules
-did not find this packaged bounded-difference weak law. The formalisation
-leaves this precise general theorem as an explicit obligation under the task
-rules and user authorisation. No other unproved theorem parameters are used.
+1. Boundedness implies membership in L². Integrating the conditional
+   expectation gives E[D_e] = 0.
+2. For i < j, D_i is F_j-measurable. Pulling it out of the conditional
+   expectation gives E[D_i D_j | F_j] = D_i E[D_j | F_j] = 0.
+   Integrating proves E[D_i D_j] = 0, hence zero cross covariance.
+3. Mathlib's covariance expansion of a finite sum gives
+   Var(sum_(e<n) D_e) = sum_(e<n) Var(D_e) ≤ n K².
+4. Chebyshev at threshold n ε gives, for n > 0 and ε > 0,
+   Pr(|n⁻¹ sum_(e<n) D_e| ≥ ε) ≤ K²/(n ε²).
+   This upper bound tends to zero, proving convergence in probability.
+
+The conditional-expectation pull-out and integral identities, finite-sum
+variance expansion, and Chebyshev inequality are all proved Mathlib results.
+There are no remaining named theorem obligations. `episode_blocking`,
+`EpisodeDesign.errors_weak_law`, and `EpisodeDesign.corrected_convergence`
+now invoke this proved law without a weak-law parameter. The original
+bounded-centre correction and H1–H3 remain explicit.
 
 H1–H3 are the facts explicitly supplied by the user for this task: clipped
 post-windows (pinned `app_a.tex` pipeline description), the per-episode unit
@@ -162,13 +163,13 @@ silently assumed by Lean.
 ## Validation
 
 The pinned Lean/Mathlib v4.35.0 project passed `lake build` with exit code 0
-(3123 jobs). Output is in `task06-build.log`. The only task-06 warnings are two
-cosmetic tactic-linter messages at `Slope.lean:427` about using `<;>` where `;`
+(3123 jobs). Follow-up output is in `task06-followup-build.log`. The only task-06 warnings are two
+cosmetic tactic-linter messages at `Slope.lean:505` about using `<;>` where `;`
 would suffice; there are no build errors.
 
-The eleven `#print axioms` commands in the module report only `propext`,
+The twelve `#print axioms` commands in the module report only `propext`,
 `Classical.choice`, and `Quot.sound`, including for the corrected convergence
-theorem. Their output is extracted in `task06-axioms.log`. No `sorry`, `admit`,
+theorem. Their output is extracted in `task06-followup-axioms.log`, including the newly proved weak law. No `sorry`, `admit`,
 new axiom declaration, `native_decide`, unchecked implementation hook, or
 check-disabling option occurs in the module. The toolchain and dependency pins
 were not changed.

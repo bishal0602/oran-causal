@@ -3,6 +3,7 @@ module
 public import OranCausal.StepUp
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Probability.Martingale.Basic
+public import Mathlib.Probability.Moments.Variance
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Real
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
@@ -191,8 +192,8 @@ theorem counterexample_not_convergent :
 
 variable {Ω : Type*} [mΩ : MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
 
-/-- Named library bridge: the bounded martingale-difference weak law.
-This is a universally quantified theorem obligation, not a modelling assumption. -/
+/-- Statement of the bounded martingale-difference weak law.
+Proved below by orthogonality, the variance bound, and Chebyshev. -/
 def BoundedMartingaleWeakLaw : Prop :=
   ∀ (F : Filtration ℕ mΩ) (D : ℕ → Ω → ℝ) (K : ℝ),
     (∀ e, StronglyMeasurable[F (e + 1)] (D e)) →
@@ -206,10 +207,87 @@ lemma integrable_bounded {f : Ω → ℝ} {K : ℝ}
   apply (integrable_const K).mono' hf
   simpa only [Real.norm_eq_abs] using hb
 
+/-- Bounded martingale differences have sample averages converging in probability.
+The proof establishes zero cross moments, variance additivity and the bound n K²,
+then applies Chebyshev at threshold n ε. No independence is used. -/
+theorem bounded_martingale_weak_law : BoundedMartingaleWeakLaw μ := by
+  intro F D K hmeas hi hz hb
+  have hLp (e : ℕ) : MemLp (D e) 2 μ :=
+    MemLp.of_bound ((hmeas e).mono (F.le _)).aestronglyMeasurable K
+      (by simpa only [Real.norm_eq_abs] using hb e)
+  have hmean (e : ℕ) : μ[D e] = 0 := by
+    rw [← integral_condExp (F.le e)]
+    exact (integral_congr_ae (hz e)).trans (by simp)
+  have hcross (i j : ℕ) (hij : i < j) : μ[D i * D j] = 0 := by
+    have hm := (hmeas i).mono (F.mono (Nat.succ_le_of_lt hij))
+    have hp := condExp_mul_of_stronglyMeasurable_left hm
+      ((hLp i).integrable_mul (hLp j)) (hi j)
+    have hzero : μ[D i * D j | F j] =ᵐ[μ] 0 := by
+      filter_upwards [hp, hz j] with ω hpω hzω
+      simpa [Pi.mul_apply, hzω] using hpω
+    rw [← integral_condExp (F.le j)]
+    exact (integral_congr_ae hzero).trans (by simp)
+  have hcov (i j : ℕ) (hij : i ≠ j) : cov[D i, D j; μ] = 0 := by
+    rcases lt_or_gt_of_ne hij with hij | hij
+    · rw [covariance_eq_sub (hLp i) (hLp j), hcross i j hij, hmean i, hmean j]
+      ring
+    · rw [covariance_comm, covariance_eq_sub (hLp j) (hLp i), hcross j i hij,
+        hmean i, hmean j]
+      ring
+  have hv (n : ℕ) : Var[fun ω => ∑ e ∈ range n, D e ω; μ] =
+      ∑ e ∈ range n, Var[D e; μ] := by
+    rw [variance_fun_sum' (fun e _ => hLp e)]
+    apply sum_congr rfl
+    intro i hi'
+    rw [sum_eq_single i, covariance_self (hLp i).aemeasurable]
+    · intro j _ hji
+      exact hcov i j hji.symm
+    · simp [hi']
+  have hvbound (n : ℕ) : Var[fun ω => ∑ e ∈ range n, D e ω; μ] ≤ n * K ^ 2 := by
+    rw [hv]
+    calc
+      _ ≤ ∑ e ∈ range n, K ^ 2 := by
+        apply sum_le_sum
+        intro e _
+        apply (variance_le_expectation_sq (hLp e).aestronglyMeasurable).trans
+        have hint : Integrable (fun ω => D e ω ^ 2) μ := by
+          simpa only [Pi.mul_def, pow_two] using (hLp e).integrable_mul (hLp e)
+        have hle : ∀ᵐ ω ∂μ, D e ω ^ 2 ≤ K ^ 2 := by
+          filter_upwards [hb e] with ω hω
+          simpa only [sq_abs] using
+            (sq_le_sq₀ (abs_nonneg _) ((abs_nonneg _).trans hω)).mpr hω
+        simpa using integral_mono_ae hint (integrable_const (K ^ 2)) hle
+      _ = _ := by simp
+  apply tendstoInMeasure_iff_norm.mpr
+  intro ε hε
+  have hlim : Tendsto (fun n : ℕ => ENNReal.ofReal ((K ^ 2 / ε ^ 2) / n))
+      atTop (𝓝 0) := by
+    simpa only [Function.comp_def, ENNReal.ofReal_zero] using ENNReal.continuous_ofReal.continuousAt.tendsto.comp
+      (tendsto_const_div_atTop_nhds_zero_nat (K ^ 2 / ε ^ 2))
+  apply tendsto_const_nhds.squeeze' hlim (Eventually.of_forall fun _ => bot_le)
+  filter_upwards [eventually_gt_atTop 0] with n hn
+  have hn' : (0 : ℝ) < n := by exact_mod_cast hn
+  have hsLp : MemLp (fun ω => ∑ e ∈ range n, D e ω) 2 μ :=
+    memLp_finsetSum _ (fun e _ => hLp e)
+  have hsmean : μ[fun ω => ∑ e ∈ range n, D e ω] = 0 := by
+    rw [integral_finsetSum _ (fun e _ => hi e)]
+    simp [hmean]
+  have hcheb := meas_ge_le_variance_div_sq hsLp (mul_pos hε hn')
+  have hevent : {ω | ε ≤ ‖(∑ e ∈ range n, D e ω) / n - (0 : ℝ)‖} =
+      {ω | ε * n ≤ |(∑ e ∈ range n, D e ω) - μ[fun ω => ∑ e ∈ range n, D e ω]|} := by
+    ext ω
+    simp only [Set.mem_ofPred_eq, sub_zero, Real.norm_eq_abs, abs_div,
+      abs_of_pos hn', hsmean, le_div_iff₀ hn']
+  rw [hevent]
+  apply hcheb.trans (ENNReal.ofReal_le_ofReal _)
+  calc
+    _ ≤ (n * K ^ 2) / (ε * n) ^ 2 :=
+      div_le_div_of_nonneg_right (hvbound n) (sq_nonneg _)
+    _ = (K ^ 2 / ε ^ 2) / n := by field_simp [ne_of_gt hn', ne_of_gt hε]
+
 /-- H1--H3 turn unit-centred errors into bounded episode martingale differences.
 Nonexistent slots are zero; the finite slot type implements the H2 cap. -/
 theorem episode_blocking {K : ℕ}
-    (weakLaw : BoundedMartingaleWeakLaw μ)
     (F : Filtration ℕ mΩ)
     (H : ℕ → Fin K → MeasurableSpace Ω) (X : ℕ → Fin K → Ω → ℝ) (C : ℝ)
     (hbefore : ∀ e j, F e ≤ H e j)
@@ -221,7 +299,7 @@ theorem episode_blocking {K : ℕ}
       (fun n ω => (∑ e ∈ range n, ∑ j : Fin K, X e j ω) / n) atTop (fun _ => 0) := by
   have hi : ∀ e j, Integrable (X e j) μ := fun e j =>
     integrable_bounded μ ((hobs e j).mono (F.le _)).aestronglyMeasurable (hbound e j)
-  apply weakLaw F (fun e ω => ∑ j : Fin K, X e j ω) (K * C)
+  apply bounded_martingale_weak_law μ F (fun e ω => ∑ j : Fin K, X e j ω) (K * C)
   · intro e
     exact Finset.stronglyMeasurable_fun_sum _ (fun j _ => hobs e j)
   · intro e
@@ -607,7 +685,7 @@ lemma z_bound (hη : 0 < η) (_hM : 0 ≤ M) (_hC : 0 ≤ C)
       (abs_nonneg _) (by norm_num)
     _ = _ := one_mul _
 
-lemma errors_weak_law (weakLaw : BoundedMartingaleWeakLaw μ)
+lemma errors_weak_law
     (hη : 0 < η) (hM : 0 ≤ M) (hC : 0 ≤ C) :
     TendstoInMeasure μ (fun n ω =>
       (total d.z n ω - total d.t n ω) / n) atTop (fun _ => 0) ∧
@@ -633,7 +711,7 @@ lemma errors_weak_law (weakLaw : BoundedMartingaleWeakLaw μ)
     integrable_bounded μ ((d.w_pre e j).mono ((d.after e j).trans (F.le _))).aestronglyMeasurable
       (Filter.Eventually.of_forall (fun ω => (d.scalar_bounds hη e j ω).2.1))
   constructor
-  · have hx := episode_blocking μ weakLaw F H (fun e j ω => d.z e j ω - d.t e j ω)
+  · have hx := episode_blocking μ F H (fun e j ω => d.z e j ω - d.t e j ω)
       (2 * M + C) d.before d.after
       (fun e j => (d.z_end e j).sub ((d.t_pre e j).mono (d.after e j)))
       (fun e j => centered_zero ((d.after e j).trans (F.le _))
@@ -644,7 +722,7 @@ lemma errors_weak_law (weakLaw : BoundedMartingaleWeakLaw μ)
         have hz := d.z_bound hη hM hC e j ω
         exact (abs_sub _ _).trans (by linarith))
     simpa only [total, sum_sub_distrib] using hx
-  · have hx := episode_blocking μ weakLaw F H (fun e j ω => d.q e j ω ^ 2 - d.w e j ω)
+  · have hx := episode_blocking μ F H (fun e j ω => d.q e j ω ^ 2 - d.w e j ω)
       2 d.before d.after
       (fun e j => ((d.q_end e j).pow 2).sub ((d.w_pre e j).mono (d.after e j)))
       (fun e j => centered_zero ((d.after e j).trans (F.le _))
@@ -697,7 +775,7 @@ lemma total_target_bound (hη : 0 < η) (hM : 0 ≤ M) (n : ℕ) :
 /-- Corrected slope convergence, grouping by episode and using only the named MDS weak law.
 The count hypothesis is the lower half of `N/n` being bounded away from zero and infinity
 with probability tending to one; H2 already gives the upper bound. -/
-theorem corrected_convergence (weakLaw : BoundedMartingaleWeakLaw μ)
+theorem corrected_convergence
     (hη : 0 < η) (hM : 0 ≤ M) (hC : 0 ≤ C)
     (ρ : ℝ) (hρ : 0 < ρ)
     (hcount : Tendsto (fun n => μ.real {ω | d.count n ω < ρ * n}) atTop (𝓝 0)) :
@@ -711,7 +789,7 @@ theorem corrected_convergence (weakLaw : BoundedMartingaleWeakLaw μ)
     congr 1
     ext ω
     simp [good, hn, not_le]
-  obtain ⟨hx, hy⟩ := d.errors_weak_law weakLaw hη hM hC
+  obtain ⟨hx, hy⟩ := d.errors_weak_law hη hM hC
   apply convergence_on_good_event μ _ _ _ good (1 / δ) ((K * M) / δ ^ 2)
     (by positivity) (by positivity) hx hy hg
   intro n
@@ -751,3 +829,5 @@ end OranCausal.Slope
 #print axioms OranCausal.Slope.binary_design_moments
 #print axioms OranCausal.Slope.episode_blocking
 #print axioms OranCausal.Slope.EpisodeDesign.corrected_convergence
+
+#print axioms OranCausal.Slope.bounded_martingale_weak_law
