@@ -61,20 +61,4 @@ exempt:
     literal: "0.8"
     count: 1
     reason: dither-width factor of the controlled condition (design constant)
-unreproduced:
-  - file: sections/s04_pmrt.tex
-    literal: "0.14"
-    count: 1
-    reason: no stored record reproduces it; sent to the authors
-  - file: sections/s06_discovery.tex
-    literal: "0.16"
-    count: 1
-    reason: no stored record reproduces it; sent to the authors
-  - file: sections/s06_discovery.tex
-    literal: "4.5"
-    count: 1
-    reason: no stored record reproduces it; sent to the authors
-  - file: sections/s06_discovery.tex
-    literal: "5.4"
-    count: 1
-    reason: no stored record reproduces it; sent to the authors
+unreproduced: []

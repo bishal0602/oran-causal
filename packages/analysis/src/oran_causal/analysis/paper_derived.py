@@ -96,7 +96,6 @@ def _two_way_bounds(
 def null_rejection_bound(
     cells: Mapping[str, Mapping[str, Any]],
     slices: Mapping[str, Mapping[str, Any]],
-    *,
     unestablished: bool,
     upper: bool,
 ) -> float:

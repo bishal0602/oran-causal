@@ -729,7 +729,8 @@ claims:
   - id: EMP-ERLY
     kind: empirical
     statement: "An earlier construction that centred the score over each episode's realised units had a rate of p <= 0.05 of 0.14 for sleep hypotheses on null outcomes."
-    paper: [sec:pmrt]
+    status: retracted
+    paper: []
     spec: spec:pmrt.weight
     depends_on: [DEF-PMRT-WEIGHT]
     tests: {min: 0}

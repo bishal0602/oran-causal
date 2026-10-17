@@ -27,7 +27,7 @@ and the proofs below use the notation of Section~\ref{sec:inference}. % src: pla
   \State form the post-window bins $P_u$ of KPI $k$ per receiver slot (Section~\ref{sec:pmrt}) over the bins $A$ the episode allows (0--90~s, plus 90--150~s where present), and the pre-window features $X_u$
   \State $E_u \gets P_u - \Gamma X_u$ \Comment{ridge prediction, fitted on training episodes}
   \State $g_u \gets \psi_A^{\top} E_u$ with $\psi_A = \Sigma_{AA}^{-1} \mu_A$ \Comment{a kernel per bin set}
-  \State $w_u \gets s_u\,\mathrm{clip}\bigl((g_u - \bar g_u) / s_u, \pm c\bigr)$ \Comment{$\bar g_u$ the running mean of earlier scores; Huber clip with a predictable scale $s_u$}
+  \State $w_u \gets s_u\,\mathrm{clip}\bigl((g_u - \bar g_u) / s_u, \pm c\bigr)$ \Comment{$\bar g_u$ the shrunk running mean of earlier scores (step 5 of Table~\ref{tab:pipeline}); Huber clip with a predictable scale $s_u$}
 \EndFor
 \State $S \gets \sum_u v_u w_u$;\; $\sigma^2 \gets \sum_u \pi_u (1 - \pi_u)\, w_u^2$;\; $z \gets S / \sigma$ \Comment{Equation~\eqref{eq:stat}}
 \For{$b = 1, \dots, B$}
@@ -70,12 +70,12 @@ Step & What it does & Fitted on \\
 1 Target bins & KPI $k$ over the cells of $r$, at 0--30, 30--60, 60--90 and 90--150~s after opening & -- \\
 2 Receiver slots & Own 1, neighbour 4, far 2 slots: cells whose load the family moved most get one each, the rest share one & training \\
 3 Adjustment & Ridge prediction~\cite{hoerl1970ridge} from pre-window bins, context and earlier units' centred modes; residual kept & training \\
-4 Matched filter & Score $g_u$: step-3 residuals weighted by $\psi = \Sigma^{-1} \mu$, favouring bins with more effect $\mu$ (one sign over slots) and less noise $\Sigma$ (Ledoit--Wolf~\cite{ledoit2004covariance}); restricted to the bins present & training \\
-5 Score centre & Subtracts $\bar g_u$, the running mean score of earlier units & earlier units, online \\
+4 Matched filter & Score $g_u$: step-3 residuals weighted by $\psi = \Sigma^{-1} \tilde\mu$, favouring bins with more effect and less noise $\Sigma$ (Ledoit--Wolf~\cite{ledoit2004covariance}), where $\tilde\mu$ is the rank-one fit of the effect profile $\mu$: a one-signed profile over slots, taken from the family's effect on load, times a least-squares profile over the four bins; restricted to the bins present & training \\
+5 Score centre & Subtracts $\bar g_u$, the running mean score of earlier units of the same episode and request direction, shrunk towards the mean over earlier units of that direction (20 pseudo-units) and the training mean (50 pseudo-units) & training and earlier units, online \\
 6 Huber clip & Clips at a scale predicted at opening~\cite{huber1964robust}, giving $w_u$ & training \\
 7 Orientation & $o$: sign of $\mu$ summed over 0--90~s, set only if $|z_{\mathrm{train}}| \ge 2$ & training \\
 \midrule
-8 Declaration weights & Roeder--Wasserman $\omega_j$~\cite{roeder2009weighted}: floor 0.2, cap 5, mean 1; direction $d_j$, sign of $z$ where $|z| \ge 3$ (33 of 60) & the 480 earlier episodes \\
+8 Declaration weights & Roeder--Wasserman $\omega_j$~\cite{roeder2009weighted}: floor 0.2, cap 5, mean 1; direction $d_j$, sign of $z$ where $|z| \ge 3$ (\val{appa.prior.directed} of 60) & the 480 earlier episodes \\
 \botrule
 \end{tabular*}
 \end{table}
@@ -148,8 +148,7 @@ $\{u \le N\}$ is $\mathcal{G}_{u-1}$-measurable.
 \label{app:assumptions}
 
 Assumption (A4) of Section~\ref{sec:inference} states formally that, as $n$, the number of episodes, grows, there are constants $s_n \to \infty$ with $\sigma^2 / s_n^2 \to \eta^2$ in probability and
-$0 < \eta^2 < \infty$ almost surely, that $\max_u |w_u| / s_n \to 0$ in probability, and that each $w_u$ is square
-integrable; Section~\ref{sec:inference} states what the four assumptions require in operational terms.
+$0 < \eta^2 < \infty$ almost surely, and that $\max_u |w_u| / s_n \to 0$ in probability; Section~\ref{sec:inference} states what the four assumptions require in operational terms.
 
 \subsection{Proof of Proposition~\ref{prop:pmrt}}
 \label{app:proof_prop}\claim{CIT-HH}\claim{CIT-DUR}
@@ -249,8 +248,10 @@ rejected, the request is proposed again and opens unit 2 with weight $w_2 = a > 
 accepted, there is no unit 2. All weights are fixed in advance, so (A1) to (A3) hold. If unit 1 is
 accepted, $z = 1$ and the redraws give $z_b = \pm 1$, so $p_{+1} = 1/2$. If unit 1 is rejected,
 $z = (a - 1)/\sqrt{1 + a^2}$ when unit 2 is accepted and $z = -(a + 1)/\sqrt{1 + a^2}$ when it is
-rejected; the redraws on the two realised units give $p_{+1} = 1/2$ and $p_{+1} = 1$. Hence, with
-$B \to \infty$, $\Pr(p_{+1} \le 1/2) = 1/2 + 1/4 = 3/4 > 1/2$. The redraws treat unit 2 as if it
+rejected; the redraws on the two realised units give exact tail probabilities $1/2$ and $1$. Hence the
+exact tail is at most $1/2$ with probability $1/2 + 1/4 = 3/4$. The value $p_{+1}$ of Equation~\eqref{eq:pval} estimates
+a tail of $1/2$ by $(1 + K)/(B + 1)$ with $K$ binomial$(B, 1/2)$, which tends to $1/2$, so for every fixed
+$t \in (1/2, 3/4)$, $\Pr(p_{+1} \le t) \to 3/4 > t$ as $B \to \infty$. The redraws treat unit 2 as if it
 existed whatever unit 1 received, which is the source of the error, as in randomisation tests under
 response-adaptive designs~\cite{simon2011randomization}; as the number of units grows,
 the martingale central limit theorem removes it.
@@ -289,7 +290,7 @@ evaluation data. \hfill$\square$
 \begin{lemma}[Design slope]
 \label{lem:slope}\claim{THM-SLOPE}
 Assume (A1) with the natural history $\mathcal{F}_{u-1}$ in place of $\mathcal{G}_{u-1}$, bounded
-outcomes, a centre $\tilde y_u$ that is $\mathcal{F}_{u-1}$-measurable, $N / n$ bounded away from 0 and
+outcomes, a bounded centre $\tilde y_u$ that is $\mathcal{F}_{u-1}$-measurable, $N / n$ bounded away from 0 and
 infinity with probability tending to one. Then
 $\hat\beta$ of Equation~\eqref{eq:slope_ht} satisfies
 \begin{equation*}
@@ -306,8 +307,9 @@ $\mathbb{E}[v_u e_u \mid \mathcal{F}_{u-1}] = \mathrm{sgn}_u \{(1 - \pi_u)\, \ma
 = \pi_u (1 - \pi_u)\, \mathrm{sgn}_u\, \tau_u^{\pi}$, and
 $\mathbb{E}[v_u^2 \mid \mathcal{F}_{u-1}] = \pi_u (1 - \pi_u)$. The sums
 $\sum_u \{v_u e_u - \pi_u (1 - \pi_u) \mathrm{sgn}_u \tau_u^{\pi}\}$ and
-$\sum_u \{v_u^2 - \pi_u (1 - \pi_u)\}$ are martingales with bounded increments over at most $n N_{\max}$ terms (Appendix~\ref{app:proof_setting}), so
-their variances are $O(n)$ and, divided by $N$, they tend to 0 in probability by Chebyshev's inequality. Overlap keeps $N^{-1} \sum_u \pi_u (1 - \pi_u) \ge \pi_{\min}(1 - \pi_{\min})$, and bounded outcomes keep
+$\sum_u \{v_u^2 - \pi_u (1 - \pi_u)\}$ have mean zero given $\mathcal{F}_{u-1}$ unit by unit. Every outcome closes within its episode, in the bins that the episode allows, and an
+episode has at most $N_{\max}$ units (Appendix~\ref{app:proof_setting}), so by the tower property the errors summed over an episode are bounded
+martingale differences over the $n$ episodes. The variances of the sums are therefore $O(n)$ and, divided by $N$, they tend to 0 in probability by Chebyshev's inequality. Overlap keeps $N^{-1} \sum_u \pi_u (1 - \pi_u) \ge \pi_{\min}(1 - \pi_{\min})$, and bounded outcomes keep
 $N^{-1} \sum_u \pi_u (1 - \pi_u) \mathrm{sgn}_u \tau_u^{\pi}$ bounded, which gives the limit of the ratio. With $\pi_u = 0.5$, $v_u^2 = 1/4$ and
 $4 v_u = 2\, \mathrm{sgn}_u (2 L_u - 1)$, which is Equation~\eqref{eq:slope_ht}.
 \end{proof}

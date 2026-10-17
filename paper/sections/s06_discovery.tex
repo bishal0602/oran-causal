@@ -38,7 +38,7 @@ declaration was unattainable, so it was repeated with \val{x8.redraws} redraws, 
 variants, within the limit of \val{x8.tol_pct}~\%. Finally, the hypotheses that the ground truth labels
 null are small effects rather than sharp nulls. Over all \val{s1.null.count}, the rate of p-values at or below 0.05 was \val{s1.null.rate}, about
 three times nominal, which reflects real effects below the materiality threshold. Over the \val{s1.null.open.count} whose knockout interval
-also contains zero it was \val{s1.null.open.rate}, with an interval reaching 0.16, so that an excess cannot be excluded there either.
+also contains zero it was \val{s1.null.open.rate}, with an interval reaching \val{s1.null.open.ci.hi}, so that an excess cannot be excluded there either.
 
 \subsection{Agreement with the ground truth}
 \label{sec:res_map}\claim{EMP-S1-MAP}\claim{EMP-S2-MAP}\claim{EMP-S1-CHAIN}\claim{EMP-S1-P2}\claim{EMP-GT-SENS}\claim{EMP-GT-EXIST}
@@ -47,8 +47,8 @@ also contains zero it was \val{s1.null.open.rate}, with an interval reaching 0.1
 \label{sec:map_claims}
 
 PMRT's maps agreed closely with the knockout ground truth (Figure~\ref{fig:maps}). On the randomised logs it declared \val{s1.pmrt.declared}
-edges, with a precision of \val{s1.map.pmrt.prec}, a recall of \val{s1.map.pmrt.rec} and no wrong sign. On the confounded logs, where the incumbent's
-state-dependent propensities were logged, it declared \val{s2.pmrt.declared} edges, with a precision of \val{s2.map.pmrt.prec}, a recall of \val{s2.map.pmrt.rec} and again no
+edges, \val{s1.pmrt.indet} of them on hypotheses with an indeterminate label, with a precision of \val{s1.map.pmrt.prec} over the others, a recall of \val{s1.map.pmrt.rec} and no wrong sign. On the confounded logs, where the incumbent's
+state-dependent propensities were logged, it declared \val{s2.pmrt.declared} edges, \val{s2.pmrt.indet} of them indeterminate, with a precision of \val{s2.map.pmrt.prec} over the others, a recall of \val{s2.map.pmrt.rec} and again no
 wrong sign (Table~\ref{tab:maps}). It declared the edge from pico sleep to neighbour protected-slice violations, on which the
 scenario's conflict rests, and the other three edges of the conflict chain, each with the ground-truth sign, on both
 kinds of log and in every larger subsample of the randomised logs. Of the ten true neighbour-relation edges it declared nine,
@@ -195,7 +195,7 @@ interval that barely excludes zero, and its RLF ratio of \val{x15.pooled.rlf} st
 differ at the network level, but the referee's per-seed gain was heavy-tailed and its mean differed between them. The
 non-replication is therefore attributed to seed-level heterogeneity of an adaptive referee, and the pooled estimate is taken as the best estimate
 (Appendix~\ref{app:x15}).
-Referees using the associational maps, finally, raised protected-slice violations to 4.5 to 5.4 times the accept-all level with and without the gate,
+Referees using the associational maps, finally, raised protected-slice violations to \val{s2.assoc.ratio_min} to \val{s2.assoc.ratio_max} times the accept-all level with and without the gate,
 because they rejected Slice Guarantee's protected-share requests; several stayed eligible, since the protected
 slice has no guard of its own (Appendix~\ref{app:decision_full}).
 

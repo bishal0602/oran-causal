@@ -22,7 +22,7 @@ what each of them guarantees.
 \end{figure}
 
 \subsection{Test statistic}
-\label{sec:pmrt}\claim{DEF-PMRT-WEIGHT}\claim{EMP-ERLY}
+\label{sec:pmrt}\claim{DEF-PMRT-WEIGHT}
 \label{sec:pmrt_idea}
 
 In logs written by a reactive controller, the network state drives both the decision and the KPIs
@@ -45,7 +45,7 @@ The weight $w_u$ summarises how the KPI under test moved after the unit opened. 
 prediction~\cite{hoerl1970ridge} built only from what was known at opening, so that the prediction contains none of
 the effect of the unit's own mode. A matched filter then combines the remaining residuals over the receiving cells and
 the seconds after opening into one number, favouring the bins where the training data showed more effect and less
-noise. The weight is then centred on the running mean of earlier units and clipped at a scale predicted at
+noise. The weight is then centred on a running mean of earlier units, shrunk towards the training mean, and clipped at a scale predicted at
 opening~\cite{huber1964robust}. Every fitted part was trained on earlier episodes, separate from the evaluation data;
 Algorithm~\ref{alg:pmrt} and Table~\ref{tab:pipeline} in Appendix~\ref{app:proof} give the
 construction step by step.
@@ -53,10 +53,7 @@ construction step by step.
 The validity of the test rests on one property of the weight: apart from the KPI series under test, it uses only
 information fixed before the unit drew its mode. It therefore uses no later unit, no unit of another family opening at
 or after $u$, and no mean or slope over an episode's realised units, because whether those units exist can depend on
-$W_u$. An earlier construction that centred the score over each episode's realised units broke this rule. Because a
-rejected request is proposed again about 60~s later, that centre depended on earlier modes, and on null outcomes its
-rate of $p \le 0.05$ for sleep hypotheses was 0.14 against the nominal 0.05. Placebo logs missed the failure, because
-applying every request removes the re-proposal. The statistic and its
+$W_u$. The statistic and its
 variance are
 \begin{equation}
 S = \sum_u v_u w_u, \qquad
@@ -92,7 +89,7 @@ first $u - 1$ units (Appendix~\ref{app:proof_setting}), and the result rests on 
   $\pi_u$ are $\mathcal{G}_{u-1}$-measurable, $\Pr(W_u = \text{accept} \mid \mathcal{G}_{u-1}) = \pi_u$, and
   $\pi_{\min} \le \pi_u \le 1 - \pi_{\min}$ for a fixed $\pi_{\min} > 0$.
 \item[(A2) Sharp null.] $H_0(f, r, k)$ holds.
-\item[(A3) Predictable weights.] Every $w_u$ is $\mathcal{G}_{u-1}$-measurable.
+\item[(A3) Predictable weights.] Every $w_u$ is $\mathcal{G}_{u-1}$-measurable and square integrable.
 \item[(A4) Regularity.] As the number of episodes grows, the design variance $\sigma^2$ grows without any single unit
   dominating $S$ (Appendix~\ref{app:assumptions}).
 \end{description}
@@ -109,7 +106,7 @@ Assume (A1) to (A3). Then $S = \sum_u v_u w_u$ is a martingale with respect to $
 quadratic variation is $\sigma^2$. Let (A4) also hold and the number of episodes grow.
 \begin{enumerate}
 \item The statistic $z = S / \sigma$ converges in distribution to $\mathcal{N}(0, 1)$.
-\item Conditionally on the data, every redraw $z_b$ has mean 0 and variance 1, and its distribution function converges
+\item Conditionally on the data, every redraw $z_b$ has mean 0 and, where $\sigma > 0$, variance 1, and its distribution function converges
   uniformly to $\Phi$ in probability.
 \item For every fixed $B$ and every $t \in [0, 1]$, $\limsup \Pr(p \le t) \le \lfloor t(B + 1) \rfloor / (B + 1) \le t$.
   The same holds for $p_d$ for each $d$ when $o$ is fixed in advance.
@@ -243,8 +240,9 @@ estimator cannot certify. The tolerance is
 \end{equation}
 with $G_k$ the mean per-episode total of guard KPI $k$ and $N(f, d)$ the mean number of units of the class per
 episode, both measured under accept-all on 40 development episodes (Appendix~\ref{app:simparams}). Suppose that every unit of a
-class were rejected and that each rejection moved the KPI by at most $\varepsilon$ on each of the three relations. The
-guard ratio would then move by at most 0.05, half the margin of 0.10 that a referee may use under the 1.10 limit of
+class were rejected, that the class had at most $\max\{N(f, d), 1\}$ units, and that each rejection moved the KPI by at
+most $\varepsilon$ on each of the three relations. The
+guard ratio, with $G_k$ as denominator, would then move by at most 0.05, half the margin of 0.10 that a referee may use under the 1.10 limit of
 Section~\ref{sec:estimand}. The certificate is thus a first-order budget per edge, not a bound on the referee's guard
 ratios: it ignores overlapping windows, classes acting together and declared edges, so whether a referee meets its
 guards is checked on held-out seeds. The uncertified classes depend only on the map, the bounds and $\varepsilon$, not

@@ -145,7 +145,7 @@ def format_value(value: Number, fmt: str) -> str:
 
 def _evaluate(node: ast.expr, names: Mapping[str, Any]) -> Any:
     match node:
-        case ast.Constant(value=value) if isinstance(value, int | float):
+        case ast.Constant(value=value) if isinstance(value, int | float | str):
             return value
         case ast.Name(id=name) if name in names:
             return names[name]
@@ -162,8 +162,8 @@ def _evaluate(node: ast.expr, names: Mapping[str, Any]) -> Any:
 def evaluate(expr: str, names: Mapping[str, Any]) -> Any:
     """Evaluates an arithmetic expression over named numbers.
 
-    Allowed: numbers, names, `+ - * /`, unary minus, `abs max min round sum len dot` and the
-    functions of `oran_causal.analysis.paper_derived`.
+    Allowed: numbers, quoted strings, names, `+ - * /`, unary minus, `abs max min round sum len dot`
+    and the functions of `oran_causal.analysis.paper_derived`.
     """
     return _evaluate(ast.parse(expr, mode="eval").body, names)
 

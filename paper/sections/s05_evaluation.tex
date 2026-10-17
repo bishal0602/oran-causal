@@ -161,7 +161,7 @@ a baseline can reach. On the randomised logs the modes are independent of the ne
 placebo declarations there come from their thresholds rather than from confounding. On the confounded logs the
 baselines are also reported at thresholds calibrated on placebo logs.
 
-Maps are scored over the \val{s1.gt.hypotheses} hypotheses. Precision is the share of scored declarations that are true, whatever their
+Maps are scored over the \val{s1.gt.hypotheses} hypotheses. Hypotheses whose ground-truth label is indeterminate are not scored, so a declaration on one counts in neither measure. Precision is the share of declarations on determinate hypotheses that are true, whatever their
 sign; recall is the share of true hypotheses that are declared; F1 is their harmonic mean; and sign accuracy is the
 share of declared true edges that carry the ground-truth sign. Referees are compared with static rules, such as
 accept-all, never-sleep, which rejects every request to put a pico to sleep, and the subsets of xApps run alone. They are also compared

@@ -152,7 +152,7 @@ but acts on nothing; and a confounded-null edge, in the latent-confounding envir
 column drawn by the confounded policy. Under unlogged confounding, the negative control, the real actions have no logged
 design, so the design-based tests are read on the placebo edge only (Section~\ref{sec:study4_results}). The two PMRT
 variants of these environments omit the Huber clip of the unit weight, which raised the null rate on development data;
-the PMRT used in the simulator keeps the clip, and its validity rests on the checks of Section~\ref{sec:res_validity}.
+the PMRT used in the simulator keeps the clip, and its validity rests on the checks of Section~\ref{sec:res_validity}. In the controlled environments the redraws stop at the first 20 that reach the observed statistic, with $p = 20 / k$ at the stopping draw $k$~\cite{besag1991sequential}, up to $B = 9999$ redraws; the simulator runs use all $B = 9999$.
 
 \begin{table}[tbp]
 \caption{Controlled environments and logging designs.}
