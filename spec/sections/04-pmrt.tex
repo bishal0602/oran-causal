@@ -33,8 +33,8 @@ The weight $w_u$ is a $\Gpast{u-1}$-measurable function of the data of earlier u
 \begin{equation*}
 \psi = \bigl(\Sigma + 10^{-8}\, \mathrm{tr}(\Sigma)/p\; I\bigr)^{-1} \mu .
 \end{equation*}
-The \emph{loadsp} kernel replaces $\psi$ by the rank-one product of a same-signed spatial profile and a least-squares time profile fitted to $\mu$; the \emph{plain} kernel uses $\psi$.
-\item \emph{Running score centre.} The score residual is centred with the running mean of earlier units of the same sign, shrunk towards the training mean with pseudo-counts $n_0 = 20$ and $n_1 = 50$ (the plain running mean once a sign has $n_1$ units) and with per-sign training intercepts.
+The \emph{loadsp} kernel computes $\psi$ from $\mu$ replaced by its rank-one fit, the product of a same-signed unit-sum spatial profile (taken from the family's load hypothesis, or from $\mu$ itself with a single slot or no load profile) and a least-squares time profile; the \emph{plain} kernel uses $\mu$ itself.
+\item \emph{Running score centre.} The score residual is centred with the running mean of earlier units of the same sign, shrunk towards the training mean with pseudo-counts $n_0 = 20$ and $n_1 = 50$ (the plain running mean once a sign has $n_1$ units) and with per-sign training intercepts. The frozen runs of Studies 1 and 2 (and of the post hoc studies) were fitted with $n_0 = 20$ and $n_1 = 50$; the manuscript describes only the running mean of earlier units.
 \item \emph{Huber clip.} A predicted scale $s_u = \kappa\, e^{h_u/2}$ is formed with $h_u$ the ridge (penalty $30\, n/100$) prediction of $\log(r^2 + 10^{-3}\,\overline{r^2})$ from standardised covariates and $\kappa = \mathrm{median}(\abs{r}/e^{h/2})/0.6745$. The matched-filter response $\hat w_u$ is clipped,
 \begin{equation*}
 w_u = \clip\bigl(\hat w_u,\; -c\, s_u,\; c\, s_u\bigr), \qquad c = 2.5 .

@@ -11,7 +11,7 @@ A map is a set of declared edges, each with a sign. Compare it with the knockout
 F_1 = \frac{2\,\mathrm{tp}}{2\,\mathrm{tp} + \mathrm{fp} + \mathrm{fn}}, \quad
 \text{sign accuracy} = \frac{\mathrm{sign\_ok}}{\mathrm{tp}},
 \end{equation*}
-with $F_1 = 0$ if $\mathrm{tp} = 0$ and $\mathrm{tp} + \mathrm{fp} + \mathrm{fn} > 0$. The number of declared edges reported (28) includes declarations on \textsc{indet} hypotheses.\claim{DEF-MET-MAP}
+with $F_1 = 0$ if $\mathrm{tp} = 0$ and $\mathrm{tp} + \mathrm{fp} + \mathrm{fn} > 0$. The number of declared edges reported (28 in Study 1, 22 in Study 2) includes declarations on \textsc{indet} hypotheses. In Study 1 the 28 are 23 true (all with the correct sign), 2 null and 3 \textsc{indet} (\texttt{ptx|far|pv}, \texttt{sleep|own|pv}, \texttt{sleep|own|v}), so precision is $23/25 = 0.92$ and recall $23/29$; in Study 2 the 22 are 18 true, 3 null and 1 \textsc{indet}, so precision is $18/21 = 0.86$ and recall $18/29$.\claim{DEF-MET-MAP}
 
 \coderef{oran_causal.core.scoring:score_method, oran_causal.core.scoring:confusion}
 

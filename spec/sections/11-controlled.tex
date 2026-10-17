@@ -8,7 +8,7 @@ A controlled environment has a known causal graph over $d$ variables and a loggi
 \subsection{Arms}
 \label{spec:env.arms}
 
-PMRT-Lin and PMRT-GBM use the PMRT core with the linear and gradient-boosted statistic respectively (the assignment score of Section~\ref{spec:pmrt.score} against a fitted predictable outcome), the Besag--Clifford p-value of Section~\ref{spec:inf.bc}, plain Benjamini--Yekutieli at $q = 0.05$ ($\omega_j \equiv 1$, no prior directions) and no Huber clip. Design-adjusted and design-blind tests (correlation, partial correlation, RCoT, Granger, \dots) are compared against them with the same step-up.\claim{DEF-ENV-ARMS}
+PMRT-Lin and PMRT-GBM use the PMRT core with the linear and gradient-boosted statistic respectively (the assignment score of Section~\ref{spec:pmrt.score} against a fitted predictable outcome), the Besag--Clifford p-value of Section~\ref{spec:inf.bc} (frozen run records: $B = 9999$, $h = 20$), plain Benjamini--Yekutieli at $q = 0.05$ ($\omega_j \equiv 1$, no prior directions) and no Huber clip. Design-adjusted and design-blind tests (correlation, partial correlation, RCoT, Granger, \dots) are compared against them with the same step-up.\claim{DEF-ENV-ARMS}
 
 \coderef{oran_causal.core.pmrt.rows:PmrtCore, oran_causal.methods.registry:resolve}
 
