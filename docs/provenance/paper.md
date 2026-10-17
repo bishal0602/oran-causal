@@ -22,3 +22,5 @@ Not copied: `user-manual.pdf`, `.vscode/`, `backups-cdd/`, `esm_staging/`, `subm
 ## Tables regenerated
 
 `8744ef6` carried two hand edits made after the last generator run: a leading zero (`0.049` for `.049`, as `JOURNAL_WRITING.md` requires) and `PMRT-Lin, R3 covariates` for `PMRT-Lin, confounder covariates`. The generators now produce both, and `tab_study4_env` writes E1 to E5. Every table in `paper/tables` is the generator output; the table text equals `8744ef6` except the generator header lines and, in three CSVs, the `p = 0.25` labels that the hand edit had fixed only in the `.tex`. The paper build gives the same 45 pages and extracted text. `fig_appC_x3_misspec.pdf` was regenerated for the same label.
+
+`fig_intro_conflict.pdf` (SVG kit, `uv sync --group browser`, rendered with Microsoft Edge through playwright) regenerates with the same text, page size and 80 dpi raster as `8744ef6`.
