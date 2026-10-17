@@ -48,7 +48,6 @@ TOP = 18.0  # header band above the diagrams (pt)
 HEAD = 12.0  # log-type heading band above each histogram (pt)
 
 
-# ------------------------------------------------------------------------------------------------------------ data
 def load() -> dict:
     """Redraws per log type, with the observed z and the p-values re-derived and asserted against
     v4_analysis.json.
@@ -95,7 +94,6 @@ def load() -> dict:
     return out
 
 
-# ------------------------------------------------------------------------------------------------------------ diagrams
 def _canvas(fig, x0_pt: float, w_pt: float, h_pt: float):
     W, H = fig.get_size_inches() * 72
     ax = fig.add_axes((x0_pt / W, 0, w_pt / W, h_pt / H))
@@ -243,7 +241,6 @@ def _diagram(ax, randomised: bool):
     _arrow(ax, (cx, cy + r + 15), (cx, dy - 1), color=P.DESIGN_ROLE, lw=SEM_LW, gid="sem:design")
 
 
-# ------------------------------------------------------------------------------------------------------------ redraws
 XLIM = (-4.5, 11.2)
 BINS = np.arange(-4.5, 4.75, 0.25)
 
