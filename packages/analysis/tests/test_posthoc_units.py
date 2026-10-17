@@ -539,6 +539,7 @@ def test_x16_strict_centre_with_a_zero_window_is_the_frozen_centre():
     assert np.array_equal(s0, s1, equal_nan=True)
 
 
+@pytest.mark.claim("ASM-SLOPE-CENTRE")
 def test_x16_strict_centre_never_uses_an_open_window():
     y, pre, episode, sgn, t0 = _units()
     cfg = ResidualConfig()

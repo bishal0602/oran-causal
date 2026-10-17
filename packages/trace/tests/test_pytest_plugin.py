@@ -70,3 +70,14 @@ def test_trace_out_always_writes(pytester: pytest.Pytester) -> None:
     target = pytester.path / "out.json"
     pytester.runpytest("-p", "no:cacheprovider", f"--trace-out={target}")
     assert json.loads(target.read_text()) == {"version": 1, "tests": []}
+
+
+def test_plugin_records_every_claim_test_under_xdist(pytester: pytest.Pytester) -> None:
+    pytester.makepyfile(test_sample=TESTS)
+    pytester.runpytest("-n", "2", "--strict-markers", "-p", "no:cacheprovider")
+    assert outcomes(pytester) == {
+        "test_two_claims": (["DEF-A", "DEF-B"], "passed"),
+        "test_fails": (["DEF-C"], "failed"),
+        "test_skipped": (["DEF-D"], "skipped"),
+        "test_setup_error": (["DEF-E"], "error"),
+    }

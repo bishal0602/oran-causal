@@ -200,3 +200,45 @@ def test_dumps_joins_tuple_keys_and_keeps_nan() -> None:
     text = dumps({("a", "b"): (1, np.float64(0.5)), "n": float("nan"), "z": np.int64(2)})
     assert text == '{\n "a|b": [\n  1,\n  0.5\n ],\n "n": NaN,\n "z": 2\n}'
 
+
+def _pooled_arms(**arm: float) -> dict[str, dict[str, float]]:
+    guards = dict.fromkeys(stats.GUARD_KEYS, 10.0)
+    return {
+        "freeze": {"V": 5.0, "E": 100.0, **guards},
+        "noarb": {"V": 10.0, "E": 100.0, **guards},
+        stats.A_ARM: {"V": 5.0, "E": 0.0, **guards},
+        "arm": {"V": 4.0, "E": 10.0, **guards, **arm},
+    }
+
+
+@pytest.mark.claim("DEF-SYS-MITIG")
+def test_eligibility_needs_retention_and_every_guard_within_the_ratio() -> None:
+    def eligible(**arm: float) -> dict:
+        P = _pooled_arms(**arm)
+        return stats._eligibility(P["arm"], P)
+
+    assert (stats.X_MATCH, stats.GUARD) == (0.90, 1.10)
+    assert eligible()["eligible"]
+    assert eligible(E=10.0)["matched"]
+    assert not eligible(E=10.5)["matched"]
+    for key in stats.GUARD_KEYS:
+        assert eligible(**{key: 11.0})["eligible"]
+        out = eligible(**{key: 11.5})
+        assert out["matched"]
+        assert not out["guard_ok"]
+        assert not out["eligible"]
+        assert out["guard_ratio"][key] == pytest.approx(1.15)
+
+
+@pytest.mark.claim("DEF-SYS-MITIG")
+def test_an_ineligible_arm_cannot_score_above_zero_recovery() -> None:
+    P = _pooled_arms()
+    den = 5.0
+    good = stats._point(P["arm"], P, den, 1)
+    assert good["eligible"]
+    assert good["R"] == good["Rstar"] == pytest.approx(1.2)
+    P = _pooled_arms(rlf=12.0)
+    bad = stats._point(P["arm"], P, den, 1)
+    assert not bad["eligible"]
+    assert bad["R"] == pytest.approx(1.2)
+    assert bad["Rstar"] == 0.0

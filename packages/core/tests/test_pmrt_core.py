@@ -400,3 +400,53 @@ def test_statistic_option_delegates_to_nonlinear(make_bump: MakeRows) -> None:
     ):
         with pytest.raises(ValueError, match=r"adjust|huber_c|statistic"):
             PmrtCore(bad).run(ds)
+
+
+@pytest.mark.claim("THM-COUNTEREX")
+def test_reproposal_makes_the_redraw_p_value_anti_conservative() -> None:
+    a = 2.0
+    cfg = RedrawConfig(b_max=4999, seq_h=None)
+
+    def p_plus(v: list[float], w: list[float], seed: int) -> float:
+        def draw(rng: np.random.Generator, b: int) -> np.ndarray:
+            return rng.choice([-0.5, 0.5], size=(b, len(v)))
+
+        redraw = Redraw(np.array(v), np.full(len(v), 0.25), draw)
+        out = crt(redraw, np.array(w)[:, None], np.random.default_rng(seed), cfg)
+        return float(out["p_plus"][0])
+
+    accepted = p_plus([0.5], [1.0], 1)
+    rejected_then_accepted = p_plus([-0.5, 0.5], [1.0, a], 2)
+    rejected_twice = p_plus([-0.5, -0.5], [1.0, a], 3)
+    assert accepted == pytest.approx(0.5, abs=0.03)
+    assert rejected_then_accepted == pytest.approx(0.5, abs=0.03)
+    assert rejected_twice == 1.0
+    levels = (accepted, rejected_then_accepted, rejected_twice)
+    prob = (0.5, 0.25, 0.25)
+    pr_le_half = sum(q for q, p in zip(prob, levels, strict=True) if p <= 0.5 + 0.03)
+    assert pr_le_half == pytest.approx(0.75)
+    assert pr_le_half > 0.5
+
+
+@pytest.mark.claim("ASM-S4-KNOWN")
+def test_null_validity_needs_the_logged_design_to_be_told_correctly() -> None:
+    n, runs = 100, 400
+    cfg = RedrawConfig(b_max=199, seq_h=None)
+
+    def rejection_rate(told_width: float) -> float:
+        rng = np.random.default_rng(5)
+        hits = 0
+        for _ in range(runs):
+            v = rng.uniform(-0.5, 0.5, n)
+            w = rng.normal(size=(n, 1))
+
+            def draw(r: np.random.Generator, b: int) -> np.ndarray:
+                return told_width * (r.random((b, n)) - 0.5)
+
+            redraw = Redraw(v, np.full(n, told_width**2 / 12), draw)
+            hits += crt(redraw, w, rng, cfg)["p2"][0] <= 0.05
+        return hits / runs
+
+    assert 0.02 <= rejection_rate(1.0) <= 0.085
+    assert rejection_rate(0.5) > 0.2
+    assert rejection_rate(2.0) < 0.02

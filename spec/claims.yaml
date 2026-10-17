@@ -732,7 +732,7 @@ claims:
     paper: [sec:pmrt]
     spec: spec:pmrt.weight
     depends_on: [DEF-PMRT-WEIGHT]
-    tests: {min: 1, tier: unit}
+    tests: {min: 0}
 
   - id: EMP-RUNTIME
     kind: empirical

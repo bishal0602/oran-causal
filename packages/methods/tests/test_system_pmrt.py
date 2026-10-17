@@ -1,11 +1,13 @@
 import dataclasses
 import gzip
+import itertools
 import json
 from pathlib import Path
 
 import numpy as np
 import pytest
 
+from oran_causal.core.design import v_var
 from oran_causal.core.pmrt import units as pu
 from oran_causal.core.pmrt.units import PmrtConfig, PmrtData, fit_pmrt
 from oran_causal.core.ridge import ResidualConfig
@@ -331,3 +333,61 @@ def test_subsets_are_disjoint_and_reproducible(train_test: dict) -> None:
     seeds = pool.eps["seed"]
     spec = f"seed={seeds[0]},seed={seeds[2]}"
     assert np.array_equal(pm.select(pool, spec), np.isin(seeds, seeds[[0, 2]]).nonzero()[0])
+
+
+def _support_table(train_test: dict, n: int, n_accept: int, n_episodes: int) -> tuple:
+    ud = train_test["te"].ud
+    rows = ud.rows_of("sleep")[:n]
+    accept = int(np.nonzero(ud.levels == 1.0)[0][0])
+    reject = int(np.nonzero(ud.levels == 0.0)[0][0])
+    mode = np.full(n, reject)
+    mode[:n_accept] = accept
+    sub = ud.subset(rows)
+    episode = np.arange(n) % n_episodes
+    return dataclasses.replace(sub, mode=mode, episode=episode), PmrtConfig()
+
+
+@pytest.mark.claim("DEF-PMRT-SUPPORT")
+@pytest.mark.parametrize(
+    ("n", "n_accept", "n_episodes", "ok"),
+    [
+        (30, 15, 3, True),
+        (29, 15, 3, False),
+        (30, 5, 3, True),
+        (30, 4, 3, False),
+        (30, 26, 3, False),
+        (30, 25, 3, True),
+        (30, 15, 2, False),
+    ],
+)
+def test_support_needs_units_both_arms_and_episodes(
+    train_test: dict, n: int, n_accept: int, n_episodes: int, ok: bool
+) -> None:
+    ud, cfg = _support_table(train_test, n, n_accept, n_episodes)
+    assert (cfg.min_units, cfg.min_accept, cfg.min_reject, cfg.min_episodes) == (30, 5, 5, 3)
+    counts, supported = pm._support(ud, "sleep", cfg)
+    assert counts == {
+        "n": n,
+        "n_accept": n_accept,
+        "n_reject": n - n_accept,
+        "n_episodes": n_episodes,
+    }
+    assert supported is ok
+
+
+@pytest.mark.claim("ASM-A4-REG")
+def test_design_variance_grows_without_one_unit_dominating(train_test: dict) -> None:
+    ud = train_test["te"].ud
+    rows = ud.rows_of("sleep")
+    w = np.random.default_rng(0).uniform(0.2, 5.0, len(rows))
+    var = v_var(ud.probs[rows], pm.LEVEL_V2_ARR) * w**2
+    sigma2, share = [], []
+    for k in (2, 4, 8, 12):
+        keep = ud.episode[rows] < k
+        sigma2.append(var[keep].sum())
+        share.append(var[keep].max() / var[keep].sum())
+    assert len(np.unique(ud.episode[rows])) >= 12
+    assert all(a < b for a, b in itertools.pairwise(sigma2))
+    assert sigma2[-1] > 4 * sigma2[0]
+    assert all(a > b for a, b in itertools.pairwise(share))
+    assert share[-1] < 0.02

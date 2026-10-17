@@ -27,7 +27,6 @@ Source commit for every `CDD-ORAN@0c89106` path below is `0c89106` on `feat/v2`.
 | `.../tests/test_controlled_report.py` | `tests/test_xmethod_eval_report.py` | Plus a FINAL / pinned-timestamp round trip |
 | `.../tests/test_controlled_golden.py` | new | Old `analyse` and `markdown` output on real EVAL records (below) |
 | `.../tests/test_controlled_t0_gate.py` | new | T0 gate, `slow` |
-| `.../tests/test_controlled_dev_gate.py` | new | DEV report gate, `slow` |
 
 ## Test data
 
@@ -38,9 +37,6 @@ Source commit for every `CDD-ORAN@0c89106` path below is `0c89106` on `feat/v2`.
 | `dependence.json` | `data/records/study4_dev/fmax_sim/dependence.json` | Byte copy; sha256 `402802b1...` is the one the EVAL spec freezes |
 | `eval_subset_records.jsonl.gz`, `eval_subset_spec.json` | `data/records/study4_eval/eval/merged.jsonl.gz` | 480 records: arms `pmrt_nl_eq`, `pcorr_native`, `pcorr_eq`, `pc_native`; worlds E1 and E4; regimes R1, R2, R3 (E4 lambda 1); n 500; 12 seeds per role. Records are the frozen ones, unmodified; the spec is the frozen spec reduced to those blocks |
 | `expected_tables.json.gz`, `expected_tables.md.gz` | Old `eval_analysis.analyse` and `markdown` on the two files above | Run with `CDD-ORAN/.venv` (numpy 2.4.2): `analyse(records, spec, "93856c230d84abda2ff3b894218dd6cb0ecd47f9", dep=load_dependence(dependence.json), spec_sha=None, protocol={"ok": True})`, then `json.dumps(_clean(out), indent=1, sort_keys=True)` |
-| `dev_gate/eval_full_old.json` | `git show 32d8f0e:scratchpad/xmethod/specs/eval/full.json` | The EVAL spec as it was when the DEV rehearsal ran (LF sha256 `81ec2718...`, recorded in the DEV report) |
-| `dev_gate/PROTOCOL_A_old.md` | `git show 32d8f0e:docs/xmethod/PROTOCOL_A.md` | Unfrozen protocol of that run (LF sha256 `5acfbcff...`) |
-| `dev_gate/dev_{full,ci_c,pmrt_nl}.json` | `git show 41d6c37:scratchpad/xmethod/specs/dev/<name>.json` | DEV specs of that run (LF sha256 `5ed77b4d...`, `4bce5423...`, `68e18a32...`) |
 
 ## How the frozen report was produced
 
