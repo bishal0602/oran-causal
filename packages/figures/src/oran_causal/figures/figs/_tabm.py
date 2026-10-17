@@ -182,7 +182,7 @@ def write(name: str, lines: list[str], rows: list[dict]) -> list[str]:
     fields: list[str] = []
     for r in rows:
         fields += [k for k in r if k not in fields]
-    with open(csv_path, "w", newline="", encoding="utf-8") as fh:
+    with csv_path.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=fields)
         w.writeheader()
         w.writerows(rows)

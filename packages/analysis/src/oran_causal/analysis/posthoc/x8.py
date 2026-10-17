@@ -151,7 +151,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     a = ap.parse_args(argv)
     out = summarize(a.dir)
     if a.json:
-        with open(a.json, "w", newline="\n") as fh:
+        with Path(a.json).open("w", newline="\n") as fh:
             json.dump(out, fh, indent=1)
     print(
         json.dumps(

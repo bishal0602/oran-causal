@@ -507,7 +507,7 @@ def build_cache(
     arrs["ctx"], arrs["ctx_num"], arrs["ctx_keys"] = ctx, num, np.array(keys, dtype="<U64")
     for f in EP_FIELDS:
         arrs[f"ep_{f}"] = np.array([p["_ep"][f] for p in parts])
-    arrs["src"] = np.array(src or os.path.basename(str(paths)))
+    arrs["src"] = np.array(src or Path(str(paths)).name)
     arrs["schema"] = np.array(CACHE_SCHEMA)
     arrs["Hs"] = np.array(Hs, np.int32)
     arrs["n_cells"] = np.array(ncs.pop(), np.int32)
@@ -728,7 +728,7 @@ def _append_file(
     for k in EP_FIELDS:
         eps[k].append(z[f"ep_{k}"])
     eps["src"].append(np.full(ne, str(z["src"])))
-    eps["file"].append(np.full(ne, os.path.basename(path)))
+    eps["file"].append(np.full(ne, Path(path).name))
     us["gep"].append(z["ep"].astype(np.int64) + off)
     for k in _UNIT_KEYS:
         us[k].append(z[k])

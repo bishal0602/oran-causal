@@ -134,7 +134,7 @@ def write(name: str, tex: str, rows: list[dict]) -> list[str]:
         for k in r:
             if k not in fields:
                 fields.append(k)
-    with open(csv_path, "w", newline="", encoding="utf-8") as fh:
+    with csv_path.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=fields)
         w.writeheader()
         w.writerows(rows)

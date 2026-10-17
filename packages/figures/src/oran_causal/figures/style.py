@@ -5,6 +5,7 @@ it. Never call `sns.set_theme` / `sns.set_style` anywhere else: it silently rese
 the rcParams below.
 """
 
+import functools
 from pathlib import Path
 
 import matplotlib as mpl
@@ -129,8 +130,6 @@ RC = {
     "legend.labelspacing": 0.35,
 }
 
-_applied = False
-
 
 def arial_files() -> list[Path]:
     """The four Arial TTFs (regular, bold, italic, bold italic) from the first system font directory
@@ -159,13 +158,10 @@ def register_cmaps() -> None:
             mpl.colormaps.register(cmap)
 
 
+@functools.cache
 def apply() -> None:
     """Apply the journal style globally. Idempotent."""
-    global _applied
-    if _applied:
-        return
     register_fonts()
     register_cmaps()
     sns.set_theme(context="paper", style="ticks", palette=P.ENTITIES, font=FONT_FAMILY, rc=RC)
     mpl.rcParams.update(RC)  # second pass: our values win over anything seaborn's context scaled
-    _applied = True

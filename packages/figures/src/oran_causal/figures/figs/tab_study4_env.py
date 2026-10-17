@@ -159,7 +159,7 @@ def write(world: str) -> list[str]:
     name = f"tab_study4_env_{world.lower()}"
     tex, csv_path = out / f"{name}.tex", out / f"{name}.csv"
     tex.write_text(latex(world, rows), encoding="utf-8")
-    with open(csv_path, "w", newline="", encoding="utf-8") as fh:
+    with csv_path.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0]))
         w.writeheader()
         w.writerows(rows)

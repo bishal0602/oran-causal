@@ -14,6 +14,7 @@ tau the conformal .05 cutoff of the tune placebo scores. Monte Carlo nulls use a
 import dataclasses
 import time
 from collections.abc import Callable, Mapping
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -358,7 +359,7 @@ def progress(cfg: Mapping[str, Any], done: int, total: int) -> None:
     """Appends "done total process_cpu_s" to `cfg["progress_file"]` when set."""
     path = cfg.get("progress_file")
     if path:
-        with open(path, "a") as f:
+        with Path(path).open("a") as f:
             f.write(f"{done} {total} {time.process_time():.3f}\n")
 
 
@@ -395,9 +396,7 @@ def _not_testable_notes(data: Dataset, nt: dict[int, str]) -> dict[str, Any]:
     if not nt:
         return {}
     return {
-        "not_testable": {
-            "{}->{}".format(*data.candidates[e]): why for e, why in sorted(nt.items())
-        },
+        "not_testable": {"->".join(data.candidates[e]): why for e, why in sorted(nt.items())},
         "not_testable_edges": [list(data.candidates[e]) for e in sorted(nt)],
     }
 

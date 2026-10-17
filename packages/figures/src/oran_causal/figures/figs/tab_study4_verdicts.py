@@ -141,7 +141,7 @@ def write() -> list[str]:
     out.mkdir(parents=True, exist_ok=True)
     tex, csv_path = out / f"{NAME}.tex", out / f"{NAME}.csv"
     tex.write_text(latex(rows), encoding="utf-8")
-    with open(csv_path, "w", newline="", encoding="utf-8") as fh:
+    with csv_path.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0]))
         w.writeheader()
         w.writerows(rows)
