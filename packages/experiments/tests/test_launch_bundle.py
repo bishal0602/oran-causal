@@ -20,8 +20,9 @@ def test_the_base_set_is_exactly_what_a_run_needs(tmp_path: Path, launch_kit):
         "pyproject.toml",
         "uv.lock",
         ".python-version",
-        "packages/a/pyproject.toml",
-        "packages/a/src/oran_causal/a/__init__.py",
+        "packages/core/pyproject.toml",
+        "packages/core/src/oran_causal/core/__init__.py",
+        "packages/figures/pyproject.toml",
         "packages/experiments/protocols/study4/PROTOCOL_A.md",
         "packages/experiments/manifests/seeds.json",
         "packages/experiments/artifacts/table.json",
@@ -49,7 +50,7 @@ def test_the_manifest_hashes_every_member_and_text_is_lf(tmp_path: Path, launch_
         for rel in built.files:
             assert man["sha256"][rel] == bundle.sha256(z.read(rel))
         assert b"\r" not in z.read("pyproject.toml")
-        assert z.read("packages/a/src/oran_causal/a/__init__.py") == b"A = 1\n"
+        assert z.read("packages/core/src/oran_causal/core/__init__.py") == b"A = 1\n"
     assert man["git_head"] == launch_kit.HEAD
     assert man["dirty"] is True
     assert man["dirty_paths"] == ["README.md"]

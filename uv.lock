@@ -1039,23 +1039,28 @@ source = { editable = "packages/experiments" }
 dependencies = [
     { name = "oran-causal-analysis" },
     { name = "oran-causal-core" },
-    { name = "oran-causal-figures" },
     { name = "oran-causal-methods" },
     { name = "oran-causal-sim" },
     { name = "packaging" },
     { name = "pyyaml" },
 ]
 
+[package.optional-dependencies]
+figures = [
+    { name = "oran-causal-figures" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "oran-causal-analysis", editable = "packages/analysis" },
     { name = "oran-causal-core", editable = "packages/core" },
-    { name = "oran-causal-figures", editable = "packages/figures" },
+    { name = "oran-causal-figures", marker = "extra == 'figures'", editable = "packages/figures" },
     { name = "oran-causal-methods", editable = "packages/methods" },
     { name = "oran-causal-sim", editable = "packages/sim" },
     { name = "packaging" },
     { name = "pyyaml", specifier = ">=6.0.3" },
 ]
+provides-extras = ["figures"]
 
 [[package]]
 name = "oran-causal-figures"

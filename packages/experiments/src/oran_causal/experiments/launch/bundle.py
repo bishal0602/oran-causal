@@ -22,8 +22,9 @@ DOT = "_dot_"
 FROZEN_COPY_REL = "_bundle/PROTOCOL_A.frozen.md"
 PROTOCOL_REL = STUDY4_PROTOCOL.relative_to(WORKSPACE_ROOT).as_posix()
 CORE_FILES = ("pyproject.toml", "uv.lock", ".python-version")
+RUN_MEMBERS = ("core", "sim", "methods", "analysis", "experiments")
 CORE_GLOBS = (
-    "packages/*/src/**/*",
+    *(f"packages/{m}/src/**/*" for m in RUN_MEMBERS),
     "packages/*/pyproject.toml",
     "packages/experiments/protocols/**/*",
     "packages/experiments/manifests/**/*",
