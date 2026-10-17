@@ -1,6 +1,8 @@
+import dataclasses
 import gzip
 import hashlib
 import json
+import tarfile
 from pathlib import Path
 from typing import Any
 
@@ -96,6 +98,119 @@ def test_fetch_skips_absent_sets_until_they_have_a_doi(record_set: tuple[Path, P
     assert only[0].detail.startswith("not present")
     with pytest.raises(KeyError, match="s3"):
         data.fetch(["s3"], root, zenodo=zenodo)
+
+
+def zenodo_with_doi(tmp_path: Path, sha: str | None) -> Path:
+    zenodo = tmp_path / "data" / "zenodo.yaml"
+    zenodo.parent.mkdir(exist_ok=True)
+    pin = "null" if sha is None else sha
+    zenodo.write_text(
+        "sets:\n"
+        "  - {name: s1, manifest: manifests/s1.sha256, files: 3, bytes: 14, "
+        f"doi: 10.5281/zenodo.42, archive_sha256: {pin}}}\n",
+        encoding="utf-8",
+    )
+    return zenodo
+
+
+@pytest.fixture
+def served(tmp_path: Path, record_set: tuple[Path, Path]) -> tuple[Path, Path, str]:
+    root, zenodo = record_set
+    rs = data.record_sets(zenodo)["s1"]
+    record = tmp_path / "served" / "42" / "files"
+    record.mkdir(parents=True)
+    data.build_archive(rs, record / "s1.tar.zst", root)
+    sha = data.file_sha256(record / "s1.tar.zst")
+    return root, zenodo_with_doi(tmp_path, sha), (tmp_path / "served").as_uri()
+
+
+def test_download_extracts_a_served_archive_and_fetch_verifies_it(
+    served: tuple[Path, Path, str], tmp_path: Path
+) -> None:
+    _, zenodo, base = served
+    target = tmp_path / "fresh"
+    rows = data.fetch(["s1"], target, zenodo=zenodo, base_url=base)
+    assert [(r.status, r.detail) for r in rows] == [(Status.PASS, "3 files verified")]
+    assert (target / "s1" / "sub" / "b.txt").read_bytes() == b"beta"
+    assert [p.name for p in tmp_path.iterdir() if p.name.startswith(".fetch-")] == []
+
+
+def test_download_refuses_a_checksum_mismatch(
+    served: tuple[Path, Path, str], tmp_path: Path
+) -> None:
+    _, _, base = served
+    zenodo = zenodo_with_doi(tmp_path, "0" * 64)
+    rs = data.record_sets(zenodo)["s1"]
+    row = data.download(rs, tmp_path / "fresh", base)
+    assert row.status is Status.DIFF
+    assert not (tmp_path / "fresh" / "s1").exists()
+
+
+def test_download_needs_a_pinned_checksum_and_a_reachable_record(
+    served: tuple[Path, Path, str], tmp_path: Path
+) -> None:
+    _, _, base = served
+    unpinned = data.record_sets(zenodo_with_doi(tmp_path, None))["s1"]
+    assert "pins no archive_sha256" in data.download(unpinned, tmp_path / "fresh", base).detail
+    pinned = data.record_sets(zenodo_with_doi(tmp_path, "0" * 64))["s1"]
+    absent = (tmp_path / "nowhere").as_uri()
+    assert data.download(pinned, tmp_path / "fresh", absent).status is Status.ERROR
+
+
+def test_download_rejects_a_path_traversal_member(tmp_path: Path) -> None:
+    evil = tmp_path / "served" / "42" / "files"
+    evil.mkdir(parents=True)
+    payload = tmp_path / "payload"
+    payload.write_bytes(b"x")
+    with tarfile.open(evil / "s1.tar.zst", "w:zst") as tar:
+        tar.add(payload, arcname="s1/ok.txt")
+        tar.add(payload, arcname="../escaped.txt")
+    zenodo = zenodo_with_doi(tmp_path, data.file_sha256(evil / "s1.tar.zst"))
+    rs = data.record_sets(zenodo)["s1"]
+    root = tmp_path / "fresh"
+    row = data.download(rs, root, (tmp_path / "served").as_uri())
+    assert (row.status, "unsafe" in row.detail) == (Status.ERROR, True)
+    assert not (tmp_path / "escaped.txt").exists()
+    assert not (root / "s1").exists()
+
+
+def test_archive_url_needs_a_zenodo_doi(record_set: tuple[Path, Path]) -> None:
+    rs = data.record_sets(record_set[1])["s1"]
+    with pytest.raises(ValueError, match="no Zenodo DOI"):
+        data.archive_url(rs)
+    with_doi = dataclasses.replace(rs, doi="10.5281/zenodo.42")
+    assert data.archive_url(with_doi) == "https://zenodo.org/records/42/files/s1.tar.zst?download=1"
+
+
+def test_pack_is_deterministic_and_verifies(record_set: tuple[Path, Path], tmp_path: Path) -> None:
+    root, zenodo = record_set
+    first = data.pack(["s1"], tmp_path / "a", root, known_missing={"s1": (".pyc",)}, zenodo=zenodo)
+    again = data.pack(["s1"], tmp_path / "b", root, known_missing={"s1": (".pyc",)}, zenodo=zenodo)
+    assert first == again
+    assert first[0].detail == "3 members verified"
+    sums = (tmp_path / "a" / "SHA256SUMS").read_text(encoding="utf-8")
+    assert sums == f"{data.file_sha256(tmp_path / 'a' / 's1.tar.zst')}  s1.tar.zst\n"
+    assert (tmp_path / "a" / "s1.tar.zst").read_bytes() == (
+        tmp_path / "b" / "s1.tar.zst"
+    ).read_bytes()
+    assert (tmp_path / "a" / "s1.sha256").is_file()
+
+
+def test_pack_skips_excused_files_flags_tampering_and_rejects_unknown_sets(
+    record_set: tuple[Path, Path], tmp_path: Path
+) -> None:
+    root, zenodo = record_set
+    (root / "s1" / "sub" / "c.pyc").unlink()
+    rs = data.record_sets(zenodo)["s1"]
+    with pytest.raises(FileNotFoundError):
+        data.build_archive(rs, tmp_path / "x.tar.zst", root)
+    rows = data.pack(["s1"], tmp_path / "out", root, known_missing={"s1": (".pyc",)}, zenodo=zenodo)
+    assert rows[0].detail == "2 members verified"
+    (root / "s1" / "a.txt").write_bytes(b"changed")
+    data.build_archive(rs, tmp_path / "t.tar.zst", root, (".pyc",))
+    assert data.verify_archive(rs, tmp_path / "t.tar.zst", (".pyc",)).status is Status.DIFF
+    with pytest.raises(KeyError, match="s9"):
+        data.pack(["s9"], tmp_path / "o2", root, zenodo=zenodo)
 
 
 def test_shipped_sets_have_manifests() -> None:

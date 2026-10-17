@@ -101,10 +101,15 @@ def _input(text: str) -> tuple[str, str]:
 def _add_data(commands: argparse._SubParsersAction) -> None:
     data = commands.add_parser("data", help="record sets: verify against data/manifests")
     sub = data.add_subparsers(dest="data_command", required=True)
-    fetch = sub.add_parser("fetch", help="verify present sets; download absent ones (stub)")
+    fetch = sub.add_parser("fetch", help="verify present sets; download absent ones")
     fetch.add_argument("--set", dest="sets", action="append", help="record set (repeatable)")
     fetch.add_argument("--records", type=Path, default=None, help="records directory")
     fetch.add_argument("--verify-only", action="store_true", help="never download")
+    fetch.add_argument("--base-url", default=None, help="Zenodo records endpoint")
+    pack = sub.add_parser("pack", help="build the Zenodo deposit archives of record sets")
+    pack.add_argument("--set", dest="sets", action="append", help="record set (default: all)")
+    pack.add_argument("--records", type=Path, default=None, help="records directory")
+    pack.add_argument("--out", type=Path, required=True, help="output directory")
 
 
 def _add_paper_values(commands: argparse._SubParsersAction) -> None:
@@ -196,7 +201,11 @@ def _records(path: Path | None) -> Path:
 def _data(a: argparse.Namespace, out: Out) -> int:
     from oran_causal.experiments.reproduce import data
 
-    rows = data.fetch(a.sets, _records(a.records), verify_only=a.verify_only)
+    if a.data_command == "pack":
+        rows = data.pack(a.sets, a.out.resolve(), _records(a.records))
+    else:
+        base = a.base_url or data.ZENODO_RECORDS
+        rows = data.fetch(a.sets, _records(a.records), verify_only=a.verify_only, base_url=base)
     out(table(rows))
     return 0 if passed(rows) else 1
 
