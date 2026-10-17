@@ -68,6 +68,13 @@ CAMPAIGN_VERSION = "oran-causal-campaign/1"
 type Record = dict[str, Any]
 type Spec = dict[str, Any]
 type Family = tuple[str, str, str, float | None, float]
+type DatasetSource = Callable[[Unit], tuple[Dataset, Truth]]
+
+
+def generated_dataset(u: Unit) -> tuple[Dataset, Truth]:
+    """The controlled-simulator dataset and truth of a unit (`lam` None is 1)."""
+    lam = 1.0 if u.lam is None else u.lam
+    return generate_dataset(u.world, u.regime, u.n, u.seed, lam=lam, kappa=u.kappa)
 
 
 def _locked_pins(python: PythonPin | None) -> dict[str, Any]:
@@ -88,6 +95,7 @@ class Providers:
     quota: Callable[[], int] = cpu_quota
     texts: Callable[[], ProtocolTexts] = shipped_protocol
     resolve: Resolver = registry_resolve
+    dataset: DatasetSource = generated_dataset
     log: Log = print
 
 
@@ -355,12 +363,11 @@ def _skip_record(run: _UnitRun, ctx: _Context, state: _State) -> Record | None:
     return None
 
 
-def _load_dataset(state: _State, u: Unit) -> None:
+def _load_dataset(state: _State, u: Unit, source: DatasetSource) -> None:
     if state.dataset_key == u.dataset:
         return
     t0 = time.process_time()
-    lam = 1.0 if u.lam is None else u.lam
-    state.ds, state.truth = generate_dataset(u.world, u.regime, u.n, u.seed, lam=lam, kappa=u.kappa)
+    state.ds, state.truth = source(u)
     state.gen, state.dataset_key = time.process_time() - t0, u.dataset
 
 
@@ -428,7 +435,7 @@ def _note_over(u: Unit, ctx: _Context, state: _State, rec: Record) -> None:
 
 
 def _execute(run: _UnitRun, ctx: _Context, state: _State) -> Record:
-    _load_dataset(state, run.unit)
+    _load_dataset(state, run.unit, ctx.providers.dataset)
     method = _load_method(state, run.unit, ctx)
     if isinstance(method, str):
         rec = failed_record(run.unit, run.config, None, f"method load failed: {method[-1500:]}")
