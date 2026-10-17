@@ -26,7 +26,9 @@ from typing import Any
 from oran_causal.analysis.system import study2 as astudy2
 from oran_causal.experiments.paths import ARTIFACTS
 from oran_causal.experiments.system.common import (
+    LEGACY_SHA256,
     LOAD_FACTOR_L40,
+    MAPGATE,
     Block,
     FrozenDoc,
     Job,
@@ -441,10 +443,12 @@ def run(
     st = guard(stage, smoke, maps_doc)
     maps = load_maps(maps_doc.path) if stage == "eval" else None
     head = header(
-        "study2",
+        astudy2.DRIVER,
         stage,
         part,
         smoke,
+        conf_stage=stage,
+        mapgate_sha256=LEGACY_SHA256[MAPGATE],
         schema=SCHEMA_EVAL if stage == "eval" else SCHEMA,
         protocol=PROTOCOL.name,
         **st,

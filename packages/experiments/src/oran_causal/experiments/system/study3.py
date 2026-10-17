@@ -22,6 +22,9 @@ from oran_causal.analysis.system import study3 as astudy3
 from oran_causal.experiments.paths import ARTIFACTS
 from oran_causal.experiments.system import study2
 from oran_causal.experiments.system.common import (
+    CERTSAFE_CODE,
+    LEGACY_SHA256,
+    MAPGATE,
     Block,
     FrozenDoc,
     Job,
@@ -205,10 +208,13 @@ def run(
     st = guard(stage, smoke, art_doc, maps_doc)
     art = load_artifact(art_doc.path) if stage == "eval" else None
     head = header(
-        "study3",
+        astudy3.DRIVER,
         stage,
         part,
         smoke,
+        cs_stage=stage,
+        mapgate_sha256=LEGACY_SHA256[MAPGATE],
+        certsafe_sha256=LEGACY_SHA256[CERTSAFE_CODE],
         schema=study2.SCHEMA_EVAL,
         protocol=PROTOCOL.name,
         **st,

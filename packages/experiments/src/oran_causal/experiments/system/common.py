@@ -9,7 +9,6 @@ import hashlib
 import itertools
 import json
 import os
-import subprocess
 import time
 from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from functools import cached_property
@@ -18,9 +17,10 @@ from typing import Any
 
 import numpy as np
 
+from oran_causal.experiments.campaign.provenance import code_info
 from oran_causal.experiments.harness.isolation import PeakRSS
 from oran_causal.experiments.launch.fingerprint import numeric_env
-from oran_causal.experiments.paths import MANIFESTS, PROTOCOLS, WORKSPACE_ROOT
+from oran_causal.experiments.paths import MANIFESTS, PROTOCOLS
 from oran_causal.sim.system import config as C
 from oran_causal.sim.system.decision.scenario import LOAD_FACTOR
 from oran_causal.sim.system.env import E6Env
@@ -55,6 +55,20 @@ SUM_FIELDS = (
     "rlf",
 )
 DEV_SEEDS = 31
+MAPGATE = "cdd_oran/decision/mapgate.py"
+CERTSAFE_CODE = "cdd_oran/decision/certsafe.py"
+CONF_ANALYZER = "scratchpad/e6_dev/e6p_conf_analyze.py"
+CONF_DRIVER = "scratchpad/e6_dev/e6p_conf.py"
+CS_ANALYZER = "scratchpad/e6_dev/e6p_certsafe_analyze.py"
+CS_DRIVER = "scratchpad/e6_dev/e6p_certsafe.py"
+LEGACY_SHA256 = {
+    MAPGATE: "64ad9d1beb336681d3f384b5d9b1871615bc317f78c0eaa6ca0d9b9dcd426dd9",
+    CONF_ANALYZER: "3d1a0965ce986889bb0dd19a228f0469c29cafd0884e23fe4ed9ffab17e8e000",
+    CONF_DRIVER: "74ae5309b9373632a03a17076ce5ba1f465be32de9b3e32d8cdb0131e786ac9d",
+    CERTSAFE_CODE: "f838af6a39691d5882c9cc8109db25866d40c1db727370fdb980872befbf5daf",
+    CS_ANALYZER: "0adde7aa181e2874b3394636932bb0df8ef71ae58c14aa628dbe9afbe9ee6a33",
+    CS_DRIVER: "41d6d173296345fadf72e49d3e36cf1b49b25168b14966c93943fc83144b7e84",
+}
 
 
 def sha_lf(path: Path) -> str:
@@ -252,32 +266,23 @@ def append_record(path: Path, rec: Record) -> None:
         fh.write(json.dumps(rec, default=to_json) + "\n")
 
 
-def git_head(root: Path = WORKSPACE_ROOT) -> str | None:
-    """Returns the workspace's git HEAD, or None outside a checkout."""
-    try:
-        res = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=root,
-            capture_output=True,
-            text=True,
-            timeout=20,
-            check=False,
-        )
-    except OSError:
-        return None
-    return res.stdout.strip() or None
-
-
 def header(driver: str, stage: str, part: Part, smoke: bool, **extra: Any) -> Record:
-    """Returns the header line of one run call."""
+    """Returns the header line of one run call.
+
+    `code` is the commit of `campaign.provenance.code_info` (launcher environment, git, bundle
+    manifest); `platform` repeats `numeric_env` under the key the referee analyses read.
+    """
+    code = code_info()
+    env = numeric_env()
     return {
         "kind": "header",
         "driver": driver,
         "stage": stage,
         "part": str(part),
         "smoke": smoke,
-        "code": {"git_head": git_head()},
-        "numeric_env": numeric_env(),
+        "code": {"git_head": code["commit"], "e6_dirty": code["dirty"]},
+        "numeric_env": env,
+        "platform": env,
         "scenario_version": C.SCENARIO_VERSION,
         "load_factor": LOAD_FACTOR_L40,
         "cpus": os.cpu_count(),

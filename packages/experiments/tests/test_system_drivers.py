@@ -1,7 +1,13 @@
+import dataclasses
+import json
+from collections.abc import Callable
 from pathlib import Path
+from types import ModuleType
 
 import pytest
 
+from oran_causal.analysis.system import study2 as astudy2
+from oran_causal.analysis.system import study3 as astudy3
 from oran_causal.experiments.system import stages, study1, study2, study3
 from oran_causal.methods.system import referees as rf
 from oran_causal.sim.system.decision.collect import RandomizedUnitPolicy
@@ -109,3 +115,33 @@ def test_run_stage_rejects_unknown_stage(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="stage in"):
         stages.run_stage(1, "maps", out=tmp_path)
     assert stages.ANALYSIS_STAGES[3] == ("bounds", "calib", "certsafe")
+
+
+def _run_header(
+    monkeypatch: pytest.MonkeyPatch, module: ModuleType, run: Callable[[], object]
+) -> dict:
+    heads = []
+    monkeypatch.setattr(module, "run_jobs", lambda out, head, *a, **k: heads.append(head) or 0)
+    run()
+    (head,) = heads
+    return head
+
+
+def test_referee_headers_carry_what_the_analyses_filter_on(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setenv("ORAN_CAUSAL_CODE_COMMIT", "a" * 40)
+    monkeypatch.setenv("ORAN_CAUSAL_CODE_DIRTY", "0")
+    out = tmp_path / "o.jsonl"
+    h2 = _run_header(monkeypatch, study2, lambda: study2.run("eval", out, smoke=True))
+    assert dataclasses.replace(astudy2.EVAL_FILTER, allow_smoke=True).header(h2)
+    maps = json.loads(study2.MAPS.path.read_text(encoding="utf-8"))
+    assert h2["mapgate_sha256"] == maps["mapgate"]["sha256"]
+    h3 = _run_header(monkeypatch, study3, lambda: study3.run("eval", out, smoke=True))
+    assert astudy3.job_filter("eval", allow_smoke=True).header(h3)
+    art = json.loads(study3.CERTSAFE.path.read_text(encoding="utf-8"))
+    assert h3["certsafe_sha256"] == art["sha256"][astudy3.CERTSAFE_KEY]
+    assert h3["mapgate_sha256"] == art["mapgate"]["sha256"]
+    for h in (h2, h3):
+        assert h["code"] == {"git_head": "a" * 40, "e6_dirty": False}
+        assert h["platform"] == h["numeric_env"]

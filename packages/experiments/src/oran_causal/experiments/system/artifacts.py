@@ -22,7 +22,20 @@ import numpy as np
 from oran_causal.core.data import UnitTable
 from oran_causal.core.gate import DIRS, RHO, Z90
 from oran_causal.experiments.system import study2, study3
-from oran_causal.experiments.system.common import FrozenDoc, Record, repro_diff, sha_lf, to_json
+from oran_causal.experiments.system.common import (
+    CERTSAFE_CODE,
+    CONF_ANALYZER,
+    CONF_DRIVER,
+    CS_ANALYZER,
+    CS_DRIVER,
+    LEGACY_SHA256,
+    MAPGATE,
+    FrozenDoc,
+    Record,
+    repro_diff,
+    sha_lf,
+    to_json,
+)
 from oran_causal.methods.system import referees as rf
 from oran_causal.sim.system.decision.vocab import FAMILIES
 
@@ -31,21 +44,7 @@ SCHEMA_MAPS = "e6p-conf-maps/1"
 SCHEMA_BOUNDS = "e6p-certsafe-bounds/1"
 SCHEMA_CALIB = "e6p-certsafe-calib/1"
 SCHEMA_CERTSAFE = "e6p-certsafe/1"
-MAPGATE = "cdd_oran/decision/mapgate.py"
-CERTSAFE_CODE = "cdd_oran/decision/certsafe.py"
-CONF_ANALYZER = "scratchpad/e6_dev/e6p_conf_analyze.py"
-CONF_DRIVER = "scratchpad/e6_dev/e6p_conf.py"
-CS_ANALYZER = "scratchpad/e6_dev/e6p_certsafe_analyze.py"
-CS_DRIVER = "scratchpad/e6_dev/e6p_certsafe.py"
 V4_ARTIFACT_SHA256 = "9991c390df3a53ef12b553990da52c6adab25d4087bb029f1427e20a898e6a91"
-LEGACY_SHA256 = {
-    MAPGATE: "64ad9d1beb336681d3f384b5d9b1871615bc317f78c0eaa6ca0d9b9dcd426dd9",
-    CONF_ANALYZER: "3d1a0965ce986889bb0dd19a228f0469c29cafd0884e23fe4ed9ffab17e8e000",
-    CONF_DRIVER: "74ae5309b9373632a03a17076ce5ba1f465be32de9b3e32d8cdb0131e786ac9d",
-    CERTSAFE_CODE: "f838af6a39691d5882c9cc8109db25866d40c1db727370fdb980872befbf5daf",
-    CS_ANALYZER: "0adde7aa181e2874b3394636932bb0df8ef71ae58c14aa628dbe9afbe9ee6a33",
-    CS_DRIVER: "41d6d173296345fadf72e49d3e36cf1b49b25168b14966c93943fc83144b7e84",
-}
 TAU_RULE = "tau(f, d, k) = (rho - 1) * G_k / (max(N(f, d), 1) * 3)"
 BETA_RTOL = 1e-9
 

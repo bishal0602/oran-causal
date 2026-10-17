@@ -20,6 +20,7 @@ The criteria (K0, K0n, K1, G, X1-X3) and the discovery label are `analysis.syste
 
 import dataclasses
 import json
+import sys
 import time
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
@@ -35,10 +36,11 @@ from oran_causal.core.data import UnitTable
 from oran_causal.core.multiplicity import weighted_step_up
 from oran_causal.experiments.system import study2
 from oran_causal.experiments.system.artifacts import platform_key
-from oran_causal.experiments.system.common import repro_diff
+from oran_causal.experiments.system.common import repro_diff, sha_lf
 from oran_causal.experiments.system.study1_discovery import (
     ARTIFACT,
     PRIMARY,
+    artifact_status,
     build_caches,
     decl_record,
     declared_list,
@@ -742,6 +744,12 @@ def _maps_section(
     return mm
 
 
+def code_sha256() -> dict[str, str]:
+    """sha256 (LF) of the analyzer, driver and map-gate modules, keyed by module name."""
+    mods = (sys.modules[__name__], study2, rf)
+    return {m.__name__: sha_lf(Path(str(m.__file__))) for m in mods}
+
+
 def analyze(
     inputs: Inputs, settings: Settings = DEFAULT_SETTINGS, artifact: Path = ARTIFACT
 ) -> dict:
@@ -752,6 +760,8 @@ def analyze(
         "schema": SCHEMA,
         "protocol": study2.PROTOCOL.status(),
         "primary": "+".join(PRIMARY),
+        "artifact": artifact_status(artifact),
+        "code_sha256": code_sha256(),
     }
     params, priors = pmrt_artifact.load_artifact(artifact)
     cfg = pmrt_artifact.pmrt_config(params, settings.B)
@@ -861,10 +871,16 @@ def _disc_groups(seeds: Sequence[int], size: int, pseudo: bool) -> list[list[int
 
 
 def run(inputs: Inputs, out_dir: Path, settings: Settings = DEFAULT_SETTINGS) -> Path:
-    """Runs `analyze` and writes `tests_conf.json` into `out_dir`; returns its path."""
+    """Runs `analyze` and writes its tests and their analysis into `out_dir`.
+
+    Writes `tests_conf.json` and `disc_conf.json` (`analysis.system.study2.disc_from_tests`, the
+    input of the maps stage); returns the analysis path.
+    """
     out_dir.mkdir(parents=True, exist_ok=True)
-    res = analyze(inputs, settings)
-    path = out_dir / "tests_conf.json"
-    dump(res, path)
-    log(f"wrote {path}")
+    tests = out_dir / "tests_conf.json"
+    dump(analyze(inputs, settings), tests)
+    rep = crit2.disc_from_tests(json.loads(tests.read_text(encoding="utf-8")))
+    path = out_dir / "disc_conf.json"
+    dump(rep, path)
+    log(f"wrote {tests}, {path} ({rep['label']['label']})")
     return path

@@ -1,4 +1,6 @@
-from typing import cast
+import json
+from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
 import pytest
@@ -175,3 +177,48 @@ def test_flip_summary_is_seeded() -> None:
     assert s1["b"]["by_mean"] == {"x": 0.5}
     assert np.isnan(s1["a"]["ci90"][0])
     assert s1["b"]["ci90"][0] <= 2.5 <= s1["b"]["ci90"][1]
+
+
+def test_code_sha256_names_the_ported_modules() -> None:
+    sha = d2.code_sha256()
+    assert set(sha) == {
+        "oran_causal.experiments.system.study2_discovery",
+        "oran_causal.experiments.system.study2",
+        "oran_causal.methods.system.referees",
+    }
+    assert all(len(v) == 64 for v in sha.values())
+
+
+def _fake_analysis(monkeypatch: pytest.MonkeyPatch, module: Any, tests: dict) -> None:
+    monkeypatch.setattr(module, "analyze", lambda inputs, settings: tests)
+
+
+def test_study2_run_writes_tests_and_disc_conf(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    _fake_analysis(monkeypatch, d2, {"schema": "tests", "n": (1, 2)})
+    seen = []
+
+    def disc_from_tests(t: dict) -> dict:
+        seen.append(t)
+        return {"label": {"label": "DISC-PASS"}}
+
+    monkeypatch.setattr(d2.crit2, "disc_from_tests", disc_from_tests)
+    path = d2.run(cast(d2.Inputs, None), tmp_path)
+    assert path == tmp_path / "disc_conf.json"
+    assert seen == [{"schema": "tests", "n": [1, 2]}]
+    assert json.loads((tmp_path / "tests_conf.json").read_text()) == seen[0]
+    assert json.loads(path.read_text())["label"]["label"] == "DISC-PASS"
+
+
+def test_study1_run_writes_tests_analysis_and_verdict(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    _fake_analysis(monkeypatch, d1, {"schema": "tests"})
+    monkeypatch.setattr(d1.crit, "from_tests", lambda t: t | {"verdict": {"verdict": "V"}})
+    monkeypatch.setattr(d1.crit, "verdict_record", lambda rep: {"verdict": rep["verdict"]})
+    path = d1.run(cast(d1.Inputs, None), tmp_path)
+    assert path == tmp_path / "analysis_v4.json"
+    assert json.loads((tmp_path / "tests_v4.json").read_text()) == {"schema": "tests"}
+    assert json.loads(path.read_text())["verdict"]["verdict"] == "V"
+    assert json.loads((tmp_path / "verdict_v4.json").read_text()) == {"verdict": {"verdict": "V"}}

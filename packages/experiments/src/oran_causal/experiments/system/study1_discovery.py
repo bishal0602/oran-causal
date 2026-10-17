@@ -655,10 +655,17 @@ def analyze(
 
 
 def run(inputs: Inputs, out_dir: Path, settings: Settings = DEFAULT_SETTINGS) -> Path:
-    """Runs `analyze` and writes `tests_v4.json` into `out_dir`; returns its path."""
+    """Runs `analyze` and writes its tests and their analysis into `out_dir`.
+
+    Writes `tests_v4.json`, `analysis_v4.json` (`analysis.system.study1.from_tests`) and
+    `verdict_v4.json`; returns the analysis path.
+    """
     out_dir.mkdir(parents=True, exist_ok=True)
-    res = analyze(inputs, settings)
-    path = out_dir / "tests_v4.json"
-    dump(res, path)
-    log(f"wrote {path}")
+    tests = out_dir / "tests_v4.json"
+    dump(analyze(inputs, settings), tests)
+    rep = crit.from_tests(json.loads(tests.read_text(encoding="utf-8")))
+    path = out_dir / "analysis_v4.json"
+    dump(rep, path)
+    dump(crit.verdict_record(rep), out_dir / "verdict_v4.json")
+    log(f"wrote {tests}, {path} ({rep['verdict']['verdict']})")
     return path
