@@ -116,15 +116,16 @@ P\'olya theorems~\cite[Thm.~3.4.10 and Exercise~3.2.9]{durrett2019probability}\c
 uses that the draw of a unit is independent of the past under the logged design (fresh-draw
 lemma\claim{THM-FRESH}). The p-value is exact when the units, their order, propensities and weights are fixed given the
 past of the other families, because the observed assignment and the redraws are then
-exchangeable~\cite[Sect.~4]{phipson2010permutation}\claim{THM-EXACT}\claim{CIT-PS}. PMRT does not meet that condition,
+exchangeable, so the tie-inclusive p-value is valid\claim{THM-EXACT} (\esm{theory}; for a continuous statistic it is
+exact~\cite[Sect.~4]{phipson2010permutation}\claim{CIT-PS}). PMRT does not meet that condition,
 and a two-unit design in which a rejected request is proposed again shows that re-proposal alone makes the one-sided
 redraw p-value anti-conservative for any fixed $t \in (1/2, 3/4)$\claim{THM-COUNTEREX}. The statements, proof ideas and
 machine-checked versions of these results are in \esm{theory}.
 
 The 60 hypotheses of one analysis are declared together by a weighted Benjamini--Yekutieli (BY)
-step-up~\cite{benjamini2001dependency,blanchard2008fdr} at $q = 0.05$. Hypothesis $j$ enters with a weight $\omega_j$
+step-up~\cite[Thm.~1.3]{benjamini2001dependency}, \cite{blanchard2008fdr} at $q = 0.05$. Hypothesis $j$ enters with a weight $\omega_j$
 and, where a prior direction $d_j$ is set, with $p_{d_j}$, and otherwise with $p$; weights and directions are derived
-from the training episodes alone~\cite{roeder2009weighted}. A declaration is a rejected hypothesis with its sign,
+from the training episodes alone~\cite[Thm.~3.1 and Sect.~5]{roeder2009weighted}. A declaration is a rejected hypothesis with its sign,
 $d_j$ where the one-sided value was used and otherwise the reported sign.
 
 \begin{corollary}[Asymptotic false discovery rate]

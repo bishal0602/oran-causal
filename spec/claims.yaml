@@ -347,14 +347,14 @@ claims:
     statement: "The Benjamini-Yekutieli step-up controls the FDR under arbitrary dependence."
     paper: [sec:inference, cor:s_fdr]
     spec: spec:thm.byfin
-    cited: {bibkey: benjamini2001dependency, locator: "no locator in the manuscript", verified: false}
+    cited: {bibkey: benjamini2001dependency, locator: "Thm. 1.3, p. 1169", verified: true}
 
   - id: CIT-BR
     kind: theorem-cited
     statement: "The weighted step-up with a reshaping function controls the FDR at q sum_{H0} w_j / m under arbitrary dependence when the null p-values are super-uniform."
-    paper: [cor:s_fdr]
+    paper: [sec:inference, cor:s_fdr]
     spec: spec:thm.byfin
-    cited: {bibkey: blanchard2008fdr, locator: "Thm. 4.2", verified: false}
+    cited: {bibkey: blanchard2008fdr, locator: "Thm. 4.2", verified: true}
 
   - id: CIT-HH
     kind: theorem-cited
@@ -368,14 +368,14 @@ claims:
     statement: "The Lindeberg-Feller theorem and Polya's theorem on uniform convergence of distribution functions."
     paper: [prop:s_pmrt]
     spec: spec:thm.pmrt
-    cited: {bibkey: durrett2019probability, locator: "Thm. 3.4.10; Exercise 3.2.9", verified: false}
+    cited: {bibkey: durrett2019probability, locator: "Thm. 3.4.10; Exercise 3.2.9", verified: true}
 
   - id: CIT-PS
     kind: theorem-cited
-    statement: "The Monte Carlo p-value that counts ties against the observed statistic is valid for every B when the B + 1 values are exchangeable."
+    statement: "For a continuous statistic and B independent draws under the null, the Monte Carlo p-value (b + 1)/(B + 1) is exact for every B."
     paper: [lem:s_exact]
     spec: spec:thm.exact
-    cited: {bibkey: phipson2010permutation, locator: "Sect. 4", verified: false}
+    cited: {bibkey: phipson2010permutation, locator: "Sect. 4", verified: true}
 
   - id: CIT-RW
     kind: theorem-cited
@@ -383,7 +383,7 @@ claims:
     paper: [sec:inference, tab:s_pipeline]
     spec: spec:fdr.weights
     code: [oran_causal.core.multiplicity:rw_weights]
-    cited: {bibkey: roeder2009weighted, locator: "no locator in the manuscript", verified: false}
+    cited: {bibkey: roeder2009weighted, locator: "Thm. 3.1; Sect. 5", verified: true}
 
   - id: EMP-S1-PLACEBO
     kind: empirical

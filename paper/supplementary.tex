@@ -70,7 +70,7 @@ an S refer to the article.}
 \section{Method}
 \label{esm:method}
 
-Algorithm~\ref{alg:s_pmrt} collects the steps of the test for one hypothesis, Table~\ref{tab:s_pipeline} the construction of the weight and Table~\ref{tab:s_rules} the rules of the test and the referee.
+Algorithm~\ref{alg:s_pmrt} collects the steps of the test for one hypothesis, Table~\ref{tab:s_pipeline} the construction of the weight $w_u$ of unit $u$ for hypothesis $(f, r, k)$ (steps 1 to 7, fitted on training, the 480 earlier and 20 development episodes) and of the inputs of the declaration layer (step 8, which runs steps 1 to 7 on the 480 earlier episodes), and Table~\ref{tab:s_rules} the rules of the test and the referee.
 
 \begin{algorithm}
 \caption{PMRT for family $f$ and hypothesis $(f, r, k)$}
@@ -102,7 +102,7 @@ Algorithm~\ref{alg:s_pmrt} collects the steps of the test for one hypothesis, Ta
 \end{algorithm}
 
 \begin{table}[tbp]
-\caption{Weight construction. Steps 1 to 7 give the weight $w_u$ of unit $u$ for hypothesis $(f, r, k)$ and step 8 the inputs of the declaration layer; training used 480 earlier and 20 development episodes, and step 8 runs steps 1 to 7 on the 480 earlier episodes.}
+\caption{Weight construction.}
 \label{tab:s_pipeline}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -118,7 +118,7 @@ Step & What it does & Fitted on \\
 6 Huber clip & Clips at a scale predicted at opening, giving $w_u$ & training \\
 7 Orientation & $o$: sign of $\mu$ summed over 0--90~s, set only if $|z_{\mathrm{train}}| \ge 2$, with $z_{\mathrm{train}}$ the $z$ of the plain 0--90~s total of the step-3 residuals & training \\
 \midrule
-8 Declaration weights & Roeder--Wasserman $\omega_j$: floor 0.2, cap 5, mean 1; direction $d_j$, sign of $z$ where $|z| \ge 3$ (\val{appa.prior.directed} of 60) & the 480 earlier episodes \\
+8 Declaration weights & Roeder--Wasserman $\omega_j$ (Roeder and Wasserman 2009, Thm.~3.1; adapted to the BY step-up; floor and cap ours): floor 0.2, cap 5, mean 1; direction $d_j$, sign of $z$ where $|z| \ge 3$ (\val{appa.prior.directed} of 60) & the 480 earlier episodes \\
 \botrule
 \end{tabular*}
 \end{table}
@@ -249,7 +249,8 @@ null satisfies $\Pr(p_j \le t_j(i)) \le t_j(i) + \delta$ for $i = 1, \dots, m$, 
 the p-values, $\mathrm{FDR} \le (q/m) \sum_{j \in \mathcal{H}_0} w_j + |\mathcal{H}_0|\, \delta$.
 \end{lemma}
 \noindent\emph{Proof idea.} Each null's contribution to the FDR is bounded by an envelope of its distribution function
-on the threshold grid, which the Benjamini--Yekutieli argument sums to $q\, w_j / m$ plus the slack.
+on the threshold grid, which the Benjamini--Yekutieli argument (Benjamini and Yekutieli 2001, proof of Thm.~1.3; Blanchard and Roquain
+2008, Prop.~2.7 and Prop.~3.7) sums to $q\, w_j / m$ plus the slack.
 \emph{Lean:} \texttt{OranCausal.StepUp.fdr\_le\_of\_selfConsistent}.
 
 \begin{lemma}[Gate budget]
@@ -329,8 +330,10 @@ $\tau_{\mathrm{AA}}$, ground truth & all accepted & equal over sampled units & k
 \end{tabular*}
 \end{table}
 
+Table~\ref{tab:s_baselines} lists the associational baselines. Each ran on the same unit table as PMRT and gave a score and a sign per hypothesis under the same support rule; on the confounded logs each tuned baseline also received a threshold calibrated on the placebo logs, which allows at most one placebo edge.
+
 \begin{table}
-\caption{Associational baselines. Each baseline ran on the same unit table as PMRT and gave a score and a sign per hypothesis under the same support rule; on the confounded logs each tuned baseline also received a threshold calibrated on the placebo logs, which allows at most one placebo edge.}
+\caption{Associational baselines.}
 \label{tab:s_baselines}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -349,7 +352,7 @@ QACM & Predicted change of the KPI predictor of Wadud et al. fitted on the acted
 \end{table}
 
 \begin{table}[tbp]
-\caption{Decision arms and metrics. An arm is eligible when its energy retention and all four guard ratios are within their limits, and an ineligible arm is scored by $R^{*} = \min(R, 0)$.}
+\caption{Decision arms and metrics.}
 \label{tab:s_armdef}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -386,12 +389,15 @@ Protected violations $V$ & Per protected-UE hour, pooled over the seeds & Object
 Recovery $R$ & $(V_{\mathrm{AA}} - V) / (V_{\mathrm{AA}} - V_{\mathrm{ref}})$, with $V_{\mathrm{ref}}$ the best single-xApp subset & -- \\
 Energy retention & Share of the energy-saving subset's saving over freeze & $\ge 0.90$ \\
 Guard ratios & Service violations, non-protected eMBB and low-latency violations, RLFs; each over accept-all & $\le 1.10$ \\
+Scored recovery $R^{*}$ & $R$ for an eligible arm, $\min(R, 0)$ otherwise; an arm is eligible when its energy retention and all four guard ratios are within their limits & -- \\
 \bottomrule
 \end{tabular*}
 \end{table}
 
+Table~\ref{tab:s_envdef} defines the environments and logging designs. A condition is one environment, logging design, confounding strength $\lambda$ and sample size $n \in \{500, 1\,000, 4\,000, 8\,000, 24\,000\}$. A truth-null edge joins a real action to a KPI that it leaves unaffected; a placebo edge joins a KPI to an extra action column logged with a known design that acts on nothing; a confounded-null edge, in the latent-confounding environment only, joins a KPI to such a column drawn by the confounded policy. Redraws stop at the first 20 that reach the observed statistic, up to $B = 9999$.
+
 \begin{table}[tbp]
-\caption{Controlled environments and logging designs. A condition is one environment, logging design, confounding strength $\lambda$ and sample size $n \in \{500, 1\,000, 4\,000, 8\,000, 24\,000\}$. A truth-null edge joins a real action to a KPI that it leaves unaffected; a placebo edge joins a KPI to an extra action column logged with a known design that acts on nothing; a confounded-null edge, in the latent-confounding environment only, joins a KPI to such a column drawn by the confounded policy. Redraws stop at the first 20 that reach the observed statistic, up to $B = 9999$.}
+\caption{Controlled environments and logging designs.}
 \label{tab:s_envdef}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -427,7 +433,7 @@ Unlogged confounding & \raggedright Latent confounding only: the confounder is l
 Tables~\ref{tab:s_validity} to~\ref{tab:s_x8} give the validity checks, Tables~\ref{tab:s_maps_full} to~\ref{tab:s_attr} the map quality under other ground-truth rules, and Figure~\ref{fig:s_subsamples} the per-subsample comparison.
 
 \begin{table}
-\caption{Validity checks on the simulator logs. The null-outcome checks used 999 redraws; the stricter check used 9\,999 redraws on 590 null-outcome variants, which share the logged designs of ten groups.}
+\caption{Validity checks on the simulator logs.}
 \label{tab:s_validity}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -437,9 +443,9 @@ Check & Result & Note \\
 \midrule
 Placebo logs, randomised & 7 of 60 at $p \le 0.05$ (3 expected); 0 declared & Binomial tail 0.03 \\
 Placebo logs, confounded & 0 of 60 at $p \le 0.05$; 0 declared & \\
-Null outcomes, randomised & Rate 0.05 (families 0.05--0.06); 0 declared & \\
-Null outcomes, confounded & Rate 0.05 (families 0.04--0.06); 0 declared & \\
-Stricter check, randomised & 2 of 590 variants declared & \\
+Null outcomes, randomised & Rate 0.05 (families 0.05--0.06); 0 declared & 999 redraws \\
+Null outcomes, confounded & Rate 0.05 (families 0.04--0.06); 0 declared & 999 redraws \\
+Stricter check, randomised & 2 of 590 variants declared & 9\,999 redraws; the variants share the logged designs of ten groups \\
 Small-effect nulls, randomised & All 21: 0.15 (\val{s1.null.ci.lo}--\val{s1.null.ci.hi}); 12 with zero in the interval: 0.075 (\val{s1.null.open.ci.lo}--\val{s1.null.open.ci.hi}) & \\
 Baselines' placebo edges & Randomised: 1 to 13; confounded: up to 29 & Most: Granger~+~BY \\
 \bottomrule
@@ -906,8 +912,10 @@ Estimate without the five seeds of largest contribution & $+\val{x15.trim.s2}$ &
 \section{Controlled environments}
 \label{esm:envs}
 
+Table~\ref{tab:s_claims} counts conditions by group of tests. A rate is invalid if the lower bound of its 95~\% seed-cluster bootstrap interval exceeds 0.05, valid if the upper bound is at most 0.075, and inconclusive otherwise; a condition is invalid if any of its rates is.
+
 \begin{table}
-\caption{Conditions by group of tests under the controlled environments. A rate is invalid if the lower bound of its 95~\% seed-cluster bootstrap interval exceeds 0.05, valid if the upper bound is at most 0.075, and inconclusive otherwise; a condition is invalid if any of its rates is.}
+\caption{Conditions by group of tests under the controlled environments.}
 \label{tab:s_claims}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -936,12 +944,14 @@ Plain partial correlation & 0.47 & 20 / 25 & MSCR & 0.94 & 8 / 10 \tabularnewlin
 \end{table}
 
 \begin{table}
-\caption{Conditions by environment: invalid / valid / counted over every $n$ at $\kappa = 0.25$; the remainder are inconclusive.}
+\caption{Conditions by environment.}
 \label{tab:s_verdicts}
 \footnotesize
 \setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}l c c c c c c@{}}
 \toprule
+\multicolumn{7}{@{}l}{Invalid / valid / counted over every $n$ at $\kappa = 0.25$; the remainder are inconclusive} \\
+\midrule
 Group and design & Linear & Rare & Delayed & Confounding & Composed & All \\
 \midrule
 Design-blind, dithered & 22/0/22 & 22/0/22 & 27/0/27 & 2/7/22 & 22/0/22 & 95/7/115 \\
