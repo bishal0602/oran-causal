@@ -109,6 +109,17 @@ exact randomisation test for sequential experiments of Bojinov and Shephard~\cit
 apply here: a sharp null on one KPI does not fix the network state that creates the units and sets the incumbent's
 propensities, so the adaptive design cannot be replayed.
 
+The proof of Proposition~\ref{prop:pmrt} combines the martingale central limit theorem with a random limiting
+variance~\cite[Cor.~3.1 and 3.2]{hall1980martingale}\claim{CIT-HH} for the statistic with the Lindeberg--Feller and
+P\'olya theorems~\cite[Thm.~3.4.10 and Exercise~3.2.9]{durrett2019probability}\claim{CIT-DUR} for the redraws, and it
+uses that the draw of a unit is independent of the past under the logged design (fresh-draw
+lemma\claim{THM-FRESH}). The p-value is exact when the units, their order, propensities and weights are fixed given the
+past of the other families, because the observed assignment and the redraws are then
+exchangeable~\cite[Sect.~4]{phipson2010permutation}\claim{THM-EXACT}\claim{CIT-PS}. PMRT does not meet that condition,
+and a two-unit design in which a rejected request is proposed again shows that re-proposal alone makes the one-sided
+redraw p-value anti-conservative for any fixed $t \in (1/2, 3/4)$\claim{THM-COUNTEREX}. The statements, proof ideas and
+machine-checked versions of these results are in \esm{theory}.
+
 The 60 hypotheses of one analysis are declared together by a weighted Benjamini--Yekutieli (BY)
 step-up~\cite{benjamini2001dependency,blanchard2008fdr} at $q = 0.05$. Hypothesis $j$ enters with a weight $\omega_j$
 and, where a prior direction $d_j$ is set, with $p_{d_j}$, and otherwise with $p$; weights and directions are derived
@@ -128,7 +139,10 @@ the analysed sample size $n$, all fixed from data independent of the evaluation 
 where a false discovery is the rejection of a true sharp null.
 \end{corollary}
 
-Untested hypotheses count in $m$ and are never declared, which is conservative.
+The corollary applies the reshaped weighted step-up of Blanchard and
+Roquain~\cite[Thm.~4.2]{blanchard2008fdr}\claim{CIT-BR} through a finite-sample bound whose slack vanishes as the
+sample grows\claim{THM-BY-FIN} (\esm{theory}). Untested hypotheses count in $m$ and are never declared, which is
+conservative.
 
 \subsection{Scope of the guarantees}
 \label{sec:reading}\claim{THM-SCOPE}
@@ -148,11 +162,11 @@ negative control. Table~\ref{tab:guarantees} summarises what each layer guarante
 \toprule
 Layer and assumptions & Guarantee & Not covered \\
 \midrule
-Logged design; (A1) & Scores have mean zero given the past (Lemma~\ref{lem:fresh}) & logs without propensities \\
+Logged design; (A1) & Scores have mean zero given the past (fresh-draw lemma) & logs without propensities \\
 Edge p-value; (A1)--(A4) & Asymptotically valid for the sharp null (Proposition~\ref{prop:pmrt}) & finite samples; weak nulls \\
 Declarations; (A1)--(A4) & FDR over sharp nulls at most $q$, asymptotically (Corollary~\ref{cor:fdr}) & sign, relation, magnitude \\
 Signs & None & wrong signs \\
-Design slope; (A1) & Slope converges to $\tau_{\pi}$ (Lemma~\ref{lem:slope}) & exact predictability of the outcome centre \\
+Design slope; (A1) & Slope converges to $\tau_{\pi}$ (design-slope lemma) & exact predictability of the outcome centre \\
 Gate & Undeclared guard edges of a rejected class within tolerance, by an approximate 90~\% bound & coverage of the bound; policy-level safety; the protected slice \\
 Decisions & None & other scenarios \\
 \botrule
@@ -174,7 +188,7 @@ outcome centre $\tilde y_u$ computed from earlier units' outcomes and $u$'s pre-
 \label{eq:slope_ht}\claim{DEF-SLOPE}
 \end{equation}
 with $\pi_u = 0.5$, which is the Horvitz--Thompson estimator of $\tau_{\pi}$ and converges to it
-(Lemma~\ref{lem:slope}). Under a state-dependent policy such as the incumbent, it converges to the
+(design-slope lemma, \claim{THM-SLOPE}\esm{theory}). Under a state-dependent policy such as the incumbent, it converges to the
 $\pi_u(1 - \pi_u)$-weighted average of $\mathrm{sgn}_u \tau_u^{\pi}$. The lemma assumes an outcome centre fixed before
 $u$'s mode is drawn, whereas the implemented centre also uses earlier outcomes whose windows are still open; with a
 strictly predictable centre, no slope changed sign (\esm{decisions}).

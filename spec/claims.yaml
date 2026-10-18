@@ -36,13 +36,13 @@ claims:
   - id: DEF-EST-H0
     kind: definition
     statement: "The sharp null H0(f, r, k) states that the outcome a unit of f would have at any cell and opening time is the same under any assignment of f's modes; it is stated over keys, not realised units."
-    paper: [sec:estimand, sec:inference, app:proof_setting]
+    paper: [sec:estimand, sec:inference, esm:setting]
     spec: spec:est.sharp
 
   - id: DEF-EST-TAUAA
     kind: definition
     statement: "The knockout effect tau_AA is the mean of sgn_u tau_u^AA, the accept-minus-reject difference of the 90 s post-window KPI sum in rollouts from the copied state with every other unit accepted (Definition 2)."
-    paper: [def:tau_aa, tab:estimands]
+    paper: [def:tau_aa, tab:s_estimands]
     spec: spec:est.tauaa
     code: [oran_causal.sim.system.decision.gt:unit_delta]
     tests: {min: 1, tier: unit}
@@ -50,7 +50,7 @@ claims:
   - id: DEF-SYS-MITIG
     kind: definition
     statement: "Mitigation chooses a referee that minimises the protected-slice violations V subject to an energy retention of at least 0.90 and four guard ratios to accept-all of at most 1.10."
-    paper: [sec:estimand, tab:arms]
+    paper: [sec:estimand, tab:s_armdef]
     spec: spec:met.eligible
     tests: {min: 1, tier: unit}
 
@@ -65,7 +65,7 @@ claims:
   - id: DEF-PMRT-WEIGHT
     kind: definition
     statement: "The weight w_u is built in seven steps: target bins, receiver slots, ridge adjustment, matched filter psi = Sigma^-1 mu, running score centre, Huber clip at a predicted scale, and orientation set where |z_train| >= 2."
-    paper: [sec:pmrt, alg:pmrt, tab:pipeline]
+    paper: [sec:pmrt, alg:s_pmrt, tab:s_pipeline]
     spec: spec:pmrt.weight
     code:
       - oran_causal.core.pmrt.units:fit_pmrt
@@ -79,7 +79,7 @@ claims:
   - id: DEF-PMRT-STAT
     kind: definition
     statement: "The statistic is S = sum_u v_u w_u with design variance sigma^2 = sum_u pi_u (1 - pi_u) w_u^2 and z = S / sigma; when sigma = 0 the code sets z = 0 and p = 1."
-    paper: [eq:stat, app:proof_prop]
+    paper: [eq:stat, prop:s_pmrt]
     spec: spec:pmrt.stat
     code: [oran_causal.core.pmrt.units:lin_z]
     tests: {min: 1, tier: unit}
@@ -87,7 +87,7 @@ claims:
   - id: DEF-PMRT-PVAL
     kind: definition
     statement: "The two-sided p-value is (1 + #{b : |z_b| >= |z|}) / (B + 1) with B = 9999 redraws of the family's modes, with one-sided values p_d where o is set; the code counts |z_b| >= |z| - 1e-9 (1 + |z|)."
-    paper: [eq:pval, app:proof_prop]
+    paper: [eq:pval, prop:s_pmrt]
     spec: spec:inf.pval
     code: [oran_causal.core.pmrt.engine:crt]
     tests: {min: 1, tier: unit}
@@ -95,14 +95,14 @@ claims:
   - id: DEF-PMRT-SUPPORT
     kind: definition
     statement: "A hypothesis is tested only when it has at least 30 units, 5 accepted, 5 rejected and 3 episodes; untested hypotheses count in m and are never declared."
-    paper: [sec:inference, alg:pmrt]
+    paper: [sec:inference, alg:s_pmrt]
     spec: spec:pmrt.support
     tests: {min: 1, tier: unit}
 
   - id: DEF-FDR-WBY
     kind: definition
     statement: "The 60 hypotheses of one analysis are declared together by a weighted Benjamini-Yekutieli step-up at q = 0.05, with Roeder-Wasserman weights (floor 0.2, cap 5, mean 1) and one-sided p-values in the prior direction where |z_prior| >= 3."
-    paper: [sec:inference, tab:pipeline]
+    paper: [sec:inference, tab:s_pipeline]
     spec: spec:fdr.wby
     depends_on: [CIT-RW]
     code:
@@ -159,7 +159,7 @@ claims:
   - id: DEF-MET-DEC
     kind: definition
     statement: "Referees are compared by the recovery R = (V_AA - V) / (V_AA - V_ref) and eligibility, with 90 % paired seed-bootstrap intervals (10,000 resamples) on decision metrics and 95 % cluster-bootstrap intervals on rates; an ineligible arm scores R* = min(R, 0)."
-    paper: [sec:baselines_scores, app:arms, tab:arms]
+    paper: [sec:baselines_scores, tab:s_armdef]
     spec: spec:met.decision
     code: [oran_causal.analysis.system.stats:gate_a]
     tests: {min: 1, tier: unit}
@@ -167,7 +167,7 @@ claims:
   - id: DEF-ENV
     kind: definition
     statement: "The controlled environments are five mechanisms with known causal graphs (linear graph, rare regime, delayed harm, latent confounding, composed), logged by independent redraws, a dithered setpoint, a confounded policy or unlogged confounding, at n from 500 to 24,000."
-    paper: [sec:envs, app:envs, tab:study4_design]
+    paper: [sec:envs, tab:s_envdef]
     spec: spec:env
     code: [oran_causal.sim.controlled.datasets.generate:generate_dataset, oran_causal.sim.controlled.datasets.truth:truth_for, oran_causal.sim.controlled.base:ControlledEnv, oran_causal.experiments.campaign.estimand:run]
     tests: {min: 1, tier: unit}
@@ -183,7 +183,7 @@ claims:
   - id: DEF-SIM-CONST
     kind: definition
     statement: "The simulator has 24 cells and 300 UEs, a 40 ms tick and 120 s warm-up plus 600 s scored time; the gate tolerances used G_v = 19,953.65 violated UE-seconds and G_RLF = 35.025 RLFs."
-    paper: [sec:scenario, app:simparams]
+    paper: [sec:scenario, tab:s_params]
     spec: spec:sys.sim
     code: [oran_causal.core.gate:tau_table, oran_causal.sim.system.config:E6Config, oran_causal.sim.system.config:TICK_S, oran_causal.sim.system.env:E6Env]
     tests: {min: 1, tier: unit}
@@ -196,7 +196,7 @@ claims:
   - id: ASM-A1-DESIGN
     kind: assumption
     statement: "(A1) For every unit u, its existence, cell, opening time, direction and propensity are G_{u-1}-measurable, Pr(W_u = accept | G_{u-1}) = pi_u, and pi_min <= pi_u <= 1 - pi_min."
-    paper: [sec:inference, app:proof_setting]
+    paper: [sec:inference, esm:setting]
     spec: spec:asm.a1
     probes: [EMP-X3]
     code: [oran_causal.sim.system.decision.collect:IncumbentPolicy]
@@ -212,7 +212,7 @@ claims:
   - id: ASM-A3-PRED
     kind: assumption
     statement: "(A3) Every weight w_u is G_{u-1}-measurable."
-    paper: [sec:inference, app:proof_setting]
+    paper: [sec:inference, esm:setting]
     spec: spec:asm.a3
     probes: [EMP-S1-NULLOUT, EMP-S1-STRICT]
     code: [oran_causal.core.pmrt.units:running_center, oran_causal.core.ridge:predictable_residuals]
@@ -221,7 +221,7 @@ claims:
   - id: ASM-A4-REG
     kind: assumption
     statement: "(A4) As the number of episodes grows, the design variance grows without any single unit dominating S; it is the one assumption the construction leaves open."
-    paper: [sec:inference, app:assumptions, app:proof_setting]
+    paper: [sec:inference, esm:setting]
     spec: spec:asm.a4
     probes: [EMP-S1-PLACEBO, EMP-S1-NULLOUT, EMP-S1-STRICT]
     tests: {min: 1, tier: t0}
@@ -229,7 +229,7 @@ claims:
   - id: ASM-FDR-FIXED
     kind: assumption
     statement: "The declaration weights omega_j and directions d_j are fixed from data independent of the evaluation data."
-    paper: [cor:fdr, app:proof_cor]
+    paper: [cor:fdr, cor:s_fdr]
     spec: spec:asm.v2
     code: [oran_causal.core.declare:prior_weights, oran_causal.core.declare:prior_directions]
     tests: {min: 1, tier: unit}
@@ -245,7 +245,7 @@ claims:
   - id: ASM-SLOPE-CENTRE
     kind: assumption
     statement: "The design slope and the gate bounds rest on an approximately predictable outcome centre; the implemented centre also uses earlier outcomes whose windows are still open."
-    paper: [sec:slope, sec:disc_limits, app:gate]
+    paper: [sec:slope, sec:disc_limits, tab:s_gate]
     spec: spec:asm.centre
     probes: [EMP-X16]
     tests: {min: 1, tier: unit}
@@ -269,13 +269,13 @@ claims:
   - id: THM-FRESH
     kind: theorem-paper
     statement: "In the setting of app:proof_setting (draws U_xi independent Uniform(0, 1) over keys and independent of G_0; G_u = G_0 v sigma(U_{xi_1}, ..., U_{xi_u})), if xi_u and pi_u are G_{u-1}-measurable and xi_u differs from the earlier keys, then U_{xi_u} is Uniform(0, 1) and independent of G_{u-1}, so Pr(W_u = accept | G_{u-1}) = pi_u (Lemma 1)."
-    paper: [lem:fresh]
+    paper: [lem:s_fresh]
     spec: spec:thm.fresh
 
   - id: THM-PMRT-ASY
     kind: theorem-paper
     statement: "Under (A1) to (A3), S is a martingale with predictable quadratic variation sigma^2; with (A4), z converges to N(0, 1), the redraw distribution converges uniformly to Phi in probability, and limsup Pr(p <= t) <= floor(t (B + 1)) / (B + 1) <= t (Proposition 1)."
-    paper: [prop:pmrt, app:proof_prop]
+    paper: [prop:pmrt, prop:s_pmrt]
     spec: spec:thm.pmrt
     depends_on: [ASM-A1-DESIGN, ASM-A2-NULL, ASM-A3-PRED, ASM-A4-REG, THM-FRESH, CIT-HH, CIT-DUR]
     code: [oran_causal.core.pmrt.engine:crt]
@@ -284,7 +284,7 @@ claims:
   - id: THM-EXACT
     kind: theorem-paper
     statement: "If, in addition to (A1) and (A2), the realised units, their order, sgn_u, pi_u and w_u are all G_0-measurable, then Pr(p <= t | G_0) <= t for every t in [0, 1], every n and every B, and likewise for p_d with the direction d fixed and the orientation o G_0-measurable (set from training data) (Lemma 2)."
-    paper: [lem:exact]
+    paper: [lem:s_exact]
     spec: spec:thm.exact
     depends_on: [ASM-A1-DESIGN, ASM-A2-NULL, THM-FRESH, CIT-PS]
     code: [oran_causal.core.pmrt.engine:crt]
@@ -292,8 +292,8 @@ claims:
 
   - id: THM-COUNTEREX
     kind: theorem-paper
-    statement: "In a two-unit design where a rejected unit is proposed again, Pr(p_{+1} <= 1/2) = 3/4 > 1/2, so re-proposal alone breaks finite-sample validity (Example 1)."
-    paper: [ex:adaptive]
+    statement: "In a two-unit design where a rejected unit is proposed again, Pr(p_{+1} <= t) tends to 3/4 > t as B grows for every fixed t in (1/2, 3/4), so re-proposal alone breaks finite-sample validity (Example 1)."
+    paper: [ex:s_adaptive]
     spec: spec:thm.counterex
     depends_on: [DEF-PMRT-PVAL]
     tests: {min: 1, tier: unit}
@@ -301,7 +301,7 @@ claims:
   - id: THM-BY-FIN
     kind: theorem-lean
     statement: "For any rejection set S with p_j <= t_j(|S|) for every j in S, where t_j(k) = q w_j k / (m c_m), the false discovery rate is at most (q/m) sum_{j in H0} w_j + |H0| delta whenever every null p-value satisfies Pr(p_j <= t_j(i)) <= t_j(i) + delta for i = 1..m, whatever the dependence between the p-values."
-    paper: [app:proof_cor, cor:fdr]
+    paper: [cor:s_fdr, cor:fdr]
     spec: spec:thm.byfin
     depends_on: [CIT-BY, CIT-BR]
     code: [oran_causal.core.multiplicity:weighted_step_up]
@@ -311,7 +311,7 @@ claims:
   - id: THM-FDR-ASY
     kind: theorem-paper
     statement: "If (A1) to (A4) hold for every true sharp null and the weights and directions are fixed from independent data, then limsup FDR <= (q/m) sum_{j in H0} omega_j <= q whatever the dependence between the p-values (Corollary 1)."
-    paper: [cor:fdr, eq:fdr, app:proof_cor]
+    paper: [cor:fdr, eq:fdr, cor:s_fdr]
     spec: spec:thm.fdr
     depends_on: [THM-BY-FIN, THM-PMRT-ASY, ASM-FDR-FIXED]
     code: [oran_causal.core.multiplicity:weighted_step_up]
@@ -320,7 +320,7 @@ claims:
   - id: THM-SLOPE
     kind: theorem-paper
     statement: "Under (A1) with the natural history, bounded outcomes and a predictable centre, beta_hat converges to the pi_u (1 - pi_u)-weighted average of sgn_u tau_u^pi; at pi_u = 0.5 it is the Horvitz-Thompson estimator as an identity (Lemma 3)."
-    paper: [lem:slope, app:proof_slope]
+    paper: [lem:s_slope]
     spec: spec:thm.slope
     depends_on: [ASM-A1-DESIGN, DEF-SLOPE]
     code: [oran_causal.core.gate:design_slope_se]
@@ -345,42 +345,42 @@ claims:
   - id: CIT-BY
     kind: theorem-cited
     statement: "The Benjamini-Yekutieli step-up controls the FDR under arbitrary dependence."
-    paper: [sec:inference, app:proof_cor]
+    paper: [sec:inference, cor:s_fdr]
     spec: spec:thm.byfin
     cited: {bibkey: benjamini2001dependency, locator: "no locator in the manuscript", verified: false}
 
   - id: CIT-BR
     kind: theorem-cited
     statement: "The weighted step-up with a reshaping function controls the FDR at q sum_{H0} w_j / m under arbitrary dependence when the null p-values are super-uniform."
-    paper: [app:proof_cor]
+    paper: [cor:s_fdr]
     spec: spec:thm.byfin
     cited: {bibkey: blanchard2008fdr, locator: "Thm. 4.2", verified: false}
 
   - id: CIT-HH
     kind: theorem-cited
     statement: "The martingale central limit theorem with a random limiting variance and its self-normalised form."
-    paper: [app:proof_prop]
+    paper: [prop:s_pmrt]
     spec: spec:thm.pmrt
     cited: {bibkey: hall1980martingale, locator: "Cor. 3.1, Cor. 3.2", verified: false}
 
   - id: CIT-DUR
     kind: theorem-cited
     statement: "The Lindeberg-Feller theorem and Polya's theorem on uniform convergence of distribution functions."
-    paper: [app:proof_prop]
+    paper: [prop:s_pmrt]
     spec: spec:thm.pmrt
     cited: {bibkey: durrett2019probability, locator: "Thm. 3.4.10; Exercise 3.2.9", verified: false}
 
   - id: CIT-PS
     kind: theorem-cited
     statement: "The Monte Carlo p-value that counts ties against the observed statistic is valid for every B when the B + 1 values are exchangeable."
-    paper: [lem:exact]
+    paper: [lem:s_exact]
     spec: spec:thm.exact
     cited: {bibkey: phipson2010permutation, locator: "Sect. 4", verified: false}
 
   - id: CIT-RW
     kind: theorem-cited
     statement: "Roeder-Wasserman weights for weighted multiple testing."
-    paper: [sec:inference, tab:pipeline]
+    paper: [sec:inference, tab:s_pipeline]
     spec: spec:fdr.weights
     code: [oran_causal.core.multiplicity:rw_weights]
     cited: {bibkey: roeder2009weighted, locator: "no locator in the manuscript", verified: false}
@@ -388,7 +388,7 @@ claims:
   - id: EMP-S1-PLACEBO
     kind: empirical
     statement: "On the randomised placebo logs PMRT declared nothing; 7 of the 60 p-values were at or below 0.05 where 3 were expected, with a binomial tail probability of 0.03 above the protocol limit of 0.01."
-    paper: [abstract, sec:res_validity, tab:validity, fig:placebo]
+    paper: [abstract, sec:res_validity, tab:s_validity, fig:placebo]
     spec: spec:met.validity
     depends_on: [DEF-FDR-WBY, DEF-SYS-LOG]
     code: [oran_causal.analysis.system.report_data:v4]
@@ -402,7 +402,7 @@ claims:
   - id: EMP-S2-PLACEBO
     kind: empirical
     statement: "On the confounded placebo logs PMRT declared nothing, with 0 of 60 p-values at or below 0.05."
-    paper: [abstract, sec:res_validity, tab:validity]
+    paper: [abstract, sec:res_validity, tab:s_validity]
     spec: spec:met.validity
     depends_on: [DEF-FDR-WBY, DEF-SYS-LOG]
     code: [oran_causal.analysis.system.report_data:opt_a]
@@ -416,7 +416,7 @@ claims:
   - id: EMP-S1-NULLOUT
     kind: empirical
     statement: "On null outcomes PMRT declared nothing, with p-value rates at or below 0.05 of 0.053 (families 0.047-0.060) on the randomised and 0.050 (0.038-0.063) on the confounded logs, using 999 redraws."
-    paper: [sec:res_validity, tab:validity]
+    paper: [sec:res_validity, tab:s_validity]
     spec: spec:met.validity
     depends_on: [DEF-PMRT-PVAL]
     code: [oran_causal.analysis.system.report_data:v4]
@@ -434,7 +434,7 @@ claims:
   - id: EMP-S1-STRICT
     kind: empirical
     statement: "Repeated with 9,999 redraws on 590 null-outcome variants of the randomised logs, declarations occurred in 2 variants, within the limit of 7.5 %, and the shares of p-values at or below 1e-3 and 2e-4 were 7.9e-4 and 1.1e-4; the evidence rests on ten logged designs."
-    paper: [sec:res_validity, app:validity, tab:validity, sec:disc_deploy]
+    paper: [sec:res_validity, tab:s_validity, sec:disc_deploy]
     spec: spec:met.validity
     depends_on: [DEF-PMRT-PVAL, DEF-FDR-WBY]
     code: [oran_causal.analysis.posthoc.x8:summarize]
@@ -444,7 +444,7 @@ claims:
   - id: EMP-S1-SMALLNULL
     kind: empirical
     statement: "Over the 21 hypotheses that the ground truth labels null, the rate of p-values at or below 0.05 was 0.15 (0.048-0.29); over the 12 whose knockout interval also contains zero it was 0.075 (0.017-0.16)."
-    paper: [sec:res_validity, tab:validity, sec:disc_deploy]
+    paper: [sec:res_validity, tab:s_validity, sec:disc_deploy]
     spec: spec:met.validity
     depends_on: [DEF-GT-LABEL, DEF-PMRT-PVAL]
     tests: {min: 1, tier: t0}
@@ -452,7 +452,7 @@ claims:
   - id: EMP-S1-MAP
     kind: empirical
     statement: "On the randomised logs PMRT declared 28 edges, with precision 0.92, recall 0.79 and no wrong sign."
-    paper: [abstract, sec:res_map, tab:maps, tab:maps_full]
+    paper: [abstract, sec:res_map, tab:maps, tab:s_maps_full]
     spec: spec:met.map
     depends_on: [DEF-MET-MAP, DEF-GT-LABEL, DEF-FDR-WBY]
     code: [oran_causal.analysis.system.report_data:v4]
@@ -471,7 +471,7 @@ claims:
   - id: EMP-S2-MAP
     kind: empirical
     statement: "On the confounded logs PMRT declared 22 edges, with precision 0.86, recall 0.62 and no wrong sign."
-    paper: [abstract, sec:res_map, tab:maps, tab:maps_full]
+    paper: [abstract, sec:res_map, tab:maps, tab:s_maps_full]
     spec: spec:met.map
     depends_on: [DEF-MET-MAP, DEF-GT-LABEL, DEF-FDR-WBY]
     code: [oran_causal.analysis.system.report_data:opt_a]
@@ -485,7 +485,7 @@ claims:
   - id: EMP-S1-CHAIN
     kind: empirical
     statement: "PMRT declared the four edges of the conflict chain with the ground-truth sign on both kinds of log and in every larger subsample of the randomised logs, and 9 of the 10 true neighbour-relation edges, missing only pico sleep to neighbour RLFs."
-    paper: [sec:res_map, tab:maps_full]
+    paper: [sec:res_map, tab:s_maps_full]
     spec: spec:met.map
     depends_on: [DEF-MET-MAP, DEF-GT-LABEL]
     code: [oran_causal.analysis.system.report_data:v4]
@@ -512,7 +512,7 @@ claims:
   - id: EMP-BASE-MAPS
     kind: empirical
     statement: "The baselines declared edges on placebo logs, up to 13 on the randomised and up to 29 on the confounded logs; Granger + BY, the strongest, reached a recall of 0.55 with six wrong signs on each kind of log, and placebo-calibrated thresholds cut recall to at most 0.21."
-    paper: [abstract, sec:res_validity, sec:res_map, tab:maps, tab:maps_full, fig:placebo]
+    paper: [abstract, sec:res_validity, sec:res_map, tab:maps, tab:s_maps_full, fig:placebo]
     spec: spec:met.map
     depends_on: [DEF-MET-MAP, DEF-GT-LABEL]
     code: [oran_causal.analysis.system.report_data:v4]
@@ -529,7 +529,7 @@ claims:
   - id: EMP-GT-LABELS
     kind: empirical
     statement: "On the randomised logs the knockout ground truth labels 29 hypotheses true, 21 null and 10 indeterminate."
-    paper: [app:ko_labels, tab:system_hypotheses]
+    paper: [tab:s_hyp]
     spec: spec:gt.label
     depends_on: [DEF-GT-LABEL, DEF-EST-TAUAA]
     code: [oran_causal.analysis.system.report_data:v4]
@@ -543,7 +543,7 @@ claims:
   - id: EMP-GT-SENS
     kind: empirical
     statement: "With the materiality threshold halved PMRT's precision rose to 1.00 on both kinds of log, and with it doubled it fell to 0.59 and 0.73; halving or doubling delta_k changed 10 and 16 of the 60 labels, the floor and interval level at most 2."
-    paper: [abstract, sec:res_map, app:maps_full, tab:maps_full]
+    paper: [abstract, sec:res_map, tab:s_maps_full]
     spec: spec:gt.label
     depends_on: [DEF-GT-LABEL, DEF-MET-MAP]
     code: [oran_causal.analysis.posthoc.x11:run]
@@ -553,7 +553,7 @@ claims:
   - id: EMP-GT-EXIST
     kind: empirical
     statement: "Under the existence rule, 26 of PMRT's 28 declarations on the randomised logs and all 22 on the confounded logs were real effects with the declared sign, and its neighbour and far declarations were labelled true in 12 of 13 and 7 of 7 cases."
-    paper: [sec:res_map, app:maps_full, tab:maps_full]
+    paper: [sec:res_map, tab:s_maps_full]
     spec: spec:gt.exist
     depends_on: [DEF-GT-LABEL, DEF-MET-MAP]
     code: [oran_causal.analysis.posthoc.x14:run]
@@ -563,7 +563,7 @@ claims:
   - id: EMP-S2-REFEREE
     kind: empirical
     statement: "Without the gate, the PMRT referee reached the highest recovery of any referee, R = 0.47, but its RLF ratio of 1.31 (90 % CI 1.10 to 1.56) breached the 1.10 guard, so it was ineligible; its gain over never-sleep was +0.25 [0.14, 0.36]."
-    paper: [abstract, sec:res_decision, tab:decision_e2e, fig:decisions, tab:decision_full]
+    paper: [abstract, sec:res_decision, tab:decision_e2e, fig:decisions, tab:s_arms]
     spec: spec:met.decision
     depends_on: [DEF-REF-RULES, DEF-MET-DEC, DEF-SYS-MITIG]
     code: [oran_causal.analysis.system.report_data:opt_a]
@@ -594,7 +594,7 @@ claims:
   - id: EMP-S2-ASSOC
     kind: empirical
     statement: "Referees using the associational maps raised protected-slice violations to 4.5 to 5.4 times the accept-all level with and without the gate, and several stayed eligible."
-    paper: [sec:res_decision, tab:decision_full]
+    paper: [sec:res_decision, tab:s_arms]
     spec: spec:met.decision
     depends_on: [DEF-REF-RULES, DEF-MET-DEC]
     code: [oran_causal.analysis.system.report_data:opt_a]
@@ -626,7 +626,7 @@ claims:
   - id: EMP-S3-GATEDIAG
     kind: empirical
     statement: "The gate certified only pico-sleep rejections (899 units) and withheld transmit-power-up rejections (2,579 units) because their two unresolved guard edges are true with harm above tolerance; the deciding bound was 0.148 against a tolerance of 0.036."
-    paper: [sec:disc_decision, app:gate, tab:gate_diag]
+    paper: [sec:disc_decision, tab:s_gate]
     spec: spec:gate
     depends_on: [DEF-GATE]
     code: [oran_causal.core.gate:certify]
@@ -644,7 +644,7 @@ claims:
   - id: EMP-X15
     kind: empirical
     statement: "On the gated dataset's seeds the ungated PMRT referee no longer outperformed never-sleep (-0.06 at an RLF ratio of 1.05); pooled over both seed sets its gain was 0.10 with an interval that barely excludes zero, at an RLF ratio of 1.18."
-    paper: [sec:res_decision, app:x15, sec:disc_limits]
+    paper: [sec:res_decision, tab:s_blocks, sec:disc_limits]
     spec: spec:pro.x15
     depends_on: [DEF-MET-DEC]
     code: [oran_causal.analysis.posthoc.x15:run]
@@ -654,7 +654,7 @@ claims:
   - id: EMP-X16
     kind: empirical
     statement: "With a strictly predictable centre all 22 map slopes kept their sign, with relative changes of -2.9 to +6.5 %, the gate bounds moved by a median of 3.5 % of their tolerance and no class changed certification."
-    paper: [sec:slope, sec:disc_limits, app:gate]
+    paper: [sec:slope, sec:disc_limits, tab:s_gate]
     spec: spec:asm.centre
     depends_on: [DEF-SLOPE, DEF-GATE]
     code: [oran_causal.analysis.posthoc.x16:analyse]
@@ -664,7 +664,7 @@ claims:
   - id: EMP-X4
     kind: empirical
     statement: "A referee that rejected requests at random, at the rate of the ungated referee, had negative recovery."
-    paper: [sec:disc_decision, sec:disc_deploy, tab:decision_full]
+    paper: [sec:disc_decision, sec:disc_deploy, tab:s_arms]
     spec: spec:met.decision
     depends_on: [DEF-MET-DEC]
     code: [oran_causal.analysis.posthoc.x4:analyse]

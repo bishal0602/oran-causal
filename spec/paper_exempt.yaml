@@ -1,14 +1,6 @@
 # Decimals the paper prints without \val. F11 fails on any other bare decimal and on a stale entry.
 # exempt: constants only (simulator coordinates, protocol constants). unreproduced: results that no record reproduces.
 exempt:
-  - file: sections/app_a.tex
-    literal: "0.5"
-    count: 1
-    reason: randomisation propensity or fixed protocol constant (accept probability, materiality floor)
-  - file: sections/app_b.tex
-    literal: "38.901"
-    count: 1
-    reason: simulator coordinate
   - file: sections/s03_setting.tex
     literal: "0.5"
     count: 1
