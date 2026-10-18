@@ -1,10 +1,6 @@
 \section{System model and problem formulation}
 \label{sec:system}
 
-This section describes the near-RT RIC considered in this work and the logging requirement on which the proposed
-approach rests. It then formulates the two problems that the paper addresses: learning a signed causal effect map from
-logged decisions, and using that map to mitigate conflicts within safety limits.
-
 \subsection{Near-RT RIC and conflict mitigation}
 \label{sec:setting_ric}
 
@@ -16,8 +12,8 @@ rejects it, as the near-RT RIC platform does with a control request that an xApp
 interface~\cite{ORANRICARCH}. We call the rule that makes this choice the referee. A rejected request is left
 unapplied, and the xApp may propose it again later.
 The network state is summarised by per-cell KPIs, such as protected-slice violations, service violations, energy,
-radio-link failures (RLFs) and served load. A request on a cell acts on that cell, on its neighbours, taken from the
-cell's observable neighbour list, and on the remaining cells; these are the own, neighbour and far relations.
+radio-link failures (RLFs) and served load. A request on a cell acts on that cell, on its neighbours and on the
+remaining cells; these are the own, neighbour and far relations.
 
 \begin{figure}[tbp]
 \centering
@@ -36,15 +32,13 @@ applies the requests of its cell-xApp pair during this hold, and a rejected unit
 the propensity $\pi_u$ and rejects with probability $1 - \pi_u$, and the logging requirement of this paper is that the
 RIC records, for every unit, its mode and its propensity. Each unit also carries an observation-only context: the
 opening request, the cell's recent reports and applied configuration, and their aggregates over the neighbouring
-cells. Discovery methods read only the logged units, their context and the per-cell KPI series; the simulator's
-internal counters and the ground truth remain hidden from them.
+cells. Discovery methods read only the logged units, their context and the per-cell KPI series.
 
 Three logging policies are considered. The randomised policy accepts or rejects each unit with probability 0.5,
-independently, from the start of an episode. The incumbent policy is confounded: its propensity, within
-$[0.15, 0.85]$, depends on the request class and on the cell state, namely the physical resource block (PRB)
-utilisation for energy-saving requests and the fraction of protected user equipments (UEs) below their throughput
-floor for protected-share requests. Placebo logs draw and record modes in the same way but apply every request, so
-that no logged mode has any effect.
+independently. The incumbent policy is confounded: its propensity, within $[0.15, 0.85]$, depends on the request
+class and on the cell state, namely the physical resource block (PRB) utilisation for energy-saving requests and the
+share of protected user equipments (UEs) below their throughput floor for protected-share requests. Placebo logs draw
+and record modes in the same way but apply every request, so that no logged mode has any effect.
 
 \subsection{Problem formulation}
 \label{sec:estimand}\claim{DEF-SYS-HYP}\claim{DEF-EST-H0}\claim{DEF-SYS-MITIG}
@@ -53,10 +47,10 @@ A hypothesis $(f, r, k)$ concerns a parameter family $f$, a relation $r$ and a K
 Section~\ref{sec:design}, four families, three relations and five KPIs give $m = 60$ hypotheses. Because the referee
 randomises the mode of a unit rather than a parameter value, each hypothesis concerns a mode contrast held for 60~s.
 Let $y_u$ be the outcome of unit $u$ for $(r, k)$, namely the KPI summed over the cells of $r$ in the 90~s after
-opening minus the same sum in the 90~s before. Let $\mathcal{F}_{u-1}$ denote the history of the network, of every xApp and of the
-modes of earlier units up to the opening time. The xApp chooses the size of the change and the direction
-$\mathrm{sgn}_u$ of the opening request, which orients the contrast, so that a positive effect means that accepting a
-request that raises the parameter raises the KPI.
+opening minus the same sum in the 90~s before. Let $\mathcal{F}_{u-1}$ denote the history of the network, of every
+xApp and of the modes of earlier units up to the opening time. The xApp chooses the size of the change and the
+direction $\mathrm{sgn}_u$ of the opening request, which orients the contrast, so that a positive effect means that
+accepting a request that raises the parameter raises the KPI.
 
 \begin{definition}[Policy-averaged assignment effect]
 \label{def:tau_pi}\claim{DEF-EST-TAUPI}
@@ -72,21 +66,19 @@ limit of $\bar\tau_{\pi} = N^{-1} \sum_u \mathrm{sgn}_u\, \tau_u^{\pi}$ over the
 episodes grows.
 \end{definition}
 
-The target depends on the logging policy, which draws the modes of the other units in a unit's window, so randomised and
-incumbent logs target different values of $\tau_{\pi}$. The knockout ground truth of Section~\ref{sec:gt} targets a third contrast, $\tau_{\mathrm{AA}}$, in which every other unit is accepted
-(Appendix~\ref{app:estimands}). No assumption of non-interference between cells or units is needed, because the null
-hypothesis concerns the whole assignment vector of a family. Under an alternative, the effect combines the direct
-effect of a unit's mode on the cells of its relation, the spillover from neighbouring units' modes, and the carryover
-through the policy, since a rejected request opens a new unit after the hold.
+The target depends on the logging policy, which draws the modes of the other units in a unit's window, so randomised
+and incumbent logs target different values of $\tau_{\pi}$. The knockout ground truth of Section~\ref{sec:gt} targets
+a third contrast, $\tau_{\mathrm{AA}}$, in which every other unit is accepted (\esm{setup}). No
+assumption of non-interference between cells or units is needed, because the null hypothesis concerns the whole
+assignment vector of a family.
 
 The paper addresses two problems. The first is discovery: from the logged units and KPI series alone, and without a
-model of the network, decide for each hypothesis whether the sharp null $H_0(f, r, k)$ holds. The sharp null states that the
-outcome a unit of $f$ would have at any cell and opening time is the same under any assignment of $f$'s modes. Each
-rejected null is reported as an edge signed by the estimated direction of $\tau_{\pi}$. The resulting signed causal effect map should control the false discovery
-rate (FDR) over the sharp nulls at a level $q$. The second problem is mitigation: given such a map, choose a referee
-that minimises the protected-slice violations $V$ subject to two safety constraints. First, the referee must keep at least 90~\% of
-the energy saving that the energy-saving xApps achieve on their own. Second, each of four guard KPIs, namely the service
-violation rate, non-protected broadband violations, low-latency violations and RLFs, must stay within 1.10 times its
-value under the static rule that accepts every request (accept-all).
-Section~\ref{sec:method} addresses both problems, and Section~\ref{sec:design} specifies the scenario in which they are
-evaluated.
+model of the network, decide for each hypothesis whether the sharp null $H_0(f, r, k)$ holds. The sharp null states
+that the outcome a unit of $f$ would have at any cell and opening time is the same under any assignment of $f$'s modes.
+Each rejected null is reported as an edge signed by the estimated direction of $\tau_{\pi}$. The resulting signed
+causal effect map should control the false discovery rate (FDR) over the sharp nulls at a level $q$. The second
+problem is mitigation: given such a map, choose a referee that minimises the protected-slice violations $V$ subject to
+two safety constraints. First, the referee must keep at least 90~\% of the energy saving that the energy-saving xApps
+achieve on their own. Second, each of four guard KPIs, namely the service violation rate, non-protected broadband
+violations, low-latency violations and RLFs, must stay within 1.10 times its value under the static rule that accepts
+every request (accept-all).

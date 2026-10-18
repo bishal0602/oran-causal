@@ -51,12 +51,15 @@
 
 \raggedbottom
 
-\usepackage{accsupp}
-\ExplSyntaxOn
-\cs_new_protected:Npn \cdd_verdict:nn #1#2
-  { \BeginAccSupp { ActualText = {#1} } \textsc {#2} \EndAccSupp { } }
-\NewDocumentCommand \verdict { m } { \exp_args:Nee \cdd_verdict:nn { \str_uppercase:n {#1} } {#1} }
-\ExplSyntaxOff
+\newcommand{\esm}[1]{Online Resource~1, Sect.~\csname esm@#1\endcsname}
+\expandafter\newcommand\csname esm@method\endcsname{S1}
+\expandafter\newcommand\csname esm@theory\endcsname{S2}
+\expandafter\newcommand\csname esm@setup\endcsname{S3}
+\expandafter\newcommand\csname esm@discovery\endcsname{S4}
+\expandafter\newcommand\csname esm@decisions\endcsname{S5}
+\expandafter\newcommand\csname esm@envs\endcsname{S6}
+\expandafter\newcommand\csname esm@bridging\endcsname{S7}
+
 \begin{document}
 
 \title[Design-Based Causal Effect Maps for xApp Conflicts]{Design-Based Causal Effect Maps for O-RAN xApp Conflicts}
@@ -75,16 +78,16 @@
 different parameter, because the parameters act on the same key performance indicators (KPIs). Resolving such
 conflicts requires knowing which parameter moves which KPI, and in which direction. The logs that could reveal this
 are written by controllers that react to the same network state that drives the KPIs, so relationships learned from
-them are confounded. In this work, we propose randomising the conflict-mitigation layer's accept-or-reject decisions
-and logging their probabilities, and introduce the predictable matched-filter randomisation test (PMRT), which redraws
-these decisions to test the sharp null that a parameter family never changes a KPI. Its false discovery rate control
-is asymptotic, needs no network model, and covers these nulls but not effect signs or the cells that carry an effect.
-In one simulated scenario, PMRT declared nothing on placebo logs and no wrong-sign edge. Its precision against a
-simulated ground truth, \val{s1.map.pmrt.prec} on randomised and \val{s2.map.pmrt.prec} on confounded logs, fell to \val{s1.gt.dbl.pmrt.prec} and \val{s2.gt.dbl.pmrt.prec} under a doubled
-materiality threshold. A referee acting on the map alone breached a radio-link-failure guard. Behind an
-edge-certification gate, the referee met every guard and matched the best static rule, which never lets a pico cell
-sleep, and even the ground-truth map did no better. Randomised logging thus supports valid discovery, and the decision
-study locates the remaining limit of safe mitigation in the guards rather than in the map.}
+them are confounded. We propose randomising the conflict-mitigation layer's accept-or-reject decisions and logging
+their probabilities, and introduce the predictable matched-filter randomisation test (PMRT), which redraws these
+decisions to test the sharp null that a parameter family never changes a KPI. Its false discovery rate control is
+asymptotic, needs no network model, and covers these nulls but not effect signs or the cells that carry an effect.
+In one simulated scenario, PMRT declared nothing on placebo logs and no wrong-sign edge, with precision against a
+simulated ground truth of \val{s1.map.pmrt.prec} on randomised and \val{s2.map.pmrt.prec} on confounded logs. A
+referee acting on the map alone breached a radio-link-failure guard. Behind an edge-certification gate, the referee
+met every guard and matched the best static rule, which never lets a pico cell sleep, and even the ground-truth map
+did no better. Randomised logging thus supports valid discovery, and the decision study locates the remaining limit
+of safe mitigation in the guards rather than in the map.}
 
 \keywords{O-RAN, xApp conflict mitigation, causal discovery, randomisation inference, design-based inference, near-RT RIC}
 
@@ -109,9 +112,8 @@ Acknowledgements text.
 
 \bmhead{Supplementary information}
 
-Online Resource~1 (ESM\_1.pdf): evaluation criteria and verdicts; supplementary discovery
-and decision results with the complete tables of all referee arms; the controlled environments in full; the bridging
-analysis and computing times.
+Online Resource~1 (ESM\_1.pdf): the algorithm and weight construction, the theorem statements with proof ideas, the
+simulation set-up, and the supplementary discovery, decision and controlled-environment results with complete tables.
 
 \bmhead{Funding}
 

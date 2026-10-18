@@ -452,7 +452,7 @@ claims:
   - id: EMP-S1-MAP
     kind: empirical
     statement: "On the randomised logs PMRT declared 28 edges, with precision 0.92, recall 0.79 and no wrong sign."
-    paper: [abstract, tab:rq, sec:res_map, tab:maps, tab:maps_full]
+    paper: [abstract, sec:res_map, tab:maps, tab:maps_full]
     spec: spec:met.map
     depends_on: [DEF-MET-MAP, DEF-GT-LABEL, DEF-FDR-WBY]
     code: [oran_causal.analysis.system.report_data:v4]
@@ -471,7 +471,7 @@ claims:
   - id: EMP-S2-MAP
     kind: empirical
     statement: "On the confounded logs PMRT declared 22 edges, with precision 0.86, recall 0.62 and no wrong sign."
-    paper: [abstract, tab:rq, sec:res_map, tab:maps, tab:maps_full]
+    paper: [abstract, sec:res_map, tab:maps, tab:maps_full]
     spec: spec:met.map
     depends_on: [DEF-MET-MAP, DEF-GT-LABEL, DEF-FDR-WBY]
     code: [oran_causal.analysis.system.report_data:opt_a]
@@ -603,7 +603,7 @@ claims:
   - id: EMP-S3-GATED
     kind: empirical
     statement: "With the gate, the PMRT referee met every guard but its outcomes were identical to never-sleep on every seed, so its gain over that rule was zero (R = 0.26, RLF ratio 0.96)."
-    paper: [abstract, tab:rq, sec:res_decision, tab:decision_e2e, sec:conclusion]
+    paper: [abstract, sec:res_decision, tab:decision_e2e, sec:conclusion]
     spec: spec:pro.study3
     depends_on: [DEF-GATE, DEF-REF-RULES, DEF-MET-DEC]
     code: [oran_causal.analysis.system.report_data:certsafe]
@@ -738,7 +738,8 @@ claims:
   - id: EMP-RUNTIME
     kind: empirical
     statement: "Computation times per method and sample size are reported in Online Resource 1, Section S5.2."
-    paper: [sec:disc_deploy]
+    status: retracted
+    paper: []
     spec: spec:met.cost
     code: [oran_causal.analysis.posthoc.x1_runtime:build]
     tests: {min: 0, tier: t0}

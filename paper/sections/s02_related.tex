@@ -1,9 +1,8 @@
 \section{Background and related work}
 \label{sec:related}
 
-This section reviews prior work in three areas: causal inference from logged data, the learning of conflict maps
-in O-RAN, and safe conflict mitigation. Table~\ref{tab:related} summarises the method families of each area and
-positions the proposed approach among them.
+Table~\ref{tab:related} places the proposed approach among the method families of three areas: causal inference from
+logged data, conflict maps in O-RAN, and safe conflict mitigation.
 
 \subsection{Causal effects from feedback-driven logs}
 \label{sec:related_design}
@@ -12,83 +11,74 @@ When a controller produced the logs, an edge test draws its validity either from
 data-generating process or from a known assignment mechanism. RIC logs leave the assumptions untestable, because
 requests react to the state that drives the KPIs, and no O-RAN work we found takes the mechanism from the RIC's own
 decisions.
-Observational causal discovery rests on the first kind. Granger causality~\cite{granger1969causal} and the
+
+Observational causal discovery rests on assumptions. Granger causality~\cite{granger1969causal} and the
 Peter--Clark (PC) algorithm~\cite{spirtes2000causation} assume that no common cause goes unmeasured, NOTEARS fits an
 acyclic structural equation model~\cite{zheng2018notears}, and the randomized conditional correlation test
 (RCoT)~\cite{strobl2019rcot} and PCMCI~\cite{runge2019pcmci} test conditional independence.
 
 Design-based inference takes its validity from the assignment mechanism instead: when the assignment probabilities
-are known, redrawing the assignments under a sharp null, which states that the assignment changes no unit's outcome, gives a
-p-value with no model of the
-outcomes~\cite{imbens2015causal}.
-Such tests reach sequential experiments on a single time series~\cite{bojinov2019timeseries}, switchback
-experiments~\cite{bojinov2023switchback} and response-adaptive designs, where re-running the adaptive assignment rule
-keeps the type I error only under conditions~\cite{simon2011randomization}. The conditional randomisation test keeps any test statistic
-valid~\cite{candes2018knockoffs}, and Benjamini--Yekutieli (BY) control keeps the FDR of many tests
-under arbitrary dependence~\cite{benjamini2001dependency}.
-Under known interference, design-based estimators~\cite{aronow2017interference} and randomisation
-tests~\cite{basse2019interference} also exist. In networks, A/B tests of congestion
-control are biased when the arms share a bottleneck~\cite{spang2021unbiased}, and CausalSim uses randomised trial
-data to debias network traces~\cite{alomar2023causalsim}.
+are known, redrawing the assignments under a sharp null, which states that the assignment changes no unit's outcome,
+gives a p-value with no model of the outcomes~\cite{imbens2015causal}. Such tests reach sequential experiments on a
+single time series~\cite{bojinov2019timeseries}, switchback experiments~\cite{bojinov2023switchback} and
+response-adaptive designs, where re-running the adaptive assignment rule keeps the type I error only under
+conditions~\cite{simon2011randomization}. The conditional randomisation test keeps any test statistic
+valid~\cite{candes2018knockoffs}, and Benjamini--Yekutieli (BY) control keeps the false discovery rate (FDR) of many
+tests under arbitrary dependence~\cite{benjamini2001dependency}. Under known interference, design-based
+estimators~\cite{aronow2017interference} and randomisation tests~\cite{basse2019interference} also exist, and in
+networks A/B tests of congestion control are biased when the arms share a
+bottleneck~\cite{spang2021unbiased}, which CausalSim addresses with randomised trial data~\cite{alomar2023causalsim}.
 Off-policy evaluation reweights logged rewards by the logged action probabilities, with doubly robust
-variants~\cite{dudik2014doubly} and intervals and M-estimation under adaptive logging~\cite{hadad2021adaptive,zhang2021mestimators}, but it estimates the
-value of a policy, not the edges of a map.
-These methods come from designed or bandit experiments, and none tests a signed map of many edges under a
-state-dependent policy.
+variants~\cite{dudik2014doubly} and intervals under adaptive logging~\cite{hadad2021adaptive,zhang2021mestimators},
+but it estimates the value of a policy, not the edges of a map. None of these methods tests a signed map of many
+edges under a state-dependent policy.
 
 Our conference work, CDD O-RAN, avoided confounding with an offline exploration phase in which a random policy
 perturbed every control parameter~\cite{dahal2026cddoran}. It kept each edge whose smoothed conditional mutual
-information (CMI) exceeded a threshold, so its graph was unsigned and without error control.
-The present method draws its identification from operational accept-or-reject decisions
-instead.
+information (CMI) exceeded a threshold, so its graph was unsigned and without error control. The present method
+draws its identification from operational accept-or-reject decisions instead.
 
 \subsection{Conflict maps in O-RAN}
 \label{sec:related_maps}
 
 Existing conflict maps mostly predict KPIs or explain a fitted model. None that we found declares signed,
-error-controlled effects of actions from logs whose actions the controller itself chose, and the one causal approach
-relies on a correct graph with every confounder measured.
-Shapley additive explanations (SHAP) attribute a model's prediction to its inputs~\cite{lundberg2017shap}, and
-their tree form~\cite{lundberg2020trees} underlies our SHAP-GBDT baseline on gradient-boosted decision trees (GBDT).
-In O-RAN, EXPLORA links a reinforcement-learning agent's actions to attributes of its input
-state~\cite{fiandrino2023explora}, and a survey covers explainable artificial intelligence for O-RAN
-control~\cite{brik2025xai}.
+error-controlled effects of actions from logs whose actions the controller itself chose. Shapley additive
+explanations (SHAP) attribute a model's prediction to its inputs~\cite{lundberg2017shap}, and their tree
+form~\cite{lundberg2020trees} underlies our SHAP-GBDT baseline on gradient-boosted decision trees (GBDT). In O-RAN,
+EXPLORA links a reinforcement-learning agent's actions to attributes of its input state~\cite{fiandrino2023explora},
+and a survey covers explainable artificial intelligence for O-RAN control~\cite{brik2025xai}.
 
-Rule-based conflict detectors take parameter groups configured by the operator~\cite{adamczyk2023conflict} or derived from
-conflict graphs~\cite{wadud2025mobility}.
-Learned detectors use a graph convolutional network trained on synthetic data~\cite{alshami2026conflict}, GraphSAGE
-reconstructions of conflict graphs~\cite{zolghadr2025conflict} or a two-tower encoder of a sparse parameter-KPI
-graph~\cite{santos2026conflictairan}, the last two trained on data from a known conflict model.
-XAI4C adds explainability-based detection and mitigation to the near-RT RIC~\cite{varshney2025xai4c}, and PACIFISTA
-profiles each application in a sandbox to rate conflicts before deployment~\cite{PACIFISTA}.
-Sharma et al.\ go further: they assemble a causal directed acyclic graph (DAG) from a SHAP analysis and estimate signed
-average treatment effects, with refutation tests~\cite{Sharma_2025}. Their estimates are identified only if that
-graph is correct and no confounder is left unmeasured. Our SHAP-GBDT baseline keeps only their importance step.
+Rule-based conflict detectors take parameter groups configured by the operator~\cite{adamczyk2023conflict} or derived
+from conflict graphs~\cite{wadud2025mobility}. Learned detectors use a graph convolutional network trained on
+synthetic data~\cite{alshami2026conflict}, GraphSAGE reconstructions of conflict graphs~\cite{zolghadr2025conflict} or
+a two-tower encoder of a sparse parameter-KPI graph~\cite{santos2026conflictairan}, the last two trained on data from
+a known conflict model. XAI4C adds explainability-based detection and mitigation to the near-RT
+RIC~\cite{varshney2025xai4c}, and PACIFISTA profiles each application in a sandbox to rate conflicts before
+deployment~\cite{PACIFISTA}. The one causal approach, by Sharma et al., assembles a causal directed acyclic graph
+(DAG) from a SHAP analysis and estimates signed average treatment effects~\cite{Sharma_2025}; its estimates are
+identified only if that graph is correct and no confounder is left unmeasured. Our SHAP-GBDT baseline keeps only
+their importance step.
 
 \subsection{Safe conflict mitigation}
 \label{sec:related_decisions}
 
-Mitigation in the RIC takes the parameter-to-KPI relations as given or learns predictors of KPI levels. Safety
+Mitigation in the RIC takes the parameter-to-KPI relations as given or learns predictors of KPI levels, and safety
 guarantees come from data on a whole policy or from a model of the system. None certifies decisions from the
-uncertainty of a causal effect map.
-Once a conflict is found, mitigation decides what to apply~\cite{ORANConflictMit,polese2023oran}: the framework of
-Adamczyk and Kliks gives priority to one of the conflicting xApps~\cite{adamczyk2023conflict}.
-Quality-of-service-aware conflict mitigation (QACM) picks the configuration that satisfies the most xApps, using
-regression predictors of their KPIs~\cite{QACM2024}, and Wadud et al.\ compared it with priority and reset rules on a
-direct transmit-power conflict~\cite{wadud2025mobility}.
-Other layers let two xApps learn as a team~\cite{iturria2022matl}, train a scheduler that selects which xApps
+uncertainty of a causal effect map. Once a conflict is found, mitigation decides what to
+apply~\cite{ORANConflictMit,polese2023oran}: the framework of Adamczyk and Kliks gives priority to one of the
+conflicting xApps~\cite{adamczyk2023conflict}, and quality-of-service-aware conflict mitigation (QACM) picks the
+configuration that satisfies the most xApps, using regression predictors of their KPIs~\cite{QACM2024}. Other layers
+let two xApps learn as a team~\cite{iturria2022matl}, train a scheduler that selects which xApps
 act~\cite{cinemre2026scheduler}, or test conflicting actions in a network digital twin before applying
 them~\cite{giannopoulos2025comix}.
 
-Safe reinforcement learning (RL) keeps a learning controller away from harmful actions~\cite{gu2024safereview},
-for example by shielding~\cite{alshiekh2018shield}, and in RAN slicing its safety has been
-shown empirically~\cite{nagib2024safe}.
-OpenTwin, a preprint, admits an xApp action only when a digital twin fitted online places its outcome in the safe
-region, and bounds false approvals by an operator budget~\cite{zhang2026opentwin}.
-High-confidence policy improvement bounds the probability that the returned policy falls below a baseline, by
-importance sampling on the behaviour probabilities~\cite{thomas2015hcpi}.
-Our edge-certification gate gives a weaker certificate, one per undeclared guard edge, and claims no policy-level
-guarantee: whether the whole referee keeps its guards was checked only on fresh simulator seeds.
+Safe reinforcement learning (RL) keeps a learning controller away from harmful actions~\cite{gu2024safereview}, for
+example by shielding~\cite{alshiekh2018shield}, and in RAN slicing its safety has been
+shown empirically~\cite{nagib2024safe}. OpenTwin, a preprint, admits an xApp action only when a digital twin fitted
+online places its outcome in the safe region, and bounds false approvals by an operator
+budget~\cite{zhang2026opentwin}. High-confidence policy improvement bounds the probability that the returned policy
+falls below a baseline~\cite{thomas2015hcpi}. Our edge-certification gate gives a weaker certificate, one per
+undeclared guard edge, and claims no policy-level guarantee.
 
 \begin{table}[tbp]
 \caption{Related method families.}

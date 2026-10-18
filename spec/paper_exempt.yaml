@@ -19,25 +19,13 @@ exempt:
     reason: bound on the guard ratios to accept-all (protocol constant)
   - file: sections/s04_pmrt.tex
     literal: "0.05"
-    count: 2
+    count: 1
     reason: nominal level, FDR level q or guard-pressure constant of the method
   - file: sections/s04_pmrt.tex
     literal: "0.10"
     count: 1
     reason: margin below the guard-ratio limit 1.10 (protocol constant)
   - file: sections/s04_pmrt.tex
-    literal: "1.10"
-    count: 1
-    reason: bound on the guard ratios to accept-all (protocol constant)
-  - file: sections/s05_evaluation.tex
-    literal: "0.5"
-    count: 1
-    reason: randomisation propensity or fixed protocol constant (accept probability, materiality floor)
-  - file: sections/s05_evaluation.tex
-    literal: "0.90"
-    count: 1
-    reason: minimum energy retention of the referee constraint (protocol constant)
-  - file: sections/s05_evaluation.tex
     literal: "1.10"
     count: 1
     reason: bound on the guard ratios to accept-all (protocol constant)
@@ -51,7 +39,7 @@ exempt:
     reason: simulator coordinate
   - file: sections/s06_discovery.tex
     literal: "0.05"
-    count: 3
+    count: 2
     reason: nominal level, FDR level q or guard-pressure constant of the method
   - file: sections/s06_discovery.tex
     literal: "1.10"

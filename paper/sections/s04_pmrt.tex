@@ -1,13 +1,12 @@
 \section{Proposed framework}
 \label{sec:method}
 
-The proposed framework has three components (Figure~\ref{fig:idea}). The referee randomises its accept-or-reject
-decisions and logs their propensities, which turns the controller's logs into an experiment with a known design. The
-predictable matched-filter randomisation test (PMRT) uses this design to test each hypothesis of
-Section~\ref{sec:estimand} and returns a signed causal effect map with asymptotic control of the FDR. A map-driven
-referee then uses the map to reject harmful requests, and an edge-certification gate restricts it to rejections whose
-side effects on the guard KPIs are certified small. This section describes the three components in turn and states
-what each of them guarantees.
+The framework has three components (Figure~\ref{fig:idea}). The referee randomises its accept-or-reject decisions and
+logs their propensities, which turns the controller's logs into an experiment with a known design. The predictable
+matched-filter randomisation test (PMRT) uses this design to test each hypothesis of Section~\ref{sec:estimand} and
+returns a signed causal effect map with asymptotic control of the FDR. A map-driven referee then uses the map to
+reject harmful requests, and an edge-certification gate restricts it to rejections whose side effects on the guard
+KPIs are certified small.
 
 \begin{figure}[tbp]
 \centering
@@ -36,20 +35,15 @@ v_u = \mathrm{sgn}_u \bigl( L(W_u) - \pi_u \bigr),
 \end{equation}
 where $\mathrm{sgn}_u$ is the direction of the opening request. Over the policy's draw, $v_u$ has mean zero and
 variance $\pi_u(1 - \pi_u)$, so an acceptance that was likely scores little and one against the odds scores more.
-The weight $w_u$ summarises how the KPI under test moved after the unit opened. It subtracts from the KPI a ridge
-prediction~\cite{hoerl1970ridge} built only from what was known at opening, so that the prediction contains none of
-the effect of the unit's own mode. A matched filter then combines the remaining residuals over the receiving cells and
-the seconds after opening into one number, favouring the bins where the training data showed more effect and less
-noise. The weight is then centred on a running mean of earlier units, shrunk towards the training mean, and clipped at a scale predicted at
-opening~\cite{huber1964robust}. Every fitted part was trained on earlier episodes, separate from the evaluation data;
-Algorithm~\ref{alg:pmrt} and Table~\ref{tab:pipeline} in Appendix~\ref{app:proof} give the
-construction step by step.
+The weight $w_u$ summarises how the KPI under test moved after the unit opened. It is the residual of the KPI after a
+ridge prediction~\cite{hoerl1970ridge} from what was known at opening, combined over the receiving cells and the
+seconds after opening by a matched filter, then centred, shrunk and clipped~\cite{huber1964robust}. Every fitted part
+was trained on earlier episodes, separate from the evaluation data (\esm{method}).
 
 The validity of the test rests on one property of the weight: apart from the KPI series under test, it uses only
 information fixed before the unit drew its mode. It therefore uses no later unit, no unit of another family opening at
 or after $u$, and no mean or slope over an episode's realised units, because whether those units exist can depend on
-$W_u$. The statistic and its
-variance are
+$W_u$. The statistic and its variance are
 \begin{equation}
 S = \sum_u v_u w_u, \qquad
 \sigma^2 = \sum_u \pi_u (1 - \pi_u)\, w_u^2, \qquad
@@ -58,8 +52,7 @@ z = S / \sigma,
 \end{equation}
 where $\sigma^2$ is the variance of $S$ over redraws of the modes with the weights held. Since it is the same for every
 redraw, $z$ is normalised by the design variance rather than studentised. The reported sign is that of $S$ times an
-orientation $o$, the sign of the training effect over 0--90~s, which is set only if the training $z$ of that effect is
-at least 2 in magnitude. Where $o$ is unset, the reported sign is that of the plain total of the residuals over 0--90~s.
+orientation $o$, the sign of the training effect, which is set only when that effect is clear in the training data.
 
 \subsection{Inference and false discovery rate control}
 \label{sec:inference}\claim{DEF-PMRT-SUPPORT}\claim{DEF-FDR-WBY}\claim{ASM-A1-DESIGN}\claim{ASM-A2-NULL}\claim{ASM-A3-PRED}\claim{ASM-A4-REG}\claim{CIT-BY}\claim{CIT-RW}
@@ -73,11 +66,10 @@ p = \frac{1 + \#\{b : |z_b| \ge |z|\}}{B + 1}, \qquad
 p_d = \frac{1 + \#\{b : d\, o\, z_b \ge d\, o\, z\}}{B + 1},
 \label{eq:pval}\claim{DEF-PMRT-PVAL}
 \end{equation}
-where $\#$ counts redraws. A hypothesis is tested only when it has at least 30 units, 5 accepted, 5 rejected and 3
-episodes. The sharp null $H_0(f, r, k)$ of Section~\ref{sec:estimand} states that the outcome a unit would have at any cell
-and opening time is the same under any assignment of $f$'s modes. It is stated over possible units, because which
-units are realised depends on the modes. The history $\mathcal{G}_{u-1}$ holds all other randomness and the modes of $f$'s
-first $u - 1$ units (Appendix~\ref{app:proof_setting}), and the result rests on four assumptions.
+where $\#$ counts redraws. Hypotheses with too few units, accepted or rejected requests, or episodes are not tested.
+The sharp null $H_0(f, r, k)$ of Section~\ref{sec:estimand} is stated over possible units, because which units are
+realised depends on the modes. The history $\mathcal{G}_{u-1}$ holds all other randomness and the modes of $f$'s first
+$u - 1$ units, and the result rests on four assumptions.
 
 \begin{description}
 \item[(A1) Design.] For every unit $u$, its existence, cell, opening time, direction $\mathrm{sgn}_u$ and propensity
@@ -86,14 +78,14 @@ first $u - 1$ units (Appendix~\ref{app:proof_setting}), and the result rests on 
 \item[(A2) Sharp null.] $H_0(f, r, k)$ holds.
 \item[(A3) Predictable weights.] Every $w_u$ is $\mathcal{G}_{u-1}$-measurable and square integrable.
 \item[(A4) Regularity.] As the number of episodes grows, the design variance $\sigma^2$ grows without any single unit
-  dominating $S$ (Appendix~\ref{app:assumptions}).
+  dominating $S$.
 \end{description}
 
 In operational terms, (A1) requires the RIC to draw each mode with the propensity it logs, set from the past and kept
-away from 0 and 1. Assumption (A2) is the hypothesis under test and asks nothing of the RIC. Under (A3), the analyst,
-not the RIC, builds each weight from what was known when the unit opened, apart from the KPI under test. Assumption (A4)
-requires enough logged units that none dominates $S$; in the simulator it holds when the clipped weights stay bounded
-and $\sigma^2 / n$ settles to a positive limit.
+away from 0 and 1. Assumption (A2) is the hypothesis under test. Under (A3), the analyst, not the RIC, builds each
+weight from what was known when the unit opened, apart from the KPI under test. Assumption (A4) requires enough logged
+units that none dominates $S$; in the simulator it holds when the clipped weights stay bounded and $\sigma^2 / n$
+settles to a positive limit.
 
 \begin{proposition}[Asymptotic validity of PMRT]
 \label{prop:pmrt}\claim{ASM-ORIENT}\claim{THM-PMRT-ASY}
@@ -101,8 +93,8 @@ Assume (A1) to (A3). Then $S = \sum_u v_u w_u$ is a martingale with respect to $
 quadratic variation is $\sigma^2$. Let (A4) also hold and the number of episodes grow.
 \begin{enumerate}
 \item The statistic $z = S / \sigma$ converges in distribution to $\mathcal{N}(0, 1)$.
-\item Conditionally on the data, every redraw $z_b$ has mean 0 and, where $\sigma > 0$, variance 1, and its distribution function converges
-  uniformly to $\Phi$ in probability.
+\item Conditionally on the data, every redraw $z_b$ has mean 0 and, where $\sigma > 0$, variance 1, and its distribution
+  function converges uniformly to $\Phi$ in probability.
 \item For every fixed $B$ and every $t \in [0, 1]$, $\limsup \Pr(p \le t) \le \lfloor t(B + 1) \rfloor / (B + 1) \le t$.
   The same holds for $p_d$ for each $d$ when $o$ is fixed in advance.
 \end{enumerate}
@@ -112,22 +104,23 @@ $2\{1 - \Phi(|z|)\}$ only by a term that vanishes in probability and by Monte Ca
 
 Only the normal limit is asymptotic: the martingale property, and $\sigma^2$ as its predictable variance, hold exactly
 in every sample. The redraw p-value is nevertheless not exact in finite samples, placebo logs included, because which
-units exist, their propensities and their weights all depend on earlier draws of the family
-(Appendix~\ref{app:proof_exact}). For the same reason the exact randomisation test for sequential experiments of
-Bojinov and Shephard~\cite{bojinov2019timeseries} does not apply here. A sharp null on one KPI does not fix the
-network state that creates the units and sets the incumbent's propensities, so the adaptive design cannot be replayed.
+units exist, their propensities and their weights all depend on earlier draws of the family. For the same reason the
+exact randomisation test for sequential experiments of Bojinov and Shephard~\cite{bojinov2019timeseries} does not
+apply here: a sharp null on one KPI does not fix the network state that creates the units and sets the incumbent's
+propensities, so the adaptive design cannot be replayed.
 
 The 60 hypotheses of one analysis are declared together by a weighted Benjamini--Yekutieli (BY)
 step-up~\cite{benjamini2001dependency,blanchard2008fdr} at $q = 0.05$. Hypothesis $j$ enters with a weight $\omega_j$
 and, where a prior direction $d_j$ is set, with $p_{d_j}$, and otherwise with $p$; weights and directions are derived
-from the training episodes alone~\cite{roeder2009weighted} (Table~\ref{tab:pipeline}). A declaration is a rejected
-hypothesis with its sign, $d_j$ where the one-sided value was used and otherwise the reported sign.
+from the training episodes alone~\cite{roeder2009weighted}. A declaration is a rejected hypothesis with its sign,
+$d_j$ where the one-sided value was used and otherwise the reported sign.
 
 \begin{corollary}[Asymptotic false discovery rate]
 \label{cor:fdr}\claim{ASM-FDR-FIXED}\claim{THM-FDR-ASY}
 Let $\mathcal{H}_0$ hold the true sharp nulls among the $m = 60$ hypotheses. Let (A1) to (A4) hold for each of them,
-and let the weighted step-up use weights $\omega_j \ge 0$ with $\sum_j \omega_j = m$ and directions $d_j$ fixed from
-data independent of the evaluation data. Then, whatever the dependence between the p-values,
+and let the weighted step-up use directions $d_j$ and weights $\omega_{n,j} \ge 0$ with $\sum_j \omega_{n,j} = m$ for
+the analysed sample size $n$, all fixed from data independent of the evaluation data, with $\omega_{n,j} \to \omega_j$
+(or $\omega_{n,j} = \omega_j$ for every $n$). Then, whatever the dependence between the p-values,
 \begin{equation}
 \limsup_{n \to \infty} \mathrm{FDR} \le \frac{q}{m} \sum_{j \in \mathcal{H}_0} \omega_j \le q,
 \label{eq:fdr}
@@ -135,20 +128,16 @@ data independent of the evaluation data. Then, whatever the dependence between t
 where a false discovery is the rejection of a true sharp null.
 \end{corollary}
 
-Untested hypotheses count in $m$ and are never declared, which is conservative. The proofs are in
-Appendix~\ref{app:proof}.
+Untested hypotheses count in $m$ and are never declared, which is conservative.
 
 \subsection{Scope of the guarantees}
 \label{sec:reading}\claim{THM-SCOPE}
 
 A declared edge states that the modes of family $f$ change KPI $k$ somewhere in the cells that relation $r$ covers,
-and the FDR bound covers that claim asymptotically. It does not cover the sign: the reported sign is the direction of
-the weighted association between the centred modes and the outcome, which need not be the sign of $\tau_{\pi}$. Nor
-does it cover which relation carries the effect. A unit's neighbour and far cells are the own cells of other units of
-$f$, so an effect of $f$ on its own cells also moves the neighbour and far sums. The hypotheses $H_0(f, \text{nbr}, k)$ and
-$H_0(f, \text{far}, k)$ are then false, and declaring them is correct. Whether PMRT attributes edges to the same
-relation as the ground truth is therefore an empirical question, and the far hypotheses are no negative control.
-Table~\ref{tab:guarantees} summarises what each layer of the framework guarantees and what rests on evidence alone.
+and the FDR bound covers that claim asymptotically. It does not cover the sign, which need not be the sign of
+$\tau_{\pi}$, nor which relation carries the effect: a unit's neighbour and far cells are the own cells of other units
+of $f$, so an effect of $f$ on its own cells also moves the neighbour and far sums, and the far hypotheses are no
+negative control. Table~\ref{tab:guarantees} summarises what each layer guarantees and what rests on evidence alone.
 
 \begin{table}[tbp]
 \caption{Guarantees of the framework.}
@@ -188,28 +177,17 @@ with $\pi_u = 0.5$, which is the Horvitz--Thompson estimator of $\tau_{\pi}$ and
 (Lemma~\ref{lem:slope}). Under a state-dependent policy such as the incumbent, it converges to the
 $\pi_u(1 - \pi_u)$-weighted average of $\mathrm{sgn}_u \tau_u^{\pi}$. The lemma assumes an outcome centre fixed before
 $u$'s mode is drawn, whereas the implemented centre also uses earlier outcomes whose windows are still open; with a
-strictly predictable centre, no slope changed sign (Appendix~\ref{app:x16}).
+strictly predictable centre, no slope changed sign (\esm{decisions}).
 
 A causal effect map $M$ gives each declared edge $(f, r, k)$ a signed coefficient $\beta(f, r, k)$. For PMRT it is the
-declaration's sign times the magnitude of the design slope; where the two signs disagree, the declaration's sign is
-kept and the disagreement counted. An associational map uses the method's sign times the magnitude of the
-least-squares slope of the outcome on the logged mode, oriented by the request's direction. The referee decides when a
-decision unit opens, on the opening request's family, direction and context, and later requests of the pair inherit
-the mode. A request opens a unit only if its parameter last changed longer ago than the actuator's minimum interval
-between changes, and a rejecting unit rejects only requests in its opening direction. For a request of family $f$ and
-direction $d$, the referee applies four rules, with the same constants for every map:
-\begin{enumerate}
-\item \emph{Effects}. It sums the direction-adjusted effects $\Delta_k = d \sum_r \beta(f, r, k)$ over the own,
-neighbour and far relations for each KPI $k$.
-\item \emph{Harm}. The request is judged on the first KPI with $\Delta_k \ne 0$ in the order protected-slice
-violations, service violations, RLFs. It is harmful if that $\Delta_k$ is positive, and is otherwise accepted.
-\item \emph{Rejection}. The request is costly if $\Delta_e > 0$ for energy. Its pressure is the largest protected-UE
-below-floor fraction over the own and neighbour relations through which it is harmful, or zero without such a
-relation or report. A harmful request is rejected if it is costly or its pressure exceeds 0.05.
-\item \emph{Guard conflict}. A rejection is guard-conflicted when accepting would help the first nonzero guard KPI
-among service violations and RLFs. Such a unit is rejected only if the previous unit of the same cell and family was
-accepted, so that a guard conflict delays a request by at most one unit.
-\end{enumerate}
+declaration's sign times the magnitude of the design slope; an associational map uses the method's sign times the
+magnitude of the least-squares slope of the outcome on the logged mode. The referee decides when a decision unit opens,
+on the opening request's family, direction and context, and later requests of the pair inherit the mode. For a request
+of family $f$ and direction $d$ it sums the direction-adjusted effects $\Delta_k = d \sum_r \beta(f, r, k)$ over the
+own, neighbour and far relations for each KPI $k$, judges the request on the first KPI with $\Delta_k \ne 0$ in the
+order protected-slice violations, service violations, RLFs, and rejects it if it is harmful and either costly in energy
+or under protected-UE pressure. A rejection that accepting would have helped on a guard KPI is delayed by at most one
+unit. The same constants apply to every map; the full rules are in \esm{method}.
 
 \subsection{Edge-certification gate}
 \label{sec:gate}\claim{DEF-GATE}\claim{ASM-GATE-COV}\claim{THM-GATE-BUDGET}
@@ -221,22 +199,17 @@ relations of the two guard KPIs, service violations and RLFs. Rejecting a reques
 by $-d\,\beta$, so a rejection's harmful direction is $h = -d$. We write the class $(f, +1)$ of requests that raise $f$
 as $f$-up, so that sleep-up holds the requests to put a pico to sleep, and $(f, -1)$ as $f$-down.
 
-A guard edge that the map declares stays under the referee's own logic. An undeclared edge is certified when the
-one-sided 90~\% upper bound of $h\,\beta$ from the map's own estimator is at most a tolerance $\varepsilon(f, d, k)$,
-and is otherwise unresolved; a class with any unresolved edge is always accepted. PMRT's bound uses the design slope
-with its martingale standard error, the associational maps' bound the least-squares slope with an independent-error
-standard error, and the oracle map's a conservative bound from its stored 95~\% interval; a map without an effect
-estimator cannot certify. The tolerance is
+An undeclared edge is certified when the one-sided 90~\% upper bound of $h\,\beta$ from the map's own estimator is at
+most a tolerance $\varepsilon(f, d, k)$, and is otherwise unresolved; a class with any unresolved edge is always
+accepted, and a map without an effect estimator cannot certify. The tolerance is
 \begin{equation}
 \varepsilon(f, d, k) = \frac{0.05\, G_k}{3\, \max\{N(f, d), 1\}},
 \label{eq:tol}
 \end{equation}
 with $G_k$ the mean per-episode total of guard KPI $k$ and $N(f, d)$ the mean number of units of the class per
-episode, both measured under accept-all on 40 development episodes (Appendix~\ref{app:simparams}). Suppose that every unit of a
-class were rejected, that the class had at most $\max\{N(f, d), 1\}$ units, and that each rejection moved the KPI by at
-most $\varepsilon$ on each of the three relations. The
-guard ratio, with $G_k$ as denominator, would then move by at most 0.05, half the margin of 0.10 that a referee may use under the 1.10 limit of
-Section~\ref{sec:estimand}. The certificate is thus a first-order budget per edge, not a bound on the referee's guard
-ratios: it ignores overlapping windows, classes acting together and declared edges, so whether a referee meets its
-guards is checked on held-out seeds. The uncertified classes depend only on the map, the bounds and $\varepsilon$, not
-on the evaluation data.
+episode, both measured under accept-all on development episodes. Suppose that every unit of a class were rejected,
+that the class had at most $\max\{N(f, d), 1\}$ units, and that each rejection moved the KPI by at most $\varepsilon$ on
+each of the three relations. The guard ratio would then move by at most 0.05, half the margin of 0.10 that a referee
+may use under the 1.10 limit of Section~\ref{sec:estimand}. The certificate is thus a first-order budget per edge, not
+a bound on the referee's guard ratios: it ignores overlapping windows, classes acting together and declared edges, so
+whether a referee meets its guards is checked on held-out seeds.

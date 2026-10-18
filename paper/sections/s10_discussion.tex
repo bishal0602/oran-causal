@@ -12,80 +12,73 @@ scenario and a single referee rule.
 The validity of the test derives from the logged design rather than from a model of the network, which makes it the
 property most likely to transfer to other networks. The randomisation distribution is generated from the logged
 propensities alone, whether uniform or state-dependent, so the guarantee holds for any statistic, weighting or prior
-direction fixed before each unit draws its mode. The controlled environments indicate that the guarantee belongs to
-the design rather than to PMRT, since partial correlation adjusted for the design variables also retained its nominal
-rate under a logged confounded policy. The statistic used in the simulator rests on its own placebo and null-outcome
-checks (Section~\ref{sec:res_validity}).
+direction fixed before each unit draws its mode. The controlled environments indicate that the guarantee belongs to the
+design rather than to PMRT, since partial correlation adjusted for the design variables also retained its nominal rate
+under a logged confounded policy.
 
 Statistical power, in contrast, depends on the choice of statistic. In the controlled environment with latent
-confounding and a single true edge, the recall of PMRT-GBM did not exceed \val{s4.e4.pmrtgbm.recall_max} at any sample size, whereas
-design-adjusted partial correlation reached \val{s4.e4.pcorr_eq.recall_24k} at the largest (Online Resource~1, Section~S4.2). On the randomised
-simulator logs, which contain no confounding, a comparison gave pooled recalls of \val{br.pcorr_eq.recall} for
-design-adjusted partial correlation, without a placebo declaration, \val{br.pcorr_native.recall} for partial correlation with context covariates
-alone, and \val{s1.map.pmrt.rec} for PMRT (Online Resource~1, Section~S5.1). The matched filter and weights of PMRT therefore increase
-power rather than validity, and a simple design-adjusted test provides the same guarantee.
+confounding and a single true edge, the recall of PMRT-GBM did not exceed \val{s4.e4.pmrtgbm.recall_max} at any sample
+size, whereas design-adjusted partial correlation reached \val{s4.e4.pcorr_eq.recall_24k} at the largest
+(\esm{envs}). On the randomised simulator logs, which contain no confounding, a comparison gave pooled recalls of
+\val{br.pcorr_eq.recall} for design-adjusted partial correlation, without a placebo declaration,
+\val{br.pcorr_native.recall} for partial correlation with context covariates alone, and \val{s1.map.pmrt.rec} for PMRT
+(\esm{bridging}). The matched filter and weights of PMRT therefore increase power rather than validity, and a simple
+design-adjusted test provides the same guarantee.
 
 \subsection{Implications for conflict mitigation}
 \label{sec:disc_mitigation}
 
-The decision results indicate that, in the evaluated scenario, the safety guards rather than the accuracy of the map
-limited safe mitigation. With the gate, the PMRT referee made the same decisions as the never-sleep rule, and the oracle
-map performed no better, because the gate certified only sleep rejections. The other rejection classes affect guard
-KPIs through edges that are present in the ground truth (Section~\ref{sec:disc_decision}). Further improvements in
-discovery would therefore not have increased the benefit of safe mitigation in this scenario. Conversely, the ungated
-result shows that a single missed edge was sufficient for the referee to breach a guard limit, so a map should not drive
-mitigation decisions without a step that certifies the effect of each decision on every guard KPI. Whether the guards
-rather than discovery limit safe mitigation in other scenarios, with other guard sets and objectives, cannot be
-determined from a single scenario.
+In the evaluated scenario, the safety guards rather than the accuracy of the map limited safe mitigation: with the gate,
+the PMRT referee made the same decisions as the never-sleep rule, and the oracle map performed no better
+(Section~\ref{sec:disc_decision}). Further improvements in discovery would therefore not have increased the benefit of
+safe mitigation here. Conversely, the ungated result shows that a single missed edge was sufficient for the referee to
+breach a guard limit, so a map should not drive mitigation decisions without a step that certifies the effect of each
+decision on every guard KPI. Whether the guards rather than discovery limit safe mitigation in other scenarios, with
+other guard sets and objectives, cannot be determined from a single scenario.
 
 \subsection{Deployment requirements}
-\label{sec:disc_deploy}\claim{EMP-X3}\claim{EMP-RUNTIME}\claim{EMP-S1-STRICT}\claim{EMP-X4}
+\label{sec:disc_deploy}\claim{EMP-X3}\claim{EMP-S1-STRICT}\claim{EMP-X4}
 
 The test requires a conflict-mitigation layer that draws each accept-or-reject decision with a known propensity and
-records that propensity exactly. A policy that changes over time does not violate this requirement, because the
-guarantee holds for state-dependent policies provided that each logged propensity is the one with which the decision
-was drawn. A recorded propensity that differs from the true one is a misspecified design. In the controlled
-environments, PMRT-GBM and PMRT-Lin exceeded the nominal null-edge rate when the assumed dither width was 0.8 times the true width,
-and every PMRT variant when the assumed strength of the logging policy was twice the true value (Online Resource~1,
-Section~S4.5). Because an error of 20~\% in the assumed design can invalidate the test, the RIC should record each
-propensity at the moment of the draw, from the code that performs it, rather than reconstruct it afterwards. Propensities must also remain bounded away from 0 and 1; the incumbent policy of the
-confounded logs, which favoured the decision suggested by the network state within fixed bounds, satisfied this
-condition, and its logs supported discovery.
+records that propensity exactly. A policy that changes over time does not violate this requirement, provided that each
+logged propensity is the one with which the decision was drawn. A recorded propensity that differs from the true one is
+a misspecified design: in the controlled environments, PMRT-GBM and PMRT-Lin exceeded the nominal null-edge rate when
+the assumed dither width was 0.8 times the true width, and every PMRT variant when the assumed strength of the logging
+policy was twice the true value (\esm{envs}). The RIC should therefore record each propensity at the moment of the
+draw, from the code that performs it, rather than reconstruct it afterwards, and keep propensities bounded away from 0
+and 1.
 
 Randomised logging imposes two costs on the operator. First, randomisation rejects some requests that a fixed rule would
-accept, and random rejection reduced recovery below that of accept-all (Table~\ref{tab:decision_full}). Second, evidence
-accumulates at the rate of decision units, each a 60~s mode followed by a 90~s outcome window, rather than at the rate
-of the RIC's control loop. The smallest samples evaluated in the simulator, 60 episodes of 600~s, correspond to hours of
-network time. At that size, small p-values occurred at their nominal rate under a stricter significance threshold
-(Appendix~\ref{app:x8}), although on the small-effect nulls of the ground truth a rate of up to three times nominal could
-not be excluded. The logging time required in a deployed RIC depends on its traffic and decision rate, which this study
-did not examine; computation times are reported in Online Resource~1, Section~S5.2.
+accept, and random rejection reduced recovery below that of accept-all (\esm{decisions}). Second, evidence accumulates
+at the rate of decision units, each a 60~s mode followed by a 90~s outcome window, rather than at the rate of the RIC's
+control loop; the smallest samples evaluated in the simulator, 60 episodes of 600~s, correspond to hours of network
+time. At that size, small p-values occurred at their nominal rate under a stricter significance threshold
+(\esm{discovery}), although on the small-effect nulls of the ground truth a rate of up to three times nominal could not
+be excluded. The logging time required in a deployed RIC depends on its traffic and decision rate, which this study
+did not examine.
 
 For operators who apply learned discovery methods to designed logs, a placebo check provides an inexpensive screening
 step. The pipeline is applied unchanged to an additional column drawn from the logged design, which by construction
-affects no KPI, and any edge declared from that column disqualifies its declarations as causal evidence. In this study, the check separated PMRT, which declared no placebo edge, from baselines that declared up to \val{s2.placebo.granger_by}
-(Section~\ref{sec:res_validity}). The check is necessary but not sufficient: a discovery stage whose threshold was
-calibrated to pass it still exceeded the nominal null-edge rate in \val{s4.cdl.invalid} of \val{s4.cdl.conditions} controlled conditions
-(Section~\ref{sec:study4_results}). A passed placebo check therefore excludes the most severe failures, whereas positive
+affects no KPI, and any edge declared from that column disqualifies its declarations as causal evidence. The check is
+necessary but not sufficient (Section~\ref{sec:study4_results}): it excludes the most severe failures, whereas positive
 causal evidence still requires a test whose validity follows from the logged design.
 
 \subsection{Limitations}
 \label{sec:disc_limits}\claim{EMP-X15}\claim{EMP-X16}
 
-The first group of limitations concerns the scope of the evidence. The simulator results come from one scenario, one incumbent policy and one
-referee rule, and none of them involves a real RIC, a testbed or a compliance claim. The
-controlled environments model no deployed RAN, and no method evaluated in them used the matched filter and weighted BY
-procedure of the PMRT applied in the simulator. Their claims hold for the dithered-setpoint design tested, and their
-evidence against design-blind tests rests in one environment on a placebo edge only. Finally, verdicts from a single block of seeds carry seed-level heterogeneity larger than their intervals
-suggest (Appendix~\ref{app:x15}).
+The simulator results come from one scenario, one incumbent policy and one referee rule, and none of them involves a
+real RIC, a testbed or a compliance claim. The controlled environments model no deployed RAN, and no method evaluated
+in them used the matched filter and weighted BY procedure of the PMRT applied in the simulator; their claims hold for
+the dithered-setpoint design tested, and their evidence against design-blind tests rests in one environment on a
+placebo edge only. Results from a single block of seeds carry seed-level heterogeneity larger than their intervals
+suggest (\esm{decisions}).
 
-The second group concerns the guarantees themselves. The validity of PMRT is asymptotic rather than exact, even on
-placebo logs, and the check at a stricter significance threshold rests on ten logged designs. The ground truth uses a
-single 90~s horizon with every other unit accepted, so it targets $\tau_{\mathrm{AA}}$ rather than $\tau_{\pi}$. The
-horizon could not be varied, and the labels of material effects, and with them the precision of PMRT, depend on the
-threshold $\delta_k$. The FDR bound applies to the edge, not to the relation to which the edge is attributed. The design
-slope and the bounds of the gate rest on an approximately predictable outcome centre. A strictly predictable centre
-changed the map slopes by \val{x16.map.rel_min} to \val{x16.map.rel_max}~\% without a change of sign, moved the bounds by a median of \val{x16.gate.median_pct}~\% of their
-tolerance and altered no certification (Appendix~\ref{app:x16}). No guard covers the protected slice, and the gate
+The validity of PMRT is asymptotic rather than exact, even on placebo logs. The ground truth uses a single 90~s horizon
+with every other unit accepted, so it targets $\tau_{\mathrm{AA}}$ rather than $\tau_{\pi}$, and the labels of material
+effects, and with them the precision of PMRT, depend on the threshold $\delta_k$. The FDR bound applies to the edge, not
+to the relation to which the edge is attributed. The design slope and the bounds of the gate rest on an approximately
+predictable outcome centre; a strictly predictable centre changed the map slopes by \val{x16.map.rel_min} to
+\val{x16.map.rel_max}~\% without a change of sign, moved the bounds by a median of \val{x16.gate.median_pct}~\% of
+their tolerance and altered no certification (\esm{decisions}). No guard covers the protected slice, and the gate
 bounds of the associational maps assume independent errors, so they can be too narrow on dependent KPI series by an
 amount that this study did not quantify.
