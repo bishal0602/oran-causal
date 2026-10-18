@@ -155,18 +155,21 @@ The p-values $p$ and $p_d$ are therefore asymptotically valid. The value $p$ dif
 $2\{1 - \Phi(|z|)\}$ only by a term that vanishes in probability and by Monte Carlo error.
 \end{proposition}
 
-Only the normal limit is asymptotic: the martingale property, and $\sigma^2$ as its predictable variance, hold exactly
-in every sample. The redraw p-value is nevertheless not exact in finite samples, placebo logs included, because which
-units exist, their propensities and their weights all depend on earlier draws of the family. For the same reason the
-exact randomisation test for sequential experiments of Bojinov and Shephard~\cite{bojinov2019timeseries} does not
-apply here: a sharp null on one KPI does not fix the network state that creates the units and sets the incumbent's
-propensities, so the adaptive design cannot be replayed.
+Only the normal limit is asymptotic. Adaptive unit creation, the re-proposal of a rejected request and propensities
+that track the network state are all decided before the unit's draw, and hence are $\mathcal{G}_{u-1}$-measurable, as
+(A1) requires. A fresh-draw lemma (\esm{lem:s_fresh}) then gives each score $v_u$ mean zero given $\mathcal{G}_{u-1}$,
+so with (A3) $S$ is a martingale with predictable variance $\sigma^2$ in every sample, however the design adapts, and
+its limit needs (A4), not a design that can be replayed. The exact randomisation test for sequential experiments of
+Bojinov and Shephard~\cite{bojinov2019timeseries} needs such a replay, which is impossible here: a sharp null on one KPI
+does not fix the network state that creates the units and sets the incumbent's propensities. Adaptivity therefore
+costs exactness in finite samples, placebo logs included, not validity in the limit: the two-unit counterexample below
+is one fixed design, so its $\sigma^2$ cannot grow as (A4) requires. The placebo logs and null outcomes of
+Section~\ref{sec:res_validity} check the finite-sample size.
 
 The proof of Proposition~\ref{prop:pmrt} combines the martingale central limit theorem with a random limiting
 variance~\cite[Cor.~3.1 and 3.2]{hall1980martingale}\claim{CIT-HH} for the statistic, the Lindeberg--Feller and
-P\'olya theorems~\cite[Thm.~3.4.10 and Exercise~3.2.9]{durrett2019probability}\claim{CIT-DUR} for the redraws, and a
-fresh-draw lemma\claim{THM-FRESH}, by which the draw of a unit is independent of the past under the logged design
-(\esm{esm:theory}). Were the units, their order, propensities and weights fixed given the past of the other families,
+P\'olya theorems~\cite[Thm.~3.4.10 and Exercise~3.2.9]{durrett2019probability}\claim{CIT-DUR} for the redraws, and the
+fresh-draw lemma\claim{THM-FRESH} (\esm{esm:theory}). Were the units, their order, propensities and weights fixed given the past of the other families,
 the tie-inclusive p-value would be valid\claim{THM-EXACT}, and exact for a continuous
 statistic~\cite[Sect.~4]{phipson2010permutation}\claim{CIT-PS}; PMRT does not meet that condition, and in a two-unit
 design in which a rejected request is proposed again the one-sided redraw p-value is anti-conservative for any fixed
