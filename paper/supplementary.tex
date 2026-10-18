@@ -570,7 +570,7 @@ Variant & True & Null & Indet. & Precision [bounds] & Recall & Sign acc. & preci
 \caption{Existence ground truth.}
 \label{tab:s_exist}
 \footnotesize
-\setlength{\tabcolsep}{2.5pt}
+\setlength{\tabcolsep}{1pt}
 \begin{tabular}{@{}l c c c c c c c c@{}}
 \toprule
  & & Material & \multicolumn{6}{c}{Effect exists (any magnitude)} \\
@@ -826,7 +826,7 @@ ground-truth harm; indet., indeterminate. With a strict outcome centre, which us
 \caption{Gated associational referees and the static ES + Power ES subset.}
 \label{tab:s_x7}
 \footnotesize
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{1.5pt}
 \begin{tabular}{@{}l c c c c c c@{}}
 \toprule
 \multicolumn{7}{@{}l}{(a) Agreement with the static subset's decision, per request} \\
@@ -846,7 +846,7 @@ Requests & 99\,785 & 5\,459 & 6\,476 & 2\,097 & 113\,817 & \\
 
 \par\medskip
 \setlength{\tabcolsep}{2.5pt}
-\noindent\resizebox{\textwidth}{!}{\begin{tabular}{@{}l c c c c@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.7cm} c c c c@{}}
 \toprule
 \multicolumn{5}{@{}l}{(b) Outcomes, attribution replays and paired differences vs the static subset} \\
 \midrule
@@ -876,7 +876,7 @@ Accept-all & 0.000 [0.000, 0.000] & 0.995 &  &  \\
 \quad Replay: protected-share rejections only & $-$11.072 [$-$12.735, $-$9.786] & 1.000 & +0.034 [0.007, 0.069] & 151 \\
 \quad Replay: without it & +0.071 [0.012, 0.133] & 1.028 & +11.177 [9.894, 12.844] & 0 \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
 
 \par\smallskip
 {\raggedright\footnotesize Identical seeds: seeds on which the arm equals the static subset.\par}
@@ -938,7 +938,7 @@ Plain partial correlation & 0.47 & 20 / 25 & MSCR & 0.94 & 8 / 10 \tabularnewlin
 \caption{Conditions by environment: invalid / valid / counted over every $n$ at $\kappa = 0.25$; the remainder are inconclusive.}
 \label{tab:s_verdicts}
 \footnotesize
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}l c c c c c c@{}}
 \toprule
 Group and design & Linear & Rare & Delayed & Confounding & Composed & All \\
@@ -964,8 +964,9 @@ Tables~\ref{tab:s_env1} to~\ref{tab:s_env5} give every condition at the primary 
 \begin{table}
 \caption{Linear graph: null-edge rate / recall.}
 \label{tab:s_env1}
-\setlength{\tabcolsep}{2.8pt}
-\begin{tabular}{@{}l c c c c c@{}}
+ootnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} c c c c c@{}}
 \toprule
 Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \midrule
@@ -1015,8 +1016,9 @@ Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \begin{table}
 \caption{Rare regime: null-edge rate / recall.}
 \label{tab:s_env2}
-\setlength{\tabcolsep}{2.8pt}
-\begin{tabular}{@{}l c c c c c@{}}
+ootnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} c c c c c@{}}
 \toprule
 Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \midrule
@@ -1066,8 +1068,9 @@ Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \begin{table}
 \caption{Delayed harm: null-edge rate / recall.}
 \label{tab:s_env3}
-\setlength{\tabcolsep}{2.8pt}
-\begin{tabular}{@{}l c c c c c@{}}
+ootnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} c c c c c@{}}
 \toprule
 Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \midrule
@@ -1121,8 +1124,9 @@ Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \begin{table}
 \caption{Latent confounding: null-edge rate / recall.}
 \label{tab:s_env4}
-\setlength{\tabcolsep}{2.8pt}
-\begin{tabular}{@{}l c c c c c@{}}
+ootnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} c c c c c@{}}
 \toprule
 Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \midrule
@@ -1172,8 +1176,9 @@ Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \begin{table}
 \caption{Composed: null-edge rate / recall.}
 \label{tab:s_env5}
-\setlength{\tabcolsep}{2.8pt}
-\begin{tabular}{@{}l c c c c c@{}}
+ootnotesize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} c c c c c@{}}
 \toprule
 Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \midrule
@@ -1270,7 +1275,7 @@ Method & 0.02 & 0.05 & 0.10 & 0.20 & 5 & 80 \\
 \caption{Null-edge rate under a misspecified design.}
 \label{tab:s_misspec}
 \footnotesize
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}l c c c c c c c@{}}
 \toprule
 \multicolumn{8}{@{}l}{\textit{Truth-null edges, dithered setpoint, linear graph and rare regime}} \\
@@ -1305,7 +1310,7 @@ The methods of the controlled environments ran on the randomised simulator logs,
 \caption{Bridging analysis on the randomised logs.}
 \label{tab:s_bridge}
 \footnotesize
-\setlength{\tabcolsep}{2pt}
+\setlength{\tabcolsep}{1pt}
 \begin{tabular}{@{}l c c c c c c c c c c c c@{}}
 \toprule
  & & Data & \multicolumn{4}{c}{Recall} & \multicolumn{4}{c}{Null rate} & Placebo & Placebo \\
