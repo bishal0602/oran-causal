@@ -8,3 +8,4 @@ public import OranCausal.GateBudget
 public import OranCausal.Slope
 public import OranCausal.Asymptotic
 public import OranCausal.FDRAsymptotic
+public import OranCausal.Scope
