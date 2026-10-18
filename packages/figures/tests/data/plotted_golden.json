@@ -1,7 +1,7 @@
 {
  "figures": {
   "fig_appC_x2_dose": {
-   "digest": "eb7f930b2b630e94ffd53535ec161478",
+   "digest": "98a998ea9f2628a85cd63e9c33c04553",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -17,7 +17,7 @@
    ]
   },
   "fig_appC_x3_misspec": {
-   "digest": "2c2ab0c8360b3eca5ab167929fc7ceda",
+   "digest": "127271fb125dcaadb8dcc07d16671eb6",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -33,7 +33,7 @@
    ]
   },
   "fig_appC_x6_width": {
-   "digest": "3bd5a739d4a689a4832cd5394fe7a138",
+   "digest": "105cb39409a59b959298234044aaa782",
    "fonts": [
     "ArialMT"
    ],
@@ -129,7 +129,7 @@
    ]
   },
   "fig_logging_validity": {
-   "digest": "c01356e53d0a4758e10b30d1be0a7003",
+   "digest": "fad3204b14151c608ba68679d7a933d7",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -320,7 +320,7 @@
    ]
   },
   "fig_study4_env_e1": {
-   "digest": "b130bc564a44211ab58ae00ff36d1281",
+   "digest": "3bdc41a67b17ea9b6f846ebe8de865e3",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -336,7 +336,7 @@
    ]
   },
   "fig_study4_env_e2": {
-   "digest": "1de40b1ad1fe1bc3f6c4c5d0416528c2",
+   "digest": "f1ca82b34ffc8678e761e070caaeeca2",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -352,7 +352,7 @@
    ]
   },
   "fig_study4_env_e3": {
-   "digest": "d6bdea21ef46d843282df3ebb8b79a0b",
+   "digest": "bcf03e5969827ae293e73b404b47595b",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -368,7 +368,7 @@
    ]
   },
   "fig_study4_env_e4": {
-   "digest": "57474fba7f490311c6774ab478107527",
+   "digest": "3bf73165a1f40d5881484d8a22949ba2",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -384,7 +384,7 @@
    ]
   },
   "fig_study4_env_e5": {
-   "digest": "e705e59c464e8215f45bbca69e857d9f",
+   "digest": "a90057f018169d3efcd501691cf4230f",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -416,7 +416,7 @@
    ]
   },
   "fig_study4_recall": {
-   "digest": "f6b6ba474b073507ef81b03d2cd0c7d7",
+   "digest": "1190a03cf3559a851e11c90cc723bc8c",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -432,7 +432,7 @@
    ]
   },
   "fig_study4_validity": {
-   "digest": "be193438295e34612cef28714b8987e8",
+   "digest": "b0e070eb6a0d48012e77f4daf3fee64b",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -558,7 +558,7 @@
    ]
   },
   "specimen_key": {
-   "digest": "361e12663fbe058692f2ef192f1e9648",
+   "digest": "975026105070e70bde21c17a5ea38de8",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -589,7 +589,7 @@
    ]
   },
   "specimen_methods": {
-   "digest": "7fcdece1b45426e6e063082c0bb37e68",
+   "digest": "6fdebe17d8405981f72b55d1a1c6c21e",
    "fonts": [
     "ArialMT"
    ],

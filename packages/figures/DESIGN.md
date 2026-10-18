@@ -81,7 +81,7 @@ gray; L* is CIELAB lightness (the greyscale value).
 | gold | `#9A7414` | 4.30 | 3.80 | 51 |
 | purple | `#8B4F9F` | 5.65 | 4.99 | 44 |
 | green | `#55803A` | 4.63 | 4.09 | 49 |
-| PMRT-Lin (light blue) | `#6E95CC` | 3.07 | 2.72 | 61 |
+| PMRT-Lin (light blue) | `#638DC8` | 3.40 | 3.01 | 58 |
 | QACM (slate) | `#6F8DB8` | 3.40 | 3.00 | 58 |
 | INT (lilac) | `#A07AB2` | 3.55 | 3.13 | 57 |
 
@@ -139,7 +139,7 @@ marks of status.
 |---|---|---|---|
 | PMRT | blue `#3767A8` | `o`, filled | solid |
 | PMRT-GBM | blue `#3767A8` | `D`, filled | solid |
-| PMRT-Lin | light blue `#6E95CC` | `D` (R3 covariates: `H`, filled) | solid |
+| PMRT-Lin | light blue `#638DC8` | `D` (R3 covariates: `H`, filled) | solid |
 | Design-adjusted partial correlation | purple `#8B4F9F` | `^` | solid |
 | Design-adjusted Granger | terracotta `#C2553A` | `s` | solid |
 | Design-adjusted RCoT | neutral `#707782` | `v` | solid |

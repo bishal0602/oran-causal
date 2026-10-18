@@ -26,7 +26,7 @@ BLUE, TERRACOTTA, TEAL, GOLD, PURPLE, GREEN = ENTITIES
 
 # --- methods [DECIDED 2026-10-08, user] -------------------------------------------------------------------------
 HERO = BLUE  # PMRT / PMRT-GBM, and the hero component of a diagram
-PMRT_LIN = "#6E95CC"  # lighter BLUE: PMRT-Lin (open marker) and PMRT-Lin, R3 covariates
+PMRT_LIN = "#638DC8"  # lighter BLUE: PMRT-Lin (open marker) and PMRT-Lin, R3 covariates
 SLATE = "#6F8DB8"  # muted blue: QACM (Studies 1-3)
 LILAC = "#A07AB2"  # lighter PURPLE: INT (Studies 1-3)
 METHODS = [*ENTITIES, PMRT_LIN, SLATE, LILAC]
