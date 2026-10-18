@@ -59,7 +59,7 @@ STATUS_LABEL = {
     "DECLARED": "declared in the map (no certificate needed)",
 }
 TOP = 1.6
-WHITE_BOX = {"fc": "white", "ec": "none", "pad": 0.4}
+WHITE_BOX = L.KNOCKOUT
 
 
 def _class_label(cls: str) -> str:
@@ -188,7 +188,6 @@ def build():
         ax.patch.set_visible(False)
     plots.finish(a)
     a.tick_params(axis="y", length=0)
-    a.spines["left"].set_visible(False)
     a.set_yticks(
         [y for y, _, _ in subrows],
         [f"{REL[s.split('|')[0]]}, {KPI[s.split('|')[1]]}" for _, _, s in subrows],

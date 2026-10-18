@@ -48,7 +48,7 @@
    ]
   },
   "fig_conflict_types": {
-   "digest": "85e1b85fe0e68ab7ffc5e79612f2a318",
+   "digest": "5f6905eba3f13b51e4a9afe8bc659dea",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -57,14 +57,14 @@
     " 0 0 369.68 156.88 "
    ],
    "pages": 1,
-   "rows": 130,
+   "rows": 129,
    "size_in": [
     5.15,
     2.1389
    ]
   },
   "fig_decision_referee_v3": {
-   "digest": "a1d92534ef13ade8b2f184de515c4065",
+   "digest": "40a8e6c9ecd2648c5743b81143e496c1",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -80,7 +80,7 @@
    ]
   },
   "fig_decisions": {
-   "digest": "b35c284fcc0f6647d9d97e3c0e6018f5",
+   "digest": "8fb45fb91334e526d9e39c21d5c70139",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -96,23 +96,23 @@
    ]
   },
   "fig_envs": {
-   "digest": "0cec51265682d03084ebcdd83d21c9b7",
+   "digest": "b8f715b18b7c787eb8555bac4936f976",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
    ],
    "mediabox": [
-    " 0 0 370.108125 188.595625 "
+    " 0 0 369.88 206.595625 "
    ],
    "pages": 1,
    "rows": 329,
    "size_in": [
     5.15,
-    2.6
+    2.85
    ]
   },
   "fig_idea": {
-   "digest": "4bd1dbf4857556d7f8ed31147d929a4c",
+   "digest": "6a19b41dba89478d3435cff0a28544c6",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -121,14 +121,14 @@
     " 0 0 370.88 302.88 "
    ],
    "pages": 1,
-   "rows": 251,
+   "rows": 249,
    "size_in": [
     5.15,
     4.1667
    ]
   },
   "fig_logging_validity": {
-   "digest": "fad3204b14151c608ba68679d7a933d7",
+   "digest": "5abc9d253792152c07853f3a5f03e981",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -176,7 +176,7 @@
    ]
   },
   "fig_method_pmrt": {
-   "digest": "ba2d99039f911754791ef821b006608b",
+   "digest": "cabf5fcf1b5b62d95d1b288c321f635a",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -192,7 +192,7 @@
    ]
   },
   "fig_placebo": {
-   "digest": "c453b475e9dca1720844a01817e06552",
+   "digest": "350770e255076d74cc34a20a1ce9b77f",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -463,7 +463,7 @@
    ]
   },
   "fig_system_e6p": {
-   "digest": "17641e6bf147bc6fe577880510d0b39e",
+   "digest": "ceaa808aae1448e8c13411ac64f3c068",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -472,7 +472,7 @@
     " 0 0 369.68 194.88 "
    ],
    "pages": 1,
-   "rows": 113,
+   "rows": 114,
    "size_in": [
     5.15,
     2.6667
@@ -494,7 +494,7 @@
    ]
   },
   "specimen_diagram": {
-   "digest": "1cd2805c192ec7ca6d03d652d2a12e1b",
+   "digest": "68e75d28e1712997102c363b8b09cade",
    "fonts": [
     "Arial-BoldMT",
     "ArialMT"
@@ -503,7 +503,7 @@
     " 0 0 369.68 182.88 "
    ],
    "pages": 1,
-   "rows": 102,
+   "rows": 103,
    "size_in": [
     5.15,
     2.5

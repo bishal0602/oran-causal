@@ -86,16 +86,8 @@ def build():
     ys = np.arange(len(keys))[::-1].astype(float)
     fig, axs = plots.figure("full", aspect=0.42, ncols=2, sharey=True)
     for j, (ax, (letter, tag)) in enumerate(zip(axs, PANELS, strict=False)):
-        # our row: light blue band; zero: a plain axis line
-        ax.axhspan(
-            ys[0] - 0.5,
-            ys[0] + 0.5,
-            color=P.tint(P.OURS, 0.16),
-            lw=0,
-            zorder=0.4,
-            gid="sem:ours-row",
-        )
-        ax.axvline(0, color=P.AXIS, lw=S.LW_AXIS, zorder=2, gid="zero-axis")
+        plots.row_band(ax, ys[0])
+        plots.zero_line(ax)
         for yy, k in zip(ys, keys, strict=False):
             v = n[k][j]
             is_hero = k == hero
@@ -126,11 +118,8 @@ def build():
         ax.set_xlim(-X_PAD, XMAX)
         ax.set_xticks([0, 10, 20, 30])
         ax.set_ylim(ys[-1] - 0.6, ys[0] + 0.5)
-        ax.grid(False)
-        plots.finish(ax)
+        plots.finish(ax, grid="x")
         ax.set_yticks(ys, [M.name(k) for k in keys])  # after finish: trimming resets tick labels
-        ax.tick_params(axis="y", length=0)
-        ax.spines["left"].set_visible(False)
         L.panel_header(ax, letter, tag)
     for t in axs[0].get_yticklabels():
         if t.get_text() == M.name(hero):

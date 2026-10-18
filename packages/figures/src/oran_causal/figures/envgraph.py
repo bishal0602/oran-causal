@@ -185,52 +185,78 @@ def _color(n: str) -> str:
     return KPI if n.startswith("K") else ACTION
 
 
-def _node(ax: Axes, x: float, y: float, n: str, label_pt: float) -> None:
+def node(
+    ax: Axes,
+    x: float,
+    y: float,
+    n: str,
+    label_pt: float | None = None,
+    r: float = R,
+    gid: str | None = None,
+) -> None:
+    """One graph node of role ``n``: action blue circle, KPI teal rounded square, confounder dashed
+    circle, placebo neutral; ``label_pt`` writes the name inside (None: unlabelled).
+    """
     c = _color(n)
     if n.startswith("K"):
-        ax.add_patch(
-            FancyBboxPatch(
-                (x - R * 0.92, y - R * 0.92),
-                1.84 * R,
-                1.84 * R,
-                boxstyle=f"round,pad=0,rounding_size={R * 0.35}",
-                fc=P.tint(c, 0.16),
-                ec=c,
-                lw=0.7,
-                zorder=4,
-            )
+        patch = FancyBboxPatch(
+            (x - r * 0.92, y - r * 0.92),
+            1.84 * r,
+            1.84 * r,
+            boxstyle=f"round,pad=0,rounding_size={r * 0.35}",
+            fc=P.tint(c, 0.16),
+            ec=c,
+            lw=0.7,
+            zorder=4,
         )
     else:
-        ax.add_patch(
-            Circle(
-                (x, y),
-                R,
-                fc=P.tint(c, 0.16),
-                ec=c,
-                lw=0.7,
-                zorder=4,
-                ls=(0, (2, 1)) if n == "Z" else "-",
-            )
+        patch = Circle(
+            (x, y),
+            r,
+            fc=P.tint(c, 0.16 if label_pt or n != "Z" else 0.28),
+            ec=c,
+            lw=0.7,
+            zorder=4,
+            ls=(0, (2, 1) if label_pt else (1.6, 0.9)) if n == "Z" else "-",
         )
-    ax.text(x, y, n, ha="center", va="center", fontsize=label_pt, color=P.INK, zorder=5)
+    patch.set_gid(gid)
+    ax.add_patch(patch)
+    if label_pt:
+        ax.text(x, y, n, ha="center", va="center", fontsize=label_pt, color=P.INK, zorder=5)
 
 
-def _path(ax: Axes, pts, kind: str, head: bool, curve: bool = True) -> None:
-    st = EDGE[kind]
+def edge(
+    ax: Axes,
+    pts,
+    kind: str,
+    head: bool,
+    curve: bool = True,
+    gid: str | None = None,
+    style: dict | None = None,
+    head_style: str = HEAD,
+    capstyle: str | None = None,
+):
+    """One bundled edge of ``kind`` through the control points ``pts`` (a cubic chain, or straight
+    when ``curve`` is false); ``style`` overrides the kind's colour / dash / width.
+    """
+    st = style or EDGE[kind]
     codes = [Path.MOVETO] + [Path.CURVE4 if curve else Path.LINETO] * (len(pts) - 1)
-    ax.add_patch(
-        FancyArrowPatch(
-            path=Path(pts, codes),
-            arrowstyle=HEAD if head else "-",
-            mutation_scale=1,
-            color=st["color"],
-            lw=st["lw"],
-            ls=st["ls"],
-            zorder=2,
-            shrinkA=0,
-            shrinkB=0,
-        )
+    patch = FancyArrowPatch(
+        path=Path(pts, codes),
+        arrowstyle=head_style if head else "-",
+        mutation_scale=1,
+        color=st["color"],
+        lw=st["lw"],
+        ls=st["ls"],
+        zorder=2,
+        shrinkA=0,
+        shrinkB=0,
     )
+    if capstyle:
+        patch.set_capstyle(capstyle)
+    patch.set_gid(gid)
+    ax.add_patch(patch)
+    return patch
 
 
 def legend_handles(g: EnvGraph) -> tuple[list, list]:
@@ -315,7 +341,7 @@ def draw_env_graph(
     for s in left:
         if sum(1 for e in g.edges if e[0] == s and e[1] in yk) > 1:
             kind = "context" if s == "Z" else "true"
-            _path(ax, [(xa + R, ya[s]), (xs, ya[s])], kind, head=False, curve=False)
+            edge(ax, [(xa + R, ya[s]), (xs, ya[s])], kind, head=False, curve=False)
     for k in kpis:
         ins = [(s, kind) for s, d, kind in g.edges if d == k and s in ya]
         plain = [s for s, kind in ins if kind == "true"]
@@ -325,14 +351,14 @@ def draw_env_graph(
         for s in plain:
             x0 = xs if sum(1 for e in g.edges if e[0] == s and e[1] in yk) > 1 else xa + R
             y1 = yk[k] + off["true"]
-            _path(
+            edge(
                 ax,
                 [(x0, ya[s]), (x0 + lw_curve, ya[s]), (xm - lw_curve, y1), (xm, y1)],
                 "true",
                 head=False,
             )
         if plain:
-            _path(
+            edge(
                 ax,
                 [(xm, yk[k] + off["true"]), (xk - R - 0.5, yk[k] + off["true"])],
                 "true",
@@ -342,7 +368,7 @@ def draw_env_graph(
         for s, kind in others:
             x0 = xs if sum(1 for e in g.edges if e[0] == s and e[1] in yk) > 1 else xa + R
             y1 = yk[k] + off[s]
-            _path(
+            edge(
                 ax,
                 [(x0, ya[s]), (x0 + lw_curve, ya[s]), (xm - lw_curve, y1), (xk - R - 0.5, y1)],
                 kind,
@@ -362,7 +388,7 @@ def draw_env_graph(
         span = abs(y0 - y1) / step
         bulge = 6 + 6 * span
         ys0, ys1 = y0 + (-1.6 if y1 < y0 else 1.6), y1 + (1.6 if y1 < y0 else -1.6)
-        _path(
+        edge(
             ax,
             [
                 (xk + R, ys0),
@@ -388,14 +414,14 @@ def draw_env_graph(
         if kind == "policy":
             y0, y1 = ya[s], ya[d]
             b = 6 + 2.5 * abs(y0 - y1) / 21
-            _path(
+            edge(
                 ax,
                 [(xa - R, y0), (xa - R - b, y0), (xa - R - b, y1), (xa - R - 0.5, y1)],
                 kind,
                 head=True,
             )
     for n, (x, y) in pos.items():
-        _node(ax, x, y, n, label_pt)
+        node(ax, x, y, n, label_pt)
     if legend:
         leg = ax.legend(
             hs,

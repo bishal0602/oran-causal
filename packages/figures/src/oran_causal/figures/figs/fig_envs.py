@@ -23,12 +23,12 @@ illustration of the rule, not a logged corpus: no axis numbers. Strip titles use
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
-from matplotlib.patches import Circle, FancyArrowPatch, FancyBboxPatch
-from matplotlib.path import Path
+from matplotlib.patches import FancyArrowPatch
 
 from oran_causal.figures import envgraph as EG
 from oran_causal.figures import layout as L
 from oran_causal.figures import palette as P
+from oran_causal.figures import plots
 from oran_causal.figures import style as S
 from oran_causal.figures.figs import _env_page as E
 from oran_causal.figures.figs.fig_logging_validity import DESIGN_LABEL
@@ -75,8 +75,8 @@ ROWS = 40  # rows drawn per strip (2 per setpoint block)
 SEED = 7800
 
 # geometry (pt). Canvas = data units in points.
-W_PT, H_PT = S.FULL * 72, 2.6 * 72
-LEG_H = 15.0  # legend band
+LEG_H = 33.0  # legend band: two framed rows
+W_PT, H_PT = S.FULL * 72, 2.6 * 72 + LEG_H - 15.0
 HEAD = 14.0  # header band above each row (letter and titles, baseline HEADER_RISE_PT up)
 G_H = 96.0  # graph canvas height
 GAP = 6.0
@@ -108,53 +108,13 @@ POLICY = {"color": P.DESIGN_ROLE, "ls": (0, (0.1, 1.7)), "lw": 1.1}
 def _path(
     ax, pts, kind: str, head: bool, curve: bool = True, gid: str | None = None
 ) -> FancyArrowPatch:
-    st = EG.EDGE[kind]
-    codes = [Path.MOVETO] + [Path.CURVE4 if curve else Path.LINETO] * (len(pts) - 1)
     if kind == "policy":
-        st = POLICY
-    p = FancyArrowPatch(
-        path=Path(pts, codes),
-        arrowstyle=HEAD_STYLE if head else "-",
-        mutation_scale=1,
-        color=st["color"],
-        lw=st["lw"] if kind == "policy" else LINE["lw"],
-        ls=st["ls"],
-        zorder=2,
-        shrinkA=0,
-        shrinkB=0,
-        capstyle="round" if kind == "policy" else "butt",
-    )
-    if gid:
-        p.set_gid(gid)
-    ax.add_patch(p)
-    return p
-
-
-def _node(ax, x: float, y: float, n: str) -> None:
-    c = EG._color(n)
-    if n.startswith("K"):
-        p = FancyBboxPatch(
-            (x - R * 0.92, y - R * 0.92),
-            1.84 * R,
-            1.84 * R,
-            boxstyle=f"round,pad=0,rounding_size={R * 0.35}",
-            fc=P.tint(c, 0.16),
-            ec=c,
-            lw=0.7,
-            zorder=4,
-        )
+        style, cap = POLICY, "round"
     else:
-        p = Circle(
-            (x, y),
-            R,
-            fc=P.tint(c, 0.16 if n != "Z" else 0.28),
-            ec=c,
-            lw=0.7,
-            zorder=4,
-            ls=(0, (1.6, 0.9)) if n == "Z" else "-",
-        )
-    p.set_gid(f"node:{n}")
-    ax.add_patch(p)
+        style, cap = {**EG.EDGE[kind], **LINE}, "butt"
+    return EG.edge(
+        ax, pts, kind, head, curve, gid, style=style, head_style=HEAD_STYLE, capstyle=cap
+    )
 
 
 def draw_graph(ax, g: EG.EnvGraph, w: float, h: float, xa: float, xk: float) -> dict:
@@ -255,7 +215,7 @@ def draw_graph(ax, g: EG.EnvGraph, w: float, h: float, xa: float, xk: float) -> 
             )
     pos = {**{n: (xa, y) for n, y in ya.items()}, **{k: (xk, y) for k, y in yk.items()}}
     for n, (x, y) in pos.items():
-        _node(ax, x, y, n)
+        EG.node(ax, x, y, n, r=R, gid=f"node:{n}")
     return pos
 
 
@@ -315,9 +275,7 @@ def _strip(ax, y, x) -> None:
     ax.set_ylim(-0.12, 1.12)
     ax.set_xticks([])
     ax.set_yticks([])
-    ax.grid(False)
-    for side in ax.spines:  # no per-strip axes: one shared time arrow under the row
-        ax.spines[side].set_visible(False)
+    plots.bare(ax)  # no per-strip axes: one shared time arrow under the row
 
 
 # --- figure ---------------------------------------------------------------------------------------------------------
@@ -434,19 +392,7 @@ def build():
     strips[0].set_ylabel("Action", fontsize=S.MIN_PT, labelpad=1)
     y = 1 - (top_b + STRIP_H + TIME_DROP) / H_PT
     x0, x1 = STRIPS[0][0] / W_PT, (STRIPS[-1][0] + STRIP_W) / W_PT
-    fig.add_artist(
-        FancyArrowPatch(
-            (x0, y),
-            (x1, y),
-            transform=fig.transFigure,
-            arrowstyle=HEAD_STYLE,
-            mutation_scale=1.4,
-            color=P.AXIS,
-            lw=S.LW_AXIS,
-            shrinkA=0,
-            shrinkB=0,
-        )
-    )
+    plots.arrow(fig, (x0, y), (x1, y), color=P.AXIS, lw=S.LW_AXIS, transform=fig.transFigure)
     fig.text(
         (x0 + x1) / 2,
         y - 2 / H_PT,
@@ -457,17 +403,5 @@ def build():
         color=P.INK,
     )
     hs, ls = legend_items()
-    fig.legend(
-        hs,
-        ls,
-        loc="upper center",
-        bbox_to_anchor=(0.5, 1.0),
-        ncol=len(ls),
-        fontsize=S.LEGEND_PT,
-        frameon=False,
-        handlelength=1.5,
-        handletextpad=0.35,
-        columnspacing=0.8,
-        borderaxespad=0.1,
-    )
+    L.canvas_legend(fig, hs, ls, ncol=3)
     return L.finalize(fig)

@@ -43,15 +43,30 @@ def panel_label(ax: Axes, letter: str, x: float = -0.02, y: float = 1.0) -> None
     )
 
 
-def finish(ax: Axes, grid: bool = True) -> None:
+def finish(ax: Axes, grid: bool | str = True) -> None:
     """Soft-modern frame (DESIGN s.4): no spines and no tick marks; the gray panel field and its white grid
-    carry the frame. ``grid=False`` removes the grid (e.g. categorical panels).
+    carry the frame. ``grid``: ``False`` removes the grid (e.g. categorical panels), ``"x"`` / ``"y"``
+    keeps only the lines across that axis (a row-wise panel keeps its x grid).
     """
     for side in ax.spines.values():
         side.set_visible(False)
     ax.tick_params(which="both", length=0)
-    if not grid:
+    if grid in ("x", "y"):
         ax.grid(False)
+        ax.grid(axis=grid, visible=True)
+    elif not grid:
+        ax.grid(False)
+
+
+def bare(ax: Axes) -> None:
+    """An axes that only carries marks (a strip of dots): its field stays, with no spines, ticks or grid;
+    labels and titles are still drawn.
+    """
+    for side in ax.spines.values():
+        side.set_visible(False)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.grid(False)
 
 
 # --- methods (hero + baselines) ------------------------------------------------
@@ -298,14 +313,89 @@ def heatmap(
     return im, cb
 
 
+def span(
+    ax: Axes,
+    lo: float,
+    hi: float,
+    role: str,
+    axis: str = "y",
+    tint: float | None = None,
+    gid: str | None = None,
+    zorder: float = 0,
+):
+    """A tinted region (role 'good' | 'bad' | 'ours') between lo and hi on ``axis``: the role hue at
+    ``tint`` (default ``P.ZONE_TINT``), no edge.
+    """
+    color = {"good": P.GOOD, "bad": P.BAD, "ours": P.OURS}[role]
+    draw = ax.axhspan if axis == "y" else ax.axvspan
+    return draw(
+        lo,
+        hi,
+        fc=P.tint(color, P.ZONE_TINT if tint is None else tint),
+        ec="none",
+        lw=0,
+        zorder=zorder,
+        gid=gid or f"sem:{role}-zone",
+    )
+
+
+def row_band(ax: Axes, y: float, height: float = 1.0):
+    """The hero's row in a row-wise panel: a light blue band behind the row at ``y``."""
+    return span(
+        ax, y - height / 2, y + height / 2, "ours", tint=0.16, gid="sem:ours-row", zorder=0.4
+    )
+
+
+def zero_line(ax: Axes, axis: str = "x"):
+    """A plain axis line at 0 (a lollipop baseline), under the marks."""
+    line = ax.axvline if axis == "x" else ax.axhline
+    return line(0, color=P.AXIS, lw=S.LW_AXIS, zorder=2, gid="zero-axis")
+
+
+def arrow(
+    target,
+    p: tuple[float, float],
+    q: tuple[float, float],
+    color: str = P.INK,
+    lw: float = 0.8,
+    transform=None,
+    gid: str = "arrow",
+    zorder: float = 2.5,
+    shrink: tuple[float, float] = (0, 0),
+):
+    """A plain straight arrow from ``p`` to ``q`` (axes or figure ``target``; same head as
+    ``diagram.arrow``), e.g. the shift a gate causes or the direction of time. ``shrink``: points
+    kept clear at the tail and the head (markers).
+    """
+    from matplotlib.patches import FancyArrowPatch
+
+    patch = FancyArrowPatch(
+        p,
+        q,
+        arrowstyle="-|>,head_length=4,head_width=2.2",
+        mutation_scale=1,
+        color=color,
+        lw=lw,
+        shrinkA=shrink[0],
+        shrinkB=shrink[1],
+        zorder=zorder,
+        gid=gid,
+        **({"transform": transform} if transform is not None else {}),
+    )
+    if hasattr(target, "add_patch"):
+        target.add_patch(patch)
+    else:
+        target.add_artist(patch)
+    return patch
+
+
 def zone(ax: Axes, lo: float, hi: float, role: str, axis: str = "y", gid: str | None = None):
     """A semantic region (role 'good' | 'bad') between lo and hi on ``axis`` (DESIGN s.6): a light tint
     of the role hue, bordered by a full-strength line on the limit (the region's inner edge).
     """
     color = P.GOOD if role == "good" else P.BAD
-    span = ax.axhspan if axis == "y" else ax.axvspan
     gid = gid or f"sem:{role}-zone"
-    z = span(lo, hi, fc=P.tint(color, P.ZONE_TINT), ec="none", lw=0, zorder=0, gid=gid)
+    z = span(ax, lo, hi, role, axis, gid=gid)
     edge = lo if role == "bad" else hi
     line = ax.axhline if axis == "y" else ax.axvline
     line(edge, color=color, lw=S.LW_REF, zorder=0.6, gid=gid + "-edge")

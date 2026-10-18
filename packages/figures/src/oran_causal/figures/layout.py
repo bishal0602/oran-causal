@@ -141,7 +141,9 @@ INVALID_LABEL = "INVALID condition"  # [G3 2026-10-12] was "INVALID cell (no rec
 # is 20 pt wider and pushed the E4 page legend into one column (letter b then hit the y label)
 
 
-def fig_legend(fig, handles: Sequence, labels: Sequence[str], where: str = "top", **kw):
+def fig_legend(
+    fig, handles: Sequence, labels: Sequence[str], where: str = "top", ncol: int | None = None, **kw
+):
     """Figure-level legend (DESIGN s.6). ``top`` (the standard): one
     centred, framed row above every panel header, wrapped into balanced rows when it does not fit the
     width (finalize). ``right``: a top-aligned column right of the panels. Never below or inside the
@@ -152,10 +154,26 @@ def fig_legend(fig, handles: Sequence, labels: Sequence[str], where: str = "top"
         handles.append(invalid_handle())
         labels.append(INVALID_LABEL)
     loc = {"top": LEGEND_TOP_LOC, "right": "outside right upper"}[where]
-    ncol = len(labels) if where == "top" else 1
+    if ncol is None:
+        ncol = len(labels) if where == "top" else 1
     leg = fig.legend(handles, labels, loc=loc, ncol=ncol, **kw)
     _reg(fig, "legends").append((fig, leg, handles, labels, where, kw))
     return leg
+
+
+def canvas_legend(fig, handles: Sequence, labels: Sequence[str], ncol: int | None = None):
+    """The framed top legend row for a figure laid out in points on a fixed canvas (no constrained
+    layout to reserve room): the same rc frame, size and spacing as ``fig_legend``, centred at the
+    top edge. The canvas leaves the strip free.
+    """
+    return fig.legend(
+        list(handles),
+        list(labels),
+        loc="upper center",
+        bbox_to_anchor=(0.5, 1.0),
+        ncol=ncol or len(labels),
+        borderaxespad=0.1,
+    )
 
 
 def _fit_legends(fig: Figure, r) -> bool:
@@ -356,6 +374,13 @@ def rate_axis(ax: Axes, axis: str = "y", label: str | None = None) -> None:
 
 
 # --- data-anchored labels (DESIGN s.4) ----------------------------------------------------------------------------------------
+KNOCKOUT = {
+    "boxstyle": "square,pad=0.08",
+    "fc": P.WHITE,
+    "ec": "none",
+}  # ``bbox=`` for a label on a line
+
+
 def label_line(ax: Axes, x: float, y: float, text: str, where: str = "above", **kw):
     """A direct label for a reference line or annotation, anchored to the data point (x, y) it names
     and offset at most MAX_LABEL_OFFSET_PT. ``where``: above / below / right / left.

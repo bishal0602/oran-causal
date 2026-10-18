@@ -14,11 +14,7 @@ from oran_causal.figures import palette as P
 from oran_causal.figures import style as S
 
 THIN = " "  # thin space as the thousands separator ("8 674")
-KNOCKOUT = {
-    "boxstyle": "square,pad=0.08",
-    "fc": P.WHITE,
-    "ec": "none",
-}  # value labels sit on white over grid / ref lines
+KNOCKOUT = L.KNOCKOUT  # value labels sit on white over grid / ref lines
 
 
 def key13(code: str) -> str:

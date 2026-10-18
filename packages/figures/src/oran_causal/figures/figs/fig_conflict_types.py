@@ -5,9 +5,10 @@ parameters over E2 (dashed, control), and parameters move KPIs in the RAN (solid
 the same three columns, so the rows differ only in where the conflict sits: at a shared parameter (direct), at a
 shared KPI reached through different parameters (indirect), or outside the declared links, as a side effect of one
 xApp's parameter on the other xApp's KPI (implicit). The conflict is the only coloured mark (semantic BAD, gid
-``sem:bad``), drawn as a solid outline on the shared parameter (a), the shared KPI (b) and the degraded KPI (c); the
-hidden side effect itself is the dotted "degrades" arrow (c). Everything else is ink and gray; xApps are identified by
-label only.
+``sem:bad``): a flagged box (``diagram.box(role="bad")``) on the shared parameter (a), the shared KPI (b) and the
+degraded KPI (c); the hidden side effect itself is the dotted "degrades" arrow (c). Everything else is B0 diagram
+furniture from ``diagram``: white boxes, a FIELD card for the near-RT RIC, plain ink arrows with the word beside the
+line.
 
 Examples and sources (cited in the text; unchanged from the earlier Figure 1, oran_causal/figures/svg/fig_intro_conflict.py):
   direct    ES lowers and CCO raises transmit power: QACM (Wadud et al., IEEE TGCN 2024), Sec. VIII-A.
@@ -21,7 +22,7 @@ kept in reviews/2026-10-13/briefs/F1R_concepts.py); revised 2026-10-14 after the
 """
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
+from matplotlib.patches import FancyArrowPatch
 
 from oran_causal.figures import diagram as D
 from oran_causal.figures import layout as L
@@ -41,28 +42,17 @@ SPEC = FigSpec(
 )
 
 H = 154.0  # canvas height (pt); the brief caps it at 2.2 in
-LW = 0.7  # structure: arrows
-LW_BOX = 0.6  # structure: box and frame outlines
-LW_BAD = 1.2  # emphasis: the conflict
-HEAD = "-|>,head_length=4,head_width=2.2"
-DASH = (0, (3, 1.6))  # E2 control (DESIGN s.10: dashed for control)
-DOT = (0, (0.1, 2.0))  # hidden side effect: round dots at the emphasis weight
-FS = S.ANNOT_PT  # 8 pt everywhere except the panel letters
-BAD = P.BAD
-
-# columns: centre x and box width (pt)
-COLS = {"x": (112.0, 62.0), "p": (220.0, 60.0), "k": (326.8, 80.0)}
-FRAME_PAD = (
-    3.0  # near-RT RIC frame around the xApp boxes (sides, top); the bottom also carries its label
-)
-FRAME_PAD_BOTTOM = 5.0
+HEADER_Y = 10.0
 BOX_H, PITCH = 14.0, 22.0  # box height; vertical distance of the two boxes in a row
-HEADER_Y = 8.5
-ROW_TOP, ROW_GAP = 15.0, 10.5
+ROW_TOP, ROW_GAP = 20.0, 8.0
 ROW_H = PITCH + BOX_H
 NAME_X = 13.0
-SHARED_DY = 3.5  # two arrows into one box land this far either side of its centre
-SIDE_DX = 16.0  # the side effect leaves its parameter box this far right of the box centre
+CARD_PAD = 6.0  # near-RT RIC card around the xApp boxes
+SHARED_DY = 3.5  # two arrows meeting at one box side keep this far either side of its centre
+MARGIN = 1.5  # an arrow stops this far from the box edge
+
+# columns: centre x and box width (pt)
+COLS = {"x": (114.5, 59.0), "p": (215.0, 60.0), "k": (328.0, 80.0)}
 
 # one row per conflict type: xApps, parameters, KPIs (a single item is shared and drawn centred)
 TYPES = [
@@ -90,7 +80,7 @@ TYPES = [
         "k": ["handover boundary"],
         "bad": ("k", 0),
         "edges": [
-            ("x0", "p0", "E2 control"),
+            ("x0", "p0", "E2"),
             ("x1", "p1", None),
             ("p0", "k0", None),
             ("p1", "k0", None),
@@ -108,116 +98,12 @@ TYPES = [
         "side": ("p0", "k1", "degrades"),
     },
 ]
-KIND = {"x": "xapp", "p": "param", "k": "kpi"}
-HEADERS = {"x": "xApps", "p": "RAN parameters", "k": "KPIs"}
+HEADERS = {"p": "RAN parameters", "k": "KPIs"}
 
 
-def _text(ax, x, y, s, ha="center", va="baseline", weight="normal", size=FS, **kw):
+def _text(ax, x, y, s, ha="center", va="baseline", weight="normal"):
     return ax.text(
-        x, y, s, ha=ha, va=va, fontsize=size, fontweight=weight, color=P.INK, zorder=6, **kw
-    )
-
-
-def _box(ax, cx, cy, w, label, kind, bad=False):
-    """xApp: gray tint, rounded, bold label; parameter: white, square; KPI: white pill. A conflict
-    element keeps its fill and gets a solid BAD outline at the emphasis weight.
-    """
-    r = {"xapp": 2.5, "param": 0.8, "kpi": BOX_H / 2}[kind]
-    fc = P.tint(P.NEUTRAL, 0.14) if kind == "xapp" else P.WHITE
-    ec, lw = (BAD, LW_BAD) if bad else (P.NEUTRAL, LW_BOX)
-    ax.add_patch(
-        FancyBboxPatch(
-            (cx - w / 2, cy - BOX_H / 2),
-            w,
-            BOX_H,
-            boxstyle=f"round,pad=0,rounding_size={r}",
-            fc=fc,
-            ec=ec,
-            lw=lw,
-            zorder=3,
-            gid="sem:bad" if bad else f"diagram:{kind}",
-        )
-    )
-    _text(ax, cx, cy, label, va="center_baseline", weight="bold" if kind == "xapp" else "normal")
-
-
-def _arrow(ax, a, b, ls="-", bad=False):
-    if ls != "-":  # a patterned shaft, then a solid head (a dashed head outline comes out ragged)
-        (xa, ya), (xb, yb) = a, b
-        n = ((xb - xa) ** 2 + (yb - ya) ** 2) ** 0.5
-        ux, uy = (xb - xa) / n, (yb - ya) / n
-        ax.plot(
-            [xa, xb - 4.5 * ux],
-            [ya, yb - 4.5 * uy],
-            color=P.INK,
-            lw=LW,
-            ls=ls,
-            marker="",
-            dash_capstyle="butt",
-            zorder=4,
-            gid="arrow",
-        )
-        a = (xb - 4.5 * ux, yb - 4.5 * uy)
-    ax.add_patch(
-        FancyArrowPatch(
-            a,
-            b,
-            arrowstyle=HEAD,
-            mutation_scale=1,
-            color=BAD if bad else P.INK,
-            lw=LW_BAD if bad else LW,
-            ls=ls,
-            shrinkA=0,
-            shrinkB=0,
-            zorder=4,
-            gid="sem:bad" if bad else "arrow",
-            joinstyle="miter",
-            capstyle="butt",
-        )
-    )
-
-
-def _side_effect(ax, src, dst, ym, label):
-    """Dotted BAD arrow from below the source parameter box, along the row's midline (between the
-    two box rows) and down into the top of the degraded KPI, its word on the arrow over the
-    parameter-to-KPI gap.
-    """
-    (xs, ys, _), (xd, yd, wd) = src, dst
-    x0, x1 = xs + SIDE_DX, xd - wd / 2 + 13.0
-    ax.plot(
-        [x0, x0, x1],
-        [ys + BOX_H / 2 + 0.8, ym, ym],
-        color=BAD,
-        lw=LW_BAD,
-        ls=DOT,
-        marker="",
-        solid_capstyle="round",
-        dash_capstyle="round",
-        zorder=4,
-        gid="sem:bad",
-    )
-    ax.add_patch(
-        FancyArrowPatch(
-            (x1, ym - 0.6),
-            (x1, yd - BOX_H / 2 - 0.8),
-            arrowstyle=HEAD,
-            mutation_scale=1,
-            color=BAD,
-            lw=LW_BAD,
-            shrinkA=0,
-            shrinkB=0,
-            zorder=4,
-            gid="sem:bad",
-        )
-    )
-    gap_l, gap_r = COLS["p"][0] + COLS["p"][1] / 2, COLS["k"][0] - COLS["k"][1] / 2
-    _text(
-        ax,
-        (gap_l + gap_r) / 2 + 0.6,
-        ym,
-        label,
-        va="center_baseline",
-        bbox={"boxstyle": "square,pad=0.12", "fc": P.WHITE, "ec": "none"},
+        x, y, s, ha=ha, va=va, fontsize=S.ANNOT_PT, fontweight=weight, color=P.INK, zorder=6
     )
 
 
@@ -225,8 +111,8 @@ def _row(ax, i, ty):
     y0 = ROW_TOP + i * (ROW_H + ROW_GAP)
     ym = y0 + ROW_H / 2
     base = (
-        0.36 * FS
-    )  # half the cap height: a baseline this far below a box centre aligns with its label
+        0.36 * S.ANNOT_PT
+    )  # half the cap height: a baseline this far below a centre aligns with a label
     let = ax.text(
         2.0,
         ym - PITCH / 2 + base,
@@ -246,86 +132,79 @@ def _row(ax, i, ty):
         for j, lab in enumerate(items):
             cy = ym if len(items) == 1 else ym + (j - 0.5) * PITCH
             pos[f"{t}{j}"] = (cx, cy, w)
-            _box(ax, cx, cy, w, lab, KIND[t], ty["bad"] == (t, j))
+            role = "bad" if ty["bad"] == (t, j) else "neutral"
+            D.box(ax, cx - w / 2, cy - BOX_H / 2, w, BOX_H, lab, role=role)
 
-    def ends(a, b, dy_b=0.0):
+    side = ty.get("side")
+
+    def ends(a, b, dy_a=0.0, dy_b=0.0):
         (xa, ya, wa), (xb, yb, wb) = pos[a], pos[b]
-        return (xa + wa / 2 + 1.5, ya), (xb - wb / 2 - 1.5, yb + dy_b)
+        return (xa + wa / 2 + MARGIN, ya + dy_a), (xb - wb / 2 - MARGIN, yb + dy_b)
 
     for a, b, lab in ty["edges"]:
+        # arrows sharing a box side keep apart: the side effect and its neighbours split the side
+        dy_a = -SHARED_DY if side and a == side[0] else 0.0
         dy_b = (int(a[1]) - 0.5) * 2 * SHARED_DY if len(ty[b[0]]) == 1 else 0.0
-        p0, p1 = ends(a, b, dy_b=dy_b)
-        _arrow(ax, p0, p1, ls=DASH if a[0] == "x" else "-")
-        if lab:  # above the upper arrow / below the lower arrow of the row
-            up = a[1] == "0"
-            _text(
-                ax,
-                (p0[0] + p1[0]) / 2,
-                (p0[1] + p1[1]) / 2 + (-2.5 if up else 2.5),
-                lab,
-                va="bottom" if up else "top",
-            )
-    if "side" in ty:
-        a, b, lab = ty["side"]
-        _side_effect(ax, pos[a], pos[b], ym, lab)
+        if side and b == side[1]:
+            dy_a, dy_b = (SHARED_DY if a[0] == "p" else 0.0), SHARED_DY
+        p0, p1 = ends(a, b, dy_a, dy_b)
+        up = a[1] == "0"
+        mid = ((p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2)
+        D.arrow(
+            ax,
+            [p0, p1],
+            lab,
+            dashed=a[0] == "x",
+            label_at=(mid[0], mid[1] + (-2.5 if up else 2.5)),
+            label_va="bottom" if up else "top",
+        )
+    if side:
+        a, b, lab = side
+        p0, p1 = ends(a, b, SHARED_DY, -SHARED_DY)
+        D.arrow(
+            ax,
+            [p0, p1],
+            lab,
+            dotted=True,
+            flag=True,
+            label_at=((p0[0] + p1[0]) / 2 - 1.0, (p0[1] + p1[1]) / 2 + 6.0),
+            label_va="top",
+        )
     return pos
 
 
 def build():
     fig, ax = D.canvas("full", height_pt=H)
-    for t, (cx, _) in COLS.items():
-        _text(ax, cx, HEADER_Y, HEADERS[t], weight="bold")
-    rows = [_row(ax, i, ty) for i, ty in enumerate(TYPES)]
-    # the near-RT RIC frame encloses the xApp boxes only (first to last), its name on the bottom
-    # edge
     cx, w = COLS["x"]
-    top = rows[0]["x0"][1] - BOX_H / 2 - FRAME_PAD
-    bottom = rows[-1]["x1"][1] + BOX_H / 2 + FRAME_PAD_BOTTOM
-    ax.add_patch(
-        FancyBboxPatch(
-            (cx - w / 2 - FRAME_PAD, top),
-            w + 2 * FRAME_PAD,
-            bottom - top,
-            boxstyle="round,pad=0,rounding_size=4",
-            fc="none",
-            ec=P.NEUTRAL_LIGHT,
-            lw=LW_BOX,
-            ls=(0, (3, 2)),
-            zorder=1,
-            gid="container",
-        )
-    )
-    _text(
+    top = 1.0
+    bottom = ROW_TOP + len(TYPES) * ROW_H + (len(TYPES) - 1) * ROW_GAP + CARD_PAD
+    D.container(
         ax,
-        cx,
-        bottom,
+        cx - w / 2 - CARD_PAD,
+        top,
+        w + 2 * CARD_PAD,
+        bottom - top,
         "Near-RT RIC",
-        va="center_baseline",
-        bbox={"boxstyle": "square,pad=0.15", "fc": P.WHITE, "ec": "none"},
+        title_dy=HEADER_Y - top,
+        ha="center",
     )
+    for t, label in HEADERS.items():
+        _text(ax, COLS[t][0], HEADER_Y, label, weight="bold", va="center_baseline")
+    for i, ty in enumerate(TYPES):
+        _row(ax, i, ty)
 
-    # build-time checks: one solid conflict outline per row, plus the implicit row's dotted path and
-    # its head; the side effect only in the implicit row, the E2 label once, everything inside the
-    # canvas
+    # build-time checks: one flagged box per row, plus the implicit row's dotted arrow and its head;
+    # the side effect only in the implicit row, the E2 word once, everything inside the canvas
     marks = [a for a in (*ax.patches, *ax.lines) if a.get_gid() == "sem:bad"]
-    outlines = [m for m in marks if isinstance(m, FancyBboxPatch)]
-    assert len(marks) == len(TYPES) + 2 and len(outlines) == len(TYPES), len(marks)
-    assert all(
-        m.get_linestyle() in ("-", "solid") for m in outlines
-    )  # every conflict outline is solid
-    paths = [m for m in marks if not isinstance(m, FancyArrowPatch | FancyBboxPatch)]
-    assert len(paths) == 1
-    assert paths[0].get_linestyle() not in (
-        "-",
-        "solid",
-    )
+    boxes = [m for m in marks if hasattr(m, "get_boxstyle")]
+    assert len(boxes) == len(TYPES) and len(marks) == len(TYPES) + 2, len(marks)
+    assert sum(isinstance(m, FancyArrowPatch) for m in marks) == 1
     assert [("side" in ty) for ty in TYPES] == [False, False, True]
-    assert sum(e[2] == "E2 control" for ty in TYPES for e in ty["edges"]) == 1
-    assert top > HEADER_Y + 2.0
+    assert sum(e[2] == "E2" for ty in TYPES for e in ty["edges"]) == 1
     assert bottom + 4.0 <= H
     assert (
         H / 72 + 2 * plt.rcParams["savefig.pad_inches"] <= 2.2
     )  # the PDF, tight-bbox padding included
-    assert COLS["x"][0] - COLS["x"][1] / 2 - FRAME_PAD > NAME_X + 60.0  # frame clears the row names
+    assert cx - w / 2 - CARD_PAD > NAME_X + 60.0  # the card clears the row names
     assert COLS["k"][0] + COLS["k"][1] / 2 <= S.FULL * 72 - D.EDGE_PT
     return L.finalize(fig)

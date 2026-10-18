@@ -176,18 +176,5 @@ def build():
             ax, letter, f"{w}: {E.BLURB[w]}", cw, HEAD[1] if w in ("E1", "E2", "E3") else HEAD[2]
         )
     hs, ls = legend_entries([E.GRAPHS[w] for w in WORLDS])
-    fig.legend(
-        hs,
-        ls,
-        loc="upper center",
-        bbox_to_anchor=(0.5, 1.0),
-        ncol=3,
-        fontsize=S.LEGEND_PT,
-        frameon=False,
-        handlelength=2.0,
-        handletextpad=0.5,
-        columnspacing=1.2,
-        labelspacing=0.35,
-        borderaxespad=0.1,
-    )
+    L.canvas_legend(fig, hs, ls, ncol=3)
     return L.finalize(fig)

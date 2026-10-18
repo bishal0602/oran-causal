@@ -42,7 +42,7 @@ SPEC = FigSpec(
 )
 
 OK, ERR = P.TEAL, P.TERRACOTTA  # edge status, as fig_study1_discovery (palette "H2")
-NULL_FC, UNSC_FC = P.tint(P.TERRACOTTA, 0.25), P.tint(P.NEUTRAL, 0.45)
+NULL_FC, UNSC_FC = P.NULL_FILL, P.UNSCORED_FILL
 # (key, column head, fill, edge, legend label)
 CATS = [
     ("true_right", "Right", OK, "none", "GT-TRUE, right sign"),
@@ -169,7 +169,6 @@ def build():
     a.set_xticks([0, 10, 20, 30, 40])
     a.set_xlabel("Edges in the map")
     plots.finish(a)
-    a.spines["left"].set_visible(False)
     H.row_axes(a, ylim, ys, [R.THRESHOLD.get(M.resolve(c).threshold, "") for c in flat])
     L.tidy_grid([[a]])
     for y, text in banners:

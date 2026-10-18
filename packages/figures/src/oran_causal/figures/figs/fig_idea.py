@@ -18,7 +18,6 @@ them and asserts both against the stored analyzer output (v4_analysis.json).
 import json
 
 import numpy as np
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 from oran_causal.figures import diagram as D
 from oran_causal.figures import palette as P
@@ -94,53 +93,6 @@ def load() -> dict:
     return out
 
 
-def _arrow(ax, a, b, color=P.INK, lw=0.8, ls="-", z=2):
-    ax.add_patch(
-        FancyArrowPatch(
-            a,
-            b,
-            arrowstyle="-|>,head_length=4,head_width=2.2",
-            mutation_scale=1,
-            color=color,
-            lw=lw,
-            ls=ls,
-            shrinkA=0,
-            shrinkB=0,
-            zorder=z,
-            gid="arrow",
-        )
-    )
-
-
-def _poly(ax, pts, color, lw):
-    for a, b in zip(pts[:-2], pts[1:-1], strict=False):
-        ax.plot(
-            [a[0], b[0]],
-            [a[1], b[1]],
-            color=color,
-            lw=lw,
-            solid_capstyle="butt",
-            zorder=2,
-            gid="arrow",
-        )
-    _arrow(ax, pts[-2], pts[-1], color=color, lw=lw)
-
-
-def _glow(ax, pts, color, role: str):
-    """Soft highlighter band behind a causal path (semantic colour field)."""
-    xs, ys = zip(*pts, strict=False)
-    ax.plot(
-        xs,
-        ys,
-        color=P.tint(color, 0.2),
-        lw=7,
-        solid_capstyle="round",
-        solid_joinstyle="round",
-        zorder=0.5,
-        gid=f"sem:{role}",
-    )
-
-
 def _text(ax, x, y, s, ha="center", va="center", bold=False):
     return ax.text(
         x,
@@ -181,19 +133,7 @@ def _header(ax, x, y, letter, tag):
 
 
 def _card(ax, y, h):
-    ax.add_patch(
-        FancyBboxPatch(
-            (2, y),
-            366,
-            h,
-            boxstyle="round,pad=0,rounding_size=7",
-            fc=P.FIELD,
-            ec="none",
-            lw=0,
-            zorder=1,
-            gid="container",
-        )
-    )
+    D.container(ax, 2, y, 366, h)
 
 
 # node geometry shared by (a) and (b): x, width
@@ -222,20 +162,18 @@ def _chain(ax, top: float, randomised: bool):
         gid="sem:confounder",
     )
     D.box(ax, W_X, by, W_W, NODE_H, "W", role="proposed", gid="sem:ours")
-    D.box(ax, KPI_X, by, KPI_W, NODE_H, "KPI").set_facecolor(P.tint(P.NEUTRAL, 0.16))
-    _arrow(ax, (W_X + W_W, mid), (KPI_X - 1, mid), lw=0.9)
+    D.box(ax, KPI_X, by, KPI_W, NODE_H, "KPI")
+    D.arrow(ax, [(W_X + W_W, mid), (KPI_X - 1, mid)], lw=0.9)
     _text(ax, (W_X + W_W + KPI_X) / 2, mid - 4, "effect", va="bottom")
     sc = STATE_X + STATE_W / 2
     kc = KPI_X + KPI_W / 2
     arch = [(sc, by), (sc, ay), (kc, ay), (kc, by - 1)]
     if not randomised:
-        _glow(ax, [(sc, by), (sc, ay), (kc, ay), (kc, by)], P.CONFOUNDER, "confounder-path")
-        _glow(ax, [(STATE_X + STATE_W, mid), (W_X - 1, mid)], P.CONFOUNDER, "confounder-path")
-        _poly(ax, arch, P.CONFOUNDER, SEM_LW)
-        _arrow(ax, (STATE_X + STATE_W, mid), (W_X - 1, mid), color=P.CONFOUNDER, lw=SEM_LW)
+        D.arrow(ax, arch, color=P.CONFOUNDER, lw=SEM_LW)
+        D.arrow(ax, [(STATE_X + STATE_W, mid), (W_X - 1, mid)], color=P.CONFOUNDER, lw=SEM_LW)
         _text(ax, (sc + kc) / 2, ay - 3, "confounding", va="bottom", bold=True)
         return
-    _poly(ax, arch, P.tint(P.CONFOUNDER, 0.55), 0.8)
+    D.arrow(ax, arch, color=P.tint(P.CONFOUNDER, 0.55), lw=0.8)
     D.box(
         ax,
         PI_X,
@@ -249,8 +187,8 @@ def _chain(ax, top: float, randomised: bool):
         lw=1.4,
         gid="sem:design",
     )
-    _arrow(ax, (STATE_X + STATE_W, mid), (PI_X - 1, mid), color=P.CONFOUNDER, lw=0.9)
-    _arrow(ax, (PI_X + PI_W, mid), (W_X - 1, mid), color=P.DESIGN_ROLE, lw=SEM_LW)
+    D.arrow(ax, [(STATE_X + STATE_W, mid), (PI_X - 1, mid)], color=P.CONFOUNDER, lw=0.9)
+    D.arrow(ax, [(PI_X + PI_W, mid), (W_X - 1, mid)], color=P.DESIGN_ROLE, lw=SEM_LW)
     D.box(
         ax,
         U_X,
@@ -263,7 +201,7 @@ def _chain(ax, top: float, randomised: bool):
         lw=1.4,
         gid="sem:design",
     )
-    _arrow(ax, (wc, by + 33), (wc, by + NODE_H + 1), color=P.DESIGN_ROLE, lw=SEM_LW)
+    D.arrow(ax, [(wc, by + 33), (wc, by + NODE_H + 1)], color=P.DESIGN_ROLE, lw=SEM_LW)
 
 
 HEADS = {"randomised": "600 episodes", "placebo": "Placebo, 40 episodes"}
@@ -283,7 +221,7 @@ def _hist(fig, ax0, x, y, w, h, d, kind: str, ylabel: bool = False):
     top = np.histogram(zb, bins=BINS)[0].max() * 1.9
     ax.set_ylim(0, top)
     ax.set_xlim(*XLIM)
-    ax.axvspan(q, XLIM[1], color=P.tint(P.GOOD, P.ZONE_TINT), lw=0, zorder=0.5, gid="sem:good-zone")
+    plots.span(ax, q, XLIM[1], "good", "x", zorder=0.5)
     ax.axvline(
         z,
         color=P.GOOD if real else P.NEUTRAL,
@@ -307,8 +245,6 @@ def _hist(fig, ax0, x, y, w, h, d, kind: str, ylabel: bool = False):
     ax.tick_params(axis="y", which="both", left=False, labelleft=False)
     ax.set_xticks([-4, 0, 4, 8])
     plots.finish(ax, grid=False)
-    ax.spines["left"].set_visible(False)
-    ax.spines["bottom"].set_visible(False)
     ax.set_xlabel("Test statistic")
     if ylabel:
         ax.set_ylabel("Redraws")

@@ -118,7 +118,6 @@ def subsample_panels(axs, d):
     axs[1].set_xticks([-0.1, 0, 0.1, 0.2, 0.3], ["−0.1", "0", "0.1", "0.2", "0.3"])
     for ax in axs:
         plots.finish(ax)
-        ax.spines["left"].set_visible(False)
         H.row_axes(ax, (-2.6, 0.95), [ys[c] for c in BASE], [H.name13(c) for c in BASE])
     L.tidy_grid([axs])
     L.panel_header(axs[0], "a", "Indirect F1 per subsample")

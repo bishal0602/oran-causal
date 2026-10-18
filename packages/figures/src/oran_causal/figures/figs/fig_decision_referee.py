@@ -116,14 +116,7 @@ def build():
     a.set_xlim(*R_LIM)
     b.set_xlim(*RLF_LIM)
     # (right) the breach region and the labelled limit line, under the data
-    b.axvspan(
-        R.GUARD,
-        RLF_LIM[1],
-        fc=P.tint(P.TERRACOTTA, LIMIT_TINT),
-        ec="none",
-        zorder=0,
-        gid="limit-zone",
-    )
+    plots.span(b, R.GUARD, RLF_LIM[1], "bad", "x", tint=LIMIT_TINT, gid="limit-zone")
     plots.ref_line(b, R.GUARD, axis="x")
     L.label_line(b, R.GUARD, banners[0][0], "limit", where="right")
     for (study, key), y in rows.items():
@@ -178,7 +171,6 @@ def build():
         plots.finish(ax)
         ax.grid(False)
         ax.tick_params(axis="y", left=False, labelleft=False)
-        ax.spines["left"].set_visible(False)
     for y, text in banners:
         L.banner(fig, a, y, L.BANNER_H * 0.8, text)
     return L.finalize(fig)

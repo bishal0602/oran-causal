@@ -4,10 +4,7 @@ TERMINOLOGY s.6.1 / s.7 and CDD-ORAN docs/ARCHITECTURE.md s.3 (diagram; no data)
 component: the PMRT block (DESIGN s.9); arrows ink.
 """
 
-from matplotlib.patches import FancyBboxPatch
-
 from oran_causal.figures import diagram as D
-from oran_causal.figures import palette as P
 from oran_causal.figures.registry import FigSpec
 
 SPEC = FigSpec(
@@ -40,19 +37,7 @@ def build():
     for lab, sub, y in ins:
         D.box(ax, IN_X, y, IN_W, STEP_H, lab, sub)
     # PMRT: the one hero component, with its four steps inside
-    ax.add_patch(
-        FancyBboxPatch(
-            (PM_X, 8),
-            PM_W,
-            186,
-            boxstyle="round,pad=0,rounding_size=3",
-            fc=P.tint(P.HERO, 0.16),
-            ec=P.HERO,
-            lw=1.0,
-            zorder=1.5,
-        )
-    )
-    ax.text(PM_X + 8, 19, "PMRT", fontsize=8, fontweight="bold", va="center", zorder=4)
+    D.container(ax, PM_X, 8, PM_W, 186, "PMRT", role="proposed", title_dy=11)
     steps = [
         ("Assignment score", "from the logged propensities"),
         ("Predictable adjustment", "past-only prediction"),

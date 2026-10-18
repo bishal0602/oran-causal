@@ -131,9 +131,7 @@ def _check(rates: dict) -> float:
 def _panel(ax, rates: dict, arms: list[str], designs: list[str], ub: float) -> None:
     x = np.arange(len(designs))
     plots.zone(ax, ub, YLIM[1], "bad")
-    ax.axhspan(
-        *NOMINAL_BAND, color=P.tint(P.GOOD, BAND_TINT), lw=0, zorder=0.5, gid="sem:good-band"
-    )
+    plots.span(ax, *NOMINAL_BAND, "good", tint=BAND_TINT, gid="sem:good-band", zorder=0.5)
     ax.text(
         0.03,
         0.97,
@@ -193,14 +191,5 @@ def build():
         Line2D([], [], ls="", marker="")
     ] * pad
     labels = [M.name(c) for c in USES + BLIND] + [""] * pad
-    L.fig_legend(fig, handles, labels, where="top").remove()
-    reg = L._reg(fig, "legends")
-    reg[-1] = (
-        fig,
-        fig.legend(handles, labels, loc=L.LEGEND_TOP_LOC, ncol=2),
-        handles,
-        labels,
-        "top",
-        {},
-    )
+    L.fig_legend(fig, handles, labels, where="top", ncol=2)
     return L.finalize(fig)

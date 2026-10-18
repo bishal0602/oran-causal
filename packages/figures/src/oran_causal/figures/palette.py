@@ -147,3 +147,8 @@ def tint(color: str, amount: float) -> tuple[float, float, float]:
     """Mix `color` toward white; amount = 1 keeps the color, 0 gives white."""
     r, g, b = to_rgb(color)
     return (1 - (1 - r) * amount, 1 - (1 - g) * amount, 1 - (1 - b) * amount)
+
+
+# --- edge-status fills (bars and column keys in the discovery figures) ----------------------------------------
+NULL_FILL = tint(BAD, 0.25)  # a declared edge on a true null
+UNSCORED_FILL = tint(NEUTRAL, 0.45)  # not scored

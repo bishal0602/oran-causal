@@ -78,7 +78,7 @@ SPAN_PT, GROUP_PT = (
 )  # [G3] y offset (pt below the axes) of the group rule and group label
 # ([G5] 8 pt labels; was -13.5, -18.0)
 OK, ERR, MISS, GT = P.TEAL, P.TERRACOTTA, P.MISSED, P.NEUTRAL  # edge status (palette "H2")
-NULL_FC, UNSC_FC = P.tint(P.TERRACOTTA, 0.25), P.tint(P.NEUTRAL, 0.45)
+NULL_FC, UNSC_FC = P.NULL_FILL, P.UNSCORED_FILL
 MS = 5.0  # status marker size (pt)
 THICK = 0.56  # bar thickness (row units)
 BASE7 = ["corr", "granger", "granger_by", "shap_gbdt", "two_tower", "qacm", "int"]
@@ -234,9 +234,7 @@ def build():
             fontsize=S.ANNOT_PT,
             color=P.INK,
         )
-    a.tick_params(axis="x", length=0)
-    a.grid(False)
-    a.spines["bottom"].set_visible(False)
+    plots.finish(a, grid=False)
     # (b) other 50 edges
     # ---------------------------------------------------------------------------------------------
     stat = {cc: edge_status(d, cc)[1] for cc in [D.PRIMARY, *BASE7]}
@@ -314,12 +312,9 @@ def build():
     # -------------------------------------------------------------------------------
     ticks = [y for y, _, _ in subrows]
     labs = [""] * len(ticks)
+    plots.finish(b, grid="x")
     for ax in (a, b):
-        if ax is not a:
-            plots.finish(ax)
-        ax.spines["left"].set_visible(False)
         H.row_axes(ax, ylim, ticks, labs)
-    b.grid(axis="x", visible=True)
     t.set_ylim(*ylim)
     t.patch.set_visible(False)
     L.tidy_grid([[a, b]])

@@ -201,17 +201,13 @@ def build_panel(which: str):
     if which == "pooled":
         plots.ref_line(ax, 0.05, axis="x")
         L.rate_axis(ax, "x", "Null-edge rate")
-        plots.finish(ax)
-        ax.grid(axis="x", visible=True)
-        ax.spines["left"].set_visible(False)
+        plots.finish(ax, grid="x")
     else:
         ax.set_xlim(-0.5, len(T.WORLDS) - 0.5)
         ax.set_xticks(range(len(T.WORLDS)), [w if w != "E4" else "E4\nplacebo" for w in T.WORLDS])
         ax.tick_params(axis="x", length=0)
         ax.set_xlabel("Environment")
-        ax.grid(False)
-        for side in ax.spines.values():
-            side.set_visible(False)
+        plots.finish(ax, grid=False)
     ax.set_ylim(*ylim)
     ax.set_yticks([s[0] for s in subrows], [REG_LABEL[s[2]] for s in subrows], fontsize=S.ANNOT_PT)
     ax.tick_params(axis="y", length=0)

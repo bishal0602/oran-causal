@@ -208,7 +208,7 @@ and an ink label on every box. Entity hues never appear in a method figure, and 
   (`layout.invalid_marks`).
 - Callouts (`layout.callout`): 8 pt ink, placed automatically where they collide with no data, text or legend; a
   leader line when the text sits more than 6 pt from its anchor.
-- Coinciding values: dodged horizontally (`layout.dodge`), said in the caption.
+- Coinciding values: dodged horizontally (`layout.dodge`), said in the text that cites the figure.
 
 **Causal maps** (tile grids, `fig_maps`): ground-truth edge = 62 % blue tile, white triangle in the sign;
 right sign = teal tile, white triangle; wrong sign = terracotta tile, white triangle; false edge = 30 % terracotta
@@ -262,6 +262,7 @@ The gallery sheet `specimen_key` draws this whole key in one figure.
   type only when uncertainty is drawn, as a short clause. The figure speaks for itself through
   its data, labels, legend and direct annotation, not through the caption.
 - No findings, mechanism, definitions of encodings or re-description of what is shown.
+- **Figures, tables and ESM captions alike are a short title.** A definition, rule or count goes into a column header, a table row, a legend entry, or the text that cites the float; a one-line table note only where a symbol must be defined.
 - If a reader needs explanatory text to read the figure, the figure is wrong: redesign it (clearer labels, direct
   annotation, fewer marks) rather than adding words.
 

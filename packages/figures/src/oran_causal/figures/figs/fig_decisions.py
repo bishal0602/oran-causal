@@ -16,7 +16,6 @@ freeze, incumbent, static envelope, random map, no-map control. Never-sleep is t
 
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.patches import FancyArrowPatch
 
 from oran_causal.figures import layout as L
 from oran_causal.figures import methods as M
@@ -101,23 +100,6 @@ def _point(ax, arm, code, *, filled, hero=False, cross=True):
     )
     M.row_point(ax, x, y, None, code, hero=hero, fill=filled)
     return x, y
-
-
-def _arrow(ax, p, q, shrink=(4, 4), color=P.INK, lw=0.8, gid="gate-arrow"):
-    ax.add_patch(
-        FancyArrowPatch(
-            p,
-            q,
-            arrowstyle="-|>",
-            mutation_scale=7 + 2 * (lw > 1),
-            lw=lw,
-            color=color,
-            shrinkA=shrink[0],
-            shrinkB=shrink[1],
-            zorder=2.5,
-            gid=gid,
-        )
-    )
 
 
 def _labels(ax, mg_p, cs_p, mg_g, cs_g, p_mg_p, p_cs_p, fig):
@@ -205,6 +187,6 @@ def build():
     # PMRT map (hero); the gated point coincides with never-sleep
     p_mg_p = _point(ax, mg_p, "MG:PMRT", filled=False, hero=True)
     p_cs_p = _point(ax, cs_p, "CS:PMRT", filled=True, hero=True)
-    _arrow(ax, p_mg_p, p_cs_p, color=P.OURS, lw=1.6, gid="sem:ours-arrow")
-    _arrow(ax, p_mg_g, p_cs_g, shrink=(3, 3))
+    plots.arrow(ax, p_mg_p, p_cs_p, shrink=(4, 4), color=P.OURS, lw=1.6, gid="sem:ours-arrow")
+    plots.arrow(ax, p_mg_g, p_cs_g, shrink=(3, 3), gid="gate-arrow")
     return _labels(ax, mg_p, cs_p, mg_g, cs_g, p_mg_p, p_cs_p, fig)

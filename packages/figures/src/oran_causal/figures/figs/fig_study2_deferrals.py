@@ -70,7 +70,6 @@ def build():
     ax.set_xticks(ticks, [f"{t // 1000:g}" for t in ticks])
     ax.set_xlabel("Rejected units (×10³)")
     plots.finish(ax)
-    ax.spines["left"].set_visible(False)
     labels = [f"{E.param_plain_label(f)}, {_direction(tables, f)}" for f in FAMILIES]
     H.row_axes(ax, (-0.6, len(FAMILIES) - 0.4), ys, labels)
     ax.tick_params(axis="y", labelsize=S.TICK_PT)

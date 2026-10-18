@@ -57,11 +57,7 @@ R_TICKS = [-10, -5, 0, 0.5, 1]
 _XP = np.array([FAR[0], FAR[1], NEAR[0], NEAR[1]])
 _UP = np.array([0.0, W_FAR, W_FAR + W_GAP, 1.0])
 TOP, BOTTOM = 1.9, 1.5  # row units above the first banner / below the last row (label strips)
-WHITE_BOX = {
-    "fc": "white",
-    "ec": "none",
-    "pad": 0.4,
-}  # a label crossing a reference line stays legible
+WHITE_BOX = L.KNOCKOUT  # a label crossing a reference line stays legible
 GAP = 0.62  # extra space between two methods (row units; layout.METHOD_GAP is 0.95)
 
 
@@ -312,7 +308,6 @@ def build_referee(fig, axs, study: str, sections, hero_codes, *, note=None):
     for ax in (a, b):
         plots.finish(ax)
         ax.tick_params(axis="y", length=0)
-        ax.spines["left"].set_visible(False)
     a.set_yticks(
         ys, [THRESHOLD.get(M.resolve(code).threshold, "") for code in flat], fontsize=S.ANNOT_PT
     )
