@@ -6,3 +6,4 @@ public import OranCausal.Fresh
 public import OranCausal.Exact
 public import OranCausal.GateBudget
 public import OranCausal.Slope
+public import OranCausal.Asymptotic

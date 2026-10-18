@@ -1,7 +1,7 @@
 ---
 id: THM-PMRT-ASY
 kind: lean
-status: todo
+status: needs clarity
 ---
 
 # 07 THM-PMRT-ASY: Asymptotic validity of PMRT
@@ -173,15 +173,17 @@ As in `README.md`: builds, no `sorry`, axioms limited to `propext`, `Classical.c
 
 ## Result
 
-Filled in by the agent.
+Resumed the previous agent's passing implementation, reviewed its hypotheses,
+expanded the axiom audit, and documented the proof and remaining qualifications
+in `../ASYMPTOTIC_REPORT.md`.
 
 | Field | Value |
 |---|---|
-| Status | |
-| Main declaration(s) | |
-| Files | |
-| Deviation from the claim | |
-| Hypotheses not stated in the claim | |
-| `lake build` | |
-| `#print axioms` | |
-| Notes | |
+| Status | `needs clarity` |
+| Main declaration(s) | `OranCausal.Asymptotic.pmrt_martingale`; `self_normalized_clt`; `standardized_redraw_moments`; `redraw_cdf_limit`; `redraw_score_cdf_limit`; `conditional_binomial_rejection_limit`; `asymptotic_rejection_bound`; `fixed_direction_score_limit`; `zero_variance_vanishes` (all in `OranCausal.Asymptotic`) |
+| Files | `proofs/OranCausal/Asymptotic.lean`; import in `proofs/OranCausal.lean`; `proofs/ASYMPTOTIC_REPORT.md`; `proofs/task07-resume-build.log`; `proofs/task07-axioms.log` |
+| Deviation from the claim | The A1–A3 martingale assertion explicitly uses square-integrable weights, which A4 supplies but A1–A3 alone do not. Exact redraw variance one is proved on `sigma > 0`; on `sigma = 0`, `zero_redraw_moments` proves variance zero. A4 makes this event negligible, and conservative reporting preserves the final bound. The report gives counterexamples to both unqualified finite-sample statements. |
+| Hypotheses not stated in the claim | Named external theorem obligations `HallHeyde mu` (Hall–Heyde Corollaries 3.1/3.2), `LindebergFellerPolya nu` (Durrett Theorem 3.4.10 and Exercise 3.2.9), and `Polya` (general continuous-limit version). No new Lean axioms. Stages explicitly take measurability of conditional redraw quantities and the conditional independent Bernoulli/product law describing the redraw experiment; construction of one probability kernel and end-to-end discharge of these interfaces are not packaged. Exact statements and source mapping are in the report. |
+| `lake build` | PASS: exit 0, 3302 jobs, `task07-resume-build.log`. No Task 07 warnings or errors; two existing Task 06 tactic-linter warnings were replayed. |
+| `#print axioms` | PASS: all fourteen audited declarations use only `propext`, `Classical.choice`, and `Quot.sound`; no `sorryAx`. See `task07-axioms.log`. Forbidden-proof-feature scan clean. |
+| Notes | Proves the beta integral and binomial mixture, the probability integral transform, and the fixed-grid probability limit, including grid endpoints. `asymptotic_rejection_bound` gives limsup Pr(p ≤ t) ≤ floor(t(B+1))/(B+1) ≤ t for fixed B and t in [0,1], conditional on its explicit interfaces. This supplies the super-uniformity conclusion for Task 08. Fixed-sign and fixed random-orientation score-limit helpers are included; no per-sample orientation selection is justified. No paper edits, commits, or pushes. |
