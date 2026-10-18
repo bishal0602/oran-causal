@@ -1,8 +1,3 @@
-% Step 5 rewrite (2026-10-14): System model and problem formulation. Built from old 3.1 (decision units, logging),
-% old 4.2 (estimand, Definition 1, interference) and the decision metrics of old 8.4 (Table tab:arms). The simulator,
-% scenario and xApp table moved to Section 5. Sources: as in the old sections (backups in the job tmp folder and git
-% history): UP = cdd_oran/decision/units_p.py; CP = cdd_oran/decision/collect_p.py; GT = cdd_oran/decision/gt_p.py;
-% CPR = docs/benchmark/E6P_CONFOUNDED_PROTOCOL.md s.3, s.7.2; W3 = reviews/2026-10-10/drafts/proposition.tex.
 \section{System model and problem formulation}
 \label{sec:system}
 
@@ -13,22 +8,22 @@ logged decisions, and using that map to mitigate conflicts within safety limits.
 \subsection{Near-RT RIC and conflict mitigation}
 \label{sec:setting_ric}
 
-The system consists of a near-RT RIC that hosts several xApps and controls a set of cells (Figure~\ref{fig:system_e6p}).
+The system consists of a near-RT RIC that hosts several xApps and controls a set of cells (Figure~\ref{fig:system}).
 Each xApp reads measurement reports from the cells and sends control requests that change one of its control
 parameters on a cell, and each family of control parameters has a single writer. Every request passes a
 conflict-mitigation interface in the style of the O-RAN Working Group~3 report~\cite{ORANConflictMit}, which accepts or
 rejects it, as the near-RT RIC platform does with a control request that an xApp sends over the E2
 interface~\cite{ORANRICARCH}. We call the rule that makes this choice the referee. A rejected request is left
-unapplied, and the xApp may propose it again later. % src: TERM s.1 (ConMit, referee); O-RAN WG3 RICARCH R005 s.9.3.3; TERM s.7 (rejection)
+unapplied, and the xApp may propose it again later.
 The network state is summarised by per-cell KPIs, such as protected-slice violations, service violations, energy,
 radio-link failures (RLFs) and served load. A request on a cell acts on that cell, on its neighbours, taken from the
-cell's observable neighbour list, and on the remaining cells; these are the own, neighbour and far relations. % src: UP docstring (exposure set N(c)); GT docstring (relations); MET s.1 (KPIs)
+cell's observable neighbour list, and on the remaining cells; these are the own, neighbour and far relations.
 
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_system_e6p.pdf}
 \caption{System model.}
-\label{fig:system_e6p}
+\label{fig:system}
 \end{figure}
 
 \subsection{Decision units and logging}
@@ -42,14 +37,14 @@ the propensity $\pi_u$ and rejects with probability $1 - \pi_u$, and the logging
 RIC records, for every unit, its mode and its propensity. Each unit also carries an observation-only context: the
 opening request, the cell's recent reports and applied configuration, and their aggregates over the neighbouring
 cells. Discovery methods read only the logged units, their context and the per-cell KPI series; the simulator's
-internal counters and the ground truth remain hidden from them. % src: UP docstring (unit, T = 60 s; context); CP docstring (logged mode and p); AR s.2.3 (PRIVILEGED_KEYS); units_p.py:236-261 (one draw at opening; reject -> every request of the pair rejected)
+internal counters and the ground truth remain hidden from them.
 
 Three logging policies are considered. The randomised policy accepts or rejects each unit with probability 0.5,
 independently, from the start of an episode. The incumbent policy is confounded: its propensity, within
 $[0.15, 0.85]$, depends on the request class and on the cell state, namely the physical resource block (PRB)
 utilisation for energy-saving requests and the fraction of protected user equipments (UEs) below their throughput
 floor for protected-share requests. Placebo logs draw and record modes in the same way but apply every request, so
-that no logged mode has any effect. % src: CP PI0_V4 (accept .5 / reject .5); CP incumbent_class, incumbent_pressure, IncumbentPolicy.accept_prob (INC_FLOOR .15); CPR s.3; CP PlaceboPolicy
+that no logged mode has any effect.
 
 \subsection{Problem formulation}
 \label{sec:estimand}\claim{DEF-SYS-HYP}\claim{DEF-EST-H0}\claim{DEF-SYS-MITIG}
@@ -61,7 +56,7 @@ Let $y_u$ be the outcome of unit $u$ for $(r, k)$, namely the KPI summed over th
 opening minus the same sum in the 90~s before. Let $\mathcal{F}_{u-1}$ denote the history of the network, of every xApp and of the
 modes of earlier units up to the opening time. The xApp chooses the size of the change and the direction
 $\mathrm{sgn}_u$ of the opening request, which orients the contrast, so that a positive effect means that accepting a
-request that raises the parameter raises the KPI. % src: units_p.py:236-261; crt_units.py docstring (y = post - pre, H = H_pre = 90); GT docstring (orientation); TERM s.4 (60 hypotheses); proposition_notes.md C5
+request that raises the parameter raises the KPI.
 
 \begin{definition}[Policy-averaged assignment effect]
 \label{def:tau_pi}\claim{DEF-EST-TAUPI}
@@ -82,7 +77,7 @@ incumbent logs target different values of $\tau_{\pi}$. The knockout ground trut
 (Appendix~\ref{app:estimands}). No assumption of non-interference between cells or units is needed, because the null
 hypothesis concerns the whole assignment vector of a family. Under an alternative, the effect combines the direct
 effect of a unit's mode on the cells of its relation, the spillover from neighbouring units' modes, and the carryover
-through the policy, since a rejected request opens a new unit after the hold. % src: W3 draft (Interference); Definition 2; Lemma D.3
+through the policy, since a rejected request opens a new unit after the hold.
 
 The paper addresses two problems. The first is discovery: from the logged units and KPI series alone, and without a
 model of the network, decide for each hypothesis whether the sharp null $H_0(f, r, k)$ holds. The sharp null states that the
@@ -94,4 +89,4 @@ the energy saving that the energy-saving xApps achieve on their own. Second, eac
 violation rate, non-protected broadband violations, low-latency violations and RLFs, must stay within 1.10 times its
 value under the static rule that accepts every request (accept-all).
 Section~\ref{sec:method} addresses both problems, and Section~\ref{sec:design} specifies the scenario in which they are
-evaluated. % src: Section 4.4 (sharp null H0); Corollary 1 (FDR over sharp nulls, q = 0.05); CPR s.7.2 (V objective; retention >= 0.90; guard ratios <= 1.10; four guards); Table tab:arms (b)
+evaluated.

@@ -1,18 +1,9 @@
-% W15 (2026-10-12, restructure P1): Appendix A = Algorithm 1 (old 4), the old Appendix D, and the exactness detail of old 4.2.
 \FloatBarrier
 \section{PMRT algorithm and proofs}
-% W14 (appendix adjudication 2026-10-12, D): retitled from "Proof of Proposition 1 and Corollary 1"; the
-% appendix also proves Lemmas 1 to 3.
 \label{app:proof}
 
-% Appendix D from the W3 draft (reviews/2026-10-10/drafts/proposition.tex, part (b)), 2026-10-11; Hall and Heyde cited
-% at chapter level (RULINGS 4: theorem numbers unverified). Code map: drafts/proposition_notes.md (B).
-
-% W15 (2026-10-12, restructure P1): Algorithm 1 moved from old Section 4.
-% W17 (2026-10-12, P2): Algorithm 1 introduced by one sentence and placed before the proofs, so that it no longer floats
-% ahead of the appendix text.
 Algorithm~\ref{alg:pmrt} collects the steps of Sections~\ref{sec:pmrt} and~\ref{sec:inference} for one hypothesis,
-and the proofs below use the notation of Section~\ref{sec:inference}. % src: plan App A (Algorithm 1 here)
+and the proofs below use the notation of Section~\ref{sec:inference}.
 
 \begin{algorithm}
 \caption{PMRT for family $f$ and hypothesis $(f, r, k)$}
@@ -48,19 +39,6 @@ Table~\ref{tab:pipeline} lists the construction of the weight $w_u$ of unit $u$ 
 \begin{table}[tbp]
 \caption{Weight construction.}
 \label{tab:pipeline}
-% W17 P2b: cells shortened, the "Frozen" column dropped (it repeated the caption; step 5 says "online" in "Fitted on").
-% Dropped detail, kept in the sources below and in Algorithm 1: "a unit needs the first 90 s" (Section 4.2 window),
-% "projected to the number of analysed episodes" (FL prior_weights).
-% Row 8 (W17, moved from the old 4.2 prose): FL prior_weights (Roeder-Wasserman, floor .2, cap W_CAP 5, mean 1, projected
-% to the analysed episodes); FL prior_directions (|prior z| >= 3); PV4 s.3 (33 of 60); FL docstring (independent data).
-% Hand-written from the old Section 4.1 prose and its footnote (W17, plan 4.3; new-reviewer-2 s.4e). Sources per row:
-% PM docstring (POST bins [0,30) [30,60) [60,90) [90,150) s after t0; slots: fixed receiver score rho_f from f's effect
-% on per-cell load, top-(S-1) cells + the rest, NSLOT own 1, nbr 4, far 2; unit set = crt_units H = 90 set, a unit
-% without the [90,150) bin uses the kernel restricted to the observed bins; adjust: X_u = pre bins, other KPIs' pre,
-% own-cell pre, ctx, hist; kernel loadsp K = Sigma^-1 mu, Ledoit-Wolf, sign-constrained spatial profile x time profile;
-% score r_u = k_u - m_u, running centre, PREDICTABLE; weights "_c": Huber clip, predicted sd; sign rule |z_plain_train|
-% >= 2); PV4 s.3 (artifact holds the kernels with / without the [90, 150) bin; frozen); training: ev2 sub v2 480 eps +
-% DEV 20 (PM docstring; TERM s.6.1).
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright}p{0.2\textwidth}>{\raggedright}p{0.6\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}@{}}
@@ -80,13 +58,9 @@ Step & What it does & Fitted on \\
 \end{tabular*}
 \end{table}
 
-
 \subsection{Setting}
 \label{app:proof_setting}
 
-% W17 P2b (ruling Q1): the sharp-null and G_u paragraph of Section 4.4 moved here (first two sentences and the
-% last sentence of this paragraph). src: W3 draft (null); proposition_notes.md C1, C2; V2 B22 (invariance, not
-% pre = post); V2 B4 (statement valid under H0 only)
 Fix a hypothesis $(f, r, k)$. For every key $\xi$ defined below, let $Y_\xi$ be the target that a unit of $f$ with
 that key would have: KPI $k$ over the cells of relation $r$ in the pre- and post-windows around its opening time. The
 sharp null $H_0(f, r, k)$ states that every $Y_\xi$ is the same under any assignment of $f$'s modes. It is stated over
@@ -135,9 +109,9 @@ In the simulator the assumptions of Lemma~\ref{lem:fresh} hold because the traje
 opening time is a function of $\mathcal{G}_0$ and of the modes of earlier units. A configuration change takes effect at the next tick, the xApps and the incumbent read delivered reports only, and
 a unit of $f$ that opens in the same second at a lower-indexed cell precedes $u$ in information
 order. Assumption (A1) states this property for a general system. The propensity is 0.5 under the randomised
-policy and within $[0.15, 0.85]$ under the incumbent. % src: collect_p.py:95, 118-130, 193-219; units_p.py:236-247 (moved from Section 4.4, W17 P2b)
+policy and within $[0.15, 0.85]$ under the incumbent.
 Assumption (A3) holds by the construction of Table~\ref{tab:pipeline}, and (A4) is the one assumption that the
-construction leaves open. % src: W3 draft (A3, A4 status); pmrt.py:173-202, 295-323, 354-381, 581-590 (moved from Section 4.4, W17 P2b)
+construction leaves open.
  The number $N$ of units of $f$ is
 bounded by a deterministic $n N_{\max}$, where $N_{\max}$ is the number of cell-xApp pairs times the number of
 minutes in an episode, since a pair opens at most one unit per 60~s. Setting $v_u w_u = 0$ for the indices
@@ -234,12 +208,9 @@ too, and the score centre and the clip scale inherit both. On placebo logs, wher
 applied to every request, (i) and (ii) disappear, but (iii) remains through the earlier modes in
 $w_u$.
 
-% W15 (2026-10-12, restructure P1): exactness detail moved from old 4.2 (L905-913).
-% W17: DUP resolved (W15 marker): the moved paragraph repeated the three reasons above; its two remaining points (no
-% study is exact; the example) kept as the two sentences below. Section 4.4 keeps the two-sentence summary.
-The redraw p-value is therefore exact in none of the datasets, placebo logs included. % src: W3_DONE; RULINGS 5; proposition_notes.md C15 (no exactness claim)
+The redraw p-value is therefore exact in none of the datasets, placebo logs included.
 Example~\ref{ex:adaptive} shows a two-unit design in which re-proposal alone makes the one-sided redraw p-value
-anti-conservative. % src: W3 draft Example D.1; RULINGS 5
+anti-conservative.
 
 \begin{example}[Re-proposal alone breaks finite-sample validity]
 \label{ex:adaptive}\claim{THM-COUNTEREX}
@@ -314,8 +285,3 @@ $N^{-1} \sum_u \pi_u (1 - \pi_u) \mathrm{sgn}_u \tau_u^{\pi}$ bounded, which giv
 $4 v_u = 2\, \mathrm{sgn}_u (2 L_u - 1)$, which is Equation~\eqref{eq:slope_ht}.
 \end{proof}
 
-% src: drafts/proposition_notes.md C14 (e6p_conf_analyze.py:201-215; centre eprocess_units.py:132-148); RULINGS 17:
-% one-sentence disclosure here only, effect not quantified.
-% W17 (2026-10-12, P2): "the effect of this was not quantified" replaced by the X16 result (P2_COMMON "The X16
-% result": it replaces "not measured" wherever it appears). src: x16_centre.json (maps rel_change -0.0286 to +0.0647,
-% all sign_agree_strict; certification status_changes []); X16_DONE.md.

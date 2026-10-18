@@ -1,8 +1,3 @@
-% Step 5 rewrite (2026-10-14): Experimental setup. Built from old 3.2 (simulator, scenario, xApps), old 5.1-5.4
-% (studies, knockout ground truth, baselines, protocol), old 7.1-7.2 (controlled environments) and old 8.4 (arms,
-% metrics). Study numbers replaced by plain names. Moved to the appendix: arms table (tab:arms), controlled-environment
-% design table (tab:study4_design), the status-marker list. Every number is copied from the old text or tables
-% (journal ec32c22: tab:design_studies, tab:xapps, tab:study4_design, Sections 3.2, 5.2-5.4, 7.2, 8.4).
 \section{Experimental setup}
 \label{sec:design}
 \label{sec:design_questions}
@@ -15,7 +10,7 @@ drawn from them, the ground truth, and the baselines and metrics.
 \subsection{Simulation environment and scenario}
 \label{sec:scenario}\claim{DEF-SIM-CONST}
 
-The simulator models a near-RT RIC and the RAN it controls (Figure~\ref{fig:system_e6p}). The network has 24 cells: 21
+The simulator models a near-RT RIC and the RAN it controls (Figure~\ref{fig:system}). The network has 24 cells: 21
 macro sectors on a seven-site hexagonal layout with wrap-around and an inter-site distance of 500~m~\cite{3gpp36814},
 and three co-channel picos at traffic hotspots. Each of a fixed population of 300 UEs belongs to a low-latency (LL),
 an enhanced mobile broadband (eMBB) or a best-effort slice. Traffic, mobility and a hidden per-site load process come from an
@@ -38,7 +33,6 @@ protection that the energy-saving xApps erode.
 \begin{table}[tbp]
 \caption{xApps of the surge scenario.}
 \label{tab:xapps}
-% Cells condensed 2026-10-14; full triggers (thresholds, holds) in Appendix C.1 and the old table (journal ec32c22).
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}p{2.2cm} p{3.6cm} p{3.0cm} p{3.6cm}@{}}
 \toprule

@@ -11,7 +11,7 @@
 %%                                                                 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}%
 
 %%%% Standard Packages
 \usepackage{graphicx}%
@@ -30,7 +30,7 @@
 \usepackage{listings}%
 \usepackage{subcaption}%
 \usepackage{array}%
-\usepackage{placeins}% \FloatBarrier keeps appendix floats in their appendix (W6, V2 B23)
+\usepackage{placeins}%
 \usepackage{claims}%
 \showclaimsfalse
 \input{generated/values}
@@ -51,8 +51,6 @@
 
 \raggedbottom
 
-% Pre-registered verdict label: small caps on the page, upper case when copied or searched (ActualText).
-% Usage: \verdict{partial}, lowercase argument (TERMINOLOGY.md, verdict labels).
 \usepackage{accsupp}
 \ExplSyntaxOn
 \cs_new_protected:Npn \cdd_verdict:nn #1#2
@@ -73,30 +71,6 @@
 
 \affil[2]{\orgdiv{Department}, \orgname{Organization}, \orgaddress{\city{City}, \country{Country}}}
 
-% Abstract rewritten 2026-10-11 (W5) to outline v2 (Front matter) and RULINGS 26: problem, key idea, one findings
-% sentence per question (validity, map quality, decision quality incl. never-sleep), Study 4 scope clause, limits; FDR
-% phrase made accurate (over sharp nulls; no sign or relation control); "restored validity" and the baselines' placebo
-% declarations kept (decided wording); existence numbers once. No citations or cross-references.
-% Sources: Section 6.1 (K0, K0n, X8, Study 2 placebo); FD v4.P3_values (.92, sign accuracy 1.00), X11 frozen S2 (.86)
-% and delta dependence; X14 (26 of 28, post hoc); X15 (pooled dR +.099 [+.003, +.194]; RLF 1.18) and FD option_a.eval
-% (rlf guard); certsafe.eval.D3, X9 (CS:GT); TERM s.12 (Study 4 claim, scope s.6.1); S4 s.4 (design-adjusted RCoT the
-% one exception among the claim's member arms; V1-2); TERM s.10 (limits); Corollary 1 (FDR over sharp nulls).
-% W6 (2026-10-11): B3 (mode contrast), B7 (no declaration), B13 / B27 (primary numbers first, study per number,
-% existence labelled post hoc), 0a (gate name), V1-2, RULINGS 27 (c).
-% W8 (2026-10-12): V3 C1 (asymptotically, for sharp nulls), N11 / C2 (no placebo declaration), C3 (met its guards),
-% N3 / C4 (claims membership; S4 s.3-4: C2a / C2b members valid on R2, rcot2_eq INVALID in R1 and R2, excluded).
-% W10 (2026-10-12): V5 fix 1. "admitted to the claims" and the RCoT / i.i.d. clause replaced by "covered by the claims"
-% (rcot2_eq and mscr_eq stay outside the claims, Section 7.4); the precision sentence names the study per number and the
-% threshold dependence separately; "so what" from Sections 8.1 (Study 4 suggests the property belongs to the design),
-% 8.2 (the guards, not discovery, bind) and 8.3 (logging requirement).
-% W12 (2026-10-12): V6 fix 1. Restructured as problem, idea, shown, not shown, take-home; labels removed or glossed
-% ("design-blind", "in the claims", "null-outcome criteria"); "26 of 28" and sign accuracy left to the body (word
-% limit). Facts: Section 6.1 (no placebo declaration in either study; baselines' placebo edges), Section 6.2 (no wrong
-% sign; .92 / .86 and delta dependence), X15 (small, not robust; RLF guard), certsafe.eval.D3 and X9 (gated = never-
-% sleep; CS:GT did not beat it), Section 7.4 (C1 on R2; C2a / C3 the PMRT construction; C2b design-adjusted partial
-% correlation and Granger), TERM s.6.1 (construction, not full statistic), Sections 8.2-8.3 and 9 (take-homes).
-% Abstract 2026-10-13: user-approved (P5 drafts combined; reviews/2026-10-12/ABSTRACT_CHOICE.md), 245 words.
-% Abstract 2026-10-13: user-approved (P5 drafts combined; ending reframed per user), see reviews/2026-10-12/ABSTRACT_CHOICE.md.
 \abstract{In Open Radio Access Networks (O-RAN), xApps from different vendors can conflict even when each controls a
 different parameter, because the parameters act on the same key performance indicators (KPIs). Resolving such
 conflicts requires knowing which parameter moves which KPI, and in which direction. The logs that could reveal this
@@ -116,7 +90,6 @@ study locates the remaining limit of safe mitigation in the guards rather than i
 
 \maketitle
 
-% W15 (2026-10-12): body split into sections/*.tex (flatten before submission: the template asks for one file).
 \input{sections/s01_introduction}
 \input{sections/s02_related}
 \input{sections/s03_setting}
@@ -128,22 +101,17 @@ study locates the remaining limit of safe mitigation in the guards rather than i
 
 \backmatter
 
-% Abbreviations list dropped 2026-10-12 (user; journal requires definition at first mention only). Old list kept in
-% reviews/2026-10-12/abbreviations_list_removed.tex for the first-use audit (V7).
 \bmhead{Acknowledgements}
 
 Acknowledgements text.
 
-% Declarations added 2026-10-09; wording as decided in PAPER_PLAN.md s.2 (Back matter) [DECIDED 2026-10-05 / 2026-10-06,
-% user]. sn-jnl structure: \section*{Declarations} after Acknowledgements (template order), \bmhead for each item.
-% Commit hashes appear only in the data and code availability statement (TERM s.8).
 \section*{Declarations}
 
 \bmhead{Supplementary information}
 
 Online Resource~1 (ESM\_1.pdf): evaluation criteria and verdicts; supplementary discovery
 and decision results with the complete tables of all referee arms; the controlled environments in full; the bridging
-analysis and computing times. % W21 (V7 check 8): descriptive caption; upload supplementary.pdf as ESM_1.pdf. W13 (2026-10-12): the ESM, built from supplementary.tex
+analysis and computing times.
 
 \bmhead{Funding}
 
@@ -163,7 +131,6 @@ Not applicable.
 
 \bmhead{Data and code availability}
 
-% W10: the main-text pointers to this statement (Sections 5 and 7.1) were removed; the Appendix C intro keeps one.
 [TBD: data and code availability; will cite the commit hashes of the code and data]
 
 \bmhead{Author contributions}
@@ -174,8 +141,6 @@ written by [TBD: name] and all authors commented on previous versions of the man
 authors read and approved the final manuscript.
 
 \begin{appendices}
-% W10 (V5 s.4): sn-jnl resets the float counters once at \begin{appendices} and prefixes the appendix letter, so the
-% numbers ran on across appendices (A1-A6, B7, B8, C9...). Reset them at every appendix section as well.
 \counterwithin*{figure}{section}%
 \counterwithin*{table}{section}%
 \counterwithin*{equation}{section}%
@@ -187,7 +152,6 @@ authors read and approved the final manuscript.
 
 \end{appendices}
 
-% Flushes the appendix floats so the references start after the last table (advisor, 2026-10-09).
 \clearpage
 
 \bibliography{sn-bibliography}

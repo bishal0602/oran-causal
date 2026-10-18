@@ -1,4 +1,4 @@
-\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}%
 
 %%%% Standard Packages
 \usepackage{graphicx}%
@@ -17,7 +17,7 @@
 \usepackage{listings}%
 \usepackage{subcaption}%
 \usepackage{array}%
-\usepackage{placeins}% \FloatBarrier keeps appendix floats in their appendix (W6, V2 B23)
+\usepackage{placeins}%
 \usepackage{claims}%
 \showclaimsfalse
 \input{generated/values}
@@ -38,8 +38,6 @@
 
 \raggedbottom
 
-% Pre-registered verdict label: small caps on the page, upper case when copied or searched (ActualText).
-% Usage: \verdict{partial}, lowercase argument (TERMINOLOGY.md, verdict labels).
 \usepackage{accsupp}
 \ExplSyntaxOn
 \cs_new_protected:Npn \cdd_verdict:nn #1#2
@@ -47,7 +45,6 @@
 \NewDocumentCommand \verdict { m } { \exp_args:Nee \cdd_verdict:nn { \str_uppercase:n {#1} } {#1} }
 \ExplSyntaxOff
 
-% S-numbering for sections, tables, figures and equations (W13 brief item 2).
 \renewcommand{\thesection}{S\arabic{section}}%
 \renewcommand{\thetable}{S\arabic{table}}%
 \renewcommand{\thefigure}{S\arabic{figure}}%
@@ -78,7 +75,6 @@ table and figure numbers without an S refer to the article.}
 
 \maketitle
 
-%======================================================================
 \section{Evaluation criteria}
 \label{esm:protocol}
 \label{esm:criteria}
@@ -164,7 +160,6 @@ Criterion & Rule & Measured & Result \\
 \end{tabular}
 \end{table}
 
-%======================================================================
 \section{Discovery on the simulator logs}
 \label{esm:discovery}
 
@@ -400,7 +395,6 @@ for an interval to be a precision statement, so none is shown.
 \label{fig:s_subsamples}
 \end{figure}
 
-%======================================================================
 \section{Conflict mitigation}
 \label{esm:decision}
 
@@ -626,7 +620,6 @@ Accept-all & 0.000 [0.000, 0.000] & 0.995 &  &  \\
 {\raggedright\footnotesize Identical seeds: seeds on which the arm equals the static subset.\par}
 \end{table}
 
-%======================================================================
 \section{Controlled environments}
 \label{esm:envs}
 
@@ -1269,7 +1262,6 @@ law & law & [95\,\% CI] & [95\,\% CI] & [95\,\% CI] \\
 \end{tabular}
 \end{table}
 
-%======================================================================
 \section{Bridging analysis and computing time}
 \label{esm:bridge}
 
