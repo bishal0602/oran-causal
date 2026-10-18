@@ -23,7 +23,7 @@ NAME = "tab_appC_gt_sensitivity"
 X11 = ("posthoc_x9_x16", "revision", "x11_gt_sensitivity.json")
 SOURCES = [source_note(*X11)]
 VARIANTS = [
-    ("frozen", "Frozen rule"),
+    ("frozen", "Rule used"),
     ("delta_x0.5", r"$\delta \times 0.5$"),
     ("delta_x2", r"$\delta \times 2$"),
     ("floor_x0.5", r"Floor $\times 0.5$"),
@@ -32,8 +32,8 @@ VARIANTS = [
     ("ci99", r"99\,\% CI"),
 ]
 STUDIES = [
-    ("S1", "Study 1 (pooled 600 episodes)", "loadsp_c+wby1s", "granger_by"),
-    ("S2", "Study 2 (pooled discovery episodes)", "MG:PMRT", "MG:granger_by"),
+    ("S1", "Randomised logs, 600 episodes pooled", "loadsp_c+wby1s", "granger_by"),
+    ("S2", "Confounded logs, discovery episodes pooled", "MG:PMRT", "MG:granger_by"),
 ]
 KEYS = (
     "precision",

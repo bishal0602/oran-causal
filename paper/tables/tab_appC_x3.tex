@@ -5,27 +5,27 @@
 % Caption must carry the required X3 sentence (PAPER_PLAN s.5 item 6).
 % Needs \usepackage{booktabs}.
 \footnotesize
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{2pt}
 \begin{tabular}{@{}l c c c c c c c@{}}
 \toprule
-\multicolumn{8}{@{}l}{\textit{Truth-null edges, R2 of E1--E2}} \\
- & \multicolumn{5}{c}{Told dither width ($\times$ true)} & \multicolumn{2}{c}{Told switch delay} \\
+\multicolumn{8}{@{}l}{\textit{Truth-null edges, dithered setpoint, linear graph and rare regime}} \\
+ & \multicolumn{5}{c}{Told dither width ($\times$ true)} & \multicolumn{2}{c}{Told setpoint delay} \\
 \cmidrule(lr){2-6}\cmidrule(lr){7-8}
 Method & 0.5 & 0.8 & 1 & 1.25 & 2 & +2\,\% & +5\,\% \\
 \midrule
 \quad PMRT-GBM & 0.152$^{\textstyle *}$ & 0.079$^{\textstyle *}$ & 0.042 & 0.040 & 0.100$^{\textstyle *}$ & 0.046 & 0.062$^{\textstyle *}$ \\
 \quad PMRT-Lin & 0.313$^{\textstyle *}$ & 0.109$^{\textstyle *}$ & 0.042 & 0.016 & 0.000 & 0.086$^{\textstyle *}$ & 0.228$^{\textstyle *}$ \\
-\quad PMRT-Lin, R3 covariates & 0.306$^{\textstyle *}$ & 0.107$^{\textstyle *}$ & 0.041 & 0.012 & 0.000 & 0.086$^{\textstyle *}$ & 0.208$^{\textstyle *}$ \\
+\quad PMRT-Lin, confounder covariates & 0.306$^{\textstyle *}$ & 0.107$^{\textstyle *}$ & 0.041 & 0.012 & 0.000 & 0.086$^{\textstyle *}$ & 0.208$^{\textstyle *}$ \\
 \quad Design-adjusted partial correlation & 0.044 & 0.044 & 0.044 & 0.044 & 0.044 & 0.058 & 0.086$^{\textstyle *}$ \\
 \midrule
-\multicolumn{8}{@{}l}{\textit{Confounded null edge, E4 R3 ($\lambda$ = 1)}} \\
+\multicolumn{8}{@{}l}{\textit{Confounded null edge, latent confounding, confounded policy ($\lambda = 1$)}} \\
  & \multicolumn{5}{c}{Told $\lambda$ ($\times$ true)} & & \\
 \cmidrule(lr){2-6}
 Method & 0.5 & 0.8 & 1 & 1.25 & 2 & & \\
 \midrule
 \quad PMRT-GBM & 0.033$^{\textstyle\sim}$ & 0.017 & 0.017 & 0.017 & 0.267$^{\textstyle *}$ &  &  \\
 \quad PMRT-Lin & 0.000 & 0.017 & 0.050$^{\textstyle\sim}$ & 0.050$^{\textstyle\sim}$ & 0.167$^{\textstyle *}$ &  &  \\
-\quad PMRT-Lin, R3 covariates & 0.000 & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ & 0.050$^{\textstyle\sim}$ & 0.183$^{\textstyle *}$ &  &  \\
+\quad PMRT-Lin, confounder covariates & 0.000 & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ & 0.050$^{\textstyle\sim}$ & 0.183$^{\textstyle *}$ &  &  \\
 \quad Design-adjusted partial correlation & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ &  &  \\
 \bottomrule
 \end{tabular}

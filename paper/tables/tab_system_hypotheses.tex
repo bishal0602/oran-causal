@@ -7,19 +7,19 @@
 \toprule
 \shortstack[l]{Parameter\\(writer)} & Relation & \shortstack{protected-slice\\violations} & \shortstack{service\\violations} & \shortstack{radio-link\\failures} & energy & \shortstack{served\\load} \\
 \midrule
-carrier & own & true $-$ & true $-$ & indeterminate & true $+$ & null \\
+macro carrier & own & true $-$ & true $-$ & indeterminate & true $+$ & null \\
 (ES) & neighbour & indeterminate & null & indeterminate & indeterminate & null \\
  & far & indeterminate & null & indeterminate & null & null \\
 \midrule
-sleep & own & indeterminate & indeterminate & true $-$ & null & true $-$ \\
+pico sleep & own & indeterminate & indeterminate & true $-$ & null & true $-$ \\
 (ES) & neighbour & true $+$ & true $+$ & true $+$ & true $+$ & true $+$ \\
  & far & true $+$ & true $+$ & true $+$ & true $+$ & true $+$ \\
 \midrule
-ptx & own & true $+$ & true $+$ & true $+$ & true $+$ & true $+$ \\
+transmit power & own & true $+$ & true $+$ & true $+$ & true $+$ & true $+$ \\
 (Power ES) & neighbour & true $-$ & true $-$ & true $-$ & true $-$ & true $-$ \\
  & far & indeterminate & true $-$ & indeterminate & true $-$ & true $-$ \\
 \midrule
-prot\_min & own & true $-$ & null & null & null & null \\
+protected share & own & true $-$ & null & null & null & null \\
 (Slice Guarantee) & neighbour & null & null & null & null & null \\
  & far & null & null & null & null & null \\
 \bottomrule

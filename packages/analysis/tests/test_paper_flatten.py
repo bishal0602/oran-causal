@@ -59,9 +59,35 @@ def test_expand_inlines_inputs_and_removes_the_claims_setup(
     ]
 
 
+def test_strip_macros_expands_esm_pointers() -> None:
+    esm = {"tab:s_a": ("Table", "S3"), "esm:b": ("Sect.", "S2.1")}
+    line = r"see \esm{tab:s_a}, Tables~\esmref{tab:s_a} and \esm{esm:b}"
+    assert flatten.strip_macros(line, {}, esm) == (
+        "see Online Resource~1, Table~S3, Tables~S3 and Online Resource~1, Sect.~S2.1"
+    )
+    with pytest.raises(KeyError):
+        flatten.strip_macros(r"\esm{no:such}", {}, esm)
+
+
+def test_load_esm_reads_defesm_lines(tmp_path: Path) -> None:
+    path = tmp_path / "esm.tex"
+    path.write_text("\\makeatletter\n\\defesm{fig:s_a}{Fig.}{S1}\n", encoding="utf-8")
+    assert flatten.load_esm(path) == {"fig:s_a": ("Fig.", "S1")}
+
+
 def test_the_manuscript_flattens_without_custom_macros() -> None:
     values = flatten.load_values(PAPER / "generated" / "values.tex")
-    body = "\n".join(flatten.expand(PAPER / "sn-article.tex", values))
-    for macro in (r"\val{", r"\claim{", r"\defval{", r"\showclaims", r"\usepackage{claims}"):
+    esm = flatten.load_esm(PAPER / "generated" / "esm.tex")
+    body = "\n".join(flatten.expand(PAPER / "sn-article.tex", values, esm=esm))
+    for macro in (
+        r"\val{",
+        r"\claim{",
+        r"\defval{",
+        r"\esm{",
+        r"\esmref{",
+        r"\defesm{",
+        r"\showclaims",
+        r"\usepackage{claims}",
+    ):
         assert macro not in body
     assert r"\input{" not in body

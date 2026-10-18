@@ -6,14 +6,14 @@
 % Host note (PAPER_PLAN X7.5): re-runs vs stored records differ on some seeds by a few violations, dR within [-0.0004, +0.0003].
 % Needs \usepackage{booktabs}.
 \footnotesize
-\setlength{\tabcolsep}{3pt}
+\setlength{\tabcolsep}{1.5pt}
 \begin{tabular}{@{}l c c c c c c@{}}
 \toprule
 \multicolumn{7}{@{}l}{(a) Agreement with the static subset's decision, per request} \\
 \midrule
  & \multicolumn{5}{c}{Subset's request stream} & Own stream \\
 \cmidrule(lr){2-6}\cmidrule(lr){7-7}
-Map & prot\_min up & ptx & carrier & sleep & All & All \\
+Map & Prot. share up & Tx power & Carrier & Sleep & All & All \\
 \midrule
 Granger & 1.0000 & 1.0000 & 0.9989 & 1.0000 & 0.9999 & 0.9996 \\
 Granger + BY & 1.0000 & 1.0000 & 0.9989 & 0.9742 & 0.9994 & 0.9950 \\
@@ -27,34 +27,34 @@ Requests & 99\,785 & 5\,459 & 6\,476 & 2\,097 & 113\,817 & \\
 \par\medskip
 
 \setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}l c c c c@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.7cm} c c c c@{}}
 \toprule
 \multicolumn{5}{@{}l}{(b) Outcomes, attribution replays and paired differences vs the static subset} \\
 \midrule
  & & & $\Delta R$ vs subset & Identical \\
 Arm & $R$ [90\,\% CI] & Retention & [90\,\% CI] & seeds \\
 \midrule
-Static ES + Power ES subset & $-$11.106 [$-$12.779, $-$9.815] & 1.000 &  &  \\
+Static subset & $-$11.106 [$-$12.779, $-$9.815] & 1.000 &  &  \\
 Accept-all & 0.000 [0.000, 0.000] & 0.995 &  &  \\
 \midrule
-\multicolumn{5}{@{}l}{\textit{Edge-certified map-driven referee, Granger map}} \\
+\multicolumn{5}{@{}l}{\textit{Gated referee, Granger map}} \\
 \quad Referee & $-$11.057 [$-$12.726, $-$9.780] & 1.003 & +0.049 [$-$0.016, 0.127] & 117 \\
-\quad Replay, prot\_min only & $-$11.106 [$-$12.779, $-$9.815] & 1.000 & 0.000 [0.000, 0.000] & 160 \\
-\quad Replay, all but prot\_min & $-$0.009 [$-$0.049, 0.024] & 0.996 & +11.096 [9.807, 12.762] & 0 \\
+\quad Replay: protected-share rejections only & $-$11.106 [$-$12.779, $-$9.815] & 1.000 & 0.000 [0.000, 0.000] & 160 \\
+\quad Replay: without it & $-$0.009 [$-$0.049, 0.024] & 0.996 & +11.096 [9.807, 12.762] & 0 \\
 \midrule
-\multicolumn{5}{@{}l}{\textit{Edge-certified map-driven referee, Granger + BY map}} \\
+\multicolumn{5}{@{}l}{\textit{Gated referee, Granger + BY map}} \\
 \quad Referee & $-$10.551 [$-$12.176, $-$9.286] & 1.032 & +0.555 [0.389, 0.740] & 65 \\
-\quad Replay, prot\_min only & $-$11.102 [$-$12.773, $-$9.814] & 1.000 & +0.004 [0.000, 0.012] & 159 \\
-\quad Replay, all but prot\_min & +0.071 [0.012, 0.133] & 1.028 & +11.177 [9.894, 12.844] & 0 \\
+\quad Replay: protected-share rejections only & $-$11.102 [$-$12.773, $-$9.814] & 1.000 & +0.004 [0.000, 0.012] & 159 \\
+\quad Replay: without it & +0.071 [0.012, 0.133] & 1.028 & +11.177 [9.894, 12.844] & 0 \\
 \midrule
-\multicolumn{5}{@{}l}{\textit{Edge-certified map-driven referee, Two-tower map}} \\
+\multicolumn{5}{@{}l}{\textit{Gated referee, Two-tower map}} \\
 \quad Referee & $-$11.023 [$-$12.683, $-$9.745] & 1.003 & +0.083 [0.011, 0.166] & 109 \\
-\quad Replay, prot\_min only & $-$11.072 [$-$12.735, $-$9.786] & 1.000 & +0.034 [0.007, 0.069] & 151 \\
-\quad Replay, all but prot\_min & $-$0.009 [$-$0.049, 0.024] & 0.996 & +11.096 [9.807, 12.762] & 0 \\
+\quad Replay: protected-share rejections only & $-$11.072 [$-$12.735, $-$9.786] & 1.000 & +0.034 [0.007, 0.069] & 151 \\
+\quad Replay: without it & $-$0.009 [$-$0.049, 0.024] & 0.996 & +11.096 [9.807, 12.762] & 0 \\
 \midrule
-\multicolumn{5}{@{}l}{\textit{Edge-certified map-driven referee, SHAP-GBDT (placebo-cal.) map}} \\
+\multicolumn{5}{@{}l}{\textit{Gated referee, SHAP-GBDT map, placebo-calibrated threshold}} \\
 \quad Referee & $-$10.467 [$-$12.055, $-$9.215] & 1.033 & +0.639 [0.457, 0.848] & 33 \\
-\quad Replay, prot\_min only & $-$11.072 [$-$12.735, $-$9.786] & 1.000 & +0.034 [0.007, 0.069] & 151 \\
-\quad Replay, all but prot\_min & +0.071 [0.012, 0.133] & 1.028 & +11.177 [9.894, 12.844] & 0 \\
+\quad Replay: protected-share rejections only & $-$11.072 [$-$12.735, $-$9.786] & 1.000 & +0.034 [0.007, 0.069] & 151 \\
+\quad Replay: without it & +0.071 [0.012, 0.133] & 1.028 & +11.177 [9.894, 12.844] & 0 \\
 \bottomrule
 \end{tabular}

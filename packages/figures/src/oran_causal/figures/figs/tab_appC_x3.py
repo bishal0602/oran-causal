@@ -24,6 +24,11 @@ R2_COLS = [("width", v) if v != 1.0 else EXACT for v in C.TOLD] + [("shift", 0.0
 R3_COLS = [("lam", v) if v != 1.0 else EXACT for v in C.TOLD]
 
 
+def plain(label: str) -> str:
+    """Method label with the confounder named in words."""
+    return label.replace("R3 covariates", "confounder covariates")
+
+
 def rows(tab: dict) -> list[dict]:
     out = []
     for reg, key, cols in (("R2", "null_raw", R2_COLS), ("R3", "conf_raw", R3_COLS)):
@@ -76,16 +81,16 @@ def latex(tab: dict, rs: list[dict]) -> str:
             for c in cols
         ]
         return (
-            rf"\quad {A.tex_name(arm)} & " + " & ".join(vals + [""] * pad) + r" \\"
+            rf"\quad {plain(A.tex_name(arm))} & " + " & ".join(vals + [""] * pad) + r" \\"
         )  # full names: no family rows
 
     out += [
         r"\footnotesize",
-        r"\setlength{\tabcolsep}{4pt}",
+        r"\setlength{\tabcolsep}{2pt}",
         r"\begin{tabular}{@{}l c c c c c c c@{}}",
         r"\toprule",
-        A.group_row("Truth-null edges, R2 of E1--E2", 8),
-        r" & \multicolumn{5}{c}{Told dither width ($\times$ true)} & \multicolumn{2}{c}{Told switch delay} \\",
+        A.group_row("Truth-null edges, dithered setpoint, linear graph and rare regime", 8),
+        r" & \multicolumn{5}{c}{Told dither width ($\times$ true)} & \multicolumn{2}{c}{Told setpoint delay} \\",
         r"\cmidrule(lr){2-6}\cmidrule(lr){7-8}",
         r"Method & 0.5 & 0.8 & 1 & 1.25 & 2 & +2\,\% & +5\,\% \\",
         r"\midrule",
@@ -93,7 +98,9 @@ def latex(tab: dict, rs: list[dict]) -> str:
     out += [line(arm, "R2", R2_COLS, 0) for arm in A.M.order(ARMS)]
     out += [
         r"\midrule",
-        A.group_row(r"Confounded null edge, E4 R3 ($\lambda$ = 1)", 8),
+        A.group_row(
+            r"Confounded null edge, latent confounding, confounded policy ($\lambda = 1$)", 8
+        ),
         r" & \multicolumn{5}{c}{Told $\lambda$ ($\times$ true)} & & \\",
         r"\cmidrule(lr){2-6}",
         r"Method & 0.5 & 0.8 & 1 & 1.25 & 2 & & \\",

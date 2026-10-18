@@ -59,7 +59,7 @@
 \affil[2]{\orgdiv{Department}, \orgname{Organization}, \orgaddress{\city{City}, \country{Country}}}
 
 \abstract{This Online Resource supplements the article ``Design-Based Causal Effect Maps for O-RAN xApp Conflicts''.
-It contains the algorithm and the weight construction (Section~\ref{esm:method}), the theorem statements with proof
+It contains the weight construction and the declaration rules (Section~\ref{esm:method}), the theorem statements with proof
 ideas (Section~\ref{esm:theory}), the simulation set-up (Section~\ref{esm:setup}), and the supplementary results on
 discovery (Section~\ref{esm:discovery}), decisions (Section~\ref{esm:decision}), controlled environments
 (Section~\ref{esm:envs}) and the bridging analysis (Section~\ref{esm:bridge}). Section, table and figure numbers without
@@ -70,36 +70,7 @@ an S refer to the article.}
 \section{Method}
 \label{esm:method}
 
-Algorithm~\ref{alg:s_pmrt} collects the steps of the test for one hypothesis, Table~\ref{tab:s_pipeline} the construction of the weight $w_u$ of unit $u$ for hypothesis $(f, r, k)$ (steps 1 to 7, fitted on training, the 480 earlier and 20 development episodes) and of the inputs of the declaration layer (step 8, which runs steps 1 to 7 on the 480 earlier episodes), and Table~\ref{tab:s_rules} the rules of the test and the referee.
-
-\begin{algorithm}
-\caption{PMRT for family $f$ and hypothesis $(f, r, k)$}
-\label{alg:s_pmrt}
-\begin{algorithmic}[1]
-\Require units of $f$ with complete 90~s pre- and post-windows, in information order; propensities $\pi_u$; the fitted parameters (receiver ranking, ridge coefficients $\Gamma$, kernels $\psi_A$ per bin set $A$, clip scale model, training orientation $o$, prior weights $\omega_j$ and directions $d_j$)
-\If{fewer than 30 units, 5 accepted, 5 rejected or 3 episodes}
-  \State \Return untested (never declared)
-\EndIf
-\For{each unit $u$}
-  \State $v_u \gets \mathrm{sgn}_u\,(L(W_u) - \pi_u)$
-  \State form the post-window bins $P_u$ of KPI $k$ per receiver slot over the bins $A$ the episode allows (0--90~s, plus 90--150~s where present), and the pre-window features $X_u$
-  \State $E_u \gets P_u - \Gamma X_u$ \Comment{ridge prediction, fitted on training episodes}
-  \State $g_u \gets \psi_A^{\top} E_u$ with $\psi_A = \Sigma_{AA}^{-1} \mu_A$ \Comment{a kernel per bin set}
-  \State $w_u \gets s_u\,\mathrm{clip}\bigl((g_u - \bar g_u) / s_u, \pm c\bigr)$ \Comment{$\bar g_u$ the shrunk running mean of earlier scores (step 5 of Table~\ref{tab:s_pipeline}); Huber clip with a predictable scale $s_u$}
-\EndFor
-\State $S \gets \sum_u v_u w_u$;\; $\sigma^2 \gets \sum_u \pi_u (1 - \pi_u)\, w_u^2$;\; $z \gets S / \sigma$
-\For{$b = 1, \dots, B$}
-  \State redraw $W_u^{(b)} = \text{accept}$ with probability $\pi_u$ for the units of $f$, other families fixed; recompute $v^{(b)}$ and $z_b$ with the same $w$
-\EndFor
-\State $p \gets$ two-sided redraw p-value
-\If{$o$ is set}
-  \State $p_{+1}, p_{-1} \gets$ one-sided redraw p-values;\; sign $\gets \mathrm{sign}(S)\, o$
-\Else
-  \State $p_{+1}, p_{-1} \gets$ unavailable;\; sign $\gets$ sign of the unfiltered statistic
-\EndIf
-\State \Return $(p, p_{+1}, p_{-1}, \text{sign})$ to the declaration layer
-\end{algorithmic}
-\end{algorithm}
+Algorithm~1 of the article collects the steps of the test for one hypothesis, Table~\ref{tab:s_pipeline} the construction of the weight $w_u$ of unit $u$ for hypothesis $(f, r, k)$ (steps 1 to 7, fitted on training, the 480 earlier and 20 development episodes) and of the inputs of the declaration layer (step 8, which runs steps 1 to 7 on the 480 earlier episodes), and Table~\ref{tab:s_rules} the rules of the test and the referee.
 
 \begin{table}[tbp]
 \caption{Weight construction.}
@@ -116,7 +87,7 @@ Step & What it does & Fitted on \\
 4 Matched filter & Score $g_u$: step-3 residuals weighted by $\psi = \Sigma^{-1} \tilde\mu$, favouring bins with more effect and less noise $\Sigma$ (Ledoit--Wolf), where $\tilde\mu$ is the rank-one fit of the effect profile $\mu$: a one-signed profile over slots, taken from the family's effect on load, times a least-squares profile over the four bins; restricted to the bins present & training \\
 5 Score centre & Subtracts $\bar g_u$, the running mean score of earlier units of the same episode and request direction, shrunk towards the mean over earlier units of that direction (20 pseudo-units) and the training mean (50 pseudo-units) & training and earlier units, online \\
 6 Huber clip & Clips at a scale predicted at opening, giving $w_u$ & training \\
-7 Orientation & $o$: sign of $\mu$ summed over 0--90~s, set only if $|z_{\mathrm{train}}| \ge 2$, with $z_{\mathrm{train}}$ the $z$ of the plain 0--90~s total of the step-3 residuals & training \\
+7 Orientation & $o$, see Table~\ref{tab:s_rules}; $z_{\mathrm{train}}$ is the $z$ of the plain 0--90~s total of the step-3 residuals & training \\
 \midrule
 8 Declaration weights & Roeder--Wasserman $\omega_j$ (Roeder and Wasserman 2009, Thm.~3.1; adapted to the BY step-up; floor and cap ours): floor 0.2, cap 5, mean 1; direction $d_j$, sign of $z$ where $|z| \ge 3$ (\val{appa.prior.directed} of 60) & the 480 earlier episodes \\
 \botrule
@@ -133,8 +104,8 @@ Step & What it does & Fitted on \\
 Rule & Definition \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Test}} \\
-Support & A hypothesis is tested only with at least 30 units, 5 accepted, 5 rejected and 3 episodes \\
-Orientation & $o$ is the sign of the training effect over 0--90~s, set only if the training $z$ of that effect is at least 2 in magnitude; where $o$ is unset, the reported sign is that of the plain total of the residuals over 0--90~s \\
+Support & A hypothesis is tested only with at least 30 units, 5 accepted, 5 rejected and 3 episodes, at least 30 training units of its family, and an outcome defined for every unit \\
+Orientation & $o$ is the sign of the rank-one fitted training effect $\tilde\mu$ over 0--90~s, set only if $|z_{\mathrm{train}}| \ge 2$; where $o$ is unset, the reported sign is that of the plain total of the residuals over 0--90~s \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Referee}} \\
 Opening & A request opens a unit only if its parameter last changed longer ago than the actuator's minimum interval between changes; a rejecting unit rejects only requests in its opening direction \\
@@ -148,6 +119,7 @@ Gate certification & An undeclared guard edge is certified when the one-sided 90
 \end{tabular*}
 \end{table}
 
+\FloatBarrier
 \section{Theory}
 \label{esm:theory}
 
@@ -261,8 +233,11 @@ $\varepsilon = 0.05\, G / (3 \max\{N, 1\})$ on each of the three relations, the 
 \noindent\emph{Proof idea.} Sum the movements over units and relations and divide by $G$.
 \emph{Lean:} \texttt{OranCausal.GateBudget.additive\_guard\_budget}.
 
+\FloatBarrier
 \section{Simulation set-up}
 \label{esm:setup}
+
+Table~\ref{tab:s_params} gives the simulation and evaluation parameters, Table~\ref{tab:s_hyp} the knockout ground truth of the 60 hypotheses and Table~\ref{tab:s_armdef} the decision arms and metrics.
 
 \begin{table}
 \caption{Simulation and evaluation parameters.}
@@ -290,44 +265,7 @@ Intervals & Decision metrics: 90~\% paired seed-bootstrap, 10\,000 resamples; ra
 \begin{table}[tbp]
 \caption{Knockout ground truth of the 60 hypotheses, randomised logs.}
 \label{tab:s_hyp}
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}l l c c c c c@{}}
-\toprule
-\shortstack[l]{Parameter\\(writer)} & Relation & \shortstack{protected-slice\\violations} & \shortstack{service\\violations} & \shortstack{radio-link\\failures} & energy & \shortstack{served\\load} \\
-\midrule
-macro carrier & own & true $-$ & true $-$ & indeterminate & true $+$ & null \\
-(ES) & neighbour & indeterminate & null & indeterminate & indeterminate & null \\
- & far & indeterminate & null & indeterminate & null & null \\
-\midrule
-pico sleep & own & indeterminate & indeterminate & true $-$ & null & true $-$ \\
-(ES) & neighbour & true $+$ & true $+$ & true $+$ & true $+$ & true $+$ \\
- & far & true $+$ & true $+$ & true $+$ & true $+$ & true $+$ \\
-\midrule
-transmit power & own & true $+$ & true $+$ & true $+$ & true $+$ & true $+$ \\
-(Power ES) & neighbour & true $-$ & true $-$ & true $-$ & true $-$ & true $-$ \\
- & far & indeterminate & true $-$ & indeterminate & true $-$ & true $-$ \\
-\midrule
-protected share & own & true $-$ & null & null & null & null \\
-(Slice Guarantee) & neighbour & null & null & null & null & null \\
- & far & null & null & null & null & null \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[tbp]
-\caption{Estimation targets.}
-\label{tab:s_estimands}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright}p{0.2\textwidth}>{\raggedright}p{0.27\textwidth}>{\raggedright}p{0.21\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}@{}}
-\toprule
-Target & Other units in the window & Unit weighting & Estimated by \\
-\midrule
-$\tau_{\pi}$, randomised logs & random modes, $\pi_u = 0.5$ & equal & design slope \\
-$\tau_{\pi}$, confounded logs & random modes, incumbent propensities & $\pi_u(1 - \pi_u)$ & design slope \\
-$\tau_{\mathrm{AA}}$, ground truth & all accepted & equal over sampled units & knockout rollouts \\
-\botrule
-\end{tabular*}
+\input{tables/tab_system_hypotheses}
 \end{table}
 
 Table~\ref{tab:s_baselines} lists the associational baselines. Each ran on the same unit table as PMRT and gave a score and a sign per hypothesis under the same support rule; on the confounded logs each tuned baseline also received a threshold calibrated on the placebo logs, which allows at most one placebo edge.
@@ -427,10 +365,11 @@ Unlogged confounding & \raggedright Latent confounding only: the confounder is l
 \end{tabular*}
 \end{table}
 
+\FloatBarrier
 \section{Discovery on the simulator logs}
 \label{esm:discovery}
 
-Tables~\ref{tab:s_validity} to~\ref{tab:s_x8} give the validity checks, Tables~\ref{tab:s_maps_full} to~\ref{tab:s_attr} the map quality under other ground-truth rules, and Figure~\ref{fig:s_subsamples} the per-subsample comparison.
+Tables~\ref{tab:s_validity} to~\ref{tab:s_x8} give the validity checks, Tables~\ref{tab:s_maps_full} to~\ref{tab:s_attr} the map quality under other ground-truth rules, and Figure~\ref{fig:s_subsamples} the per-subsample comparison. On the neighbour-relation edges of the randomised logs, PMRT's F1 score matched that of Granger~+~BY on only \val{s1.p2.gby.wins60} of the \val{s1.p2.n60} smallest subsamples, and on \val{s1.p2.gby.wins120} of the \val{s1.p2.n120} larger ones; the ranges of the two methods overlapped on the smallest subsamples, and the comparison ignores the \val{s1.placebo.granger_by} placebo edges of Granger~+~BY. On the confounded logs the comparison held throughout. The one-sided DAGGER rows of Table~\ref{tab:s_x8} use the reshaped DAGGER procedure, which controls the FDR under arbitrary dependence (Ramdas, Chen, Wainwright and Jordan 2019, Thm.~1(b)).
 
 \begin{table}
 \caption{Validity checks on the simulator logs.}
@@ -455,44 +394,7 @@ Baselines' placebo edges & Randomised: 1 to 13; confounded: up to 29 & Most: Gra
 \begin{table}
 \caption{Stricter significance check, randomised logs.}
 \label{tab:s_x8}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}l l c r r r r@{}}
-\toprule
-\multicolumn{7}{@{}l}{(a) Declarations and small p-values on null outcomes} \\
-\midrule
- & & Variants with & \multicolumn{4}{c}{Used p-values at or below} \\
-\cmidrule(lr){4-7}
-Statistic & Declaration layer & a declaration & 0.05 & $10^{-3}$ & $2\times10^{-4}$ & $10^{-4}$ \\
-\midrule
-Plain & BY & 5 & 1778 & 40 & 7 & 5 \\
-Plain & Weighted one-sided BY & 7 & 1721 & 34 & 8 & 4 \\
-Plain & One-sided DAGGER & 7 & 1721 & 34 & 8 & 4 \\
-Matched filter & BY & 1 & 1700 & 28 & 5 & 1 \\
-\textbf{Matched filter} & \textbf{Weighted one-sided BY} & \textbf{2} & \textbf{1670} & \textbf{28} & \textbf{4} & \textbf{3} \\
-Matched filter & One-sided DAGGER & 2 & 1670 & 28 & 4 & 3 \\
-Maximum & BY & 3 & 1740 & 26 & 7 & 3 \\
-Maximum & Weighted one-sided BY & 2 & 1727 & 26 & 6 & 4 \\
-Maximum & One-sided DAGGER & 6 & 1727 & 26 & 6 & 4 \\
-\midrule
-Expected if exact & & & 1770.0 & 35.4 & 7.1 & 3.5 \\
-\bottomrule
-\end{tabular}
-
-\par\medskip
-
-\begin{tabular}{@{}l l r r r r@{}}
-\toprule
-\multicolumn{6}{@{}l}{(b) Redraw p-value versus its normal approximation} \\
-\midrule
-Statistic & p-value & 0.05 & $10^{-3}$ & $2\times10^{-4}$ & $10^{-4}$ \\
-\midrule
-Plain & Redraw & 0.050 & $1.1\times10^{-3}$ & $2.0\times10^{-4}$ & $1.4\times10^{-4}$ \\
- & Normal & 0.049 & $9.0\times10^{-4}$ & $1.7\times10^{-4}$ & $8.5\times10^{-5}$ \\
-Matched filter & Redraw & 0.048 & $7.9\times10^{-4}$ & $1.4\times10^{-4}$ & $2.8\times10^{-5}$ \\
- & Normal & 0.047 & $6.2\times10^{-4}$ & $8.5\times10^{-5}$ & $2.8\times10^{-5}$ \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_appC_x8}
 \end{table}
 
 \begin{table}[tbp]
@@ -544,119 +446,19 @@ and INT 3 (all right); two-tower and QACM declared none.\par}
 \begin{table}
 \caption{Ground-truth sensitivity.}
 \label{tab:s_gt}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}l c c c c c c c@{}}
-\toprule
- & \multicolumn{3}{c}{Ground-truth labels} & \multicolumn{3}{c}{PMRT} & Granger + BY \\
-\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-8}
-Variant & True & Null & Indet. & Precision [bounds] & Recall & Sign acc. & precision \\
-\midrule
-\multicolumn{8}{@{}l}{\textit{Randomised logs, 600 episodes pooled}} \\
-\quad Rule used & 29 & 21 & 10 & 0.92 [0.82, 0.93] & 0.79 & 1.00 & 0.59 \\
-\quad $\delta \times 0.5$ & 37 & 16 & 7 & 1.00 [0.93, 1.00] & 0.70 & 1.00 & 0.72 \\
-\quad $\delta \times 2$ & 20 & 34 & 6 & 0.59 [0.57, 0.61] & 0.80 & 1.00 & 0.41 \\
-\quad Floor $\times 0.5$ & 29 & 21 & 10 & 0.92 [0.82, 0.93] & 0.79 & 1.00 & 0.59 \\
-\quad Floor $\times 2$ & 29 & 21 & 10 & 0.92 [0.82, 0.93] & 0.79 & 1.00 & 0.59 \\
-\quad 90\,\% CI & 30 & 22 & 8 & 0.92 [0.82, 0.93] & 0.77 & 1.00 & 0.61 \\
-\quad 99\,\% CI & 28 & 21 & 11 & 0.92 [0.79, 0.93] & 0.79 & 1.00 & 0.58 \\
-\midrule
-\multicolumn{8}{@{}l}{\textit{Confounded logs, discovery episodes pooled}} \\
-\quad Rule used & 29 & 24 & 7 & 0.86 [0.82, 0.86] & 0.62 & 1.00 & 0.54 \\
-\quad $\delta \times 0.5$ & 31 & 19 & 10 & 1.00 [0.91, 1.00] & 0.65 & 1.00 & 0.62 \\
-\quad $\delta \times 2$ & 23 & 33 & 4 & 0.73 [0.73, 0.73] & 0.70 & 1.00 & 0.42 \\
-\quad Floor $\times 0.5$ & 29 & 24 & 7 & 0.86 [0.82, 0.86] & 0.62 & 1.00 & 0.54 \\
-\quad Floor $\times 2$ & 29 & 26 & 5 & 0.82 [0.82, 0.82] & 0.62 & 1.00 & 0.52 \\
-\quad 90\,\% CI & 29 & 25 & 6 & 0.86 [0.82, 0.86] & 0.62 & 1.00 & 0.54 \\
-\quad 99\,\% CI & 28 & 23 & 9 & 0.85 [0.77, 0.86] & 0.61 & 1.00 & 0.53 \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_appC_gt_sensitivity}
 \end{table}
 
 \begin{table}
 \caption{Existence ground truth.}
 \label{tab:s_exist}
-\footnotesize
-\setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}l c c c c c c c c@{}}
-\toprule
- & & Material & \multicolumn{6}{c}{Effect exists (any magnitude)} \\
-\cmidrule(lr){3-3}\cmidrule(lr){4-9}
- & & & & Wrong & Not & & & Prec. \\
-Method & Decl. & precision & Confirmed & sign & est. & Precision & Recall & 90 / 99\,\% \\
-\midrule
-\multicolumn{9}{@{}l}{\textit{Randomised logs, 600 episodes pooled}} \\
-\quad PMRT & 28 & 0.92 & 26 & 0 & 2 & 0.93 & 0.60 & 0.93 / 0.89 \\
-\quad Correlation & 8 & 0.86 & 7 & 1 & 0 & 0.88 & 0.16 & 0.88 / 0.88 \\
-\quad Granger & 32 & 0.69 & 18 & 6 & 8 & 0.56 & 0.42 & 0.59 / 0.56 \\
-\quad Granger + BY & 45 & 0.59 & 21 & 11 & 13 & 0.47 & 0.49 & 0.49 / 0.47 \\
-\quad SHAP-GBDT & 17 & 0.93 & 16 & 0 & 1 & 0.94 & 0.37 & 0.94 / 0.94 \\
-\quad INT & 8 & 0.88 & 8 & 0 & 0 & 1.00 & 0.19 & 1.00 / 1.00 \\
-\quad QACM & 10 & 0.89 & 10 & 0 & 0 & 1.00 & 0.23 & 1.00 / 1.00 \\
-\quad Two-tower & 6 & 1.00 & 5 & 1 & 0 & 0.83 & 0.12 & 0.83 / 0.83 \\
-\midrule
-\multicolumn{9}{@{}l}{\textit{Randomised logs, 17 subsamples: counts summed, precision median [min, max]}} \\
-\quad PMRT & 361 & 0.89 [0.82, 0.95] & 340 & 0 & 21 & 0.95 [0.91, 0.96] & 0.47 & 0.95 / 0.95 \\
-\quad Granger + BY & 605 & 0.68 [0.60, 0.75] & 322 & 142 & 141 & 0.53 [0.47, 0.61] & 0.44 & 0.55 / 0.53 \\
-\midrule
-\multicolumn{9}{@{}l}{\textit{Confounded logs, pooled discovery maps (tuned thresholds)}} \\
-\quad PMRT & 22 & 0.86 & 22 & 0 & 0 & 1.00 & 0.55 & 1.00 / 0.95 \\
-\quad Correlation & 10 & 0.80 & 8 & 2 & 0 & 0.80 & 0.20 & 0.80 / 0.80 \\
-\quad Granger & 32 & 0.60 & 16 & 8 & 8 & 0.50 & 0.40 & 0.50 / 0.50 \\
-\quad Granger + BY (untuned) & 47 & 0.54 & 20 & 10 & 17 & 0.43 & 0.50 & 0.43 / 0.40 \\
-\quad SHAP-GBDT & 11 & 0.80 & 11 & 0 & 0 & 1.00 & 0.28 & 1.00 / 1.00 \\
-\quad INT & 5 & 0.80 & 5 & 0 & 0 & 1.00 & 0.12 & 1.00 / 1.00 \\
-\quad QACM & 6 & 0.83 & 6 & 0 & 0 & 1.00 & 0.15 & 1.00 / 1.00 \\
-\quad Two-tower & 8 & 0.62 & 6 & 0 & 2 & 0.75 & 0.15 & 0.75 / 0.75 \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_appC_existence}
 \end{table}
 
 \begin{table}
 \caption{Relation attribution.}
 \label{tab:s_attr}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}l c c c c c c@{}}
-\toprule
-\multicolumn{7}{@{}l}{(a) Far-relation hypotheses by ground-truth label} \\
-\midrule
- & \multicolumn{3}{c}{Randomised logs} & \multicolumn{3}{c}{Confounded logs} \\
-\cmidrule(lr){2-4}\cmidrule(lr){5-7}
-Parameter (writer) & True & Null & Indet. & True & Null & Indet. \\
-\midrule
-macro carrier (ES) & 0 & 3 & 2 & 0 & 4 & 1 \\
-pico sleep (ES) & 5 & 0 & 0 & 5 & 0 & 0 \\
-transmit power (Power ES) & 3 & 0 & 2 & 4 & 0 & 1 \\
-protected share (Slice Guarantee) & 0 & 5 & 0 & 0 & 5 & 0 \\
-\midrule
-All 20 & 8 & 8 & 4 & 9 & 9 & 2 \\
-\bottomrule
-\end{tabular}
-
-\par\medskip
-
-\begin{tabular}{@{}l c c c c c c c c c c@{}}
-\toprule
-\multicolumn{11}{@{}l}{(b) Neighbour and far declarations by the label of the declared edge} \\
-\midrule
- & \multicolumn{5}{c}{Neighbour} & \multicolumn{5}{c}{Far} \\
-\cmidrule(lr){2-6}\cmidrule(lr){7-11}
-Method & Decl. & True & Null & Indet. & Own-attr. & Decl. & True & Null & Indet. & Own-attr. \\
-\midrule
-\multicolumn{11}{@{}l}{\textit{Randomised logs, 600 episodes pooled}} \\
-\quad PMRT & 9 & 9 & 0 & 0 & 0 & 4 & 3 & 0 & 1 & 1 \\
-\quad Granger + BY & 16 & 8 & 6 & 2 & 3 & 10 & 3 & 4 & 3 & 4 \\
-\midrule
-\multicolumn{11}{@{}l}{\textit{Randomised logs, sum over 17 subsamples}} \\
-\quad PMRT & 94 & 91 & 3 & 0 & 0 & 30 & 28 & 1 & 1 & 2 \\
-\quad Granger + BY & 191 & 115 & 46 & 30 & 32 & 128 & 52 & 42 & 34 & 46 \\
-\midrule
-\multicolumn{11}{@{}l}{\textit{Confounded logs, discovery episodes pooled}} \\
-\quad PMRT & 6 & 6 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 0 \\
-\quad Granger + BY & 15 & 7 & 6 & 2 & 3 & 13 & 4 & 7 & 2 & 4 \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_appC_attribution}
 \end{table}
 
 \begin{figure}
@@ -666,6 +468,7 @@ Method & Decl. & True & Null & Indet. & Own-attr. & Decl. & True & Null & Indet.
 \label{fig:s_subsamples}
 \end{figure}
 
+\FloatBarrier
 \section{Conflict mitigation}
 \label{esm:decision}
 
@@ -797,31 +600,7 @@ Arm & Rej. & $R$ & [90\,\% CI] & Ret. & SVR & eMBB & LL & RLF & Elig. \\
 \begin{table}[tbp]
 \caption{Gate diagnosis.}
 \label{tab:s_gate}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}l r r r r l c@{}}
-\toprule
- & \multicolumn{3}{c}{PMRT bound} & \multicolumn{3}{c}{Ground truth} \\
-\cmidrule(lr){2-4}\cmidrule(lr){5-7}
-Uncertified guard edge & $h\beta$ & UB90 & $\varepsilon$ & $h\cdot$GT [95\,\% CI] & Label & Harm $>\varepsilon$ \\
-\midrule
-\multicolumn{7}{@{}l}{\textit{Transmit power up (Power ES): uncertified; 2\,579 units withheld}} \\
-\quad neighbour RLFs & 0.0825 & 0.148 & 0.0364 & 0.0611 [0.0271, 0.0962] & true & yes \\
-\quad far violations & 21.2 & 39.8 & 20.8 & 24.2 [18.9, 29.9] & true & yes \\
-\midrule
-\multicolumn{7}{@{}l}{\textit{Pico sleep (ES): certified; 899 units rejected}} \\
-\quad none & \multicolumn{6}{l}{--} \\
-\midrule
-\multicolumn{7}{@{}l}{\textit{Macro carrier off (ES): uncertified; 67 units withheld}} \\
-\quad neighbour violations & 16.2 & 34.9 & 17.0 & 6.65 [4.19, 9.70] & null & no \\
-\quad neighbour RLFs & 0.0267 & 0.0903 & 0.0298 & 0.00798 [$-$0.00532, 0.0220] & indet. & no \\
-\midrule
-\multicolumn{7}{@{}l}{\textit{Protected share down (Slice Guarantee): uncertified; 0 units withheld}} \\
-\quad neighbour violations & $-$0.110 & 8.76 & 8.52 & 0.0125 [$-$0.216, 0.242] & null & no \\
-\quad far violations & 4.16 & 12.4 & 8.52 & 0.0919 [$-$0.194, 0.416] & null & no \\
-\quad far RLFs & 0.0599 & 0.0914 & 0.0150 & 0.000368 [0, 0.00117] & null & no \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_gate_diag}
 
 \par\smallskip
 {\raggedright\footnotesize
@@ -832,58 +611,7 @@ ground-truth harm; indet., indeterminate. With a strict outcome centre, which us
 \begin{table}
 \caption{Gated associational referees and the static ES + Power ES subset.}
 \label{tab:s_x7}
-\footnotesize
-\setlength{\tabcolsep}{1.5pt}
-\begin{tabular}{@{}l c c c c c c@{}}
-\toprule
-\multicolumn{7}{@{}l}{(a) Agreement with the static subset's decision, per request} \\
-\midrule
- & \multicolumn{5}{c}{Subset's request stream} & Own stream \\
-\cmidrule(lr){2-6}\cmidrule(lr){7-7}
-Map & Prot. share up & Tx power & Carrier & Sleep & All & All \\
-\midrule
-Granger & 1.0000 & 1.0000 & 0.9989 & 1.0000 & 0.9999 & 0.9996 \\
-Granger + BY & 1.0000 & 1.0000 & 0.9989 & 0.9742 & 0.9994 & 0.9950 \\
-Two-tower & 0.9993 & 1.0000 & 0.9989 & 1.0000 & 0.9994 & 0.9991 \\
-SHAP-GBDT (placebo-cal.) & 0.9993 & 1.0000 & 0.9989 & 0.9742 & 0.9989 & 0.9941 \\
-\midrule
-Requests & 99\,785 & 5\,459 & 6\,476 & 2\,097 & 113\,817 & \\
-\bottomrule
-\end{tabular}
-
-\par\medskip
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.7cm} c c c c@{}}
-\toprule
-\multicolumn{5}{@{}l}{(b) Outcomes, attribution replays and paired differences vs the static subset} \\
-\midrule
- & & & $\Delta R$ vs subset & Identical \\
-Arm & $R$ [90\,\% CI] & Retention & [90\,\% CI] & seeds \\
-\midrule
-Static subset & $-$11.106 [$-$12.779, $-$9.815] & 1.000 &  &  \\
-Accept-all & 0.000 [0.000, 0.000] & 0.995 &  &  \\
-\midrule
-\multicolumn{5}{@{}l}{\textit{Gated referee, Granger map}} \\
-\quad Referee & $-$11.057 [$-$12.726, $-$9.780] & 1.003 & +0.049 [$-$0.016, 0.127] & 117 \\
-\quad Replay: protected-share rejections only & $-$11.106 [$-$12.779, $-$9.815] & 1.000 & 0.000 [0.000, 0.000] & 160 \\
-\quad Replay: without it & $-$0.009 [$-$0.049, 0.024] & 0.996 & +11.096 [9.807, 12.762] & 0 \\
-\midrule
-\multicolumn{5}{@{}l}{\textit{Gated referee, Granger + BY map}} \\
-\quad Referee & $-$10.551 [$-$12.176, $-$9.286] & 1.032 & +0.555 [0.389, 0.740] & 65 \\
-\quad Replay: protected-share rejections only & $-$11.102 [$-$12.773, $-$9.814] & 1.000 & +0.004 [0.000, 0.012] & 159 \\
-\quad Replay: without it & +0.071 [0.012, 0.133] & 1.028 & +11.177 [9.894, 12.844] & 0 \\
-\midrule
-\multicolumn{5}{@{}l}{\textit{Gated referee, Two-tower map}} \\
-\quad Referee & $-$11.023 [$-$12.683, $-$9.745] & 1.003 & +0.083 [0.011, 0.166] & 109 \\
-\quad Replay: protected-share rejections only & $-$11.072 [$-$12.735, $-$9.786] & 1.000 & +0.034 [0.007, 0.069] & 151 \\
-\quad Replay: without it & $-$0.009 [$-$0.049, 0.024] & 0.996 & +11.096 [9.807, 12.762] & 0 \\
-\midrule
-\multicolumn{5}{@{}l}{\textit{Gated referee, SHAP-GBDT map, placebo-calibrated threshold}} \\
-\quad Referee & $-$10.467 [$-$12.055, $-$9.215] & 1.033 & +0.639 [0.457, 0.848] & 33 \\
-\quad Replay: protected-share rejections only & $-$11.072 [$-$12.735, $-$9.786] & 1.000 & +0.034 [0.007, 0.069] & 151 \\
-\quad Replay: without it & +0.071 [0.012, 0.133] & 1.028 & +11.177 [9.894, 12.844] & 0 \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_appC_x7}
 
 \par\smallskip
 {\raggedright\footnotesize Identical seeds: seeds on which the arm equals the static subset.\par}
@@ -909,10 +637,11 @@ Estimate without the five seeds of largest contribution & $+\val{x15.trim.s2}$ &
 {\raggedright\footnotesize Permutation test of the per-seed violation rate between blocks: $p = \val{x15.p.noarb}$ under accept-all, $p = \val{x15.p.never_sleep}$ under never-sleep. Difference of the block means: \val{x15.block_diff} (permutation $p = \val{x15.perm_p}$).\par}
 \end{table}
 
+\FloatBarrier
 \section{Controlled environments}
 \label{esm:envs}
 
-Table~\ref{tab:s_claims} counts conditions by group of tests. A rate is invalid if the lower bound of its 95~\% seed-cluster bootstrap interval exceeds 0.05, valid if the upper bound is at most 0.075, and inconclusive otherwise; a condition is invalid if any of its rates is.
+Table~\ref{tab:s_claims} counts conditions by group of tests and Table~\ref{tab:s_verdicts} by environment, with rates and conditions classed as invalid, valid or inconclusive by the rule of Section~5.4 of the article. Figure~\ref{fig:s_validity_env} shows the null-edge rate by environment, Tables~\ref{tab:s_env1} to~\ref{tab:s_env5} the null-edge rate and recall per environment, Figure~\ref{fig:s_recall} the recall against sample size, and Tables~\ref{tab:s_dose} and~\ref{tab:s_misspec} the null rates under other dither designs and under a misspecified design. Both PMRT variants here omit the Huber clip of the unit weight.
 
 \begin{table}
 \caption{Conditions by group of tests under the controlled environments.}
@@ -975,265 +704,31 @@ Tables~\ref{tab:s_env1} to~\ref{tab:s_env5} give every condition at the primary 
 \begin{table}
 \caption{Linear graph: null-edge rate / recall.}
 \label{tab:s_env1}
-ootnotesize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} c c c c c@{}}
-\toprule
-Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
-\midrule
-\multicolumn{6}{@{}l}{\textbf{Linear graph, independent logging}} \\
-\multicolumn{6}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.027$^{\textstyle\sim}$/1.00 & 0.033$^{\textstyle\sim}$/1.00 & 0.044$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 & 0.056$^{\textstyle\sim}$/1.00 \\
-\quad PMRT-Lin & 0.037/1.00 & 0.033$^{\textstyle\sim}$/1.00 & 0.052$^{\textstyle\sim}$/1.00 & 0.037$^{\textstyle\sim}$/1.00 & 0.044$^{\textstyle\sim}$/1.00 \\
-\multicolumn{6}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.029/1.00 & 0.025/1.00 & 0.046$^{\textstyle\sim}$/1.00 & 0.037$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 \\
-\quad RCoT & 0.083$^{\textstyle *}$/-- & 0.069$^{\textstyle\sim}$/1.00 & 0.060$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 & 0.046$^{\textstyle\sim}$/1.00 \\
-\multicolumn{6}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.037/1.00 & 0.019/1.00 & 0.056$^{\textstyle\sim}$/1.00 & 0.029$^{\textstyle\sim}$/1.00 & 0.023$^{\textstyle\sim}$/1.00 \\
-\quad Partial correlation & 0.040/1.00 & 0.033/1.00 & 0.050$^{\textstyle\sim}$/1.00 & 0.046$^{\textstyle\sim}$/1.00 & 0.037$^{\textstyle\sim}$/1.00 \\
-\quad Partial correlation, HAC & 0.044$^{\textstyle\sim}$/1.00 & 0.035/1.00 & 0.048$^{\textstyle\sim}$/1.00 & 0.044$^{\textstyle\sim}$/1.00 & 0.037$^{\textstyle\sim}$/1.00 \\
-\quad Partial correlation, HAC (fixed-b) & 0.044$^{\textstyle\sim}$/1.00 & 0.035/1.00 & 0.048$^{\textstyle\sim}$/1.00 & 0.044$^{\textstyle\sim}$/1.00 & 0.037$^{\textstyle\sim}$/1.00 \\
-\quad RCoT & 0.094$^{\textstyle *}$/-- & 0.094$^{\textstyle *}$/-- & 0.062$^{\textstyle\sim}$/1.00 & 0.060$^{\textstyle\sim}$/1.00 & 0.035$^{\textstyle\sim}$/1.00 \\
-\quad MSCR (n $\le$ 1000) & 0.040$^{\textstyle\sim}$/1.00 & 0.054/1.00 &  &  &  \\
-\quad PC & 0.094$^{\textstyle *}$/-- & 0.025/1.00 & 0.042/1.00 & 0.019/1.00 & 0.054$^{\textstyle\sim}$/1.00 \\
-\quad NOTEARS & 0.000/1.00 & 0.000/1.00 & 0.000/1.00 & 0.000/1.00 & 0.000/1.00 \\
-\quad SHAP-DAG & 0.035/1.00 & 0.029/1.00 & 0.133$^{\textstyle *}$/-- & 0.125$^{\textstyle *}$/-- & 0.037/1.00 \\
-\quad Two-tower & 0.021/1.00 & 0.025/1.00 & 0.027/1.00 & 0.033/1.00 & 0.044/1.00 \\
-\quad CDD O-RAN discovery & 0.075$^{\textstyle *}$/-- & 0.081$^{\textstyle *}$/-- & 0.037/1.00 &  &  \\
-\midrule
-\multicolumn{6}{@{}l}{\textbf{Linear graph, dithered setpoint}} \\
-\multicolumn{6}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.033$^{\textstyle\sim}$/1.00 & 0.033$^{\textstyle\sim}$/1.00 & 0.040$^{\textstyle\sim}$/1.00 & 0.062$^{\textstyle\sim}$/1.00 & 0.075$^{\textstyle *}$/-- \\
-\quad PMRT-Lin & 0.048$^{\textstyle\sim}$/0.96 & 0.050/0.97 & 0.054$^{\textstyle\sim}$/0.99 & 0.050/0.99 & 0.048$^{\textstyle\sim}$/0.99 \\
-\multicolumn{6}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.056$^{\textstyle\sim}$/1.00 & 0.042$^{\textstyle\sim}$/1.00 & 0.054$^{\textstyle\sim}$/1.00 & 0.056$^{\textstyle\sim}$/1.00 & 0.042/1.00 \\
-\quad RCoT & 0.104$^{\textstyle *}$/-- & 0.083$^{\textstyle *}$/-- & 0.237$^{\textstyle *}$/-- & 0.369$^{\textstyle *}$/-- & 0.708$^{\textstyle *}$/-- \\
-\multicolumn{6}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.683$^{\textstyle *}$/-- & 0.758$^{\textstyle *}$/-- & 0.887$^{\textstyle *}$/-- & 0.921$^{\textstyle *}$/-- & 0.954$^{\textstyle *}$/-- \\
-\quad Partial correlation & 0.210$^{\textstyle *}$/-- & 0.198$^{\textstyle *}$/-- & 0.198$^{\textstyle *}$/-- & 0.225$^{\textstyle *}$/-- & 0.242$^{\textstyle *}$/-- \\
-\quad Partial correlation, HAC & 0.212$^{\textstyle *}$/-- & 0.198$^{\textstyle *}$/-- & 0.196$^{\textstyle *}$/-- & 0.225$^{\textstyle *}$/-- & 0.242$^{\textstyle *}$/-- \\
-\quad Partial correlation, HAC (fixed-b) & 0.210$^{\textstyle *}$/-- & 0.198$^{\textstyle *}$/-- & 0.196$^{\textstyle *}$/-- & 0.225$^{\textstyle *}$/-- & 0.242$^{\textstyle *}$/-- \\
-\quad RCoT & 0.156$^{\textstyle *}$/-- & 0.152$^{\textstyle *}$/-- & 0.204$^{\textstyle *}$/-- & 0.344$^{\textstyle *}$/-- & 0.610$^{\textstyle *}$/-- \\
-\quad MSCR (n $\le$ 1000) & 1.000$^{\textstyle *}$/-- & 1.000$^{\textstyle *}$/-- &  &  &  \\
-\quad PC & 0.067$^{\textstyle\sim}$/1.00 & 0.027/1.00 & 0.027/1.00 & 0.065$^{\textstyle\sim}$/1.00 & 0.048/1.00 \\
-\quad NOTEARS & 0.165$^{\textstyle *}$/-- & 0.169$^{\textstyle *}$/-- & 0.167$^{\textstyle *}$/-- & 0.169$^{\textstyle *}$/-- & 0.169$^{\textstyle *}$/-- \\
-\quad SHAP-DAG & 0.246$^{\textstyle *}$/-- & 0.225$^{\textstyle *}$/-- & 0.219$^{\textstyle *}$/-- & 0.202$^{\textstyle *}$/-- & 0.198$^{\textstyle *}$/-- \\
-\quad Two-tower & 0.198$^{\textstyle *}$/-- & 0.204$^{\textstyle *}$/-- & 0.212$^{\textstyle *}$/-- & 0.196$^{\textstyle *}$/-- & 0.223$^{\textstyle *}$/-- \\
-\quad CDD O-RAN discovery & 0.027/1.00 & 0.106$^{\textstyle *}$/-- & 0.183$^{\textstyle *}$/-- &  &  \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_study4_env_e1}
 \end{table}
 
 \begin{table}
 \caption{Rare regime: null-edge rate / recall.}
 \label{tab:s_env2}
-ootnotesize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} c c c c c@{}}
-\toprule
-Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
-\midrule
-\multicolumn{6}{@{}l}{\textbf{Rare regime, independent logging}} \\
-\multicolumn{6}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.041/0.79 & 0.037/0.83 & 0.045/0.94 & 0.045/0.95 & 0.045$^{\textstyle\sim}$/0.99 \\
-\quad PMRT-Lin & 0.051$^{\textstyle\sim}$/0.29 & 0.046/0.32 & 0.050$^{\textstyle\sim}$/0.34 & 0.035/0.37 & 0.050$^{\textstyle\sim}$/0.38 \\
-\multicolumn{6}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.054$^{\textstyle\sim}$/0.28 & 0.047/0.32 & 0.054/0.34 & 0.038/0.37 & 0.050$^{\textstyle\sim}$/0.38 \\
-\quad RCoT & 0.094$^{\textstyle *}$/-- & 0.065$^{\textstyle *}$/-- & 0.052$^{\textstyle\sim}$/0.60 & 0.051/0.62 & 0.041/0.67 \\
-\multicolumn{6}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.055$^{\textstyle\sim}$/0.30 & 0.052/0.32 & 0.053/0.35 & 0.040$^{\textstyle\sim}$/0.36 & 0.053$^{\textstyle\sim}$/0.38 \\
-\quad Partial correlation & 0.060$^{\textstyle\sim}$/0.29 & 0.046$^{\textstyle\sim}$/0.32 & 0.052/0.34 & 0.038/0.36 & 0.052$^{\textstyle\sim}$/0.38 \\
-\quad Partial correlation, HAC & 0.055$^{\textstyle\sim}$/0.31 & 0.045$^{\textstyle\sim}$/0.31 & 0.052/0.34 & 0.040/0.36 & 0.052$^{\textstyle\sim}$/0.38 \\
-\quad Partial correlation, HAC (fixed-b) & 0.055$^{\textstyle\sim}$/0.31 & 0.044$^{\textstyle\sim}$/0.31 & 0.052/0.34 & 0.040/0.36 & 0.052$^{\textstyle\sim}$/0.38 \\
-\quad RCoT & 0.097$^{\textstyle *}$/-- & 0.059$^{\textstyle\sim}$/0.56 & 0.052/0.60 & 0.051/0.62 & 0.046/0.67 \\
-\quad MSCR (n $\le$ 1000) & 0.054/0.88 & 0.046/0.94 &  &  &  \\
-\quad PC & 0.069$^{\textstyle *}$/-- & 0.065$^{\textstyle *}$/-- & 0.022/0.38 & 0.012/0.38 & 0.055/0.41 \\
-\quad NOTEARS & 0.016/0.25 & 0.000/0.26 & 0.000/0.25 & 0.000/0.25 & 0.000/0.25 \\
-\quad SHAP-DAG & 0.065$^{\textstyle *}$/-- & 0.041/0.95 & 0.041/0.99 & 0.056/1.00 & 0.032/1.00 \\
-\quad Two-tower & 0.083$^{\textstyle *}$/-- & 0.041/0.67 & 0.051/0.78 & 0.081$^{\textstyle *}$/-- & 0.176$^{\textstyle *}$/-- \\
-\quad CDD O-RAN discovery & 0.073$^{\textstyle *}$/-- & 0.078$^{\textstyle *}$/-- & 0.050/0.96 &  &  \\
-\midrule
-\multicolumn{6}{@{}l}{\textbf{Rare regime, dithered setpoint}} \\
-\multicolumn{6}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.052/0.49 & 0.049$^{\textstyle\sim}$/0.66 & 0.052/0.93 & 0.041$^{\textstyle\sim}$/0.93 & 0.051/0.94 \\
-\quad PMRT-Lin & 0.057/0.19 & 0.053/0.28 & 0.037/0.45 & 0.034/0.55 & 0.058/0.68 \\
-\multicolumn{6}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.055$^{\textstyle\sim}$/0.30 & 0.059/0.37 & 0.039/0.54 & 0.035$^{\textstyle\sim}$/0.63 & 0.055/0.76 \\
-\quad RCoT & 0.135$^{\textstyle *}$/-- & 0.112$^{\textstyle *}$/-- & 0.227$^{\textstyle *}$/-- & 0.355$^{\textstyle *}$/-- & 0.552$^{\textstyle *}$/-- \\
-\multicolumn{6}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.506$^{\textstyle *}$/-- & 0.606$^{\textstyle *}$/-- & 0.795$^{\textstyle *}$/-- & 0.858$^{\textstyle *}$/-- & 0.918$^{\textstyle *}$/-- \\
-\quad Partial correlation & 0.352$^{\textstyle *}$/-- & 0.468$^{\textstyle *}$/-- & 0.691$^{\textstyle *}$/-- & 0.784$^{\textstyle *}$/-- & 0.873$^{\textstyle *}$/-- \\
-\quad Partial correlation, HAC & 0.341$^{\textstyle *}$/-- & 0.471$^{\textstyle *}$/-- & 0.691$^{\textstyle *}$/-- & 0.780$^{\textstyle *}$/-- & 0.862$^{\textstyle *}$/-- \\
-\quad Partial correlation, HAC (fixed-b) & 0.340$^{\textstyle *}$/-- & 0.470$^{\textstyle *}$/-- & 0.690$^{\textstyle *}$/-- & 0.779$^{\textstyle *}$/-- & 0.862$^{\textstyle *}$/-- \\
-\quad RCoT & 0.167$^{\textstyle *}$/-- & 0.189$^{\textstyle *}$/-- & 0.304$^{\textstyle *}$/-- & 0.454$^{\textstyle *}$/-- & 0.674$^{\textstyle *}$/-- \\
-\quad MSCR (n $\le$ 1000) & 0.841$^{\textstyle *}$/-- & 0.924$^{\textstyle *}$/-- &  &  &  \\
-\quad PC & 0.023/0.24 & 0.035/0.29 & 0.021/0.26 & 0.000/0.00 & 0.000/0.00 \\
-\quad NOTEARS & 0.033/0.28 & 0.037/0.29 & 0.041/0.30 & 0.029/0.29 & 0.028/0.28 \\
-\quad SHAP-DAG & 0.030/0.77 & 0.046/0.91 & 0.032/0.96 & 0.054/0.97 & 0.050/0.98 \\
-\quad Two-tower & 0.062$^{\textstyle\sim}$/0.55 & 0.016/0.42 & 0.045/0.66 & 0.028/0.58 & 0.028/0.60 \\
-\quad CDD O-RAN discovery & 0.030/0.40 & 0.027/0.49 & 0.037/0.80 &  &  \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_study4_env_e2}
 \end{table}
 
 \begin{table}
 \caption{Delayed harm: null-edge rate / recall.}
 \label{tab:s_env3}
-ootnotesize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} c c c c c@{}}
-\toprule
-Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
-\midrule
-\multicolumn{6}{@{}l}{\textbf{Delayed harm, independent logging}} \\
-\multicolumn{6}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.036$^{\textstyle\sim}$/1.00 & 0.039$^{\textstyle\sim}$/1.00 & 0.042/1.00 & 0.048/1.00 & 0.034/1.00 \\
-\quad PMRT-Lin & 0.037/1.00 & 0.059$^{\textstyle\sim}$/1.00 & 0.047$^{\textstyle\sim}$/1.00 & 0.045$^{\textstyle\sim}$/1.00 & 0.058/1.00 \\
-\multicolumn{6}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.042$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 & 0.045/1.00 & 0.055$^{\textstyle\sim}$/1.00 \\
-\quad Granger & 0.042$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 & 0.045/1.00 & 0.055$^{\textstyle\sim}$/1.00 \\
-\quad RCoT & 0.098$^{\textstyle *}$/-- & 0.069$^{\textstyle\sim}$/1.00 & 0.055$^{\textstyle\sim}$/1.00 & 0.048$^{\textstyle\sim}$/1.00 & 0.045/1.00 \\
-\multicolumn{6}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.044$^{\textstyle\sim}$/1.00 & 0.052/1.00 & 0.058$^{\textstyle\sim}$/1.00 & 0.027$^{\textstyle\sim}$/1.00 & 0.056$^{\textstyle\sim}$/1.00 \\
-\quad Partial correlation & 0.037$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 & 0.048/1.00 & 0.042$^{\textstyle\sim}$/1.00 & 0.056$^{\textstyle\sim}$/1.00 \\
-\quad Partial correlation, HAC & 0.037$^{\textstyle\sim}$/1.00 & 0.048$^{\textstyle\sim}$/1.00 & 0.048/1.00 & 0.042$^{\textstyle\sim}$/1.00 & 0.056$^{\textstyle\sim}$/1.00 \\
-\quad Partial correlation, HAC (fixed-b) & 0.037$^{\textstyle\sim}$/1.00 & 0.048$^{\textstyle\sim}$/1.00 & 0.048/1.00 & 0.041$^{\textstyle\sim}$/1.00 & 0.056$^{\textstyle\sim}$/1.00 \\
-\quad Granger & 0.045$^{\textstyle\sim}$/1.00 & 0.053/1.00 & 0.058$^{\textstyle\sim}$/1.00 & 0.030$^{\textstyle\sim}$/1.00 & 0.056$^{\textstyle\sim}$/1.00 \\
-\quad RCoT & 0.084$^{\textstyle *}$/-- & 0.080$^{\textstyle *}$/-- & 0.053/1.00 & 0.047/1.00 & 0.061$^{\textstyle\sim}$/1.00 \\
-\quad MSCR (n $\le$ 1000) & 0.044/1.00 & 0.056/1.00 &  &  &  \\
-\quad PC & 0.017/1.00 & 0.045/1.00 & 0.045/1.00 & 0.064$^{\textstyle\sim}$/1.00 & 0.037/1.00 \\
-\quad NOTEARS & 0.000/1.00 & 0.000/1.00 & 0.000/1.00 & 0.000/1.00 & 0.000/1.00 \\
-\quad SHAP-DAG & 0.044/1.00 & 0.091$^{\textstyle *}$/-- & 0.048/1.00 & 0.103$^{\textstyle *}$/-- & 0.056/1.00 \\
-\quad Two-tower & 0.072$^{\textstyle *}$/-- & 0.053/1.00 & 0.058/1.00 & 0.061/1.00 & 0.125$^{\textstyle *}$/-- \\
-\quad CDD O-RAN discovery & 0.034/1.00 & 0.047/1.00 & 0.017/1.00 &  &  \\
-\midrule
-\multicolumn{6}{@{}l}{\textbf{Delayed harm, dithered setpoint}} \\
-\multicolumn{6}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.034$^{\textstyle\sim}$/1.00 & 0.045$^{\textstyle\sim}$/1.00 & 0.048$^{\textstyle\sim}$/1.00 & 0.044$^{\textstyle\sim}$/1.00 & 0.058$^{\textstyle\sim}$/1.00 \\
-\quad PMRT-Lin & 0.072$^{\textstyle\sim}$/0.98 & 0.062$^{\textstyle\sim}$/1.00 & 0.066$^{\textstyle\sim}$/1.00 & 0.064$^{\textstyle\sim}$/1.00 & 0.045/1.00 \\
-\multicolumn{6}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.056$^{\textstyle\sim}$/1.00 & 0.052$^{\textstyle\sim}$/1.00 & 0.059$^{\textstyle\sim}$/1.00 & 0.056$^{\textstyle\sim}$/1.00 & 0.036/1.00 \\
-\quad Granger & 0.056$^{\textstyle\sim}$/1.00 & 0.052$^{\textstyle\sim}$/1.00 & 0.059$^{\textstyle\sim}$/1.00 & 0.056$^{\textstyle\sim}$/1.00 & 0.036/1.00 \\
-\quad RCoT & 0.111$^{\textstyle *}$/-- & 0.086$^{\textstyle *}$/-- & 0.253$^{\textstyle *}$/-- & 0.423$^{\textstyle *}$/-- & 0.706$^{\textstyle *}$/-- \\
-\multicolumn{6}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.691$^{\textstyle *}$/-- & 0.784$^{\textstyle *}$/-- & 0.903$^{\textstyle *}$/-- & 0.920$^{\textstyle *}$/-- & 0.939$^{\textstyle *}$/-- \\
-\quad Partial correlation & 0.216$^{\textstyle *}$/-- & 0.255$^{\textstyle *}$/-- & 0.366$^{\textstyle *}$/-- & 0.436$^{\textstyle *}$/-- & 0.480$^{\textstyle *}$/-- \\
-\quad Partial correlation, HAC & 0.219$^{\textstyle *}$/-- & 0.255$^{\textstyle *}$/-- & 0.370$^{\textstyle *}$/-- & 0.442$^{\textstyle *}$/-- & 0.483$^{\textstyle *}$/-- \\
-\quad Partial correlation, HAC (fixed-b) & 0.217$^{\textstyle *}$/-- & 0.255$^{\textstyle *}$/-- & 0.370$^{\textstyle *}$/-- & 0.442$^{\textstyle *}$/-- & 0.483$^{\textstyle *}$/-- \\
-\quad Granger & 0.439$^{\textstyle *}$/-- & 0.558$^{\textstyle *}$/-- & 0.744$^{\textstyle *}$/-- & 0.798$^{\textstyle *}$/-- & 0.892$^{\textstyle *}$/-- \\
-\quad RCoT & 0.159$^{\textstyle *}$/-- & 0.184$^{\textstyle *}$/-- & 0.248$^{\textstyle *}$/-- & 0.372$^{\textstyle *}$/-- & 0.647$^{\textstyle *}$/-- \\
-\quad MSCR (n $\le$ 1000) & 1.000$^{\textstyle *}$/-- & 1.000$^{\textstyle *}$/-- &  &  &  \\
-\quad PC & 0.130$^{\textstyle *}$/-- & 0.114$^{\textstyle *}$/-- & 0.128$^{\textstyle *}$/-- & 0.119$^{\textstyle *}$/-- & 0.158$^{\textstyle *}$/-- \\
-\quad NOTEARS & 0.180$^{\textstyle *}$/-- & 0.189$^{\textstyle *}$/-- & 0.188$^{\textstyle *}$/-- & 0.188$^{\textstyle *}$/-- & 0.188$^{\textstyle *}$/-- \\
-\quad SHAP-DAG & 0.250$^{\textstyle *}$/-- & 0.242$^{\textstyle *}$/-- & 0.228$^{\textstyle *}$/-- & 0.230$^{\textstyle *}$/-- & 0.230$^{\textstyle *}$/-- \\
-\quad Two-tower & 0.222$^{\textstyle *}$/-- & 0.256$^{\textstyle *}$/-- & 0.242$^{\textstyle *}$/-- & 0.264$^{\textstyle *}$/-- & 0.255$^{\textstyle *}$/-- \\
-\quad CDD O-RAN discovery & 0.111$^{\textstyle *}$/-- & 0.163$^{\textstyle *}$/-- & 0.205$^{\textstyle *}$/-- &  &  \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_study4_env_e3}
 \end{table}
 
 \begin{table}
 \caption{Latent confounding: null-edge rate / recall.}
 \label{tab:s_env4}
-ootnotesize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} c c c c c@{}}
-\toprule
-Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
-\midrule
-\multicolumn{6}{@{}l}{\textbf{Latent confounding, independent logging}} \\
-\multicolumn{6}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.025/0.05 & 0.050$^{\textstyle\sim}$/0.17 & 0.025/0.85 & 0.000/1.00 & 0.100$^{\textstyle\sim}$/1.00 \\
-\quad PMRT-Lin & 0.000/0.47 & 0.050$^{\textstyle\sim}$/0.85 & 0.000/1.00 & 0.000/1.00 & 0.025/1.00 \\
-\multicolumn{6}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.025/0.55 & 0.050$^{\textstyle\sim}$/0.85 & 0.000/1.00 & 0.000/1.00 & 0.025/1.00 \\
-\quad RCoT & 0.150$^{\textstyle\sim}$/0.25 & 0.100$^{\textstyle\sim}$/0.55 & 0.100$^{\textstyle\sim}$/1.00 & 0.025/1.00 & 0.025/1.00 \\
-\multicolumn{6}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.000/0.50 & 0.050$^{\textstyle\sim}$/0.85 & 0.000/1.00 & 0.000/1.00 & 0.025/1.00 \\
-\quad Partial correlation & 0.000/0.50 & 0.050$^{\textstyle\sim}$/0.85 & 0.000/1.00 & 0.000/1.00 & 0.025/1.00 \\
-\quad Partial correlation, HAC & 0.000/0.55 & 0.050$^{\textstyle\sim}$/0.85 & 0.000/1.00 & 0.000/1.00 & 0.025/1.00 \\
-\quad Partial correlation, HAC (fixed-b) & 0.000/0.53 & 0.050$^{\textstyle\sim}$/0.85 & 0.000/1.00 & 0.000/1.00 & 0.025/1.00 \\
-\quad RCoT & 0.050$^{\textstyle\sim}$/0.23 & 0.050$^{\textstyle\sim}$/0.55 & 0.100$^{\textstyle\sim}$/1.00 & 0.000/1.00 & 0.025/1.00 \\
-\quad MSCR (n $\le$ 1000) & 0.150$^{\textstyle\sim}$/0.07 & 0.025/0.20 &  &  &  \\
-\quad PC & 0.000$^{\textstyle\circ}$/0.38 & 0.000$^{\textstyle\circ}$/0.62 & 0.000$^{\textstyle\circ}$/1.00 & 0.025$^{\textstyle\circ}$/1.00 & 0.025$^{\textstyle\circ}$/1.00 \\
-\quad NOTEARS & 0.000$^{\textstyle\circ}$/0.38 & 0.000$^{\textstyle\circ}$/0.57 & 0.000$^{\textstyle\circ}$/0.80 & 0.000$^{\textstyle\circ}$/0.93 & 0.000$^{\textstyle\circ}$/0.97 \\
-\quad SHAP-DAG & 0.050$^{\textstyle\circ}$/0.30 & 0.025$^{\textstyle\circ}$/0.23 & 0.050$^{\textstyle\circ}$/0.97 & 0.050$^{\textstyle\circ}$/1.00 & 0.000$^{\textstyle\circ}$/1.00 \\
-\quad Two-tower & 0.075$^{\textstyle\circ}$/0.82 & 0.025$^{\textstyle\circ}$/0.65 & 0.000$^{\textstyle\circ}$/1.00 & 0.025$^{\textstyle\circ}$/1.00 & 0.075$^{\textstyle\circ}$/1.00 \\
-\quad CDD O-RAN discovery & 0.000$^{\textstyle\circ}$/0.15 & 0.075$^{\textstyle\circ}$/0.53 & 0.025$^{\textstyle\circ}$/1.00 &  &  \\
-\midrule
-\multicolumn{6}{@{}l}{\textbf{Latent confounding, dithered setpoint}} \\
-\multicolumn{6}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.025/0.00 & 0.075$^{\textstyle\sim}$/0.00 & 0.075$^{\textstyle\sim}$/0.07 & 0.050$^{\textstyle\sim}$/0.03 & 0.025/0.05 \\
-\quad PMRT-Lin & 0.075$^{\textstyle\sim}$/0.00 & 0.075$^{\textstyle\sim}$/0.03 & 0.125$^{\textstyle\sim}$/0.17 & 0.100$^{\textstyle\sim}$/0.35 & 0.025/0.90 \\
-\multicolumn{6}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.075$^{\textstyle\sim}$/0.00 & 0.100$^{\textstyle\sim}$/0.05 & 0.150$^{\textstyle\sim}$/0.15 & 0.100$^{\textstyle\sim}$/0.40 & 0.025/0.90 \\
-\quad RCoT & 0.100$^{\textstyle\sim}$/0.00 & 0.100$^{\textstyle\sim}$/0.03 & 0.075$^{\textstyle\sim}$/0.03 & 0.025/0.03 & 0.075$^{\textstyle\sim}$/0.10 \\
-\multicolumn{6}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.075$^{\textstyle\sim}$/0.10 & 0.150$^{\textstyle\sim}$/0.33 & 0.100$^{\textstyle\sim}$/0.85 & 0.325$^{\textstyle *}$/-- & 0.400$^{\textstyle *}$/-- \\
-\quad Partial correlation & 0.075$^{\textstyle\sim}$/0.10 & 0.075$^{\textstyle\sim}$/0.33 & 0.025/0.82 & 0.100$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 \\
-\quad Partial correlation, HAC & 0.100$^{\textstyle\sim}$/0.10 & 0.075$^{\textstyle\sim}$/0.33 & 0.025/0.82 & 0.100$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 \\
-\quad Partial correlation, HAC (fixed-b) & 0.100$^{\textstyle\sim}$/0.10 & 0.075$^{\textstyle\sim}$/0.33 & 0.025/0.82 & 0.100$^{\textstyle\sim}$/1.00 & 0.050$^{\textstyle\sim}$/1.00 \\
-\quad RCoT & 0.025/0.03 & 0.075$^{\textstyle\sim}$/0.15 & 0.025/0.30 & 0.025/0.50 & 0.050$^{\textstyle\sim}$/0.75 \\
-\quad MSCR (n $\le$ 1000) & 0.025/0.05 & 0.000/0.05 &  &  &  \\
-\quad PC & 0.125$^{\textstyle\circ}$/0.20 & 0.100$^{\textstyle\circ}$/0.47 & 0.050$^{\textstyle\circ}$/0.95 & 0.250$^{\textstyle\circ}$/1.00 & 0.175$^{\textstyle\circ}$/1.00 \\
-\quad NOTEARS & 0.050$^{\textstyle\circ}$/0.15 & 0.000$^{\textstyle\circ}$/0.12 & 0.000$^{\textstyle\circ}$/0.03 & 0.000$^{\textstyle\circ}$/0.00 & 0.000$^{\textstyle\circ}$/0.00 \\
-\quad SHAP-DAG & 0.100$^{\textstyle\circ}$/0.07 & 0.050$^{\textstyle\circ}$/0.03 & 0.025$^{\textstyle\circ}$/0.15 & 0.025$^{\textstyle\circ}$/0.42 & 0.000$^{\textstyle\circ}$/0.75 \\
-\quad Two-tower & 0.100$^{\textstyle\circ}$/0.10 & 0.075$^{\textstyle\circ}$/0.03 & 0.150$^{\textstyle\circ}$/0.93 & 0.025$^{\textstyle\circ}$/1.00 & 0.000$^{\textstyle\circ}$/1.00 \\
-\quad CDD O-RAN discovery & 0.075$^{\textstyle\circ}$/0.17 & 0.025$^{\textstyle\circ}$/0.17 & 0.000$^{\textstyle\circ}$/0.60 &  &  \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_study4_env_e4}
 \end{table}
 
 \begin{table}
 \caption{Composed: null-edge rate / recall.}
 \label{tab:s_env5}
-ootnotesize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} c c c c c@{}}
-\toprule
-Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
-\midrule
-\multicolumn{6}{@{}l}{\textbf{Composed, independent logging}} \\
-\multicolumn{6}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.033$^{\textstyle\sim}$/0.70 & 0.037/0.84 & 0.035$^{\textstyle\sim}$/0.99 & 0.043$^{\textstyle\sim}$/1.00 & 0.058$^{\textstyle\sim}$/1.00 \\
-\quad PMRT-Lin & 0.040/0.35 & 0.058$^{\textstyle\sim}$/0.36 & 0.060$^{\textstyle\sim}$/0.45 & 0.050$^{\textstyle\sim}$/0.53 & 0.040$^{\textstyle\sim}$/0.62 \\
-\multicolumn{6}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.045/0.35 & 0.052$^{\textstyle\sim}$/0.36 & 0.045$^{\textstyle\sim}$/0.45 & 0.048$^{\textstyle\sim}$/0.52 & 0.037$^{\textstyle\sim}$/0.62 \\
-\quad RCoT & 0.072$^{\textstyle\sim}$/0.68 & 0.085$^{\textstyle *}$/-- & 0.062$^{\textstyle\sim}$/0.80 & 0.045$^{\textstyle\sim}$/0.87 & 0.037/0.97 \\
-\multicolumn{6}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.030/0.35 & 0.040/0.36 & 0.048$^{\textstyle\sim}$/0.45 & 0.043/0.53 & 0.037/0.62 \\
-\quad Partial correlation & 0.048/0.35 & 0.058$^{\textstyle\sim}$/0.36 & 0.050$^{\textstyle\sim}$/0.45 & 0.048$^{\textstyle\sim}$/0.53 & 0.037$^{\textstyle\sim}$/0.62 \\
-\quad Partial correlation, HAC & 0.048/0.34 & 0.060$^{\textstyle\sim}$/0.36 & 0.052$^{\textstyle\sim}$/0.45 & 0.048$^{\textstyle\sim}$/0.53 & 0.037$^{\textstyle\sim}$/0.62 \\
-\quad Partial correlation, HAC (fixed-b) & 0.048/0.34 & 0.060$^{\textstyle\sim}$/0.36 & 0.052$^{\textstyle\sim}$/0.45 & 0.048$^{\textstyle\sim}$/0.53 & 0.037$^{\textstyle\sim}$/0.62 \\
-\quad RCoT & 0.090$^{\textstyle *}$/-- & 0.052$^{\textstyle\sim}$/0.70 & 0.065$^{\textstyle\sim}$/0.83 & 0.060$^{\textstyle\sim}$/0.90 & 0.045/0.99 \\
-\quad MSCR (n $\le$ 1000) & 0.048$^{\textstyle\sim}$/0.67 & 0.050$^{\textstyle *}$/-- &  &  &  \\
-\quad PC & 0.013/0.40 & 0.010/0.39 & 0.013/0.50 & 0.025/0.54 & 0.010/0.53 \\
-\quad NOTEARS & 0.007/0.38 & 0.003/0.35 & 0.000/0.33 & 0.000/0.33 & 0.000/0.33 \\
-\quad SHAP-DAG & 0.052$^{\textstyle\sim}$/0.92 & 0.010/0.94 & 0.007/1.00 & 0.015/1.00 & 0.045/1.00 \\
-\quad Two-tower & 0.083$^{\textstyle *}$/-- & 0.052/0.71 & 0.102$^{\textstyle *}$/-- & 0.120$^{\textstyle *}$/-- & 0.113$^{\textstyle *}$/-- \\
-\quad CDD O-RAN discovery & 0.013/0.67 & 0.040/0.68 & 0.013/0.68 &  &  \\
-\midrule
-\multicolumn{6}{@{}l}{\textbf{Composed, dithered setpoint}} \\
-\multicolumn{6}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.050$^{\textstyle\sim}$/0.68 & 0.045/0.68 & 0.052/0.76 & 0.068$^{\textstyle\sim}$/0.80 & 0.058$^{\textstyle\sim}$/0.93 \\
-\quad PMRT-Lin & 0.043$^{\textstyle\sim}$/0.42 & 0.048$^{\textstyle\sim}$/0.47 & 0.045$^{\textstyle\sim}$/0.56 & 0.060$^{\textstyle\sim}$/0.60 & 0.058$^{\textstyle\sim}$/0.64 \\
-\multicolumn{6}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.033$^{\textstyle\sim}$/0.48 & 0.043$^{\textstyle\sim}$/0.55 & 0.045/0.61 & 0.052/0.64 & 0.070$^{\textstyle\sim}$/0.74 \\
-\quad RCoT & 0.107$^{\textstyle *}$/-- & 0.140$^{\textstyle *}$/-- & 0.230$^{\textstyle *}$/-- & 0.383$^{\textstyle *}$/-- & 0.623$^{\textstyle *}$/-- \\
-\multicolumn{6}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.580$^{\textstyle *}$/-- & 0.688$^{\textstyle *}$/-- & 0.840$^{\textstyle *}$/-- & 0.875$^{\textstyle *}$/-- & 0.932$^{\textstyle *}$/-- \\
-\quad Partial correlation & 0.270$^{\textstyle *}$/-- & 0.335$^{\textstyle *}$/-- & 0.490$^{\textstyle *}$/-- & 0.557$^{\textstyle *}$/-- & 0.613$^{\textstyle *}$/-- \\
-\quad Partial correlation, HAC & 0.270$^{\textstyle *}$/-- & 0.328$^{\textstyle *}$/-- & 0.485$^{\textstyle *}$/-- & 0.542$^{\textstyle *}$/-- & 0.598$^{\textstyle *}$/-- \\
-\quad Partial correlation, HAC (fixed-b) & 0.268$^{\textstyle *}$/-- & 0.323$^{\textstyle *}$/-- & 0.485$^{\textstyle *}$/-- & 0.542$^{\textstyle *}$/-- & 0.598$^{\textstyle *}$/-- \\
-\quad RCoT & 0.133$^{\textstyle *}$/-- & 0.152$^{\textstyle *}$/-- & 0.207$^{\textstyle *}$/-- & 0.310$^{\textstyle *}$/-- & 0.595$^{\textstyle *}$/-- \\
-\quad MSCR (n $\le$ 1000) & 0.968$^{\textstyle *}$/-- & 1.000$^{\textstyle *}$/-- &  &  &  \\
-\quad PC & 0.018/0.45 & 0.035/0.45 & 0.000/0.00 & 0.000/0.00 & 0.000/0.00 \\
-\quad NOTEARS & 0.022/0.45 & 0.033/0.45 & 0.028/0.44 & 0.033/0.45 & 0.028/0.43 \\
-\quad SHAP-DAG & 0.060$^{\textstyle\sim}$/0.68 & 0.020/0.67 & 0.050$^{\textstyle\sim}$/0.69 & 0.028/0.73 & 0.010/0.85 \\
-\quad Two-tower & 0.055$^{\textstyle\sim}$/0.68 & 0.028/0.68 & 0.085$^{\textstyle *}$/-- & 0.030/0.75 & 0.020/0.77 \\
-\quad CDD O-RAN discovery & 0.000/0.57 & 0.013/0.70 & 0.025/0.73 &  &  \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_study4_env_e5}
 \end{table}
 
 \begin{figure}
@@ -1243,75 +738,19 @@ Method & $n=500$ & $n=1000$ & $n=4000$ & $n=8000$ & $n=24000$ \\
 \label{fig:s_recall}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=\textwidth]{figures/fig_appC_x2_dose.pdf}
-\caption{Truth-null rate against the dither design.}
-\label{fig:s_dose}
-\end{figure}
-
 \begin{table}
 \caption{Truth-null rate by dither design.}
 \label{tab:s_dose}
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}l c c c c c c@{}}
-\toprule
- & \multicolumn{4}{c}{Dither width (20 setpoint blocks)} & \multicolumn{2}{c}{Setpoint blocks (width 0.10)} \\
-\cmidrule(lr){2-5}\cmidrule(lr){6-7}
-Method & 0.02 & 0.05 & 0.10 & 0.20 & 5 & 80 \\
-\midrule
-\multicolumn{7}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & 0.049 & 0.045 & 0.046 & 0.043 & 0.044 & 0.046 \\
-\quad PMRT-Lin & 0.045 & 0.042 & 0.045 & 0.043 & 0.050 & 0.054 \\
-\addlinespace
-\multicolumn{7}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & 0.048 & 0.049 & 0.048 & 0.048 & -- & 0.054 \\
-\addlinespace
-\multicolumn{7}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & 0.823$^{\textstyle *}$ & 0.803$^{\textstyle *}$ & 0.754$^{\textstyle *}$ & 0.619$^{\textstyle *}$ & 0.873$^{\textstyle *}$ & 0.571$^{\textstyle *}$ \\
-\quad Partial correlation & 0.496$^{\textstyle *}$ & 0.485$^{\textstyle *}$ & 0.419$^{\textstyle *}$ & 0.253$^{\textstyle *}$ & 0.431$^{\textstyle *}$ & 0.312$^{\textstyle *}$ \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_appC_x2}
 \end{table}
-
-\begin{figure}
-\centering
-\includegraphics[width=\textwidth]{figures/fig_appC_x3_misspec.pdf}
-\caption{Null-edge rate under a misspecified design.}
-\label{fig:s_misspec}
-\end{figure}
 
 \begin{table}
 \caption{Null-edge rate under a misspecified design.}
 \label{tab:s_misspec}
-\footnotesize
-\setlength{\tabcolsep}{2pt}
-\begin{tabular}{@{}l c c c c c c c@{}}
-\toprule
-\multicolumn{8}{@{}l}{\textit{Truth-null edges, dithered setpoint, linear graph and rare regime}} \\
- & \multicolumn{5}{c}{Told dither width ($\times$ true)} & \multicolumn{2}{c}{Told setpoint delay} \\
-\cmidrule(lr){2-6}\cmidrule(lr){7-8}
-Method & 0.5 & 0.8 & 1 & 1.25 & 2 & +2\,\% & +5\,\% \\
-\midrule
-\quad PMRT-GBM & 0.152$^{\textstyle *}$ & 0.079$^{\textstyle *}$ & 0.042 & 0.040 & 0.100$^{\textstyle *}$ & 0.046 & 0.062$^{\textstyle *}$ \\
-\quad PMRT-Lin & 0.313$^{\textstyle *}$ & 0.109$^{\textstyle *}$ & 0.042 & 0.016 & 0.000 & 0.086$^{\textstyle *}$ & 0.228$^{\textstyle *}$ \\
-\quad PMRT-Lin, confounder covariates & 0.306$^{\textstyle *}$ & 0.107$^{\textstyle *}$ & 0.041 & 0.012 & 0.000 & 0.086$^{\textstyle *}$ & 0.208$^{\textstyle *}$ \\
-\quad Design-adjusted partial correlation & 0.044 & 0.044 & 0.044 & 0.044 & 0.044 & 0.058 & 0.086$^{\textstyle *}$ \\
-\midrule
-\multicolumn{8}{@{}l}{\textit{Confounded null edge, latent confounding, confounded policy ($\lambda = 1$)}} \\
- & \multicolumn{5}{c}{Told $\lambda$ ($\times$ true)} & & \\
-\cmidrule(lr){2-6}
-Method & 0.5 & 0.8 & 1 & 1.25 & 2 & & \\
-\midrule
-\quad PMRT-GBM & 0.033$^{\textstyle\sim}$ & 0.017 & 0.017 & 0.017 & 0.267$^{\textstyle *}$ &  &  \\
-\quad PMRT-Lin & 0.000 & 0.017 & 0.050$^{\textstyle\sim}$ & 0.050$^{\textstyle\sim}$ & 0.167$^{\textstyle *}$ &  &  \\
-\quad PMRT-Lin, confounder covariates & 0.000 & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ & 0.050$^{\textstyle\sim}$ & 0.183$^{\textstyle *}$ &  &  \\
-\quad Design-adjusted partial correlation & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ & 0.033$^{\textstyle\sim}$ &  &  \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_appC_x3}
 \end{table}
 
+\FloatBarrier
 \section{Bridging analysis}
 \label{esm:bridge}
 
@@ -1320,40 +759,7 @@ The methods of the controlled environments ran on the randomised simulator logs,
 \begin{table}
 \caption{Bridging analysis on the randomised logs.}
 \label{tab:s_bridge}
-\footnotesize
-\setlength{\tabcolsep}{1pt}
-\begin{tabular}{@{}l c c c c c c c c c c c c@{}}
-\toprule
- & & Data & \multicolumn{4}{c}{Recall} & \multicolumn{4}{c}{Null rate} & Placebo & Placebo \\
-\cmidrule(lr){4-7}\cmidrule(lr){8-11}
-Method & Rule & sets & 60 & 120 & 300 & All & 60 & 120 & 300 & All & column & logs \\
-\midrule
-PMRT of the simulator (reference) & & & 0.56 & 0.62 & 0.69 & 0.79 & 0.10 & 0.10 & 0.10 & 0.10 &  & 0.00 \\
-\midrule
-\multicolumn{13}{@{}l}{\textit{Design-based tests}} \\
-\quad PMRT-GBM & BY & 72 & 0.39 & 0.49 & 0.55 & 0.55 & 0.05 & 0.05 & 0.07 & 0.14 & 0.00 & 0.00 \\
-\quad PMRT-Lin & BY & 72 & 0.49 & 0.55 & 0.62 & 0.72 & 0.05 & 0.06 & 0.10 & 0.10 & 0.00 & 0.00 \\
-\quad PMRT-Lin, confounder covariates & BY & 72 & 0.49 & 0.55 & 0.59 & 0.72 & 0.05 & 0.07 & 0.10 & 0.10 & 0.00 & 0.00 \\
-\midrule
-\multicolumn{13}{@{}l}{\textit{Design-adjusted tests}} \\
-\quad Partial correlation & BY & 72 & 0.52 & 0.58 & 0.57 & 0.72 & 0.05 & 0.06 & 0.10 & 0.10 & 0.00 & 0.00 \\
-\quad Granger & BY & 72 & 0.52 & 0.58 & 0.57 & 0.72 & 0.05 & 0.06 & 0.10 & 0.10 & 0.00 & 0.00 \\
-\quad RCoT & BY & 72 & 0.38 & 0.41 & 0.48 & 0.48 & 0.05 & 0.07 & 0.07 & 0.10 & 0.01 & 0.03 \\
-\midrule
-\multicolumn{13}{@{}l}{\textit{Design-blind methods}} \\
-\quad Correlation & BY & 72 & 0.61 & 0.73 & 0.79 & 0.83 & 0.51 & 0.58 & 0.62 & 0.62 & 0.59 & 0.17 \\
-\quad Partial correlation & BY & 72 & 0.52 & 0.58 & 0.57 & 0.69 & 0.05 & 0.06 & 0.10 & 0.10 & 0.00 & 0.00 \\
-\quad Partial correlation, HAC (fixed-b) & BY & 72 & 0.52 & 0.57 & 0.57 & 0.69 & 0.05 & 0.06 & 0.10 & 0.10 & 0.00 & 0.00 \\
-\quad Granger & BY & 72 & 0.62 & 0.70 & 0.74 & 0.76 & 0.41 & 0.55 & 0.69 & 0.76 & 0.40 & 0.22 \\
-\quad RCoT & BY & 72 & 0.38 & 0.46 & 0.50 & 0.48 & 0.05 & 0.05 & 0.14 & 0.10 & 0.01 & 0.05 \\
-\quad MSCR ($n \le 1000$, partial) & BY & 15 & 0.61 & 0.80 & -- & -- & 1.00 & 1.00 & -- & -- & 0.56 & 0.33 \\
-\quad Two-tower & Plac. & 72 & 0.27 & 0.29 & 0.22 & 0.34 & 0.10 & 0.10 & 0.07 & 0.10 & 0.05 & 0.15 \\
-\quad CDD O-RAN discovery (partial) & Plac. & 60 & 0.40 & 0.49 & 0.44 & 0.25 & 0.08 & 0.23 & 1.00 & 1.00 & 0.05 & 0.05 \\
-\quad PC & Plac. & 72 & 0.11 & 0.12 & 0.19 & 0.14 & 0.10 & 0.06 & 0.14 & 0.14 & 0.05 & 0.07 \\
-\quad NOTEARS & Plac. & 72 & 0.19 & 0.20 & 0.22 & 0.24 & 0.05 & 0.05 & 0.05 & 0.05 & 0.01 & 0.05 \\
-\quad SHAP-DAG & Plac. & 72 & 0.27 & 0.26 & 0.33 & 0.28 & 0.07 & 0.07 & 0.05 & 0.05 & 0.04 & 0.00 \\
-\bottomrule
-\end{tabular}
+\input{tables/tab_appB_bridge}
 \end{table}
 
 \FloatBarrier

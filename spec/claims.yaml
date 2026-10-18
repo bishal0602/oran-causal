@@ -42,7 +42,7 @@ claims:
   - id: DEF-EST-TAUAA
     kind: definition
     statement: "The knockout effect tau_AA is the mean of sgn_u tau_u^AA, the accept-minus-reject difference of the 90 s post-window KPI sum in rollouts from the copied state with every other unit accepted (Definition 2)."
-    paper: [def:tau_aa, tab:s_estimands]
+    paper: [def:tau_aa]
     spec: spec:est.tauaa
     code: [oran_causal.sim.system.decision.gt:unit_delta]
     tests: {min: 1, tier: unit}
@@ -65,7 +65,7 @@ claims:
   - id: DEF-PMRT-WEIGHT
     kind: definition
     statement: "The weight w_u is built in seven steps: target bins, receiver slots, ridge adjustment, matched filter psi = Sigma^-1 mu, running score centre, Huber clip at a predicted scale, and orientation set where |z_train| >= 2."
-    paper: [sec:pmrt, alg:s_pmrt, tab:s_pipeline]
+    paper: [sec:pmrt, alg:pmrt, tab:s_pipeline]
     spec: spec:pmrt.weight
     code:
       - oran_causal.core.pmrt.units:fit_pmrt
@@ -95,7 +95,7 @@ claims:
   - id: DEF-PMRT-SUPPORT
     kind: definition
     statement: "A hypothesis is tested only when it has at least 30 units, 5 accepted, 5 rejected and 3 episodes; untested hypotheses count in m and are never declared."
-    paper: [sec:inference, alg:s_pmrt]
+    paper: [sec:inference, alg:pmrt]
     spec: spec:pmrt.support
     tests: {min: 1, tier: unit}
 
@@ -268,7 +268,7 @@ claims:
 
   - id: THM-FRESH
     kind: theorem-paper
-    statement: "In the setting of app:proof_setting (draws U_xi independent Uniform(0, 1) over keys and independent of G_0; G_u = G_0 v sigma(U_{xi_1}, ..., U_{xi_u})), if xi_u and pi_u are G_{u-1}-measurable and xi_u differs from the earlier keys, then U_{xi_u} is Uniform(0, 1) and independent of G_{u-1}, so Pr(W_u = accept | G_{u-1}) = pi_u (Lemma 1)."
+    statement: "In the setting of esm:setting (draws U_xi independent Uniform(0, 1) over keys and independent of G_0; G_u = G_0 v sigma(U_{xi_1}, ..., U_{xi_u})), if xi_u and pi_u are G_{u-1}-measurable and xi_u differs from the earlier keys, then U_{xi_u} is Uniform(0, 1) and independent of G_{u-1}, so Pr(W_u = accept | G_{u-1}) = pi_u (Lemma 1)."
     paper: [lem:s_fresh]
     spec: spec:thm.fresh
 
@@ -301,7 +301,7 @@ claims:
   - id: THM-BY-FIN
     kind: theorem-lean
     statement: "For any rejection set S with p_j <= t_j(|S|) for every j in S, where t_j(k) = q w_j k / (m c_m), the false discovery rate is at most (q/m) sum_{j in H0} w_j + |H0| delta whenever every null p-value satisfies Pr(p_j <= t_j(i)) <= t_j(i) + delta for i = 1..m, whatever the dependence between the p-values."
-    paper: [cor:s_fdr, cor:fdr]
+    paper: [cor:s_fdr, cor:fdr, lem:s_by]
     spec: spec:thm.byfin
     depends_on: [CIT-BY, CIT-BR]
     code: [oran_causal.core.multiplicity:weighted_step_up]
@@ -329,7 +329,7 @@ claims:
   - id: THM-GATE-BUDGET
     kind: theorem-paper
     statement: "If every unit of a class were rejected and each rejection moved a guard KPI by at most epsilon on each of the three relations, the guard ratio would move by at most 0.05."
-    paper: [sec:gate]
+    paper: [sec:gate, lem:s_gate]
     spec: spec:gate.budget
     depends_on: [DEF-GATE]
     code: [oran_causal.core.gate:tau_table]
@@ -654,7 +654,7 @@ claims:
   - id: EMP-X16
     kind: empirical
     statement: "With a strictly predictable centre all 22 map slopes kept their sign, with relative changes of -2.9 to +6.5 %, the gate bounds moved by a median of 3.5 % of their tolerance and no class changed certification."
-    paper: [sec:slope, sec:disc_limits, tab:s_gate]
+    paper: [sec:disc_limits, tab:s_gate]
     spec: spec:asm.centre
     depends_on: [DEF-SLOPE, DEF-GATE]
     code: [oran_causal.analysis.posthoc.x16:analyse]
@@ -682,7 +682,7 @@ claims:
 
   - id: EMP-S4-C2C3
     kind: empirical
-    statement: "The design-based and design-adjusted tests remained near 0.05 under every logging design and all four protocol claims were supported, except that design-adjusted RCoT was invalid and PMRT-Lin exceeded its allowance of invalid conditions under the confounded policy."
+    statement: "The design-based and design-adjusted tests remained near 0.05 under every logging design and all four protocol claims were supported, except that design-adjusted RCoT was invalid and PMRT-Lin was invalid in some conditions under the confounded policy."
     paper: [abstract, sec:study4, fig:logging_validity]
     spec: spec:env.validity
     depends_on: [DEF-ENV, DEF-ENV-ARMS, ASM-S4-KNOWN]
@@ -710,7 +710,7 @@ claims:
   - id: EMP-POWER
     kind: empirical
     statement: "In the latent-confounding environment the recall of PMRT-GBM did not exceed 0.075 while design-adjusted partial correlation reached 0.90; on the randomised simulator logs pooled recalls were 0.72, 0.69 and 0.79 for design-adjusted partial correlation, context-only partial correlation and PMRT."
-    paper: [sec:disc_discovery]
+    paper: [sec:study4, sec:disc_discovery]
     spec: spec:env.power
     depends_on: [DEF-ENV, DEF-MET-MAP]
     tests: {min: 1, tier: t0}

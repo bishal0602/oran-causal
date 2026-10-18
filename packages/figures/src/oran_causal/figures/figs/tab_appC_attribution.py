@@ -22,16 +22,16 @@ NAME = "tab_appC_attribution"
 X13 = ("posthoc_x9_x16", "revision", "x13_attribution.json")
 SOURCES = [source_note(*X13)]
 FAMILIES = [
-    ("carrier", "carrier (ES)"),
-    ("sleep", "sleep (ES)"),
-    ("ptx", "ptx (Power ES)"),
-    ("prot_min", r"prot\_min (Slice Guarantee)"),
+    ("carrier", "macro carrier (ES)"),
+    ("sleep", "pico sleep (ES)"),
+    ("ptx", "transmit power (Power ES)"),
+    ("prot_min", "protected share (Slice Guarantee)"),
 ]
 LABELS = ("TRUE", "NULL", "INDET")
 ROWS = [
-    ("S1", "pooled", "Study 1, pooled 600 episodes"),
-    ("S1", "slices", "Study 1, sum over 17 subsamples"),
-    ("S2", "pooled", "Study 2, pooled discovery episodes"),
+    ("S1", "pooled", "Randomised logs, 600 episodes pooled"),
+    ("S1", "slices", "Randomised logs, sum over 17 subsamples"),
+    ("S2", "pooled", "Confounded logs, discovery episodes pooled"),
 ]
 METHODS = {
     "S1": [("loadsp_c+wby1s", "PMRT"), ("granger_by", "Granger + BY")],
@@ -119,7 +119,7 @@ def latex(rs: list[dict]) -> str:
         r"\toprule",
         r"\multicolumn{7}{@{}l}{(a) Far-relation hypotheses by ground-truth label} \\",
         r"\midrule",
-        r" & \multicolumn{3}{c}{Study 1} & \multicolumn{3}{c}{Study 2} \\",
+        r" & \multicolumn{3}{c}{Randomised logs} & \multicolumn{3}{c}{Confounded logs} \\",
         r"\cmidrule(lr){2-4}\cmidrule(lr){5-7}",
         r"Parameter (writer) & True & Null & Indet. & True & Null & Indet. \\",
         r"\midrule",

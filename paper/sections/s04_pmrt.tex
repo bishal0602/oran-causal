@@ -17,7 +17,6 @@ KPIs are certified small.
 
 \subsection{Test statistic}
 \label{sec:pmrt}\claim{DEF-PMRT-WEIGHT}
-\label{sec:pmrt_idea}
 
 In logs written by a reactive controller, the network state drives both the mode $W$ (accept or reject) and the KPIs
 (Figure~\ref{fig:idea}a). When the referee accepts a request whenever an independent uniform draw $U$ falls below a
@@ -39,7 +38,7 @@ variance $\pi_u(1 - \pi_u)$, so an acceptance that was likely scores little and 
 The weight $w_u$ summarises how the KPI under test moved after the unit opened. It is the residual of the KPI after a
 ridge prediction~\cite{hoerl1970ridge} from what was known at opening, combined over the receiving cells and the
 seconds after opening by a matched filter, then centred, shrunk and clipped~\cite{huber1964robust}. Every fitted part
-was trained on earlier episodes, separate from the evaluation data (\esm{method}).
+was trained on earlier episodes, separate from the evaluation data (\esm{esm:method}).
 
 The validity of the test rests on one property of the weight: apart from the KPI series under test, it uses only
 information fixed before the unit drew its mode. It therefore uses no later unit, no unit of another family opening at
@@ -57,9 +56,8 @@ orientation $o$, the sign of the training effect, which is set only when that ef
 
 \subsection{Inference and false discovery rate control}
 \label{sec:inference}\claim{DEF-PMRT-SUPPORT}\claim{DEF-FDR-WBY}\claim{ASM-A1-DESIGN}\claim{ASM-A2-NULL}\claim{ASM-A3-PRED}\claim{ASM-A4-REG}\claim{CIT-BY}\claim{CIT-RW}
-\label{sec:declaration}
 
-The modes of family $f$ are redrawn $B = 9999$ times from the logged propensities, with every other family fixed and
+The modes of family $f$ are redrawn $B$ times from the logged propensities, with every other family fixed and
 the weights held, and $z_b$ is recomputed for each redraw. Each hypothesis has a two-sided p-value $p$ and, where $o$
 is set, a one-sided value $p_d$ for each effect direction $d \in \{+1, -1\}$:
 \begin{equation}
@@ -67,7 +65,61 @@ p = \frac{1 + \#\{b : |z_b| \ge |z|\}}{B + 1}, \qquad
 p_d = \frac{1 + \#\{b : d\, o\, z_b \ge d\, o\, z\}}{B + 1},
 \label{eq:pval}\claim{DEF-PMRT-PVAL}
 \end{equation}
-where $\#$ counts redraws. Hypotheses with too few units, accepted or rejected requests, or episodes are not tested.
+where $\#$ counts redraws. Algorithm~\ref{alg:pmrt} lists the steps for one hypothesis, including the cases left
+untested. Its sub-steps in small capitals are the steps of \esm{tab:s_pipeline} with the same number, fitted on
+the training units. Every hypothesis uses $n_{\mathrm{u}} = 30$,
+$n_{\mathrm{a}} = n_{\mathrm{r}} = 5$, $n_{\mathrm{e}} = 3$, $(t_1, t_2, t_3, t_4) = (30, 60, 90, 150)$~s,
+$(K_{\mathrm{own}}, K_{\mathrm{nbr}}, K_{\mathrm{far}}) = (1, 4, 2)$, $\ell_{\mathrm{h}} = 150$~s,
+$\nu_0 = 20$, $\nu_1 = 50$, $c = 2.5$, $z_o = 2$ and $B = 9999$.
+
+\begin{algorithm}[!tbp]
+\caption{PMRT for one hypothesis.}
+\label{alg:pmrt}
+\footnotesize
+\begin{algorithmic}[1]
+\Require hypothesis $(f, r, k)$; training units $\mathcal{T}$ of $f$; units $u = 1, \dots, N$ of $f$ in information
+  order with $W_u$, $\mathrm{sgn}_u$, $\pi_u$, $y_u$ and complete pre- and post-windows of length $t_3$; counts $N_{\mathrm{a}}$,
+  $N_{\mathrm{r}}$, $N_{\mathrm{e}}$ of accepted units, rejected units and episodes
+\Require minimum support $n_{\mathrm{u}}, n_{\mathrm{a}}, n_{\mathrm{r}}, n_{\mathrm{e}}$; bin edges
+  $t_1 < t_2 < t_3 < t_4$; slot counts $K_r$; history length $\ell_{\mathrm{h}}$; pseudo-units $\nu_0, \nu_1$;
+  clip constant $c$; orientation threshold $z_o$; redraws $B$
+\Ensure $p$, the one-sided $p_{+1}, p_{-1}$ and the reported sign $\varsigma$, or untested
+\If{$\min\{|\mathcal{T}|, N\} < n_{\mathrm{u}}$ \textbf{or} $N_{\mathrm{a}} < n_{\mathrm{a}}$ \textbf{or}
+  $N_{\mathrm{r}} < n_{\mathrm{r}}$ \textbf{or} $N_{\mathrm{e}} < n_{\mathrm{e}}$ \textbf{or} $y_u \notin \mathbb{R}$
+  for some $u$}
+  \State \Return untested \Comment{never declared}
+\EndIf
+\State $\rho \gets \textsc{RankSlots}(\mathcal{T}; K_r)$ \Comment{step 2}
+\State $\Gamma \gets \textsc{Adjust}(\mathcal{T}, \rho; \ell_{\mathrm{h}})$ \Comment{step 3}
+\State $(\tilde\mu, \Sigma) \gets \textsc{Profile}(\mathcal{T}, \rho, \Gamma)$ \Comment{step 4}
+\State $\psi_A \gets \Sigma_{AA}^{-1} \tilde\mu_A$ for $A \in \{A_3, A_4\}$ \Comment{$A_j$: bins up to $t_j$}
+\State $\hat s \gets \textsc{Scale}(\mathcal{T}, \psi)$ \Comment{step 6}
+\State $o \gets \mathrm{sign}(\mathbf{1}_{A_3}^{\top} \tilde\mu)\, \mathbf{1}\{|z_{\mathrm{train}}| \ge z_o\}$
+  \Comment{step 7}
+\For{$u = 1, \dots, N$}
+  \State $v_u \gets \mathrm{sgn}_u (L(W_u) - \pi_u)$ \Comment{Eq.~\eqref{eq:score}}
+  \State $E_u \gets P_u - \Gamma X_u$ \Comment{$P_u$, $X_u$: post-window bins, pre-window features}
+  \State $g_u \gets \psi_{A_u}^{\top} E_u$ \Comment{$A_u$: bins observed for $u$}
+  \State $\bar g_u \gets \textsc{Centre}(g_1, \dots, g_{u-1}; \nu_0, \nu_1)$ \Comment{step 5}
+  \State $s_u \gets \hat s(X_u)$
+  \State $w_u \gets s_u \max\{-c, \min\{c, (g_u - \bar g_u) / s_u\}\}$
+\EndFor
+\State $z \gets S / \sigma$ \Comment{Eq.~\eqref{eq:stat}}
+\For{$b = 1, \dots, B$}
+  \State $L(W_u^{(b)}) \sim \mathrm{Bernoulli}(\pi_u)$ for $u = 1, \dots, N$ \Comment{other families fixed}
+  \State $z_b \gets \sum_u v_u^{(b)} w_u / \sigma$
+\EndFor
+\State $p \gets$ two-sided value of Eq.~\eqref{eq:pval}
+\If{$o \ne 0$}
+  \State $p_d \gets$ one-sided value of Eq.~\eqref{eq:pval} for $d \in \{+1, -1\}$
+  \State $\varsigma \gets \mathrm{sign}(z)\, o$
+\Else
+  \State $\varsigma \gets \mathrm{sign}(z^{\circ})$ \Comment{$p_{\pm 1}$ undefined; $z^{\circ}$: $z$ of the centred
+    $A_3$ total of $E_u$}
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
 The sharp null $H_0(f, r, k)$ of Section~\ref{sec:estimand} is stated over possible units, because which units are
 realised depends on the modes. The history $\mathcal{G}_{u-1}$ holds all other randomness and the modes of $f$'s first
 $u - 1$ units, and the result rests on four assumptions.
@@ -111,20 +163,18 @@ apply here: a sharp null on one KPI does not fix the network state that creates 
 propensities, so the adaptive design cannot be replayed.
 
 The proof of Proposition~\ref{prop:pmrt} combines the martingale central limit theorem with a random limiting
-variance~\cite[Cor.~3.1 and 3.2]{hall1980martingale}\claim{CIT-HH} for the statistic with the Lindeberg--Feller and
-P\'olya theorems~\cite[Thm.~3.4.10 and Exercise~3.2.9]{durrett2019probability}\claim{CIT-DUR} for the redraws, and it
-uses that the draw of a unit is independent of the past under the logged design (fresh-draw
-lemma\claim{THM-FRESH}). The p-value is exact when the units, their order, propensities and weights are fixed given the
-past of the other families, because the observed assignment and the redraws are then
-exchangeable, so the tie-inclusive p-value is valid\claim{THM-EXACT} (\esm{theory}; for a continuous statistic it is
-exact~\cite[Sect.~4]{phipson2010permutation}\claim{CIT-PS}). PMRT does not meet that condition,
-and a two-unit design in which a rejected request is proposed again shows that re-proposal alone makes the one-sided
-redraw p-value anti-conservative for any fixed $t \in (1/2, 3/4)$\claim{THM-COUNTEREX}. The statements, proof ideas and
-machine-checked versions of these results are in \esm{theory}.
+variance~\cite[Cor.~3.1 and 3.2]{hall1980martingale}\claim{CIT-HH} for the statistic, the Lindeberg--Feller and
+P\'olya theorems~\cite[Thm.~3.4.10 and Exercise~3.2.9]{durrett2019probability}\claim{CIT-DUR} for the redraws, and a
+fresh-draw lemma\claim{THM-FRESH}, by which the draw of a unit is independent of the past under the logged design
+(\esm{esm:theory}). Were the units, their order, propensities and weights fixed given the past of the other families,
+the tie-inclusive p-value would be valid\claim{THM-EXACT}, and exact for a continuous
+statistic~\cite[Sect.~4]{phipson2010permutation}\claim{CIT-PS}; PMRT does not meet that condition, and in a two-unit
+design in which a rejected request is proposed again the one-sided redraw p-value is anti-conservative for any fixed
+$t \in (1/2, 3/4)$\claim{THM-COUNTEREX}.
 
 The 60 hypotheses of one analysis are declared together by a weighted Benjamini--Yekutieli (BY)
 step-up~\cite[Thm.~1.3]{benjamini2001dependency}, \cite{blanchard2008fdr} at $q = 0.05$. Hypothesis $j$ enters with a weight $\omega_j$
-and, where a prior direction $d_j$ is set, with $p_{d_j}$, and otherwise with $p$; weights and directions are derived
+and, where a prior direction $d_j$ is set and $p_{d_j}$ is defined, with $p_{d_j}$, and otherwise with $p$; weights and directions are derived
 from the training episodes alone~\cite[Thm.~3.1 and Sect.~5]{roeder2009weighted}. A declaration is a rejected hypothesis with its sign,
 $d_j$ where the one-sided value was used and otherwise the reported sign.
 
@@ -143,7 +193,7 @@ where a false discovery is the rejection of a true sharp null.
 
 The corollary applies the reshaped weighted step-up of Blanchard and
 Roquain~\cite[Thm.~4.2]{blanchard2008fdr}\claim{CIT-BR} through a finite-sample bound whose slack vanishes as the
-sample grows\claim{THM-BY-FIN} (\esm{theory}). Untested hypotheses count in $m$ and are never declared, which is
+sample grows\claim{THM-BY-FIN} (\esm{esm:theory}). Untested hypotheses count in $m$ and are never declared, which is
 conservative.
 
 \subsection{Scope of the guarantees}
@@ -153,7 +203,7 @@ A declared edge states that the modes of family $f$ change KPI $k$ somewhere in 
 and the FDR bound covers that claim asymptotically. It does not cover the sign, which need not be the sign of
 $\tau_{\pi}$, nor which relation carries the effect: a unit's neighbour and far cells are the own cells of other units
 of $f$, so an effect of $f$ on its own cells also moves the neighbour and far sums, and the far hypotheses are no
-negative control. Table~\ref{tab:guarantees} summarises what each layer guarantees and what rests on evidence alone.
+negative control (\esm{tab:s_attr}). Table~\ref{tab:guarantees} summarises what each layer guarantees and what rests on evidence alone.
 
 \begin{table}[tbp]
 \caption{Guarantees of the framework.}
@@ -176,8 +226,7 @@ Decisions & None & other scenarios \\
 \end{table}
 
 \subsection{Map-driven referee}
-\label{sec:acting}
-\label{sec:slope}\claim{ASM-SLOPE-CENTRE}\claim{EMP-X16}
+\label{sec:slope}\claim{ASM-SLOPE-CENTRE}
 \label{sec:referee}\claim{DEF-REF-RULES}
 
 The referee needs the size of each effect, not only its sign, and takes it from the design slope $\hat\beta$, which
@@ -190,10 +239,9 @@ outcome centre $\tilde y_u$ computed from earlier units' outcomes and $u$'s pre-
 \label{eq:slope_ht}\claim{DEF-SLOPE}
 \end{equation}
 with $\pi_u = 0.5$, which is the Horvitz--Thompson estimator of $\tau_{\pi}$ and converges to it
-(design-slope lemma, \claim{THM-SLOPE}\esm{theory}). Under a state-dependent policy such as the incumbent, it converges to the
+(design-slope lemma, \claim{THM-SLOPE}\esm{esm:theory}). Under a state-dependent policy such as the incumbent, it converges to the
 $\pi_u(1 - \pi_u)$-weighted average of $\mathrm{sgn}_u \tau_u^{\pi}$. The lemma assumes an outcome centre fixed before
-$u$'s mode is drawn, whereas the implemented centre also uses earlier outcomes whose windows are still open; with a
-strictly predictable centre, no slope changed sign (\esm{decisions}).
+$u$'s mode is drawn, which the implemented centre meets only approximately (Section~\ref{sec:disc_limits}).
 
 A causal effect map $M$ gives each declared edge $(f, r, k)$ a signed coefficient $\beta(f, r, k)$. For PMRT it is the
 declaration's sign times the magnitude of the design slope; an associational map uses the method's sign times the
@@ -203,7 +251,7 @@ of family $f$ and direction $d$ it sums the direction-adjusted effects $\Delta_k
 own, neighbour and far relations for each KPI $k$, judges the request on the first KPI with $\Delta_k \ne 0$ in the
 order protected-slice violations, service violations, RLFs, and rejects it if it is harmful and either costly in energy
 or under protected-UE pressure. A rejection that accepting would have helped on a guard KPI is delayed by at most one
-unit. The same constants apply to every map; the full rules are in \esm{method}.
+unit. The same constants apply to every map; the full rules are in \esm{esm:method}.
 
 \subsection{Edge-certification gate}
 \label{sec:gate}\claim{DEF-GATE}\claim{ASM-GATE-COV}\claim{THM-GATE-BUDGET}

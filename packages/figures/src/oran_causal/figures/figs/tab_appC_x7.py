@@ -25,16 +25,23 @@ SOURCES = [source_note(*X7)]
 REF = "sub:ES+PowerES"
 SHADOW = "X7:sub|shadow"
 FAMS = [
-    ("prot_min|+1", r"prot\_min up"),
-    ("ptx", "ptx"),
-    ("carrier", "carrier"),
-    ("sleep", "sleep"),
+    ("prot_min|+1", "Prot. share up"),
+    ("ptx", "Tx power"),
+    ("carrier", "Carrier"),
+    ("sleep", "Sleep"),
 ]
 
 
 def map_name(arm: str) -> str:
     name = A.M.name(arm)
     return f"{name} (placebo-cal.)" if A.M.resolve(arm).threshold == "plc" else name
+
+
+def referee_group(map_label: str) -> str:
+    """Group-row title of a gated referee, e.g. 'Gated referee, Granger map'."""
+    base = map_label.removesuffix(" (placebo-cal.)")
+    tail = ", placebo-calibrated threshold" if base != map_label else ""
+    return f"Gated referee, {base} map{tail}"
 
 
 def rows(t: dict) -> tuple[list[dict], list[dict]]:
@@ -79,13 +86,13 @@ def rows(t: dict) -> tuple[list[dict], list[dict]]:
             )
         return d
 
-    outcome.append(out_row(REF, "subset", f"Static {A.M.name(REF)} subset", None))
+    outcome.append(out_row(REF, "subset", "Static subset", None))
     outcome.append(out_row("noarb", "accept_all", A.M.name("noarb"), None))
     for arm in t["refs"]:
         outcome.append(out_row(arm, "referee", "Referee", t["diff_vs_ref"][arm]))
         for rep, lab in (
-            ("pm", r"Replay, prot\_min only"),
-            ("other", r"Replay, all but prot\_min"),
+            ("pm", "Replay: protected-share rejections only"),
+            ("other", "Replay: without it"),
         ):
             key = f"X7:{arm}|{rep}"
             outcome.append(
@@ -116,7 +123,7 @@ def latex(t: dict, agree: list[dict], outcome: list[dict]) -> str:
     nf = len(FAMS)
     out += [
         r"\footnotesize",
-        r"\setlength{\tabcolsep}{3pt}",
+        r"\setlength{\tabcolsep}{1.5pt}",
         r"\begin{tabular}{@{}l" + " c" * nf + r" c c@{}}",
         r"\toprule",
         rf"\multicolumn{{{3 + nf}}}{{@{{}}l}}{{(a) Agreement with the static subset's decision, per request}} \\",
@@ -148,7 +155,7 @@ def latex(t: dict, agree: list[dict], outcome: list[dict]) -> str:
     # (b) outcomes, replays, paired differences
     out += [
         r"\setlength{\tabcolsep}{2.5pt}",
-        r"\begin{tabular}{@{}l c c c c@{}}",
+        r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.7cm} c c c c@{}}",
         r"\toprule",
         r"\multicolumn{5}{@{}l}{(b) Outcomes, attribution replays and paired differences vs the static subset} \\",
         r"\midrule",
@@ -174,7 +181,7 @@ def latex(t: dict, agree: list[dict], outcome: list[dict]) -> str:
         if r["kind"] == "referee":
             out += [
                 r"\midrule",
-                A.group_row(f"Edge-certified map-driven referee, {r['map']} map", 5),
+                A.group_row(referee_group(r["map"]), 5),
             ]
         out.append(line(rf"\quad {r['label']}", r))
     out += [r"\bottomrule", r"\end{tabular}", ""]

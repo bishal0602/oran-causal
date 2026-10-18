@@ -31,7 +31,7 @@ def rows() -> list[dict]:
     ref = t["v4_frozen_reference"]
     r = {
         "arm": "frozen_v4_primary",
-        "method": f"{A.M.name(REF)} (frozen, reference)",
+        "method": f"{A.M.name(REF)} of the simulator (reference)",
         "rule": "",
         "datasets": "",
         "of": full,
@@ -60,6 +60,18 @@ def rows() -> list[dict]:
     return out
 
 
+def row_label(code: str, partial: bool) -> str:
+    """Table label of a method, marked 'partial' when it covers only some data sets."""
+    lab = (
+        A.short(code)
+        .replace(r"n $\le$ 1000", r"$n \le 1000$")
+        .replace("R3 covariates", "confounder covariates")
+    )
+    if not partial:
+        return lab
+    return lab[:-1] + ", partial)" if lab.endswith(")") else lab + " (partial)"
+
+
 def latex(rs: list[dict]) -> str:
     ncol = 1 + 1 + 1 + 2 * len(SLICES) + 2
     out = A.header(
@@ -78,10 +90,10 @@ def latex(rs: list[dict]) -> str:
     )
     out += [
         r"\footnotesize",
-        r"\setlength{\tabcolsep}{2pt}",
+        r"\setlength{\tabcolsep}{1pt}",
         r"\begin{tabular}{@{}l c c" + " c" * len(SLICES) + " c" * len(SLICES) + r" c c@{}}",
         r"\toprule",
-        r" & & Data & \multicolumn{4}{c}{Recall} & \multicolumn{4}{c}{GT-NULL rate} & Placebo & Placebo \\",
+        r" & & Data & \multicolumn{4}{c}{Recall} & \multicolumn{4}{c}{Null rate} & Placebo & Placebo \\",
         r"\cmidrule(lr){4-7}\cmidrule(lr){8-11}",
         r"Method & Rule & sets & 60 & 120 & 300 & All & 60 & 120 & 300 & All & column & logs \\",
     ]
@@ -107,9 +119,8 @@ def latex(rs: list[dict]) -> str:
         out += [r"\midrule", A.group_row(fam, ncol)]
         for code in codes:
             r = by[code]
-            part = r"$^{\dagger}$" if r["datasets"] < r["of"] else ""
             out.append(
-                rf"\quad {A.short(code)}{part} & {rule_tex[r['rule']]} & {r['datasets']} & {nums(r)} \\"
+                rf"\quad {row_label(code, r['datasets'] < r['of'])} & {rule_tex[r['rule']]} & {r['datasets']} & {nums(r)} \\"
             )
     out += [r"\bottomrule", r"\end{tabular}", ""]
     return "\n".join(out)

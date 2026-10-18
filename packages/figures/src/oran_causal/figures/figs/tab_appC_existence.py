@@ -147,7 +147,7 @@ def latex(t: dict) -> str:
     ncol = 9
     out += [
         r"\footnotesize",
-        r"\setlength{\tabcolsep}{2.5pt}",
+        r"\setlength{\tabcolsep}{1pt}",
         r"\begin{tabular}{@{}l c c c c c c c c@{}}",
         r"\toprule",
         r" & & Material & \multicolumn{6}{c}{Effect exists (any magnitude)} \\",
@@ -166,11 +166,13 @@ def latex(t: dict) -> str:
             rf"{A.prob(q['0.9']['ex_precision'], 2)} / {A.prob(q['0.99']['ex_precision'], 2)} \\"
         )
 
-    out += [r"\midrule", A.group_row("Study 1, pooled 600 episodes", ncol)]
+    out += [r"\midrule", A.group_row("Randomised logs, 600 episodes pooled", ncol)]
     out += [pooled_row("S1", m) for m in S1_POOLED]
     out += [
         r"\midrule",
-        A.group_row("Study 1, 17 subsamples: counts summed, precision median [min, max]", ncol),
+        A.group_row(
+            "Randomised logs, 17 subsamples: counts summed, precision median [min, max]", ncol
+        ),
     ]
     for m in S1_SLICES:
         sl = {
@@ -191,7 +193,10 @@ def latex(t: dict) -> str:
             rf"{A.prob(ep[0], 2)} {A.ci(ep[1], ep[2], nd=2)} & {A.prob(rc[0], 2)} & "
             rf"{A.prob(e90, 2)} / {A.prob(e99, 2)} \\"
         )
-    out += [r"\midrule", A.group_row("Study 2, pooled discovery maps (DEV-tuned thresholds)", ncol)]
+    out += [
+        r"\midrule",
+        A.group_row("Confounded logs, pooled discovery maps (tuned thresholds)", ncol),
+    ]
     out += [pooled_row("S2", m) for m in S2_POOLED]
     out += [r"\bottomrule", r"\end{tabular}", ""]
     return "\n".join(out)

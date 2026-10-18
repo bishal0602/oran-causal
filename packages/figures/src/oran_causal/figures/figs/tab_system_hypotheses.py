@@ -5,7 +5,7 @@ run ``uv run python -m oran_causal.figures.figs.tab_system_hypotheses``.
 
 Source: ``v4_analysis.json`` gt.cells (via ``_studies.v4_gt_cells()``), status and sign as stored.
 The status counts are checked against FD ``v4.gt.counts`` (re-aggregation: counting cells). Families
-are labelled with their writer xApp (``entities.param_label``), relations and KPIs with the
+are labelled with their plain name and writer xApp (``entities.param_plain_label``), relations and KPIs with the
 TERMINOLOGY s.4 paper names. The Study 2 ground truth (confounded logs) has its own labels and is
 not shown here.
 """
@@ -55,7 +55,7 @@ def rows() -> list[dict]:
     out = []
     for f in FAMILIES:
         for r in RELATIONS:
-            row = {"family": f, "family_label": E.param_label(f), "relation": RELATIONS[r]}
+            row = {"family": f, "family_label": E.param_plain_label(f), "relation": RELATIONS[r]}
             for k in KPIS:
                 c = g[(f, r, k)]
                 row[k] = _label(c)
@@ -90,7 +90,7 @@ def latex(rs: list[dict]) -> list[str]:
             out.append(r"\midrule")
         param, _, writer = r["family_label"].partition(
             " ("
-        )  # 'prot_min (Slice Guarantee)' over two rows
+        )  # 'protected share (Slice Guarantee)' over two rows
         fam = {0: TM.tex(param), 1: f"({writer}"}.get(j, "")
         out.append(rf"{fam} & {r['relation']} & " + " & ".join(r[k] for k in KPIS) + r" \\")
     out += [r"\bottomrule", r"\end{tabular}"]

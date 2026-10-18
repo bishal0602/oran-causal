@@ -29,6 +29,14 @@ exempt:
     literal: "38.864"
     count: 1
     reason: simulator coordinate
+  - file: sections/s05_evaluation.tex
+    literal: "0.05"
+    count: 1
+    reason: nominal level in the validity rule of the controlled environments (protocol constant)
+  - file: sections/s05_evaluation.tex
+    literal: "0.075"
+    count: 1
+    reason: upper bound of a valid rate in the validity rule of the controlled environments (protocol constant)
   - file: sections/s06_discovery.tex
     literal: "0.05"
     count: 2

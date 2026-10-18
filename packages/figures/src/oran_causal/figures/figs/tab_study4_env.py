@@ -20,6 +20,14 @@ from oran_causal.figures.figs import _study4 as T
 from oran_causal.figures.paths import tables_dir
 
 SOURCES = [T.SRC_CELLS, T.SRC_RECALL]
+WORLD_NAME = {
+    "E1": "Linear graph",
+    "E2": "Rare regime",
+    "E3": "Delayed harm",
+    "E4": "Latent confounding",
+    "E5": "Composed",
+}  # plain names, as fig_study4_recall
+REGIME_NAME = {"R1": "independent logging", "R2": "dithered setpoint"}
 GROUPS = [
     ("Design-based tests", ["pmrt_nl_eq", "pmrt_eq"]),
     ("Design-adjusted tests", ["pcorr_eq", "granger_eq", "rcot2_eq"]),
@@ -121,8 +129,9 @@ def latex(world: str, rows: list[dict]) -> str:
         "% Entry: null-edge rejection rate / recall; mark = the condition's validity from all its reads (* INVALID, ~ INCONCLUSIVE,"
         " unmarked VALID, ° no validity read); -- = no recall (INVALID condition);"
         " blank = not in the method's grid. Needs \\usepackage{booktabs}.",
-        r"\setlength{\tabcolsep}{2.8pt}",
-        r"\begin{tabular}{@{}l" + " c" * len(T.NS) + "@{}}",
+        r"\footnotesize",
+        r"\setlength{\tabcolsep}{2.5pt}",
+        r"\begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm}" + " c" * len(T.NS) + "@{}}",
         r"\toprule",
         "Method & " + " & ".join(f"$n={n}$" for n in T.NS) + r" \\",
     ]
@@ -131,7 +140,7 @@ def latex(world: str, rows: list[dict]) -> str:
     for reg in ("R1", "R2"):
         body += [
             r"\midrule",
-            rf"\multicolumn{{{len(T.NS) + 1}}}{{@{{}}l}}{{\textbf{{{world}, {reg}}}}} \\",
+            rf"\multicolumn{{{len(T.NS) + 1}}}{{@{{}}l}}{{\textbf{{{WORLD_NAME[world]}, {REGIME_NAME[reg]}}}}} \\",
         ]
         for group, arms in GROUPS:
             present = [a for a in arms if any((reg, a, n) in by for n in T.NS)]

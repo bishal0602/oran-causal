@@ -1,6 +1,5 @@
 \section{Experimental setup}
 \label{sec:design}
-\label{sec:design_questions}
 
 The framework is evaluated in a system-level simulation of an O-RAN surge scenario, which provides the logs for
 discovery and the closed-loop runs for conflict mitigation, and in controlled environments with known causal
@@ -13,7 +12,7 @@ The simulator models a near-RT RIC and the RAN it controls (Figure~\ref{fig:syst
 macro sectors on a seven-site hexagonal layout~\cite{3gpp36814} and three co-channel picos at traffic hotspots, serving
 300 UEs in a low-latency (LL), an enhanced mobile broadband (eMBB) or a best-effort slice. Traffic, mobility and a
 hidden per-site load process come from an exogenous tape keyed by the seed, so that runs that act differently see the
-same tape (parameters in \esm{setup}). In the surge scenario, a localised surge triples the file-arrival rate of the UEs
+same tape (parameters in \esm{esm:setup}). In the surge scenario, a localised surge triples the file-arrival rate of the UEs
 near a venue during the middle of the scored window.
 
 Three xApps run on the RIC, each writing its own parameter families (Table~\ref{tab:xapps}). The Energy Saving (ES)
@@ -41,9 +40,6 @@ xApp & Parameter & Range & Acts when \tabularnewline
 \end{tabular}
 \end{table}
 
-Five KPIs are recorded per cell: protected-slice violations, service violations, energy, RLFs and served load.
-Violations count violated UE-seconds.
-
 \subsection{Datasets}
 \label{sec:datasets}\claim{PRO-TUNE}
 
@@ -60,8 +56,8 @@ from the evaluation data.
 \label{sec:gt}\claim{DEF-GT-LABEL}
 
 The maps are scored against knockout rollouts, which estimate the effect of one unit's mode with every other unit
-accepted. This target differs from PMRT's $\tau_{\pi}$, so the scores measure agreement between two related
-quantities rather than the validity of the test.
+accepted; as this target is not PMRT's $\tau_{\pi}$, the scores measure agreement rather than the validity of the
+test.
 
 \begin{definition}[Knockout effect]
 \label{def:tau_aa}\claim{DEF-EST-TAUAA}
@@ -76,13 +72,11 @@ episode-cluster bootstrap interval. A hypothesis is labelled true, with the sign
 excludes zero and the absolute mean is at least a materiality threshold $\delta_k$, set to 5~\% of the largest
 absolute mean of KPI $k$. It is labelled null when the interval lies within $\pm\delta_k$, and is otherwise left
 unscored. A knockout null is therefore a small effect rather than a sharp null, and the labels depend materially on
-$\delta_k$ (\esm{discovery}). On the randomised logs the ground truth labels 29 of the 60 hypotheses true, 21 null and 10
-indeterminate (\esm{setup}).\claim{EMP-GT-LABELS}
+$\delta_k$ (\esm{esm:discovery}). On the randomised logs the ground truth labels 29 of the 60 hypotheses true, 21 null and 10
+indeterminate (\esm{esm:setup}).\claim{EMP-GT-LABELS}
 
 \subsection{Controlled environments}
 \label{sec:envs}\claim{DEF-ENV}\claim{DEF-ENV-ARMS}\claim{ASM-S4-KNOWN}
-\label{sec:study4_design}
-\label{sec:study4_purpose}
 
 The simulator runs one scenario with one logging design per dataset, and its ground truth is estimated. The controlled
 environments remove both limitations: each isolates one mechanism with a known causal graph, so that every null edge
@@ -91,7 +85,9 @@ clean linear graph, an edge active only in a rare regime, delayed harm through l
 confounding, and the three mechanisms composed (Figure~\ref{fig:envs}a). Actions are logged by independent redraws per
 observation, by a dithered setpoint held for a twentieth of the data plus a small independent dither, or, in the
 latent-confounding environment, by a confounded behaviour policy with logged probabilities (Figure~\ref{fig:envs}b).
-Each method ran at 500 to 24\,000 observations, and each condition on 40 seeds.
+Each method ran at 500 to 24\,000 observations, and each condition on 40 seeds. A null-edge rate is invalid when the
+lower bound of its 95~\% seed-cluster bootstrap interval exceeds 0.05, valid when the upper bound is at most 0.075, and
+inconclusive otherwise; a condition is invalid when any of its rates is.
 
 \begin{figure}[tbp]
 \centering
@@ -109,16 +105,14 @@ errors~\cite{newey1987hac,kiefer2005fixedb}, plain Granger and RCoT, the structu
 PC~\cite{spirtes2000causation} and NOTEARS~\cite{zheng2018notears}, SHAP-DAG after Sharma et
 al.~\cite{Sharma_2025,lundberg2017shap}, the two-tower network, the max-stratified correlation-ratio test of our
 earlier work, and the discovery stage of CDD O-RAN~\cite{dahal2026cddoran}. The controlled environments test the
-randomisation construction that PMRT shares, not its matched-filter statistic or its weighted declaration layer, and
-both PMRT variants there omit the Huber clip of the unit weight. The validity of the PMRT used in the simulator
+randomisation construction that PMRT shares, not its matched-filter statistic or its weighted declaration layer. The validity of the PMRT used in the simulator
 therefore rests on its own null checks there (Section~\ref{sec:res_validity}).
 
 \subsection{Baselines and metrics}
 \label{sec:baselines_scores}\claim{DEF-MET-MAP}\claim{DEF-MET-DEC}
-\label{sec:arms}
 
 In the simulator, PMRT is compared with seven associational baselines that ignore the logging design and run on the
-same unit table (\esm{setup}): correlation, Granger~\cite{granger1969causal} with a tuned threshold or under BY control
+same unit table (\esm{esm:setup}): correlation, Granger~\cite{granger1969causal} with a tuned threshold or under BY control
 (Granger~+~BY), SHAP-GBDT~\cite{Sharma_2025}, a two-tower network~\cite{santos2026conflictairan}, the intent-conflict
 statistic INT of PACIFISTA~\cite{PACIFISTA} and QACM~\cite{QACM2024}. Each threshold was set on development episodes so
 that the far relation received at most one declaration. Because the ground truth labels \val{s1.far.true} of the
@@ -133,9 +127,9 @@ true, whatever their sign; recall is the share of true hypotheses that are decla
 sign accuracy is the share of declared true edges that carry the ground-truth sign. Referees are compared with static
 rules, such as accept-all, never-sleep, which rejects every request to put a pico to sleep, and the subsets of xApps
 run alone, and with referees driven by the oracle map of true edges, a random map and the associational maps
-(\esm{setup}). The objective is the protected-slice violations $V$, reported as the recovery
+(\esm{esm:setup}). The objective is the protected-slice violations $V$, reported as the recovery
 $R = (V_{\mathrm{AA}} - V) / (V_{\mathrm{AA}} - V_{\mathrm{ref}})$, which is 0 for accept-all and 1 for the best
 single-xApp subset. A referee is eligible when it meets the two constraints of Section~\ref{sec:estimand}. Never-sleep
 is the best eligible static rule, because the subset that sets $R = 1$ retains almost none of the energy saving.
 Intervals on decision metrics are 90~\% paired seed-bootstrap intervals, and intervals on rates are 95~\%
-cluster-bootstrap intervals.\label{sec:protocol}
+cluster-bootstrap intervals.

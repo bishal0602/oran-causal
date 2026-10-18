@@ -27,7 +27,8 @@ NAME = "tab_gate_diag"
 X10 = ("posthoc_x9_x16", "revision", "x10_gate_diag.json")
 SOURCES = [source_note(*X10), ST.SRC_FD]
 REL = {"own": "own", "nbr": "neighbour", "far": "far"}
-KPI = {"v": "v", "rlf": "RLF"}
+KPI = {"v": "violations", "rlf": "RLFs"}
+GT_LABEL = {"TRUE": "true", "NULL": "null", "INDET": "indet."}
 ARM = "CS:PMRT"
 
 
@@ -41,16 +42,17 @@ def num(x) -> str:
     return (A.MINUS if x < 0 else "") + s
 
 
-# W21 (V7 A13): prot_min is a code name; the printed table names it as the body does ("protected
-# share")
-PLAIN = {"prot_min": "protected share"}
+CLASS = {
+    ("ptx", 1): "Transmit power up",
+    ("sleep", 1): "Pico sleep",
+    ("carrier", -1): "Macro carrier off",
+    ("prot_min", -1): "Protected share down",
+}
 
 
 def class_label(f: str, d: int) -> str:
-    lab = E.param_label(f)
-    if f in PLAIN:
-        lab = PLAIN[f] + lab[len(f) :]
-    return lab.replace("_", r"\_") + ", " + ("$+1$" if d > 0 else "$-1$")
+    """Plain name of a rejection class with its writer xApp, e.g. 'Pico sleep (ES)'."""
+    return f"{CLASS[(f, d)]} ({E.XAPPS[E.WRITER[f]].name})"
 
 
 def check(t: dict):
@@ -166,7 +168,7 @@ def latex(rs: list[dict], meta: dict) -> str:
                 vol = f"certified; {A.thousands(r['units_rejected'])} units rejected"
             else:
                 vol = f"uncertified; {A.thousands(r['units_withheld'])} units withheld"
-            out += [r"\midrule", A.group_row(f"{class_label(r['family'], r['d'])} ({vol})", ncol)]
+            out += [r"\midrule", A.group_row(f"{class_label(r['family'], r['d'])}: {vol}", ncol)]
         if r["rel"] is None:
             out.append(rf"\quad none & \multicolumn{{{ncol - 1}}}{{l}}{{--}} \\")
             continue
@@ -174,7 +176,7 @@ def latex(rs: list[dict], meta: dict) -> str:
         gt = rf"{num(r['h_gt'])} [{num(r['h_gt_lo'])}, {num(r['h_gt_hi'])}]"
         out.append(
             rf"\quad {edge} & {num(r['h_beta'])} & {num(r['ub90'])} & {num(r['tau'])} & {gt} & "
-            rf"{r['gt_label']} & {'yes' if r['gt_harm_beyond_tau'] else 'no'} \\"
+            rf"{GT_LABEL[r['gt_label']]} & {'yes' if r['gt_harm_beyond_tau'] else 'no'} \\"
         )
     out += [r"\bottomrule", r"\end{tabular}", ""]
     return "\n".join(out)

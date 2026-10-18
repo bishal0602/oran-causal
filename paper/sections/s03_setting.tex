@@ -12,7 +12,7 @@ rejects it, as the near-RT RIC platform does with a control request that an xApp
 interface~\cite{ORANRICARCH}. We call the rule that makes this choice the referee. A rejected request is left
 unapplied, and the xApp may propose it again later.
 The network state is summarised by per-cell KPIs, such as protected-slice violations, service violations, energy,
-radio-link failures (RLFs) and served load. A request on a cell acts on that cell, on its neighbours and on the
+radio-link failures (RLFs) and served load; violations count violated UE-seconds. A request on a cell acts on that cell, on its neighbours and on the
 remaining cells; these are the own, neighbour and far relations.
 
 \begin{figure}[tbp]
@@ -68,7 +68,7 @@ episodes grows.
 
 The target depends on the logging policy, which draws the modes of the other units in a unit's window, so randomised
 and incumbent logs target different values of $\tau_{\pi}$. The knockout ground truth of Section~\ref{sec:gt} targets
-a third contrast, $\tau_{\mathrm{AA}}$, in which every other unit is accepted (\esm{setup}). No
+a third contrast, $\tau_{\mathrm{AA}}$, in which every other unit is accepted. No
 assumption of non-interference between cells or units is needed, because the null hypothesis concerns the whole
 assignment vector of a family.
 
