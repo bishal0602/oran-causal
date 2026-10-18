@@ -319,7 +319,7 @@ claims:
 
   - id: THM-SLOPE
     kind: theorem-paper
-    statement: "Under (A1) with the natural history, bounded outcomes and a predictable centre, beta_hat converges to the pi_u (1 - pi_u)-weighted average of sgn_u tau_u^pi; at pi_u = 0.5 it is the Horvitz-Thompson estimator as an identity (Lemma 3)."
+    statement: "Under (A1) with the natural history, bounded outcomes, a bounded predictable centre, N/n bounded away from 0 with probability tending to one, outcomes closing within their episode and at most N_max units per episode, beta_hat minus the pi_u (1 - pi_u)-weighted average of sgn_u tau_u^pi tends to 0 in probability; at pi_u = 0.5 it is the Horvitz-Thompson estimator as an identity (ESM Lemma 3)."
     paper: [lem:s_slope]
     spec: spec:thm.slope
     depends_on: [ASM-A1-DESIGN, DEF-SLOPE]

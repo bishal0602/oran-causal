@@ -1,7 +1,7 @@
 ---
 id: THM-COUNTEREX
 kind: lean
-status: needs clarity
+status: implemented
 ---
 
 # 02 THM-COUNTEREX: Re-proposal counterexample
@@ -49,10 +49,10 @@ Filled in by the agent.
 
 | Field | Value |
 |---|---|
-| Status | needs clarity for the pinned source's boundary statement; both original interpretations and the deferred off-boundary result are proved |
+| Status | implemented (2026-10-18). The current claim (spec/claims.yaml THM-COUNTEREX) is the t ∈ (1/2, 3/4) form: "Pr(p_{+1} <= t) tends to 3/4 > t as B grows for every fixed t in (1/2, 3/4)", matching ESM Example 1 (`ex:s_adaptive`) and `finite_redraw_rejection_limit_between_half_and_three_quarters` exactly. The claim and source quoted above are the pinned (superseded) boundary version |
 | Main declaration(s) | `OranCausal.Counterexample.exact_tail_rejection`; `finite_redraw_rejection_limit`; `finite_redraw_rejection_formula`; new `finite_redraw_rejection_limit_above_half` and `finite_redraw_rejection_limit_between_half_and_three_quarters` (all in `OranCausal.Counterexample`) |
 | Files | `proofs/OranCausal/Counterexample.lean`, imported by `proofs/OranCausal.lean`; `proofs/COUNTEREX_REPORT.md`; `proofs/task02-build.log`; new `proofs/task02-followup-build.log` and `proofs/task02-followup-axioms.log` |
-| Deviation from the claim | Exact-tail result: `Pr(p∞ ≤ 1/2) = 3/4`. For the source's plus-one Monte Carlo p-value, `lim_B Pr(pB ≤ 1/2) = 3/8`, not `3/4`. For odd `B` the finite probability is `3/8`; for `B = 2n` it is `(3/8)(1 - choose(2n,n)/4^n)`. **Deferred item completed:** for every `a > 1` and fixed `1/2 < t < 3/4`, `Pr(pB ≤ t) → 3/4`. The stronger result covers all `1/2 < t < 1`. Thus the plus-one procedure is asymptotically anti-conservative at every requested cutoff, while its boundary limit remains different. |
+| Deviation from the claim | None for the current claim (t ∈ (1/2, 3/4) form): same design, quantifiers and limit 3/4 as `finite_redraw_rejection_limit_between_half_and_three_quarters` (`finite_redraw_rejection_limit_above_half` covers all t ∈ (1/2, 1)). Superseded boundary wording (pinned source): exact-tail test `Pr(p∞ ≤ 1/2) = 3/4`, but the plus-one p-value gives `lim_B Pr(pB ≤ 1/2) = 3/8` (odd B: 3/8; B = 2n: (3/8)(1 - choose(2n,n)/4^n)); spec:thm.counterex now states both |
 | Hypotheses not stated in the claim | `a : ℝ`, `1 < a`; fair sequential assignments, first rejection triggers the second unit, fixed weights `1,a`, positive direction and orientation, redraws hold the observed unit set fixed, and conditionally iid redraws. These are specified by the source; `a` is arbitrary. |
 | `lake build` | Follow-up PASS, exit 0, 3123 jobs; no errors or task-02 warnings. Existing cosmetic warnings in task 06 were replayed unchanged. See `task02-followup-build.log`. Original validation is retained in `task02-build.log`. |
 | `#print axioms` | All four audited limit/exact-tail declarations, including both new limit theorems: only `[propext, Classical.choice, Quot.sound]`; no `sorryAx`. See `task02-followup-axioms.log`. |

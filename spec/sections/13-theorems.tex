@@ -54,12 +54,12 @@ The Monte Carlo p-value that counts ties against the observed statistic is valid
 \label{spec:thm.counterex}
 
 \begin{proposition}[Re-proposal breaks finite-sample validity]
-In a two-unit design in which a rejected unit is proposed again, the exact tail probability of the redraw distribution gives $\Prob(p \le 1/2) = 3/4 > 1/2$ (Lean \texttt{exact\_tail\_rejection}). For the finite-$B$ plus-one p-value $p_{+1}$, the limit as $B \to \infty$ is $\Prob(p_{+1} \le 1/2) \to 3/8$ (\texttt{finite\_redraw\_rejection\_limit}), with exactly $3/8$ for odd $B$ and $(3/8)\bigl(1 - \binom{2n}{n}/4^n\bigr)$ for $B = 2n$ (\texttt{finite\_redraw\_rejection\_formula}), and $3/8$ for $B = 1$ (\texttt{one\_redraw\_rejection}).
+In a two-unit design in which a rejected unit is proposed again ($\pi_u = 1/2$, $\sgn_u = o = +1$, $w_1 = 1$, $w_2 = a > 1$), the plus-one p-value satisfies $\Prob(p_{+1} \le t) \to 3/4 > t$ as $B \to \infty$ for every fixed $t \in (1/2, 3/4)$ (Lean \texttt{finite\_redraw\_rejection\_limit\_between\_half\_and\_three\_quarters}; the limit is $3/4$ for every $t \in (1/2, 1)$, \texttt{finite\_redraw\_rejection\_limit\_above\_half}). At the boundary $t = 1/2$ the exact-tail test rejects with probability $3/4$ (\texttt{exact\_tail\_rejection}) while the plus-one p-value gives $3/8$ in the limit (\texttt{finite\_redraw\_rejection\_limit}, \texttt{finite\_redraw\_rejection\_formula}).
 \end{proposition}
 
-\noindent Thus re-proposal alone breaks finite-sample validity of the exact-tail test; the tail value $3/4$ refers to that test, not to the finite-$B$ p-value.\claim{THM-COUNTEREX}
+\noindent Thus re-proposal alone breaks finite-sample validity of the plus-one redraw p-value.\claim{THM-COUNTEREX}
 
-\lean{OranCausal.Counterexample.exact_tail_rejection, OranCausal.Counterexample.finite_redraw_rejection_limit, OranCausal.Counterexample.finite_redraw_rejection_formula, OranCausal.Counterexample.one_redraw_rejection}
+\lean{OranCausal.Counterexample.finite_redraw_rejection_limit_between_half_and_three_quarters, OranCausal.Counterexample.finite_redraw_rejection_limit_above_half, OranCausal.Counterexample.exact_tail_rejection, OranCausal.Counterexample.finite_redraw_rejection_limit, OranCausal.Counterexample.finite_redraw_rejection_formula, OranCausal.Counterexample.one_redraw_rejection}
 
 \subsection{Weighted BY under arbitrary dependence}
 \label{spec:thm.byfin}

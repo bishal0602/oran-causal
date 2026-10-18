@@ -1,7 +1,7 @@
 ---
 id: THM-SLOPE
 kind: lean
-status: needs clarity
+status: implemented
 ---
 
 # 06 THM-SLOPE: Design slope
@@ -65,10 +65,10 @@ See `../SLOPE_REPORT.md` for the mathematical statements and source-to-Lean mapp
 
 | Field | Value |
 |---|---|
-| Status | `needs clarity` |
+| Status | `implemented` (2026-10-18). Current claim (spec/claims.yaml THM-SLOPE) and ESM `lem:s_slope` (paper/supplementary.tex) now state the bounded predictable centre, N/n bounded away from 0 with probability tending to one, outcomes closing within their episode, at most N_max units per episode and episodes appended in a fixed order, which are the hypotheses of `EpisodeDesign.corrected_convergence`; conclusion beta_hat minus the weighted target tends to 0 in probability |
 | Main declaration(s) | `OranCausal.Slope.unbounded_centre_counterexample`; `counterexample_not_convergent`; `half_propensity_identity`; `half_propensity_target`; `EpisodeDesign.corrected_convergence`; `bounded_martingale_weak_law` (all in `OranCausal.Slope`) |
 | Files | `proofs/OranCausal/Slope.lean`; import in `proofs/OranCausal.lean`; `proofs/SLOPE_REPORT.md`; `proofs/task06-build.log`; `proofs/task06-axioms.log`; `proofs/task06-workspace-check.log`; `proofs/task06-followup-build.log`; `proofs/task06-followup-axioms.log` |
-| Deviation from the claim | added hypothesis: bounded centre (\|ỹ_u\| ≤ C); the paper's proof needs it for bounded increments; counterexample in `OranCausal.Slope.unbounded_centre_counterexample`. The half-propensity identity is proved without boundedness. Centred errors are grouped by episode, not treated as unit-level martingale differences. |
+| Deviation from the claim | None for the current claim and ESM Lemma 3. Superseded claim (quoted above) lacked the bounded centre (necessary: `unbounded_centre_counterexample`), the unit-count condition and the episode facts. The proof groups centred errors by episode, as the ESM proof idea says. The half-propensity identity is proved without boundedness |
 | Hypotheses not stated in the claim | Explicit source facts authorised by the user: H1, each outcome is observed by its episode end; H2, at most `N_max` units per episode; H3, episodes are appended in order and the previous episode's history is contained in each unit's pre-opening history. Uniform boundedness and predictability of the centre. `BoundedMartingaleWeakLaw μ` is now proved by `bounded_martingale_weak_law` using conditional-expectation orthogonality, variance additivity, the bound n·K², and Chebyshev. No named library obligation or weak-law premise remains. |
 | `lake build` | PASS, exit 0, 3123 jobs; no errors. Follow-up: `task06-followup-build.log`. Two cosmetic tactic-linter warnings at `Slope.lean:505` concern `<;>` versus `;`. |
 | `#print axioms` | PASS for all twelve audited declarations, including the proved weak law and corrected convergence theorem: only `propext`, `Classical.choice`, `Quot.sound`; no `sorryAx`. See `task06-followup-axioms.log`. |
