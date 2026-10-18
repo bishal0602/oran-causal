@@ -34,23 +34,25 @@ HALF = 2.5  # \includegraphics[width=0.49\textwidth]
 ASPECT = 0.55  # default height / width
 MAX_HEIGHT = 4.5
 
-# Type scale (pt) [G5 2026-10-12, user decision: journal rule 8-12 pt] floor raised to 8 pt; sizes 8
-# / 9 / 10 keep the variance small
-TICK_PT = 8.0  # was 7.5
-LABEL_PT = 9.0  # was 8.5
-LEGEND_PT = 8.0  # was 7.5
-PANEL_PT = 10.0  # was 9.5
+# Type scale (pt) [G5 2026-10-12, user decision: journal rule 8-12 pt; 2026-10-18 soft-modern scale]: one scale for
+# every figure (DESIGN s.3)
+TICK_PT = 8.0
+LABEL_PT = 9.5
+LEGEND_PT = 8.0
+PANEL_PT = 11.0
 MIN_PT = 8.0  # floor for any figure text at print size (figures are built at print width); was 7.0
-ANNOT_PT = MIN_PT  # was 7.0 (6.5 before that)
+ANNOT_PT = 8.0
+TAG_PT = 8.0  # panel tags, bold beside the bold PANEL_PT letter
 
 # Line weights (pt)
-LW_PROPOSED = 1.9
-LW_BASELINE = 1.1
-LW_ENTITY = 1.3
-LW_AXIS = 0.6
-LW_GRID = 0.4
-LW_REF = 0.7  # threshold / target lines
-MARKER_SIZE = 3.6
+LW_PROPOSED = 2.0
+LW_BASELINE = 1.2
+LW_ENTITY = 1.4
+LW_AXIS = 0.8
+LW_GRID = 0.9
+LW_REF = 0.9
+LW_WHISKER = 0.8
+MARKER_SIZE = 4.0
 SPINE_OFFSET = 3  # pt, see finish()
 
 RC = {
@@ -71,7 +73,7 @@ RC = {
     "mathtext.rm": FONT_FAMILY,
     "mathtext.it": f"{FONT_FAMILY}:italic",
     "mathtext.bf": f"{FONT_FAMILY}:bold",
-    "font.size": 8,
+    "font.size": TICK_PT,
     "axes.labelsize": LABEL_PT,
     "axes.titlesize": LABEL_PT,
     "legend.fontsize": LEGEND_PT,
@@ -82,7 +84,7 @@ RC = {
     "text.color": P.INK,
     "axes.labelcolor": P.INK,
     "axes.edgecolor": P.AXIS,
-    "axes.facecolor": P.WHITE,
+    "axes.facecolor": P.FIELD,
     "xtick.color": P.AXIS,
     "ytick.color": P.AXIS,
     "xtick.labelcolor": P.INK,
@@ -91,10 +93,12 @@ RC = {
     "image.cmap": "harbor_seq",
     # axes
     "axes.linewidth": LW_AXIS,
+    "axes.spines.left": False,
+    "axes.spines.bottom": False,
     "axes.spines.top": False,
     "axes.spines.right": False,
     "axes.grid": True,
-    "axes.grid.axis": "y",
+    "axes.grid.axis": "both",
     "axes.axisbelow": True,
     "axes.titlelocation": "left",
     "axes.labelpad": 3,
@@ -103,8 +107,8 @@ RC = {
     "grid.linestyle": "-",
     "xtick.direction": "out",
     "ytick.direction": "out",
-    "xtick.major.size": 2.5,
-    "ytick.major.size": 2.5,
+    "xtick.major.size": 0.0,
+    "ytick.major.size": 0.0,
     "xtick.major.width": LW_AXIS,
     "ytick.major.width": LW_AXIS,
     "xtick.minor.visible": False,
@@ -115,15 +119,21 @@ RC = {
     "lines.linewidth": LW_ENTITY,
     "lines.markersize": MARKER_SIZE,
     "lines.markeredgecolor": P.WHITE,
-    "lines.markeredgewidth": 0.5,
+    "lines.markeredgewidth": 0.6,
     "lines.solid_joinstyle": "round",
     "patch.edgecolor": "none",
     "patch.linewidth": 0.7,
     "errorbar.capsize": 2,
     "boxplot.flierprops.marker": "",
+    "hatch.linewidth": 0.6,
+    "hatch.color": P.NEUTRAL,
     # legend
-    "legend.frameon": False,
-    "legend.handlelength": 1.8,
+    "legend.frameon": True,
+    "legend.facecolor": P.LEGEND_FC,
+    "legend.edgecolor": P.LEGEND_EC,
+    "legend.framealpha": 1.0,
+    "legend.borderpad": 0.45,
+    "legend.handlelength": 2.0,
     "legend.handletextpad": 0.5,
     "legend.columnspacing": 1.2,
     "legend.borderaxespad": 0,

@@ -53,6 +53,22 @@ def _visible(t: Text, r) -> bool:
     return True
 
 
+def _drawn_ticklabels(axis) -> list[Text]:
+    """Tick labels matplotlib draws: those whose tick lies inside the view interval (a locator also
+    lists ticks beyond the limits, which are never drawn).
+    """
+    axis.get_ticklabels()
+    lo, hi = sorted(axis.get_view_interval())
+    eps = 1e-9 * max(1.0, abs(hi - lo))
+    return [
+        lab
+        for tick in axis.get_major_ticks()
+        if lo - eps <= tick.get_loc() <= hi + eps
+        for lab in (tick.label1, tick.label2)
+        if lab.get_visible()
+    ]
+
+
 def _pt(fig) -> float:
     return fig.dpi / 72
 
@@ -69,7 +85,7 @@ def texts(fig, r) -> list[tuple]:
         for t in ax.texts:
             if _visible(t, r):
                 out.append(
-                    (f"{name}: text '{t.get_text()[:30]}'", t.get_window_extent(r), ax, False)
+                    (f"{name}: text '{t.get_text()[:30]}'", Text.get_window_extent(t, r), ax, False)
                 )
         for lab in (ax.xaxis.label, ax.yaxis.label, ax.title, ax._left_title, ax._right_title):
             if _visible(lab, r):
@@ -78,7 +94,7 @@ def texts(fig, r) -> list[tuple]:
                 )
         if ax.axison:
             for axis in (ax.xaxis, ax.yaxis):
-                for t in axis.get_ticklabels():
+                for t in _drawn_ticklabels(axis):
                     if _visible(t, r):
                         out.append(
                             (
@@ -170,6 +186,8 @@ def anchored_labels(fig) -> list[str]:
                 or t.anncoords != "offset points"
                 or t.xycoords != "data"
             ):
+                continue
+            if t.arrow_patch is not None:
                 continue
             d = float(np.hypot(*t.xyann))
             if d > MAX_ANCHOR_PT and t.get_text().strip():
@@ -336,7 +354,7 @@ def tick_hygiene(fig, r) -> list[str]:
                 for t in axis.get_major_ticks()
                 if t.tick1line.get_visible() and t.tick1line.get_markersize()
             ]
-            labels = [t for t in axis.get_ticklabels() if _visible(t, r)]
+            labels = [t for t in _drawn_ticklabels(axis) if _visible(t, r)]
             if ticks and not labels:
                 out.append(
                     f"{ax.get_label() or 'axes'}: {side} tick marks without labels (hide the unlabeled axis)"
@@ -345,8 +363,8 @@ def tick_hygiene(fig, r) -> list[str]:
         ra, rb = a.get_window_extent(r), b.get_window_extent(r)
         if abs(ra.y0 - rb.y0) > 1 or abs(ra.y1 - rb.y1) > 1:
             continue
-        la = [t.get_text() for t in a.get_yticklabels() if _visible(t, r)]
-        lb = [t.get_text() for t in b.get_yticklabels() if _visible(t, r)]
+        la = [t.get_text() for t in _drawn_ticklabels(a.yaxis) if _visible(t, r)]
+        lb = [t.get_text() for t in _drawn_ticklabels(b.yaxis) if _visible(t, r)]
         if la and la == lb and np.allclose(a.get_ylim(), b.get_ylim()):
             out.append(
                 f"repeated y tick labels {la} across a row (show them on the left panel only)"

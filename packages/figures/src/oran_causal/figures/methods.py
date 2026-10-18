@@ -29,12 +29,17 @@ from matplotlib.lines import Line2D
 
 from oran_causal.figures import layout as L
 from oran_causal.figures import palette as P
+from oran_causal.figures import plots
 from oran_causal.figures import style as S
 
 DASH = (0, (3, 1.6))  # design-blind series (ignores the design)
 DOT = (0, (1, 1.5))  # random map
 DASHDOT = (0, (4, 1.5, 1, 1.5))  # oracle map
-REF_DASH = (0, (4, 2))  # reference lines (DESIGN s.4 / s.5.4): ink at 60 %, LW_REF
+BLIND_DASH = (
+    0,
+    (4, 1.8),
+)  # design-blind families: the grayscale cue next to colour and marker (DESIGN s.5)
+REF_DASH = plots.REF_DASH  # reference lines (DESIGN s.5.4): ink at 80 %, LW_REF
 BAND_ALPHA = {True: 0.14, False: 0.08}  # CI bands: hero / others (DESIGN s.7)
 
 
@@ -49,14 +54,14 @@ class Family:
     fill: str | None = None  # default band / bar fill colour; None = same as color
 
 
-# [DECIDED 2026-10-08, user] Colour = method (fixed, paper-wide; palette.py). All methods solid; the
-# family is named by banners, legends and captions. Methods without a colour (ink rows / tables
+# [DECIDED 2026-10-08, user] Colour = method (fixed, paper-wide; palette.py). Design-blind families are dashed
+# (2026-10-18, grayscale cue); the family is named by banners, legends and captions. Methods without a colour (ink rows / tables
 # only) are neutral gray.
 FAMILIES = {
     "based": Family("Design-based tests", P.HERO, P.HERO, "-", 0),
     "adjusted": Family("Design-adjusted tests", P.NEUTRAL, P.NEUTRAL, "-", None),
-    "blind_test": Family("Design-blind methods", P.NEUTRAL, P.NEUTRAL, "-", None),
-    "blind_learned": Family("Design-blind methods", P.NEUTRAL, P.NEUTRAL, "-", None),
+    "blind_test": Family("Design-blind methods", P.NEUTRAL, P.NEUTRAL, BLIND_DASH, None),
+    "blind_learned": Family("Design-blind methods", P.NEUTRAL, P.NEUTRAL, BLIND_DASH, None),
     "oracle": Family("Reference maps", P.INK, P.INK, DASHDOT, None, alpha=0.6),
     "random": Family("Reference maps", P.NEUTRAL, P.NEUTRAL, DOT, None),
     "static": Family("Static rules", P.NEUTRAL, P.NEUTRAL, "none", None),
@@ -361,9 +366,9 @@ def row_point(
             xerr=[[x - ci[0]], [ci[1] - x]],
             fmt="none",
             ecolor=P.INK,
-            elinewidth=0.6,
+            elinewidth=S.LW_WHISKER,
             capsize=1.5,
-            capthick=0.6,
+            capthick=S.LW_WHISKER,
             zorder=3,
             clip_on=False,
         )  # than the marker would read as an "A" otherwise)
@@ -407,10 +412,9 @@ def handle(code: str, hero: bool = False) -> Line2D:
     return Line2D([], [], **st)
 
 
-def legend(fig, codes: Sequence[str], hero: str | None = None, where: str = "auto", **kw):
-    """Figure legend in family order with proxy handles (DESIGN s.6): the hero's entry is filled.
-    ``auto`` (default): a right column when every panel keeps its minimum width, else a centred top
-    row (layout.finalize decides).
+def legend(fig, codes: Sequence[str], hero: str | None = None, where: str = "top", **kw):
+    """Figure legend in family order with proxy handles (DESIGN s.6): the hero's entry first and
+    filled, one framed row above the panels (``where="right"``: a column right of them).
     """
     codes = order(codes)
     return L.fig_legend(
@@ -419,7 +423,7 @@ def legend(fig, codes: Sequence[str], hero: str | None = None, where: str = "aut
 
 
 def reference_line(ax, x, y, **kw):
-    """A reference series (DESIGN s.4 / s.5.4): ink at 60 %, dash (4, 2), LW_REF, no marker,
+    """A reference series (DESIGN s.4): ink at 80 %, dash (4, 2), LW_REF, no marker,
     labelled directly. The frozen PMRT next to the Study 4 PMRT arms is drawn this way, never in the
     PMRT-GBM family's blue.
     """
@@ -427,7 +431,7 @@ def reference_line(ax, x, y, **kw):
         x,
         y,
         color=P.INK,
-        alpha=0.6,
+        alpha=plots.REF_ALPHA,
         lw=S.LW_REF,
         ls=REF_DASH,
         marker="",

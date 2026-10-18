@@ -5,6 +5,8 @@ the whole paper (methods.py), plus three Harbor tints for PMRT-Lin, QACM and INT
 sand, sage) and the five hues added on 2026-10-06 (lavender, umber, sky, rose, aubergine) are retired.
 - Methods and entities (xApps, KPIs, NCPs) share these hues but never share a figure (DESIGN s.12.2).
 - Heatmaps: SEQ for magnitudes, DIV for signed values (rates: centred at the nominal level).
+- [DECIDED 2026-10-18, user] Soft-modern redesign: the six hues and three tints were deepened to at least 3:1 on white
+  (DESIGN s.2); panels sit on the FIELD gray.
 No colour may be defined anywhere else.
 """
 
@@ -12,33 +14,35 @@ from matplotlib.colors import LinearSegmentedColormap, ListedColormap, to_rgb
 
 # --- the six Harbor hues: entities (peers, slots 1-6) and methods -------------------------------------------------
 ENTITIES = [
-    "#4273B0",
-    "#C17154",
-    "#3FAFA9",
-    "#CBAA56",
-    "#955C98",
-    "#5C9B5E",
+    "#3767A8",
+    "#C2553A",
+    "#1A7F8E",
+    "#9A7414",
+    "#8B4F9F",
+    "#55803A",
 ]  # blue terracotta teal gold purple green
 ENTITY_MARKERS = ["o", "s", "^", "D", "v", "P"]
 BLUE, TERRACOTTA, TEAL, GOLD, PURPLE, GREEN = ENTITIES
 
 # --- methods [DECIDED 2026-10-08, user] -------------------------------------------------------------------------
 HERO = BLUE  # PMRT / PMRT-GBM, and the hero component of a diagram
-PMRT_LIN = "#7196C4"  # 75 % tint of BLUE: PMRT-Lin (open marker) and PMRT-Lin, R3 covariates
-SLATE = "#8CA7CF"  # 60 % tint of harbor_seq #406DAF: QACM (Studies 1-3)
-LILAC = "#B58DB7"  # 70 % tint of PURPLE: INT (Studies 1-3)
+PMRT_LIN = "#6E95CC"  # lighter BLUE: PMRT-Lin (open marker) and PMRT-Lin, R3 covariates
+SLATE = "#6F8DB8"  # muted blue: QACM (Studies 1-3)
+LILAC = "#A07AB2"  # lighter PURPLE: INT (Studies 1-3)
 METHODS = [*ENTITIES, PMRT_LIN, SLATE, LILAC]
 METHOD_MARKERS = ["o", "s", "^", "D", "v", "P", "X", "h", "p"]
 
 # --- neutrals and special roles ----------------------------------------------------------------------------------
-INK = "#1E2430"  # all text, CI whiskers, correct graph edges
-AXIS = "#3A4150"  # spines and ticks
-GRID = "#E8EAEE"  # hairline horizontal grid
-NEUTRAL = "#8A909C"  # neutral diagram outlines; methods without a slot
-NEUTRAL_LIGHT = "#A9AFBA"  # container outlines (dashed)
-MISSED = "#9AA0AA"  # missed (false-negative) graph edges
-SPURIOUS = "#B94739"  # spurious (false-positive) graph edges
+INK = "#262B33"  # all text, CI whiskers, correct graph edges
+AXIS = "#5A606B"  # tick labels and the few remaining axis lines
+GRID = "#FFFFFF"  # white grid on the FIELD panels
+NEUTRAL = "#707782"  # neutral diagram outlines; methods without a slot
+NEUTRAL_LIGHT = "#9AA0AA"  # hairline outlines
+MISSED = "#8A909C"  # missed (false-negative) graph edges
+SPURIOUS = TERRACOTTA  # spurious (false-positive) graph edges
 WHITE = "#FFFFFF"
+FIELD = "#EFF1F4"  # panel background (facet field) and null map tiles
+LEGEND_FC, LEGEND_EC = "#F6F7F9", "#D5D9DF"  # legend box
 
 # --- semantic roles [2026-10-13, user: "proper use of the Harbor palette", figures were "bland and soulless"] -------
 # Colour carries meaning paper-wide. Draw semantic artists with gid "sem:<role>" (e.g. "sem:good-zone").
@@ -49,7 +53,9 @@ DESIGN_ROLE = (
     GOLD  # the logged randomisation / logging design (the ingredient that makes the test valid)
 )
 CONFOUNDER = PURPLE  # network state, confounding paths
-ZONE_TINT = 0.12  # zone backgrounds; tiles and fills use 0.28-1.0
+ZONE_TINT = (
+    0.10  # zone fills (bordered by a full-strength limit line); tiles and fills use 0.28-1.0
+)
 # --- continuous --------------------------------------------------------------------------------------------------
 SEQ = [
     "#F2F7FF",
@@ -72,7 +78,20 @@ RUST_CMAP = LinearSegmentedColormap.from_list(
     "harbor_rust", DIV[3:]
 )  # rust half of DIV: near-white -> rust (counts of errors)
 
-NEUTRALS = [INK, AXIS, GRID, NEUTRAL, NEUTRAL_LIGHT, MISSED, SPURIOUS, WHITE, "#000000"]
+NEUTRALS = [
+    INK,
+    AXIS,
+    GRID,
+    NEUTRAL,
+    NEUTRAL_LIGHT,
+    MISSED,
+    SPURIOUS,
+    WHITE,
+    FIELD,
+    LEGEND_FC,
+    LEGEND_EC,
+    "#000000",
+]
 PALETTE = [*METHODS, *ENTITIES]
 
 

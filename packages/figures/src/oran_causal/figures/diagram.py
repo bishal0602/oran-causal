@@ -4,10 +4,11 @@ Work in a points-like coordinate system: `canvas(width_pt, height_pt)` returns a
 axes whose data units are points at print size, so box sizes and font sizes match.
 
 Roles (see DESIGN.md, "Diagrams"):
-  * neutral component  -> white fill, NEUTRAL outline 0.6 pt
-  * entity component   -> entity tint 10 %, entity outline (e.g. one color per xApp)
-  * proposed component -> HERO tint 16 %, HERO outline 1.0 pt, bold label
-  * container (e.g. near-RT RIC) -> dashed NEUTRAL_LIGHT outline, bold title top-left
+  * neutral component  -> white fill, NEUTRAL outline LW_BOX
+  * entity component   -> entity tint 12 %, entity outline (e.g. one color per xApp)
+  * proposed component -> HERO tint 18 %, HERO outline 1.2 pt, bold label
+  * container (e.g. near-RT RIC) -> a filled FIELD card, no outline, bold title top-left
+Connectors are plain ink arrows (straight or single elbow) with the label as plain text beside them.
 """
 
 from matplotlib.axes import Axes
@@ -18,6 +19,11 @@ from oran_causal.figures import palette as P
 from oran_causal.figures import style as S
 
 EDGE_PT = 2.0
+RADIUS = 5.0  # one corner radius for every box (containers: RADIUS + 2)
+LW_BOX = 0.8
+LW_ARROW = 0.7
+ENTITY_TINT = 0.12
+HERO_TINT = 0.18
 
 
 def canvas(width: str = "full", height_pt: float = 180) -> tuple[Figure, Axes]:
@@ -46,7 +52,7 @@ def box(
     sub: str | None = None,
     role: str = "neutral",
     color: str | None = None,
-    radius: float = 2.0,
+    radius: float | None = None,
     lw: float | None = None,
     ls: object = "-",
     gid: str | None = None,
@@ -54,14 +60,16 @@ def box(
     """role: 'neutral' | 'entity' (pass color=P.entity(k)) | 'proposed'. ``lw`` / ``ls`` override
     the outline (xApp boxes: 1.0 pt, DESIGN s.12.2); labels are always ink.
     """
+    if radius is None:
+        radius = RADIUS
     if role == "proposed":
-        fc, ec, lw0, weight = P.tint(P.HERO, 0.16), P.HERO, 1.0, "bold"
+        fc, ec, lw0, weight = P.tint(P.HERO, HERO_TINT), P.HERO, LW_BOX + 0.4, "bold"
     elif role == "entity":
         if color is None:
             raise ValueError("entity boxes need color=P.entity(k)")
-        fc, ec, lw0, weight = P.tint(color, 0.10), color, 0.6, "normal"
+        fc, ec, lw0, weight = P.tint(color, ENTITY_TINT), color, LW_BOX, "normal"
     else:
-        fc, ec, lw0, weight = P.WHITE, P.NEUTRAL, 0.6, "normal"
+        fc, ec, lw0, weight = P.WHITE, P.NEUTRAL, LW_BOX, "normal"
     patch = ax.add_patch(
         FancyBboxPatch(
             (x, y),
@@ -103,23 +111,32 @@ def box(
     return patch
 
 
-def container(
-    ax: Axes, x: float, y: float, w: float, h: float, title: str, radius: float = 4.0
-) -> None:
+def container(ax: Axes, x: float, y: float, w: float, h: float, title: str) -> None:
+    """A grouping card (e.g. the near-RT RIC): FIELD fill, no outline, bold title top-left."""
     ax.add_patch(
         FancyBboxPatch(
             (x, y),
             w,
             h,
-            boxstyle=f"round,pad=0,rounding_size={radius}",
-            fc=P.WHITE,
-            ec=P.NEUTRAL_LIGHT,
-            lw=0.6,
-            ls=(0, (3, 2)),
+            boxstyle=f"round,pad=0,rounding_size={RADIUS + 2}",
+            fc=P.FIELD,
+            ec="none",
+            lw=0,
             zorder=1,
+            gid="container",
         )
     )
-    ax.text(x + 8, y + 10, title, ha="left", va="center", fontsize=8, fontweight="bold", zorder=4)
+    ax.text(
+        x + 8,
+        y + 10,
+        title,
+        ha="left",
+        va="center",
+        fontsize=S.ANNOT_PT,
+        fontweight="bold",
+        color=P.INK,
+        zorder=4,
+    )
 
 
 def arrow(
@@ -138,7 +155,7 @@ def arrow(
             [a[0], b[0]],
             [a[1], b[1]],
             color=P.INK,
-            lw=0.7,
+            lw=LW_ARROW,
             ls=ls,
             marker="",
             solid_capstyle="butt",
@@ -152,7 +169,7 @@ def arrow(
             arrowstyle="-|>,head_length=4,head_width=2.2",
             mutation_scale=1,
             color=P.INK,
-            lw=0.7,
+            lw=LW_ARROW,
             ls=ls,
             shrinkA=0,
             shrinkB=0,

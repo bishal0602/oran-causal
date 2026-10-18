@@ -74,25 +74,18 @@ def test_marker_shape_is_the_base_method():
     ):
         sp, sa = M.style(plain), M.style(adj)
         assert sp["marker"] == sa["marker"]
-        assert sp["ls"] == sa["ls"] == "-"
+        assert (sp["ls"], sa["ls"]) == (M.BLIND_DASH, "-")
     assert M.style("pcorr_native")["color"] != M.style("pcorr_eq")["color"]
     assert M.style("granger_native")["color"] != M.style("granger_eq")["color"]
     assert M.color("rcot2_native") == M.color("rcot2_eq") == P.NEUTRAL
 
 
 def test_family_cues():
-    """[DECIDED 2026-10-08, user] No dashes: every method is solid; only references keep their own dash."""
-    for code in (
-        "pmrt_nl_eq",
-        "pcorr_eq",
-        "corr",
-        "pcorr_native",
-        "two_tower",
-        "cdl",
-        "granger_by",
-        "pmrt_r3",
-    ):
+    """[DECIDED 2026-10-18, user] Design-based and design-adjusted methods are solid, design-blind ones dashed."""
+    for code in ("pmrt_nl_eq", "pcorr_eq", "pmrt_r3"):
         assert M.style(code)["ls"] == "-", code
+    for code in ("corr", "pcorr_native", "two_tower", "cdl", "granger_by"):
+        assert M.style(code)["ls"] == M.BLIND_DASH, code
     o = M.style("MG:GT")
     assert o["color"] == P.INK
     assert o["mfc"] == "none"
@@ -133,6 +126,8 @@ def test_unplotted_methods_refuse_a_marker():
 def test_mapping_rules(build_figure, figure_name, rule):
     if rule == "wording" and not FIGS[figure_name].SPEC.paper:
         pytest.skip("style specimens use generic 'Proposed / Baseline' names; not in the paper")
+    if rule in ("one hero", "frozen PMRT") and figure_name == "specimen_key":
+        pytest.skip("the key sheet shows the Studies 1-3 PMRT points beside the Study 4 series")
     problems = M.audit(build_figure(figure_name))[rule]
     assert not problems, f"{figure_name}: " + "; ".join(problems)
 

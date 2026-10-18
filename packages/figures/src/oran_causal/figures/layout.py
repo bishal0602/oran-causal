@@ -24,12 +24,12 @@ from matplotlib.figure import Figure, SubFigure
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.ticker import FixedLocator, NullFormatter
-from matplotlib.transforms import blended_transform_factory, offset_copy
+from matplotlib.transforms import Bbox, blended_transform_factory, offset_copy
 
 from oran_causal.figures import palette as P
 from oran_causal.figures import style as S
 
-TAG_PT = S.LEGEND_PT  # panel tag: regular 8 pt under the 10 pt bold letter ([G5] was 7.5 / 9.5)
+TAG_PT = S.TAG_PT  # panel tag: bold, next to the bold panel letter (DESIGN s.3)
 LETTER_GAP_PT = 14  # minimum gap between a panel letter's right edge and its tag / axes edge
 HEADER_RISE_PT = 5  # baseline of letter and tag above the axes top
 MAX_LABEL_OFFSET_PT = 6  # data-anchored labels sit at most this far from their anchor
@@ -56,8 +56,15 @@ def _reg(fig, key: str) -> list:
     root = _root(fig)
     if hasattr(root, "_cdd"):
         root._cdd.setdefault("invalid_pts", [])
+        root._cdd.setdefault("callouts", [])
     if not hasattr(root, "_cdd"):
-        root._cdd = {"headers": [], "legends": [], "invalid": False, "invalid_pts": []}
+        root._cdd = {
+            "headers": [],
+            "legends": [],
+            "invalid": False,
+            "invalid_pts": [],
+            "callouts": [],
+        }
     return root._cdd[key] if key else root._cdd
 
 
@@ -94,6 +101,7 @@ def panel_header(ax: Axes, letter: str, tag: str | None = None, inset: bool = Fa
             ha="left",
             va="baseline",
             fontsize=TAG_PT,
+            fontweight="bold",
             color=P.INK,
         )
         t.set_gid("panel-tag")
@@ -128,77 +136,26 @@ def invalid_handle() -> Line2D:
     )
 
 
+LEGEND_TOP_LOC = "outside upper center"
 INVALID_LABEL = "INVALID condition"  # [G3 2026-10-12] was "INVALID cell (no recall)"; "INVALID condition (no recall)"
 # is 20 pt wider and pushed the E4 page legend into one column (letter b then hit the y label)
 
 
 def fig_legend(fig, handles: Sequence, labels: Sequence[str], where: str = "top", **kw):
-    """Figure-level legend. ``top``: one centred row above every panel header, wrapped into balanced
-    rows when it does not fit the width (finalize). ``right``: a top-aligned column right of the
-    panels. ``auto`` [DECIDED 2026-10-08, user; agreed style page]: a right column on a full-width
-    figure, unless it would squeeze a data panel below MIN_PANEL_IN, then the top row; always the
-    top row on a half-width figure (finalize decides). Never below or inside the axes. An ``INVALID
-    condition`` entry is appended automatically when the figure drew INVALID marks.
+    """Figure-level legend (DESIGN s.6). ``top`` (the standard): one
+    centred, framed row above every panel header, wrapped into balanced rows when it does not fit the
+    width (finalize). ``right``: a top-aligned column right of the panels. Never below or inside the
+    axes. An ``INVALID condition`` entry is appended automatically when the figure drew INVALID marks.
     """
     handles, labels = list(handles), list(labels)
     if _reg(fig, "invalid") and INVALID_LABEL not in labels:
         handles.append(invalid_handle())
         labels.append(INVALID_LABEL)
-    if where == "auto" and _root(fig).get_figwidth() < (S.FULL + S.HALF) / 2:
-        where = "top"  # half width: top row (agreed style page)
-    loc = {
-        "top": "outside upper center",
-        "right": "outside right upper",
-        "auto": "outside right upper",
-    }[where]
+    loc = {"top": LEGEND_TOP_LOC, "right": "outside right upper"}[where]
     ncol = len(labels) if where == "top" else 1
     leg = fig.legend(handles, labels, loc=loc, ncol=ncol, **kw)
     _reg(fig, "legends").append((fig, leg, handles, labels, where, kw))
     return leg
-
-
-MIN_PANEL_IN = 1.0  # = checks.MIN_AXES_IN: no data panel narrower than this (DESIGN s.2)
-
-
-def _data_axes(fig: Figure) -> list:
-    out, seen = [], set()
-    stack = [fig]
-    while stack:
-        f = stack.pop()
-        stack.extend(getattr(f, "subfigs", []))
-        for ax in f.axes:
-            if (
-                id(ax) not in seen
-                and ax.get_visible()
-                and ax.axison
-                and ax.get_label() != "<colorbar>"
-            ):
-                seen.add(id(ax))
-                out.append(ax)
-    return out
-
-
-def _resolve_auto(fig: Figure, r) -> bool:
-    """``auto`` legends: keep the right column if every data panel stays >= MIN_PANEL_IN wide and
-    the legend lies on the canvas; otherwise replace it by the top row.
-    """
-    changed = False
-    reg = _reg(fig, "legends")
-    for i, (owner, leg, handles, labels, where, kw) in enumerate(reg):
-        if where != "auto":
-            continue
-        narrow = any(
-            ax.get_window_extent(r).width / fig.dpi < MIN_PANEL_IN - 1e-6 for ax in _data_axes(fig)
-        )
-        off = leg.get_window_extent(r).x1 > fig.bbox.width + 1
-        if narrow or off:
-            leg.remove()
-            leg = owner.legend(handles, labels, loc="outside upper center", ncol=len(labels), **kw)
-            reg[i] = (owner, leg, handles, labels, "top", kw)
-            changed = True
-        else:
-            reg[i] = (owner, leg, handles, labels, "right", kw)
-    return changed
 
 
 def _fit_legends(fig: Figure, r) -> bool:
@@ -215,7 +172,7 @@ def _fit_legends(fig: Figure, r) -> bool:
         for rows in range(2, n + 1):
             ncol = int(np.ceil(n / rows))
             leg.remove()
-            leg = owner.legend(handles, labels, loc="outside upper center", ncol=ncol, **kw)
+            leg = owner.legend(handles, labels, loc=LEGEND_TOP_LOC, ncol=ncol, **kw)
             if leg.get_window_extent(r).width <= avail or ncol == 1:
                 break
         reg[i] = (owner, leg, handles, labels, where, kw)
@@ -248,8 +205,8 @@ def hide_x(ax: Axes) -> None:
 
 
 def hide_y_labels(ax: Axes) -> None:
-    """An inner column with the same y scale as its row's left panel: keep the axis line (and the
-    grid), drop the repeated tick marks, tick labels and the y label.
+    """An inner column with the same y scale as its row's left panel: no ticks, tick labels or y label (the
+    grid carries the scale).
     """
     ax.tick_params(axis="y", which="both", left=False, labelleft=False)
     ax.set_ylabel("")
@@ -257,8 +214,9 @@ def hide_y_labels(ax: Axes) -> None:
 
 def tidy_grid(axs) -> None:
     """Call after every panel's limits and ticks are set (and after ``plots.finish``). In each
-    column, a panel whose x axis equals the bottom panel's loses its x axis; in each row, a panel
-    whose y axis equals the left panel's loses its y tick labels.
+    column, a panel whose x axis equals the bottom panel's loses its x title but keeps its tick labels
+    (every facet row is readable on its own, DESIGN s.4); in each row, a panel whose y axis equals the
+    left panel's loses its y tick labels.
     """
     a = np.atleast_2d(np.asarray(axs, dtype=object))
     nr, nc = a.shape
@@ -266,7 +224,7 @@ def tidy_grid(axs) -> None:
         col = [a[i, j] for i in range(nr) if a[i, j] is not None and a[i, j].axison]
         for ax in col[:-1]:
             if _same_x(ax, col[-1]):
-                hide_x(ax)
+                ax.set_xlabel("")
     for i in range(nr):
         row = [a[i, j] for j in range(nc) if a[i, j] is not None and a[i, j].axison]
         for ax in row[1:]:
@@ -336,7 +294,7 @@ def _space_invalid(fig) -> None:
 # --- dodge (DESIGN s.7) -----------------------------------------------------------------------------------------------------
 DODGE_PT = 3.4
 DODGE_NARROW_PT = (
-    2.6  # [NEW 2026-10-05] narrow log-x panels: neighbouring x positions < 20 pt apart
+    3.0  # narrow log-x panels (neighbouring x < 20 pt apart); > checks.COINCIDE_FRAC x hero marker
 )
 
 
@@ -503,18 +461,196 @@ def method_labels(ax: Axes, groups: Sequence, offset_pt: float) -> None:
         )
 
 
+# --- callouts (direction rule: auto-placed, leader line beyond MAX_LABEL_OFFSET_PT) --------------------------------------
+CALLOUT_DIST_PT = (8, 12, 17, 23, 30, 38, 48, 60)
+CALLOUT_DIRS = {
+    name: (round(float(np.cos(np.radians(deg))), 3), round(float(np.sin(np.radians(deg))), 3))
+    for name, deg in (
+        ("e", 0),
+        ("ene", 22.5),
+        ("ne", 45),
+        ("nne", 67.5),
+        ("n", 90),
+        ("nnw", 112.5),
+        ("nw", 135),
+        ("wnw", 157.5),
+        ("w", 180),
+        ("wsw", 202.5),
+        ("sw", 225),
+        ("ssw", 247.5),
+        ("s", 270),
+        ("sse", 292.5),
+        ("se", 315),
+        ("ese", 337.5),
+    )
+}
+CALLOUT_PAD_PT = 1.5
+
+
+def callout(
+    ax: Axes, x: float, y: float, text: str, prefer: Sequence[str] = ("n", "e", "w", "s"), **kw
+):
+    """A label for the data point (x, y), placed by ``finalize`` at the first candidate offset (the
+    preferred directions first, then the others, nearest first) whose box touches no other text,
+    marker, data line, whisker or arrow and stays inside the axes. Beyond MAX_LABEL_OFFSET_PT it gets
+    a thin ink leader line to the point.
+    """
+    t = ax.annotate(
+        text,
+        xy=(x, y),
+        xycoords="data",
+        xytext=(0, 0),
+        textcoords="offset points",
+        ha="center",
+        va="center",
+        fontsize=kw.pop("fontsize", S.ANNOT_PT),
+        color=P.INK,
+        linespacing=kw.pop("linespacing", 1.0),
+        **kw,
+    )
+    t.set_gid("callout")
+    order = list(prefer) + [d for d in CALLOUT_DIRS if d not in prefer]
+    _reg(ax.figure, "callouts").append((ax, t, order))
+    return t
+
+
+def _obstacles(fig, ax, r, skip) -> tuple[list, list]:
+    from matplotlib.collections import LineCollection
+    from matplotlib.patches import FancyArrowPatch
+    from matplotlib.path import Path
+    from matplotlib.text import Text
+
+    boxes, paths = [], []
+    px = fig.dpi / 72
+    for t in fig.findobj(Text):
+        if t is skip or not t.get_visible() or not t.get_text().strip():
+            continue
+        if t.get_gid() == "callout" and not getattr(t, "_placed", False):
+            continue
+        boxes.append(Text.get_window_extent(t, r))
+    for ln in ax.get_lines():
+        if not ln.get_visible() or ln.get_gid() in ("halo",):
+            continue
+        xy = ln.get_transform().transform(np.asarray(ln.get_xydata(), float))
+        xy = xy[np.isfinite(xy).all(axis=1)]
+        if ln.get_marker() not in (None, "", "None", " ") and ln.get_markersize() > 0:
+            h = (ln.get_markersize() / 2 + 0.8) * px
+            boxes += [Bbox.from_extents(a - h, b - h, a + h, b + h) for a, b in xy]
+        if ln.get_linestyle() not in ("None", "", " ") and len(xy) > 1:
+            paths.append(Path(xy))
+    for c in ax.collections:
+        if isinstance(c, LineCollection) and c.get_visible():
+            tr = c.get_transform()
+            paths += [Path(tr.transform(seg)) for seg in c.get_segments() if len(seg) > 1]
+    for p in ax.patches:
+        if isinstance(p, FancyArrowPatch) and p.get_visible():
+            paths.append(p.get_transform().transform_path(p.get_path()))
+    return boxes, paths
+
+
+def _callout_cost(bb, leader, boxes, paths, inner, own) -> float:
+    hits = sum(bb.overlaps(b) for b in boxes) + sum(
+        p.intersects_bbox(bb, filled=False) for p in paths
+    )
+    inside = inner.contains(bb.x0, bb.y0) and inner.contains(bb.x1, bb.y1)
+    cross = 0
+    if leader is not None:
+        cross = sum(leader.intersects_bbox(b, filled=True) for b in boxes if not b.overlaps(own))
+    return 10 * hits + 10 * (not inside) + 4 * cross
+
+
+def _place_callouts(fig: Figure, r) -> None:
+    """Each registered callout goes to the candidate (preferred directions first, distances
+    nearest first) with the lowest cost: other texts, markers, data lines, whiskers and arrows it
+    touches, leaving the axes, and marks its leader line crosses; ties go to the nearer candidate.
+    The callout's own marker (and halo) is not an obstacle; beyond MAX_LABEL_OFFSET_PT it gets a
+    thin ink leader line to the point.
+    """
+    from matplotlib.path import Path
+
+    px = fig.dpi / 72
+    pad = CALLOUT_PAD_PT * px
+    for ax, t, order in _reg(fig, "callouts"):
+        boxes, paths = _obstacles(fig, ax, r, t)
+        ax_xy = ax.transData.transform(t.xy)
+        own = Bbox.from_extents(
+            ax_xy[0] - 4 * px, ax_xy[1] - 4 * px, ax_xy[0] + 4 * px, ax_xy[1] + 4 * px
+        )
+        boxes = [b for b in boxes if not b.contains(*ax_xy)]
+        inner = ax.get_window_extent(r).padded(-1 * px)
+        best = None
+        for dist in CALLOUT_DIST_PT:
+            for rank, d in enumerate(order):
+                ux, uy = CALLOUT_DIRS[d]
+                ha = "center" if abs(ux) < 0.3 else ("left" if ux > 0 else "right")
+                va = "center" if abs(uy) < 0.3 else ("bottom" if uy > 0 else "top")
+                t.set_horizontalalignment(ha)
+                t.set_verticalalignment(va)
+                t.xyann = (ux * dist, uy * dist)
+                bb = t.get_window_extent(r).padded(pad)
+                leader = None
+                if dist > MAX_LABEL_OFFSET_PT:
+                    end = (ax_xy[0] + ux * dist * px, ax_xy[1] + uy * dist * px)
+                    start = (ax_xy[0] + ux * 4 * px, ax_xy[1] + uy * 4 * px)
+                    leader = Path([start, end])
+                cost = _callout_cost(bb, leader, boxes, paths, inner, own) + dist / 60 + rank / 100
+                if best is None or cost < best[0]:
+                    best = (cost, ha, va, t.xyann, dist)
+        _, ha, va, off, dist = best
+        t.set_horizontalalignment(ha)
+        t.set_verticalalignment(va)
+        t.xyann = off
+        if dist > MAX_LABEL_OFFSET_PT:
+            ux, uy = (np.sign(round(off[0], 3)), np.sign(round(off[1], 3)))
+            rel = (
+                0.5 if ha == "center" else (0.0 if ha == "left" else 1.0),
+                0.5 if va == "center" else (0.0 if va == "bottom" else 1.0),
+            )
+            props = {
+                "fontsize": t.get_fontsize(),
+                "fontweight": t.get_fontweight(),
+                "linespacing": t._linespacing,
+            }
+            t.remove()
+            t = ax.annotate(
+                t.get_text(),
+                xy=t.xy,
+                xycoords="data",
+                xytext=off,
+                textcoords="offset points",
+                ha=ha,
+                va=va,
+                color=P.INK,
+                arrowprops={
+                    "arrowstyle": "-",
+                    "lw": 0.6,
+                    "color": P.INK,
+                    "shrinkA": 1.0,
+                    "shrinkB": 4.0,
+                    "relpos": rel,
+                },
+                **props,
+            )
+            t.set_gid("callout")
+            t.arrow_patch.set_gid("leader")
+        t._placed = True
+        fig.draw_without_rendering()
+        r = fig.canvas.get_renderer()
+
+
 # --- finalize ---------------------------------------------------------------------------------------------------------
 def finalize(fig: Figure) -> Figure:
     """Resolve the registered headers and legends after a layout pass (letters left of the
     tick-label column, legend rows balanced to the width). Call last in ``build()``.
     """
     _space_invalid(fig)
-    fig.draw_without_rendering()
-    _resolve_auto(fig, fig.canvas.get_renderer())
     for _ in range(2):
         fig.draw_without_rendering()
         r = fig.canvas.get_renderer()
         _fit_legends(fig, r)
         _place_letters(fig, r)
+    if _reg(fig, "callouts"):
+        fig.draw_without_rendering()
+        _place_callouts(fig, fig.canvas.get_renderer())
     fig.draw_without_rendering()
     return fig

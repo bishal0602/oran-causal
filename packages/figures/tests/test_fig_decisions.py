@@ -13,6 +13,7 @@ import numpy as np
 import pytest
 from matplotlib.collections import LineCollection
 from matplotlib.lines import Line2D
+from matplotlib.text import Text
 
 from oran_causal.figures import style
 from oran_causal.figures.figs import _studies as ST
@@ -67,7 +68,7 @@ def test_no_text_on_a_line(fig):
     pad = fig.dpi / 72  # 1 pt
     hits = []
     for t in _texts(fig):
-        bb = t.get_window_extent(r).expanded(1, 1)
+        bb = Text.get_window_extent(t, r)
         x0, x1, y0, y1 = bb.x0 - pad, bb.x1 + pad, bb.y0 - pad, bb.y1 + pad
         for ax in fig.axes:
             for seg in _segments(ax):

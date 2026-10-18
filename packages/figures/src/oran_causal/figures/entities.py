@@ -25,7 +25,7 @@ from oran_causal.figures import methods as M
 from oran_causal.figures import palette as P
 from oran_causal.figures import style as S
 
-LW_XAPP = 1.0  # xApp box / parameter node outline: teal and gold are < 3:1 on white (DESIGN s.12.2)
+LW_XAPP = 1.0  # xApp box / parameter node outline (DESIGN s.12.2)
 COVERAGE_LS = (
     0,
     (3, 1.6),

@@ -58,8 +58,11 @@ YTICKS = [0.02, 0.05, 0.1, 0.2, 0.5, 1]
 # valid_ub (a pooled rate above it cannot be valid, whatever its CI); a thin teal band marking the
 # nominal level (visual width only, +-10 %)
 NOMINAL_BAND = (0.045, 0.055)
-BAND_TINT = 0.3
-HERO_LW, HERO_MS = 2.6, S.MARKER_SIZE + 1.4  # the focal series: heavier than the default hero
+BAND_TINT = 0.22
+HERO_LW, HERO_MS = (
+    S.LW_PROPOSED + 0.5,
+    S.MARKER_SIZE + 1.0,
+)  # the focal series: heavier than the default hero
 
 
 def pooled_rates() -> dict[tuple[str, str], tuple[float, int]]:
@@ -127,7 +130,7 @@ def _check(rates: dict) -> float:
 
 def _panel(ax, rates: dict, arms: list[str], designs: list[str], ub: float) -> None:
     x = np.arange(len(designs))
-    ax.axhspan(ub, YLIM[1], color=P.tint(P.BAD, P.ZONE_TINT), lw=0, zorder=0, gid="sem:bad-zone")
+    plots.zone(ax, ub, YLIM[1], "bad")
     ax.axhspan(
         *NOMINAL_BAND, color=P.tint(P.GOOD, BAND_TINT), lw=0, zorder=0.5, gid="sem:good-band"
     )
@@ -179,7 +182,7 @@ def build():
     _panel(a, rates, USES, DESIGNS, ub)
     _panel(b, rates, BLIND, blind_designs, ub)
     a.set_ylabel("Null-edge rate")
-    L.label_line(b, 1, NOMINAL_BAND[1], "nominal 0.05", where="above", ha="center")
+    L.label_line(b, 1, NOMINAL_BAND[0], "nominal 0.05", where="below", ha="center")
     L.panel_header(a, "a", "Uses the logging design")
     L.panel_header(b, "b", "Ignores the logging design")
     L.tidy_grid([[a, b]])
@@ -194,7 +197,7 @@ def build():
     reg = L._reg(fig, "legends")
     reg[-1] = (
         fig,
-        fig.legend(handles, labels, loc="outside upper center", ncol=2),
+        fig.legend(handles, labels, loc=L.LEGEND_TOP_LOC, ncol=2),
         handles,
         labels,
         "top",

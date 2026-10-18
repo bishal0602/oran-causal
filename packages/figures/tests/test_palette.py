@@ -2,27 +2,8 @@
 neutral).
 """
 
-import matplotlib
-
 from oran_causal.figures import methods as M
 from oran_causal.figures import palette as P
-
-
-def test_harbor_values():
-    assert P.ENTITIES == ["#4273B0", "#C17154", "#3FAFA9", "#CBAA56", "#955C98", "#5C9B5E"]
-    assert [
-        *P.ENTITIES,
-        "#7196C4",
-        "#8CA7CF",
-        "#B58DB7",
-    ] == P.METHODS  # six hues + PMRT-Lin, QACM, INT tints
-    assert P.HERO == P.BLUE
-    for tint, base, amount in (
-        (P.PMRT_LIN, P.BLUE, 0.75),
-        (P.SLATE, P.SEQ[5], 0.6),
-        (P.LILAC, P.PURPLE, 0.7),
-    ):
-        assert matplotlib.colors.to_hex(P.tint(base, amount)).upper() == tint, tint
 
 
 def test_every_method_colour_is_harbor():

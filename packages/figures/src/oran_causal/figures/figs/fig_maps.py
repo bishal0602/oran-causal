@@ -8,8 +8,8 @@ raising the parameter. Tiles are the colour field (semantic roles, DESIGN s.5): 
 tint, white triangle; right sign - teal tile, white triangle; wrong sign - terracotta tile, white
 triangle; false edge (ground truth null) - light terracotta tile, terracotta triangle; missed -
 white tile, gray outline triangle in the true sign; not scored (indeterminate) - light gray hatch;
-true null - near-white. PMRT's facet sits on a light blue field. The legend row shows the tiles
-themselves. Row labels on the left facet only; KPI labels under every facet (one row of facets).
+true null - the gray panel field. PMRT's facet is framed in its blue. The legend row shows the tiles
+themselves. Row labels and KPI labels on the left facet only (one row of facets).
 
 Source: V4 gt.cells and slices_result.pooled.metrics.<code>.declared through _study1.load(), which
 re-scores every map against the stored metrics. The tile counts are asserted against tab:maps (a)
@@ -54,7 +54,6 @@ EXPECT = {S1.PRIMARY: (28, 23, 0, 2), "granger": (32, 14, 4, 8), "granger_by": (
 N_TRUE = 29
 
 HATCH = "/////"
-NULL_BG = "#F3F4F6"  # true null / nothing declared: near-white
 # category -> (tile face, tile edge, triangle face, triangle edge, semantic tag)
 TILES = {
     "truth": (P.tint(P.OURS, 0.62), "none", P.WHITE, P.WHITE, "sem:ours-tile"),
@@ -63,7 +62,13 @@ TILES = {
     "false": (P.tint(P.BAD, 0.30), "none", P.BAD, P.BAD, "sem:bad-tile"),
     "missed": (P.WHITE, P.tint(P.MISSED, 0.7), "none", P.MISSED, "missed-tile"),
     "indet": (P.tint(P.NEUTRAL, 0.22), "none", None, None, "indet-tile"),
-    None: (NULL_BG, "none", None, None, "null-tile"),
+    None: (
+        P.FIELD,
+        "none",
+        None,
+        None,
+        "null-tile",
+    ),  # true null / nothing declared: the panel field
 }
 GAP = 0.9  # blank rows between family blocks (family header in the left facet)
 FAMILY_IN_PT = 46  # family header starts left of the longest relation label
@@ -223,14 +228,15 @@ def draw(maps: dict, facets: list[tuple[str, str]], hero: str):
     fig, axs = plots.figure("full", aspect=0.74, ncols=len(facets), gridspec_kw={"wspace": 0.04})
     for j, (ax, (code, title)) in enumerate(zip(axs, facets, strict=False)):
         cells = maps[code]
-        if code == hero:  # our map: a light blue field behind the facet
+        if code == hero:  # our map: framed in the hero colour
             ax.add_patch(
                 Rectangle(
                     (-0.18, rows[0][0] - 0.25),
                     len(KPIS) + 0.36,
                     ymax - rows[0][0] + 0.43,
-                    fc=P.tint(P.OURS, P.ZONE_TINT),
-                    ec="none",
+                    fc="none",
+                    ec=P.OURS,
+                    lw=1.1,
                     zorder=0,
                     clip_on=False,
                     gid="sem:ours-zone",
@@ -257,7 +263,7 @@ def draw(maps: dict, facets: list[tuple[str, str]], hero: str):
             fontweight="bold" if code == hero else "normal",
             gid="facet-title",
         )
-        for x, (_, lab) in enumerate(KPIS):
+        for x, (_, lab) in enumerate(KPIS if j == 0 else []):
             ax.annotate(
                 lab,
                 xy=(x + 0.5, ymax),

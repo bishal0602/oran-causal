@@ -44,6 +44,6 @@ def build():
         )
     ax.set_xticks(range(len(GROUPS)), GROUPS)
     ax.set(ylabel="Synthetic score", ylim=(0, 1))
-    plots.finish(ax, trim=False)
+    plots.finish(ax)
     M.legend(fig, CODES, hero="pmrt")
     return L.finalize(fig)

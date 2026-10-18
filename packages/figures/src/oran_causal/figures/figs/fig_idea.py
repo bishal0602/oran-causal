@@ -43,7 +43,7 @@ SPEC = FigSpec(
 H_IN = 2.2
 PANEL_W = 114.0  # diagram panel width (pt)
 GAP = 6.0  # between the two diagram panels (pt)
-TAG_B_PT = 123.0  # the (b) header (letter + tag) reaches this far right of the panel's left edge
+TAG_B_PT = 134.0  # the (b) header (letter + tag) reaches this far right of the panel's left edge
 TOP = 18.0  # header band above the diagrams (pt)
 HEAD = 12.0  # log-type heading band above each histogram (pt)
 
@@ -345,7 +345,7 @@ def build():
     axl.set_xlabel("Test statistic")
     axl.set_xticks([-4, 0, 4, 8])
     for ax in (axt, axl):
-        plots.finish(ax, trim=False, grid=False)
+        plots.finish(ax, grid=False)
         ax.spines["left"].set_visible(False)
     axt.spines["bottom"].set_visible(False)
     L.panel_header(axt, "c", "Redraw test")

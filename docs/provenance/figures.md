@@ -12,7 +12,7 @@ Source: the workspace `figures/` project (uv project `cddfig`) at git `257dc48` 
 | `packages/figures/data/fig_idea_redraws.json` | `figures/data/fig_idea_redraws.json` | Byte-identical (sha256 `446027d9...`), `-text` in `.gitattributes`. Made offline by `figures/scripts/fig_idea_redraws.py`, which needs the old CDD-ORAN code and is not ported |
 | `packages/figures/tests/*.py` | `figures/tests/*.py` | Ported; record-, journal- and DESIGN-dependent tests are marked `slow` by fixture |
 | `packages/figures/tests/test_{cli,paths,plotted,synthetic_records,t0_gate}.py`, `conftest.py` | new | CLI, path mapping, digest and gate tests |
-| `packages/figures/tests/data/plotted_golden.json` | digests of the OLD cddfig run on CDD-ORAN | See the generator below |
+| `packages/figures/tests/data/plotted_golden.json` | digests of the OLD cddfig run on CDD-ORAN, regenerated after the 2026-10-18 redesign | See the gate below |
 
 Dropped: `figures/_bak_*`, `figures/preview/`, `figures/fonts/` (IBM Plex, unused), `figures/scripts/`.
 
@@ -42,6 +42,8 @@ cd figures && .venv/Scripts/python.exe -B <scratchpad>/golden.py
 ```
 
 run from outside the tree, with `PYTHONHASHSEED=0` (the old code iterated a set for marker order in `fig_study1_discovery`; the new `plotted.py` sorts marker-only lines).
+
+The digest covers colours, line widths, fonts and text positions as well as the plotted values. After the 2026-10-18 redesign (DESIGN.md, design "soft modern") the golden was regenerated from the new package with the `built` fixture's computation in `test_t0_gate.py` (`PYTHONHASHSEED=0`, JSON `indent=1`, sorted keys), and `specimen_key` was added. Before regenerating, the plotted data with styling stripped was compared between the old and new code on every figure. The data were equal. The only differences were presentation: zone limit lines, KPI labels now on the left map facet only, diagram corner radii and two diagram positions, beeswarm display offsets, and tick labels outside the view that are never drawn. Figure sizes were unchanged; tight-crop media boxes moved by at most 5 pt.
 
 ## Source state and pins
 

@@ -6,7 +6,6 @@ from collections.abc import Sequence
 
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
@@ -44,9 +43,13 @@ def panel_label(ax: Axes, letter: str, x: float = -0.02, y: float = 1.0) -> None
     )
 
 
-def finish(ax: Axes, trim: bool = True, grid: bool = True) -> None:
-    """Detach left/bottom spines by 3 pt and trim them to the tick range."""
-    sns.despine(ax=ax, offset=S.SPINE_OFFSET, trim=trim)
+def finish(ax: Axes, grid: bool = True) -> None:
+    """Soft-modern frame (DESIGN s.4): no spines and no tick marks; the gray panel field and its white grid
+    carry the frame. ``grid=False`` removes the grid (e.g. categorical panels).
+    """
+    for side in ax.spines.values():
+        side.set_visible(False)
+    ax.tick_params(which="both", length=0)
     if not grid:
         ax.grid(False)
 
@@ -92,16 +95,16 @@ def bar_method(ax: Axes, x, h, k: int, width: float, label: str | None = None, *
 
 
 def errorbars(ax: Axes, x, y, err, **kw):
-    """CI whiskers in ink, cap 2 pt, 0.6 pt."""
+    """CI whiskers in ink, cap 2 pt, LW_WHISKER."""
     return ax.errorbar(
         x,
         y,
         yerr=err,
         fmt="none",
         ecolor=P.INK,
-        elinewidth=0.6,
+        elinewidth=S.LW_WHISKER,
         capsize=2,
-        capthick=0.6,
+        capthick=S.LW_WHISKER,
         zorder=5,
         **kw,
     )
@@ -189,9 +192,13 @@ def stacked_shares(
 
 
 # --- reference lines, legends, annotations -------------------------------------
+REF_ALPHA = 0.8
+REF_DASH = (0, (4, 2))
+
+
 def ref_line(ax: Axes, y: float, label: str | None = None, axis: str = "y"):
-    """Threshold/target line: ink at 60 %, dash (4, 2), 0.7 pt, labeled directly (not in the legend)."""
-    kw = {"color": P.INK, "alpha": 0.6, "lw": S.LW_REF, "ls": (0, (4, 2)), "zorder": 2}
+    """Threshold/target line: ink at 80 %, dash (4, 2), LW_REF, labelled directly (not in the legend)."""
+    kw = {"color": P.INK, "alpha": REF_ALPHA, "lw": S.LW_REF, "ls": REF_DASH, "zorder": 2}
     if axis == "y":
         ax.axhline(y, **kw)
         if label:
@@ -221,13 +228,13 @@ def ref_line(ax: Axes, y: float, label: str | None = None, axis: str = "y"):
 
 
 def legend_right(ax: Axes, handles=None, labels=None, **kw):
-    """Full-width figures (5.15 in): frameless column outside the axes, top-aligned."""
+    """Legend column outside the axes, top-aligned (framed by the rc legend box)."""
     args = [a for a in (handles, labels) if a is not None]
     return ax.legend(*args, loc="upper left", bbox_to_anchor=(1.02, 1.0), **kw)
 
 
 def legend_top(ax: Axes, ncol: int = 2, handles=None, labels=None, **kw):
-    """Half-width panels (2.5 in): frameless row above the axes, left-aligned."""
+    """Legend row above the axes, left-aligned (framed by the rc legend box)."""
     args = [a for a in (handles, labels) if a is not None]
     return ax.legend(*args, loc="lower left", bbox_to_anchor=(0, 1.02), ncol=ncol, **kw)
 
@@ -289,6 +296,20 @@ def heatmap(
     if cbar_label:
         cb.set_label(cbar_label)
     return im, cb
+
+
+def zone(ax: Axes, lo: float, hi: float, role: str, axis: str = "y", gid: str | None = None):
+    """A semantic region (role 'good' | 'bad') between lo and hi on ``axis`` (DESIGN s.6): a light tint
+    of the role hue, bordered by a full-strength line on the limit (the region's inner edge).
+    """
+    color = P.GOOD if role == "good" else P.BAD
+    span = ax.axhspan if axis == "y" else ax.axvspan
+    gid = gid or f"sem:{role}-zone"
+    z = span(lo, hi, fc=P.tint(color, P.ZONE_TINT), ec="none", lw=0, zorder=0, gid=gid)
+    edge = lo if role == "bad" else hi
+    line = ax.axhline if axis == "y" else ax.axvline
+    line(edge, color=color, lw=S.LW_REF, zorder=0.6, gid=gid + "-edge")
+    return z
 
 
 TEXT_CONTRAST = 4.5  # WCAG AA for normal-size text

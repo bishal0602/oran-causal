@@ -34,6 +34,14 @@ ARMS = [
     "corr",
 ]  # legend order
 GRID = np.logspace(-3, 0, 61)
+PHASES = (
+    0,
+    3,
+    6,
+    1,
+    4,
+    8,
+)  # marker phases on the 10-step grid: the three arms on the diagonal 3 steps apart
 LIM = (1e-3, 1.0)
 VIEW = (7.5e-4, 1.35)  # [2026-10-06] headroom: markers at 1 (and the 0.001 corner) never clipped
 
@@ -54,9 +62,7 @@ def _panel(ax, pv: dict):
     )
     for i, arm in enumerate(M.order(ARMS)):  # ECDF from the first positive p (DESIGN s.7)
         if arm in pv:
-            x, y, mark = L.ecdf_line(
-                pv[arm], GRID, phase=(5 * i) // 3
-            )  # 6 distinct phases on the 10-step grid
+            x, y, mark = L.ecdf_line(pv[arm], GRID, phase=PHASES[i])
             M.plot(ax, x, y, arm, hero=arm == T.HERO, label=M.name(arm), markevery=mark)
     ax.set(
         xscale="log",

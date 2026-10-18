@@ -50,7 +50,7 @@ def build():
     a.set_yticks(rows, [f"Scenario {i + 1}" for i in range(len(shares))])
     a.set(xlim=(0, 1), xlabel="Share of requests (synthetic)")
     a.xaxis.set_major_formatter(lambda v, _: f"{v:.0%}")
-    plots.finish(a, trim=False)
+    plots.finish(a)
     steps = np.arange(21)
     for k, key in enumerate(KEYS):
         y = [0.62, 0.55, 0.70][k] + [0.25, 0.3, 0.12][k] * (1 - np.exp(-steps / [4, 7, 3][k]))

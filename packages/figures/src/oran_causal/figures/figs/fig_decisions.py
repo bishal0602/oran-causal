@@ -75,9 +75,9 @@ def _cross(ax, x, y, xci, yci):
         yerr=[[y - yci[0]], [yci[1] - y]],
         fmt="none",
         ecolor=P.INK,
-        elinewidth=0.6,
+        elinewidth=S.LW_WHISKER,
         capsize=1.5,
-        capthick=0.6,
+        capthick=S.LW_WHISKER,
         zorder=3,
         clip_on=False,
     )
@@ -120,6 +120,53 @@ def _arrow(ax, p, q, shrink=(4, 4), color=P.INK, lw=0.8, gid="gate-arrow"):
     )
 
 
+def _labels(ax, mg_p, cs_p, mg_g, cs_g, p_mg_p, p_cs_p, fig):
+    """Point labels as callouts, auto-placed clear of marks, whiskers and arrows, with a leader line
+    when they sit away from their point; the hero arrow keeps its 'with gate' label.
+    """
+    g, r_, _, _ = _pt(mg_p)
+    L.callout(
+        ax,
+        g,
+        r_,
+        f"PMRT map, no gate\nRLF ratio {g:.2f}",
+        prefer=("n", "ne", "nw", "e"),
+        fontweight="bold",
+    )
+    x, y, _, _ = _pt(cs_p)
+    L.callout(ax, x, y, "PMRT map with gate\n= never-sleep", prefer=("nw", "w", "sw", "n"))
+    x, y, _, _ = _pt(cs_g)
+    L.callout(ax, x, y, "Oracle map\nwith gate", prefer=("sw", "w", "s", "nw"))
+    x, y, _, _ = _pt(mg_g)
+    L.callout(ax, x, y, "Oracle map\nno gate", prefer=("s", "se", "sw", "e"))
+    (x0, y0), (x1, y1) = ax.transData.transform(p_mg_p), ax.transData.transform(p_cs_p)
+    ang = float(np.degrees(np.arctan2(y1 - y0, x1 - x0)))
+    ang = ang + 180 if ang > 90 else ang - 180 if ang < -90 else ang
+    t = 0.38
+    ax.annotate(
+        "with gate",
+        xy=(p_mg_p[0] + t * (p_cs_p[0] - p_mg_p[0]), p_mg_p[1] + t * (p_cs_p[1] - p_mg_p[1])),
+        xytext=(0, 3),
+        textcoords="offset points",
+        ha="center",
+        va="bottom",
+        rotation=ang,
+        rotation_mode="anchor",
+        fontsize=S.ANNOT_PT,
+        color=P.INK,
+        fontweight="bold",
+    )
+    ax.set_xticks(
+        [0.9, 1.0, R.GUARD, 1.2, 1.3, 1.4, 1.5, 1.6],
+        ["0.9", "1.0", "1.10", "1.2", "1.3", "1.4", "1.5", "1.6"],
+    )
+    ax.set_yticks(np.round(np.arange(0, 0.71, 0.1), 1))
+    ax.set_xlabel("RLF ratio vs accept-all (lower is better)")
+    ax.set_ylabel("Recovery R (higher is better)")
+    plots.finish(ax)
+    return L.finalize(fig)
+
+
 def build():
     S.apply()
     fig = plt.figure(figsize=(S.FULL, HEIGHT))
@@ -132,17 +179,8 @@ def build():
     _check(mg_p, cs_p, ns)
     _ev = ST.fd()["certsafe"]["eval"]
     # the breach region and the limit
-    ax.axvspan(
-        XLIM[0], R.GUARD, fc=P.tint(P.GOOD, P.ZONE_TINT), ec="none", zorder=0, gid="sem:good-zone"
-    )
-    ax.axvspan(
-        R.GUARD,
-        XLIM[1],
-        fc=P.tint(P.BAD, P.ZONE_TINT + 0.04),
-        ec="none",
-        zorder=0,
-        gid="sem:bad-zone",
-    )
+    plots.zone(ax, XLIM[0], R.GUARD, "good", axis="x")
+    plots.zone(ax, R.GUARD, XLIM[1], "bad", axis="x")
     plots.ref_line(ax, R.GUARD, axis="x")
     L.label_line(ax, R.GUARD, YLIM[0] + 0.03, "breaks RLF limit", where="right", fontweight="bold")
     L.label_line(ax, R.GUARD, YLIM[1] - 0.03, "within RLF limit", where="left", fontweight="bold")
@@ -169,77 +207,4 @@ def build():
     p_cs_p = _point(ax, cs_p, "CS:PMRT", filled=True, hero=True)
     _arrow(ax, p_mg_p, p_cs_p, color=P.OURS, lw=1.6, gid="sem:ours-arrow")
     _arrow(ax, p_mg_g, p_cs_g, shrink=(3, 3))
-    # labels
-    g, _, (glo, ghi), (_, rhi) = _pt(mg_p)
-    L.label_line(
-        ax,
-        g,
-        rhi,
-        f"PMRT map, no gate\nRLF ratio {g:.2f}",
-        where="above",
-        ha="center",
-        linespacing=1.0,
-        fontweight="bold",
-    )
-    (x0, y0), (x1, y1) = ax.transData.transform(p_mg_p), ax.transData.transform(p_cs_p)
-    ang = float(np.degrees(np.arctan2(y1 - y0, x1 - x0)))
-    ang = ang + 180 if ang > 90 else ang - 180 if ang < -90 else ang  # keep the text upright
-    t = 0.38  # along the arrow from the ungated end: clear of the limit line
-    ax.annotate(
-        "with gate",
-        xy=(p_mg_p[0] + t * (p_cs_p[0] - p_mg_p[0]), p_mg_p[1] + t * (p_cs_p[1] - p_mg_p[1])),
-        xytext=(0, 3),
-        textcoords="offset points",
-        ha="center",
-        va="bottom",
-        rotation=ang,
-        rotation_mode="anchor",
-        fontsize=S.ANNOT_PT,
-        color=P.INK,
-        fontweight="bold",
-    )
-    x, y, xci, yci = _pt(cs_p)
-    ax.annotate(
-        "PMRT map with gate\n= never-sleep",
-        xy=(xci[0], y + 0.068),
-        xytext=(-6, 0),
-        textcoords="offset points",
-        ha="right",
-        va="center",
-        fontsize=S.ANNOT_PT,
-        color=P.INK,
-        linespacing=1.0,
-    )
-    x, y, xci, yci = _pt(cs_g)
-    ax.annotate(
-        "Oracle map\nwith gate",
-        xy=(xci[0], y - 0.064),
-        xytext=(-6, 0),
-        textcoords="offset points",
-        ha="right",
-        va="center",
-        fontsize=S.ANNOT_PT,
-        color=P.INK,
-        linespacing=1.0,
-    )
-    x, y, xci, yci = _pt(mg_g)
-    ax.annotate(
-        "Oracle map\nno gate",
-        xy=(x + 0.014, yci[0] - 0.02),
-        xytext=(0, 0),
-        textcoords="offset points",
-        ha="center",
-        va="top",
-        fontsize=S.ANNOT_PT,
-        color=P.INK,
-        linespacing=1.0,
-    )
-    ax.set_xticks(
-        [0.9, 1.0, R.GUARD, 1.2, 1.3, 1.4, 1.5, 1.6],
-        ["0.9", "1.0", "1.10", "1.2", "1.3", "1.4", "1.5", "1.6"],
-    )
-    ax.set_xlabel("RLF ratio vs accept-all (lower is better)")
-    ax.set_ylabel("Recovery R (higher is better)")
-    plots.finish(ax)
-    ax.grid(axis="y", visible=True)
-    return L.finalize(fig)
+    return _labels(ax, mg_p, cs_p, mg_g, cs_g, p_mg_p, p_cs_p, fig)
