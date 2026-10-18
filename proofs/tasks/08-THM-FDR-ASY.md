@@ -1,7 +1,7 @@
 ---
 id: THM-FDR-ASY
 kind: lean
-status: todo
+status: needs clarity
 ---
 
 # 08 THM-FDR-ASY: Asymptotic FDR control
@@ -79,11 +79,11 @@ Filled in by the agent.
 
 | Field | Value |
 |---|---|
-| Status | |
-| Main declaration(s) | |
-| Files | |
-| Deviation from the claim | |
-| Hypotheses not stated in the claim | |
-| `lake build` | |
-| `#print axioms` | |
-| Notes | |
+| Status | needs clarity (deviations 1 and 3 and inherited task 07 obligations; authors may accept as implemented) |
+| Main declaration(s) | `OranCausal.FDRAsymptotic.limsup_fdr_le` (moving weights), `limsup_fdr_le_of_tendsto`, `limsup_fdr_le_const` (paper form); core `fdr_le_add_vanishing`; per-null input `NullLimit` with `nullLimit_of_pmrt`, `nullLimit_of_twoSided_pmrt`, `nullLimit_of_directed_pmrt` |
+| Files | `proofs/OranCausal/FDRAsymptotic.lean`, `proofs/OranCausal.lean` (import), `proofs/OranCausal/StepUp.lean` (additive `fdr_nonneg`, `fdr_le_one`), `proofs/FDR_ASY_REPORT.md` |
+| Deviation from the claim | Moving (projected) weights: limsup FDR <= limsup_n (q/m) sum_{H0} w_{n,j} <= q; the paper middle term holds for convergent or constant weights. The proof cites Prop. 1 as uniform in t while it is pointwise; uniformity derived for fixed B (lattice lemma), only for t >= 0 (all thresholds >= 0); B growing with n not covered |
+| Hypotheses not stated in the claim | m >= 1, q >= 0, measurable p-values and tested sets, deterministic weights and directions (conditional on training data), fixed B per null; A1-A4 enter through task 07 interfaces and named obligations (HallHeyde, LindebergFellerPolya, Polya) |
+| `lake build` | passes, 3303 jobs (`proofs/task08-build.log`) |
+| `#print axioms` | `propext`, `Classical.choice`, `Quot.sound` for all 17 audited declarations (`proofs/task08-axioms.log`) |
+| Notes | Formalised against the current paper; pinned-vs-current drift in FDR_ASY_REPORT.md. Untested = outside tested set (p = +inf), never rejected. Forbidden-feature scan clean (`proofs/task08-forbidden-scan.log`). Not committed |

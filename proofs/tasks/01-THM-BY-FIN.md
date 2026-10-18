@@ -85,4 +85,4 @@ Filled in by the agent.
 | Hypotheses not stated in the claim | `m >= 1`, `q >= 0`, `w_j >= 0`, measurable `p_j` and `S`; `sum w_j = m` and `delta >= 0` not needed |
 | `lake build` | clean rebuild passes; `leanchecker` replay exit 0 |
 | `#print axioms` | `propext`, `Classical.choice`, `Quot.sound` |
-| Notes | Commit `e2b20ee` |
+| Notes | Commit `e2b20ee`. 2026-10-18 (task 08): added public lemmas `fdr_nonneg`, `fdr_le_one` to StepUp.lean (additive only; no existing statement, name or visibility changed); lake build passes; `#print axioms` of `fdr_le_of_selfConsistent`, `fdr_nonneg`, `fdr_le_one`: propext, Classical.choice, Quot.sound (proofs/task08-step7-build.log) |

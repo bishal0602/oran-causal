@@ -238,8 +238,25 @@ theorem fdr_le_of_selfConsistent {m : ℕ} (hm : 1 ≤ m)
     _ ≤ ∑ j ∈ H0, ((q / m) * w j + δ) := sum_le_sum hj
     _ = _ := by rw [sum_add_distrib, ← mul_sum]; simp [nsmul_eq_mul]
 
+omit [IsProbabilityMeasure μ] in
+lemma fdr_nonneg {m : ℕ} (S : Ω → Finset (Fin m)) (H0 : Finset (Fin m)) :
+    0 ≤ fdr μ S H0 := by
+  unfold fdr
+  exact integral_nonneg fun ω => by positivity
+
+lemma fdr_le_one {m : ℕ} (S : Ω → Finset (Fin m)) (H0 : Finset (Fin m)) :
+    fdr μ S H0 ≤ 1 := by
+  unfold fdr
+  refine (integral_mono_of_nonneg (Filter.Eventually.of_forall fun ω => by positivity)
+    (integrable_const (1 : ℝ)) (Filter.Eventually.of_forall fun ω => ?_)).trans (by simp)
+  have h : (H0 ∩ S ω).card ≤ (max (S ω).card 1 : ℕ) :=
+    (card_le_card inter_subset_right).trans (le_max_left _ _)
+  exact div_le_one_of_le₀ (by exact_mod_cast h) (Nat.cast_nonneg _)
+
 end Probability
 
 end OranCausal.StepUp
 
 #print axioms OranCausal.StepUp.fdr_le_of_selfConsistent
+#print axioms OranCausal.StepUp.fdr_nonneg
+#print axioms OranCausal.StepUp.fdr_le_one
