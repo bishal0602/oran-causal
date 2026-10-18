@@ -11,7 +11,7 @@ KPIs are certified small.
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\textwidth]{figures/fig_idea.pdf}
-\caption{Confounded and randomised logging.}
+\caption{Confounded and randomised logging: (a) a reactive controller sets the mode $W$ (accept or reject) from the network state, which also moves the KPI; (b) the referee logs the accept probability $\pi$ and draws an independent uniform $U \sim \mathrm{Unif}(0,1)$, accepting when $U < \pi$. (c) The observed statistic $z$ (bold line) against 9999 redraws of the logged modes: it lies beyond every redraw in the real experiment (600 episodes) but not in the placebo logs (40 episodes).}
 \label{fig:idea}
 \end{figure}
 
@@ -20,8 +20,8 @@ KPIs are certified small.
 \label{sec:pmrt_idea}
 
 In logs written by a reactive controller, the network state drives both the decision and the KPIs
-(Figure~\ref{fig:idea}a). When the referee draws each mode with a logged propensity, the state no longer determines
-the decision (Figure~\ref{fig:idea}b), and the propensities define what chance alone would produce. A KPI that moves
+(Figure~\ref{fig:idea}a). When the referee draws each mode with a logged propensity, the state affects the mode only
+through the logged propensity (Figure~\ref{fig:idea}b), and the propensities define what chance alone would produce. A KPI that moves
 with the modes more than the propensities allow is then evidence of an effect, even when the propensities themselves
 depend on the network state. PMRT measures this co-movement with a statistic that pairs a score of each unit's mode
 with a weight built from the KPI series, and compares it with the values obtained when the modes are redrawn from the

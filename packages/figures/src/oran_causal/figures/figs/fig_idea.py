@@ -2,25 +2,25 @@
 its probability logged cuts the confounding path, and redrawing the logged decisions gives the
 reference distribution of the test.
 
-(a) reactive controller: network state -> decision, network state -> KPI (the confounding path,
-SPURIOUS hue, labelled once), decision -> KPI (the effect). (b) the same with a logged coin driving
-the decision; the state -> decision arrow faint and crossed out. The decision node is the one hero
-component (DESIGN s.10). (c) real redraws: the frozen Study 1 PMRT statistic (arm loadsp_c, the
-primary) for sleep -> neighbour protected-slice violations, B = 9999 redraws of the logged decisions
-on the pooled randomised logs (600 episodes) and on the placebo logs (40 episodes), observed value
-as an ink line. The redraws come from figures/data/fig_idea_redraws.json, written by
-figures/scripts/fig_idea_redraws.py from the stored evaluation logs with the frozen code; the build
-re-derives the observed z and the p-values from them and asserts both against the stored analyzer
-output (v4_analysis.json).
+(a) reactive controller: network state -> mode W, network state -> KPI (the confounding arch,
+purple, labelled once), W -> KPI (the effect). (b) randomised logging: the state sets the logged
+accept probability pi, an independent uniform draw U ~ Unif(0,1) turns it into the mode
+(W = accept iff U < pi); the state -> KPI arch stays, muted. (c) real redraws: the frozen Study 1
+PMRT statistic (arm loadsp_c, the primary) for sleep -> neighbour protected-slice violations,
+B = 9999 redraws of the logged decisions on the pooled randomised logs (600 episodes) and on the
+placebo logs (40 episodes), observed value as a bold line labelled with its z, one-sided p-value
+(the declaration p_d, d = +1) in the panel subtitle. The redraws come from
+figures/data/fig_idea_redraws.json, written by figures/scripts/fig_idea_redraws.py from the stored
+evaluation logs with the frozen code; the build re-derives the observed z and the p-values from
+them and asserts both against the stored analyzer output (v4_analysis.json).
 """
 
 import json
 
 import numpy as np
-from matplotlib.patches import Circle, FancyArrowPatch
+from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 from oran_causal.figures import diagram as D
-from oran_causal.figures import layout as L
 from oran_causal.figures import palette as P
 from oran_causal.figures import plots
 from oran_causal.figures import style as S
@@ -40,12 +40,12 @@ SPEC = FigSpec(
     caption_hint="Confounding in controller logs and how randomised logging removes it; (c) one true edge, 9999 redraws",
 )
 
-H_IN = 2.2
-PANEL_W = 114.0  # diagram panel width (pt)
-GAP = 6.0  # between the two diagram panels (pt)
-TAG_B_PT = 134.0  # the (b) header (letter + tag) reaches this far right of the panel's left edge
-TOP = 18.0  # header band above the diagrams (pt)
-HEAD = 12.0  # log-type heading band above each histogram (pt)
+H_PT = 300.0
+PAD_PT = 1.4  # savefig pad (0.02 in) on each side
+XLIM = (-4.5, 10.0)
+BINS = np.arange(-4.5, 4.75, 0.25)
+TAIL = 0.95  # the shaded tail: top 5 % of the redraws (one-sided, the tested direction)
+SEM_LW = 1.1
 
 
 def load() -> dict:
@@ -88,22 +88,13 @@ def load() -> dict:
     assert not out["placebo"]["declared"]
     assert out["randomised"]["p"] == 1 / 10000
     assert out["randomised"]["z"] > out["randomised"]["zb"].max()
-    # room for the rotated "observed" label on the side of the line away from the bars
-    assert out["randomised"]["z"] + 2.2 < XLIM[1]
+    # room for the z label on the side of the line away from the bars
+    assert out["randomised"]["z"] + 1.0 < XLIM[1]
     assert XLIM[0] + 2.2 < out["placebo"]["z"] < 0
     return out
 
 
-def _canvas(fig, x0_pt: float, w_pt: float, h_pt: float):
-    W, H = fig.get_size_inches() * 72
-    ax = fig.add_axes((x0_pt / W, 0, w_pt / W, h_pt / H))
-    ax.set_xlim(0, w_pt)
-    ax.set_ylim(h_pt, 0)
-    ax.axis("off")
-    return ax
-
-
-def _arrow(ax, a, b, color=P.INK, lw=0.7, ls="-", z=2, gid="arrow"):
+def _arrow(ax, a, b, color=P.INK, lw=0.8, ls="-", z=2):
     ax.add_patch(
         FancyArrowPatch(
             a,
@@ -116,9 +107,23 @@ def _arrow(ax, a, b, color=P.INK, lw=0.7, ls="-", z=2, gid="arrow"):
             shrinkA=0,
             shrinkB=0,
             zorder=z,
-            gid=gid,
+            gid="arrow",
         )
     )
+
+
+def _poly(ax, pts, color, lw):
+    for a, b in zip(pts[:-2], pts[1:-1], strict=False):
+        ax.plot(
+            [a[0], b[0]],
+            [a[1], b[1]],
+            color=color,
+            lw=lw,
+            solid_capstyle="butt",
+            zorder=2,
+            gid="arrow",
+        )
+    _arrow(ax, pts[-2], pts[-1], color=color, lw=lw)
 
 
 def _glow(ax, pts, color, role: str):
@@ -128,7 +133,7 @@ def _glow(ax, pts, color, role: str):
         xs,
         ys,
         color=P.tint(color, 0.2),
-        lw=8,
+        lw=7,
         solid_capstyle="round",
         solid_joinstyle="round",
         zorder=0.5,
@@ -136,185 +141,191 @@ def _glow(ax, pts, color, role: str):
     )
 
 
-# node boxes (pt, y down): state top right, decision bottom left, KPI bottom right; the coin sits
-# top left in (b)
-BH = 20.0
-STATE = (54.0, 8.0, 58.0)  # x, y, w
-DECIS = (2.0, 96.0, 52.0)
-KPI = (80.0, 96.0, 32.0)
-SEM_LW = 1.1  # semantic arrows: a touch heavier than the 0.7 pt ink arrows
+def _text(ax, x, y, s, ha="center", va="center", bold=False):
+    return ax.text(
+        x,
+        y,
+        s,
+        ha=ha,
+        va=va,
+        fontsize=S.ANNOT_PT,
+        fontweight="bold" if bold else "normal",
+        color=P.INK,
+        zorder=5,
+    )
 
 
-def _diagram(ax, randomised: bool):
-    sx, sy, sw = STATE
-    dx, dy, dw = DECIS
-    kx, ky, kw = KPI
+def _header(ax, x, y, letter, tag):
+    ax.text(
+        x,
+        y,
+        letter,
+        ha="left",
+        va="baseline",
+        fontsize=S.PANEL_PT,
+        fontweight="bold",
+        color=P.INK,
+        gid="panel-letter",
+    )
+    ax.text(
+        x + 21,
+        y,
+        tag,
+        ha="left",
+        va="baseline",
+        fontsize=S.TAG_PT,
+        fontweight="bold",
+        color=P.INK,
+        gid="panel-tag",
+    )
+
+
+def _card(ax, y, h):
+    ax.add_patch(
+        FancyBboxPatch(
+            (2, y),
+            366,
+            h,
+            boxstyle="round,pad=0,rounding_size=7",
+            fc=P.FIELD,
+            ec="none",
+            lw=0,
+            zorder=1,
+            gid="container",
+        )
+    )
+
+
+# node geometry shared by (a) and (b): x, width
+STATE_X, STATE_W = 12.0, 52.0
+PI_X, PI_W = 116.0, 56.0
+W_X, W_W = 252.0, 44.0
+KPI_X, KPI_W = 332.0, 32.0
+U_X, U_W = 234.0, 80.0
+NODE_H = 22.0
+
+
+def _chain(ax, top: float, randomised: bool):
+    by, ay = top + 22, top + 14
+    mid = by + NODE_H / 2
+    wc = W_X + W_W / 2
     D.box(
         ax,
-        sx,
-        sy,
-        sw,
-        BH,
-        "Network state",
+        STATE_X,
+        by,
+        STATE_W,
+        NODE_H,
+        "State",
         role="entity",
         color=P.CONFOUNDER,
         lw=0.9,
         gid="sem:confounder",
     )
-    D.box(ax, dx, dy, dw, BH, "Decision", role="proposed", gid="sem:ours")
-    D.box(ax, kx, ky, kw, BH, "KPI").set_facecolor(P.tint(P.NEUTRAL, 0.16))
-    # decision -> KPI: the effect we want
-    _arrow(ax, (dx + dw, dy + BH / 2), (kx - 1, ky + BH / 2), lw=0.9)
-    ax.text(
-        (dx + dw + kx) / 2, dy + BH / 2 + 4, "effect", ha="center", va="top", fontsize=S.ANNOT_PT
-    )
-    s_dec = (sx + 3, sy + BH)  # state -> decision leaves the state's bottom-left corner
-    e_dec = (dx + dw - 12, dy - 1)
-    s_kpi, e_kpi = (kx + kw / 2, sy + BH), (kx + kw / 2, ky - 1)
+    D.box(ax, W_X, by, W_W, NODE_H, "W", role="proposed", gid="sem:ours")
+    D.box(ax, KPI_X, by, KPI_W, NODE_H, "KPI").set_facecolor(P.tint(P.NEUTRAL, 0.16))
+    _arrow(ax, (W_X + W_W, mid), (KPI_X - 1, mid), lw=0.9)
+    _text(ax, (W_X + W_W + KPI_X) / 2, mid - 4, "effect", va="bottom")
+    sc = STATE_X + STATE_W / 2
+    kc = KPI_X + KPI_W / 2
+    arch = [(sc, by), (sc, ay), (kc, ay), (kc, by - 1)]
     if not randomised:
-        _glow(ax, [s_dec, e_dec], P.CONFOUNDER, "confounder-path")
-        _glow(ax, [s_kpi, e_kpi], P.CONFOUNDER, "confounder-path")
-        _arrow(ax, s_dec, e_dec, color=P.CONFOUNDER, lw=SEM_LW, gid="sem:confounder")
-        _arrow(ax, s_kpi, e_kpi, color=P.CONFOUNDER, lw=SEM_LW, gid="sem:confounder")
-        ym = (sy + BH + dy) / 2
-        xl = s_dec[0] + (e_dec[0] - s_dec[0]) * (ym - s_dec[1]) / (e_dec[1] - s_dec[1])
-        ax.text(
-            (xl + s_kpi[0]) / 2,
-            ym,
-            "confounding",
-            ha="center",
-            va="center",
-            fontsize=S.ANNOT_PT,
-            fontweight="bold",
-        )
+        _glow(ax, [(sc, by), (sc, ay), (kc, ay), (kc, by)], P.CONFOUNDER, "confounder-path")
+        _glow(ax, [(STATE_X + STATE_W, mid), (W_X - 1, mid)], P.CONFOUNDER, "confounder-path")
+        _poly(ax, arch, P.CONFOUNDER, SEM_LW)
+        _arrow(ax, (STATE_X + STATE_W, mid), (W_X - 1, mid), color=P.CONFOUNDER, lw=SEM_LW)
+        _text(ax, (sc + kc) / 2, ay - 3, "confounding", va="bottom", bold=True)
         return
-    # state -> decision cut: faint purple, crossed out; state -> KPI stays (no longer a back-door
-    # path)
-    _arrow(
+    _poly(ax, arch, P.tint(P.CONFOUNDER, 0.55), 0.8)
+    D.box(
         ax,
-        s_dec,
-        e_dec,
-        color=P.tint(P.CONFOUNDER, 0.45),
-        lw=0.7,
-        ls=(0, (2, 1.6)),
-        z=1,
-        gid="sem:confounder-cut",
+        PI_X,
+        by - 2,
+        PI_W,
+        NODE_H + 4,
+        "π",
+        sub="logged",
+        role="entity",
+        color=P.DESIGN_ROLE,
+        lw=1.4,
+        gid="sem:design",
     )
-    mx, my = (s_dec[0] + e_dec[0]) / 2, (s_dec[1] + e_dec[1]) / 2
-    ax.text(
-        mx,
-        my,
-        "×",
-        ha="center",
-        va="center",
-        fontsize=11,
-        color=P.INK,
-        zorder=4,
-        bbox={"boxstyle": "circle,pad=0.05", "fc": P.WHITE, "ec": "none"},
+    _arrow(ax, (STATE_X + STATE_W, mid), (PI_X - 1, mid), color=P.CONFOUNDER, lw=0.9)
+    _arrow(ax, (PI_X + PI_W, mid), (W_X - 1, mid), color=P.DESIGN_ROLE, lw=SEM_LW)
+    D.box(
+        ax,
+        U_X,
+        by + 34,
+        U_W,
+        NODE_H,
+        "U ~ Unif(0,1)",
+        role="entity",
+        color=P.DESIGN_ROLE,
+        lw=1.4,
+        gid="sem:design",
     )
-    _arrow(ax, s_kpi, e_kpi, color=P.CONFOUNDER, lw=0.8, gid="sem:confounder")
-    # the coin with its logged probability drives the decision
-    cx, cy, r = 18.0, sy + BH / 2, 9.0
-    _glow(ax, [(cx, cy + r + 18), (cx, dy)], P.DESIGN_ROLE, "design-path")
-    ax.add_patch(
-        Circle(
-            (cx, cy),
-            r,
-            fc=P.tint(P.DESIGN_ROLE, 0.5),
-            ec=P.DESIGN_ROLE,
-            lw=0.9,
-            zorder=3,
-            gid="sem:design",
-        )
-    )
-    ax.text(cx, cy, "p", ha="center", va="center", fontsize=S.TICK_PT, style="italic", zorder=4)
-    ax.text(
-        cx,
-        cy + r + 3,
-        "logged p",
-        ha="center",
-        va="top",
-        fontsize=S.ANNOT_PT,
-        fontweight="bold",
-        zorder=4,
-    )
-    _arrow(ax, (cx, cy + r + 15), (cx, dy - 1), color=P.DESIGN_ROLE, lw=SEM_LW, gid="sem:design")
+    _arrow(ax, (wc, by + 33), (wc, by + NODE_H + 1), color=P.DESIGN_ROLE, lw=SEM_LW)
 
 
-XLIM = (-4.5, 11.2)
-BINS = np.arange(-4.5, 4.75, 0.25)
+HEADS = {"randomised": "600 episodes", "placebo": "Placebo, 40 episodes"}
 
 
-TAIL = 0.95  # the shaded tail: top 5 % of the redraws (one-sided, the tested direction)
-
-
-def _hist(ax, d, label: str, tail_label: bool = False):
+def _hist(fig, ax0, x, y, w, h, d, kind: str, ylabel: bool = False):
+    W, H = fig.get_size_inches() * 72
+    ax = fig.add_axes((x / W, 1 - (y + h) / H, w / W, h / H))
     zb, z = d["zb"], d["z"]
     assert BINS[0] <= zb.min() and zb.max() <= BINS[-1], (zb.min(), zb.max())
     q = float(np.quantile(zb, TAIL))
     real = z > q
-    assert real == d["declared"], (
-        label,
-        z,
-        q,
-    )  # the line lands in the tail exactly when PMRT declares
+    assert real == d["declared"], (kind, z, q)  # the line is in the tail exactly when PMRT declares
     _, _, bars = ax.hist(zb, bins=BINS, color=P.tint(P.OURS, 0.45), ec=P.WHITE, lw=0.3, zorder=2)
     for b in bars:
         b.set_gid("sem:ours")
-    n = np.histogram(zb, bins=BINS)[0]
-    top = n.max() * 1.7
+    top = np.histogram(zb, bins=BINS)[0].max() * 1.9
     ax.set_ylim(0, top)
     ax.set_xlim(*XLIM)
     ax.axvspan(q, XLIM[1], color=P.tint(P.GOOD, P.ZONE_TINT), lw=0, zorder=0.5, gid="sem:good-zone")
-    if tail_label:
-        ax.text(
-            XLIM[1] - 0.3,
-            top * 0.06,
-            "top 5 %",
-            ha="right",
-            va="bottom",
-            fontsize=S.ANNOT_PT,
-            color=P.INK,
-        )
     ax.axvline(
         z,
         color=P.GOOD if real else P.NEUTRAL,
-        lw=1.8 if real else 1.3,
+        lw=2.6,
         zorder=3,
         gid="sem:good" if real else "observed-null",
     )
+    side = -1 if real else 1  # the z label sits on the side of the line away from the bars
     ax.annotate(
-        label,
-        xy=(0, 1),
-        xycoords="axes fraction",
-        xytext=(0, 3),
+        f"z = {z:.2f}".replace("-", "−"),
+        xy=(z, top),
+        xytext=(5 * side, -3),
         textcoords="offset points",
+        ha="right" if real else "left",
+        va="top",
+        fontsize=S.ANNOT_PT,
+        fontweight="bold",
+        color=P.INK,
+    )
+    ax.axhline(0, color=P.AXIS, lw=S.LW_AXIS, zorder=2.5)
+    ax.tick_params(axis="y", which="both", left=False, labelleft=False)
+    ax.set_xticks([-4, 0, 4, 8])
+    plots.finish(ax, grid=False)
+    ax.spines["left"].set_visible(False)
+    ax.spines["bottom"].set_visible(False)
+    ax.set_xlabel("Test statistic")
+    if ylabel:
+        ax.set_ylabel("Redraws")
+    p = d["p"]
+    ptxt = "p ≤ 1e-4" if p <= 1e-4 + 1e-12 else f"p = {p:.2f}"
+    ax0.text(
+        x,
+        y - 2,
+        HEADS[kind],
         ha="left",
         va="bottom",
         fontsize=S.ANNOT_PT,
+        fontweight="bold",
         color=P.INK,
     )
-    away = "right" if z > np.median(zb) else "left"  # the side of the line away from the bars
-    L.label_line(ax, z, top, "observed", where=away, va="top", rotation=90)
-    if real:  # bars' side, inside the tail zone with the line
-        L.label_line(ax, z, top, "real effect", where="left", va="top", fontweight="bold")
-    else:  # outside side, beyond "observed": clear of the tail zone
-        ax.annotate(
-            "no effect",
-            xy=(z, 1),
-            xycoords=("data", "axes fraction"),
-            xytext=(-16, 0),
-            textcoords="offset points",
-            ha="right",
-            va="top",
-            fontsize=S.ANNOT_PT,
-            fontweight="bold",
-            color=P.INK,
-        )
-    ax.axhline(0, color=P.AXIS, lw=S.LW_AXIS, zorder=2.5)
-    ax.tick_params(axis="y", which="both", left=False, labelleft=False)
-    ax.spines["left"].set_visible(False)
-    ax.grid(False)
+    ax0.text(x + w, y - 2, ptxt, ha="right", va="bottom", fontsize=S.ANNOT_PT, color=P.INK)
+    return ax
 
 
 def build():
@@ -322,36 +333,23 @@ def build():
     S.apply()
     import matplotlib.pyplot as plt
 
-    fig = plt.figure(figsize=(S.FULL, H_IN))
-    W, H = S.FULL * 72, H_IN * 72
-    dia_h = H - TOP
-    axa = _canvas(fig, 2.0, PANEL_W, dia_h)
-    axb = _canvas(fig, 2.0 + PANEL_W + GAP, PANEL_W, dia_h)
-    _diagram(axa, randomised=False)
-    _diagram(axb, randomised=True)
-    L.panel_header(axa, "a", "Reactive controller", inset=True)
-    L.panel_header(axb, "b", "Randomised, logged decision", inset=True)
-    # (c): two stacked histograms sharing the x axis
-    cx0 = 2.0 + PANEL_W + GAP + TAG_B_PT + 30.0  # letter c (about 20 pt) 10 pt clear of the (b) tag
-    cw = W - cx0 - 6.0
-    bottom, gap = 30.0, HEAD + 4.0
-    ch = (H - TOP - HEAD - bottom - gap) / 2
-    axt = fig.add_axes((cx0 / W, (bottom + ch + gap) / H, cw / W, ch / H))
-    axl = fig.add_axes((cx0 / W, bottom / H, cw / W, ch / H))
-    _hist(axt, data["randomised"], "Randomised logs")
-    _hist(axl, data["placebo"], "Placebo logs", tail_label=True)
-    L.hide_x(axt)
-    axt.set_ylabel("Redraws")
-    axl.set_xlabel("Test statistic")
-    axl.set_xticks([-4, 0, 4, 8])
-    for ax in (axt, axl):
-        plots.finish(ax, grid=False)
-        ax.spines["left"].set_visible(False)
-    axt.spines["bottom"].set_visible(False)
-    L.panel_header(axt, "c", "Redraw test")
-    L.finalize(fig)
-    for t in axt.texts:  # lift the (c) header over the heading band: level with (a) and (b)
-        if t.get_gid() in ("panel-letter", "panel-tag"):
-            t.xyann = (t.xyann[0], t.xyann[1] + HEAD)
+    fig = plt.figure(figsize=(S.FULL, H_PT / 72))
+    W = S.FULL * 72
+    # the canvas spans the text width less the savefig pad on both sides, so the saved page is
+    # 	extwidth wide (a wider page makes LaTeX shrink the 8 pt text)
+    ax = fig.add_axes((PAD_PT / W, 0, (W - 2 * PAD_PT) / W, 1))
+    ax.set_xlim(PAD_PT, W - PAD_PT)
+    ax.set_ylim(H_PT, 0)
+    ax.axis("off")
+    for top, h, letter, tag, rand in (
+        (15, 58, "a", "Reactive", False),
+        (90, 92, "b", "Randomised", True),
+    ):
+        _header(ax, 2, top - 4, letter, tag)
+        _card(ax, top, h)
+        _chain(ax, top, rand)
+    _header(ax, 2, 196, "c", "Redraw test")
+    _hist(fig, ax, 34, 222, 156, 50, data["randomised"], "randomised", ylabel=True)
+    _hist(fig, ax, 206, 222, 156, 50, data["placebo"], "placebo")
     fig.draw_without_rendering()
     return fig

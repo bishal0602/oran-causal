@@ -112,20 +112,19 @@
    ]
   },
   "fig_idea": {
-   "digest": "57e2b83559db8060130b7032dc540cb0",
+   "digest": "4bd1dbf4857556d7f8ed31147d929a4c",
    "fonts": [
     "Arial-BoldMT",
-    "Arial-ItalicMT",
     "ArialMT"
    ],
    "mediabox": [
-    " 0 0 365.68 156.2883007813 "
+    " 0 0 370.88 302.88 "
    ],
    "pages": 1,
-   "rows": 271,
+   "rows": 251,
    "size_in": [
     5.15,
-    2.2
+    4.1667
    ]
   },
   "fig_logging_validity": {
