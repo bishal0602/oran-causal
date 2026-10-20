@@ -6,7 +6,7 @@ ground-truth effect of a rejection (h x GT mean, 95 % CI) and label, and whether
 harm exceeds tau. Not a figure (no SPEC): run ``uv run python -m
 oran_causal.figures.figs.tab_gate_diag``.
 
-Source: extras/revision/x10_gate_diag.json (X10, EXTRAS_PROTOCOL amendment 2026-10-11; the script
+Source: posthoc_x9_x16/revision/x10_gate_diag.json (X10, posthoc protocol amendment 2026-10-11; the script
 reproduced the frozen certification, the uncertified set and CS:PMRT = never-sleep on 160 / 160
 seeds before writing), keys ``repro.ok``, ``classes.<i>.{class, family, d, certified,
 withheld_units_eval, deferred_units_eval, unresolved}`` and ``edges.<i>.{class, rel, kpi, status,

@@ -29,7 +29,13 @@ from typing import Any
 
 import numpy as np
 
-from oran_causal.analysis.posthoc.paths import ARTIFACTS, RECORDS, lf_sha256, write_text
+from oran_causal.analysis.posthoc.paths import (
+    ARTIFACTS,
+    PROTOCOL_NAME,
+    RECORDS,
+    lf_sha256,
+    write_text,
+)
 from oran_causal.analysis.posthoc.refs import RefereeTools
 from oran_causal.core.data import UnitTable
 from oran_causal.core.design import v_design
@@ -41,9 +47,9 @@ from oran_causal.sim.system.decision.vocab import FAMILIES
 
 H = 90
 RTOL = 1e-9
-CERTSAFE_ART = "E6P_CERTSAFE.json"
-MAPS_ART = "E6P_CONF_MAPS.json"
-PROTOCOL = "scratchpad/xmethod/EXTRAS_PROTOCOL.md 2026-10-12: X16"
+CERTSAFE_ART = "study3_certsafe.json"
+MAPS_ART = "study2_maps.json"
+PROTOCOL = f"{PROTOCOL_NAME} 2026-10-12: X16"
 DISC_SETS = ("e6p-conf-disc-1-a", "e6p-conf-disc-1-b")
 CSV_COLUMNS = (
     "table",

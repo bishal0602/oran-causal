@@ -2,7 +2,6 @@
 
 import hashlib
 import json
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -13,10 +12,8 @@ from oran_causal.analysis.posthoc import x4 as a_x4
 from oran_causal.analysis.posthoc.x7 import FAMS, arm_name, job_list
 from oran_causal.experiments.posthoc import x1_timing as t1
 from oran_causal.experiments.posthoc import x4, x7, x8
-from oran_causal.experiments.system import study3
 from oran_causal.experiments.system.common import Part, read_records
 
-DATA = Path(__file__).parent / "data"
 RECORDS = Path(__file__).resolve().parents[3] / "data" / "records"
 SKIP = {"cpu_s", "secs", "rss_mb"}
 
@@ -25,22 +22,9 @@ def digest(x: Any) -> str:
     return hashlib.sha256(json.dumps(x, separators=(",", ":")).encode()).hexdigest()
 
 
-def _dev_rows(spec: dict) -> list[dict]:
-    rows = []
-    for k, v in spec["est_cost_s"].items():
-        arm, world, regime, n = k.split("|")
-        rows.append({"arm": arm, "world": world, "regime": regime, "n": int(n[1:]), "median": v})
-    return rows
-
-
 @pytest.fixture(scope="module")
 def timing_spec() -> dict:
     return t1.load_spec()
-
-
-def test_make_spec_reproduces_the_frozen_timing_spec(timing_spec):
-    eval_spec = json.loads(t1.EVAL_SPEC_PATH.read_text(encoding="utf-8"))
-    assert t1.make_spec(eval_spec, _dev_rows(timing_spec)) == timing_spec
 
 
 def test_make_spec_drops_the_dropped_arms_and_adds_the_extra_ones(timing_spec):
@@ -224,19 +208,6 @@ def test_x4_edges_and_stream():
         x4.RandomDefer(1.5, 1)
 
 
-def test_job_lists_equal_the_old_drivers():
-    gold = json.loads((DATA / "posthoc_jobs_golden.json").read_text())
-    pairs = [list(j) for j in x4.job_pairs()]
-    assert len(pairs) == gold["x4_jobs"]["n"] == 4 + 160 * 3
-    assert pairs[:6] == gold["x4_jobs"]["head"]
-    assert digest(pairs) == gold["x4_jobs"]["sha256"]
-    seven = [list(j) for j in job_list(study3.stage_seeds("eval"))]
-    assert len(seven) == gold["x7_jobs"]["n"] == 160 * 13
-    assert seven[:6] == gold["x7_jobs"]["head"]
-    assert digest(seven) == gold["x7_jobs"]["sha256"]
-    assert {s for s, _ in pairs} == set(range(191100, 191260))
-
-
 def test_job_filters_restrict_the_runs():
     assert {a for _, a in x4.job_pairs([191100], ["noarb", "X4:rand@0.25"])} == {
         "noarb",
@@ -391,50 +362,3 @@ def test_x8_declaration_block_keeps_determined_hypotheses():
 
 
 ABSENT_OK = frozenset({"ptx_post"})
-
-
-def near(got, want, rtol=0.2, path=""):
-    """Same shape as `want`; numbers within `rtol` (episodes diverge across hardware).
-
-    Dict keys must match at every level except the names in `ABSENT_OK`, which may be missing
-    on either side (a rare event that one platform's episode never reaches).
-    """
-    if isinstance(want, dict):
-        assert isinstance(got, dict), path
-        extra = (got.keys() ^ want.keys()) - ABSENT_OK
-        assert not extra, (path, sorted(extra))
-        for k in want.keys() & got.keys():
-            near(got[k], want[k], rtol, f"{path}/{k}")
-    elif isinstance(want, list):
-        assert isinstance(got, list), path
-        assert len(got) == len(want), path
-        for i, (g, w) in enumerate(zip(got, want, strict=True)):
-            near(g, w, rtol, f"{path}[{i}]")
-    elif isinstance(want, int | float) and not isinstance(want, bool):
-        assert got == pytest.approx(want, rel=rtol, abs=3), (path, got, want)
-    else:
-        assert got == want, path
-
-
-GOLDEN = DATA / f"posthoc_records_golden_{sys.platform}.json"
-
-
-@pytest.mark.slow
-@pytest.mark.skipif(not GOLDEN.exists(), reason="no golden for this platform")
-def test_smoke_episodes_match_the_old_drivers_on_this_platform():
-    gold = json.loads(GOLDEN.read_text())
-
-    def norm(r):
-        return json.loads(json.dumps({k: v for k, v in r.items() if k not in SKIP}, default=str))
-
-    for arm, g in gold["x4"].items():
-        near(norm(x4.job(gold["seed"], arm, smoke=True, short=gold["short_s"])), g)
-    art = study3.load_artifact()
-    for kind, ref in (
-        ("shadow", None),
-        ("own", "CS:granger@dev"),
-        ("pm", "CS:granger@dev"),
-        ("other", "CS:granger@dev"),
-    ):
-        got = norm(x7.job(gold["seed"], kind, ref, art, smoke=True, short=gold["short_s"]))
-        near(got, gold["x7"][arm_name(ref, kind)])

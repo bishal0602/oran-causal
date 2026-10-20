@@ -4,7 +4,7 @@
  "budget_cpu_s": 7200,
  "arms": {
   "cmi_knn_eq": {
-   "ref": "cdd_oran.xmethod.methods.cmi_knn:CMIKnnMethod",
+   "ref": "cmi_knn",
    "config": {
     "arm": "eq",
     "backend": "torch"
@@ -17,7 +17,7 @@
    "device": "gpu"
   },
   "cmi_knn_native": {
-   "ref": "cdd_oran.xmethod.methods.cmi_knn:CMIKnnMethod",
+   "ref": "cmi_knn",
    "config": {
     "arm": "native",
     "backend": "torch"
@@ -29,7 +29,7 @@
    "device": "gpu"
   },
   "cmi_knn_eq_min": {
-   "ref": "cdd_oran.xmethod.methods.cmi_knn:CMIKnnMethod",
+   "ref": "cmi_knn",
    "config": {
     "arm": "eq_min",
     "backend": "torch"

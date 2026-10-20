@@ -119,12 +119,12 @@ def _rest(s: x11.Study) -> tuple[Path, tuple[Path, ...]]:
 def _merged(records: Path, study: int) -> tuple[Any, Any, int]:
     src, shap = rd.Sources(records=records), ShapSources(records=records)
     run, n, old, new, filt = (
-        ("e6p-conf-eval-1", 12, "E6P_CONF_MAPS.json", shap.maps_artifact, astudy2.EVAL_FILTER)
+        ("e6p-conf-eval-1", 12, "study2_maps.json", shap.maps_artifact, astudy2.EVAL_FILTER)
         if study == 2
         else (
             "e6p-cs-eval-1",
             20,
-            "E6P_CERTSAFE.json",
+            "study3_certsafe.json",
             shap.certsafe_artifact,
             astudy3.job_filter("eval"),
         )

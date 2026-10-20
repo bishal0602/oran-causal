@@ -1,4 +1,4 @@
-"""Bridging-study runs: the Study 4 method set on the frozen Study 1 (v4) data (protocol EXP_B).
+"""Bridging-study runs: the Study 4 method set on the frozen Study 1 (v4) data.
 
 A unit is (arm, family, slice) of the frozen v4 data, keyed as a campaign unit
 `<arm>|E6|<family>|k0|n<units>|s<dataset seed>` with role `measure` (evaluation slices) or
@@ -36,34 +36,27 @@ from oran_causal.experiments.campaign.merge import merge_index, read_entry, summ
 from oran_causal.experiments.campaign.run import RunOptions, run_units
 from oran_causal.experiments.campaign.shard import CostTable, partition
 from oran_causal.experiments.campaign.spec import Unit
-from oran_causal.experiments.paths import SPECS, WORKSPACE_ROOT
+from oran_causal.experiments.paths import WORKSPACE_ROOT
 from oran_causal.sim.system.decision.vocab import FAMILIES
 
 COUNTS_SCHEMA = "xm-expb-counts/1"
 ROLE_OF_KIND = {"placebo": "placebo_log"}
 RESULTS = WORKSPACE_ROOT / "data" / "records" / "bridging" / "exp_b"
-LEGACY_PATHS = {
-    "scratchpad/xmethod/specs/exp_b/": SPECS / "exp_b",
-    "scratchpad/xmethod/results/exp_b/": RESULTS,
-}
 SUMMARY_EXTRA = ("mode", "platforms", "protocol_sha256", "spec_sha256", *MERGE_SETS)
 
 type Counts = dict[str, dict[str, int]]
 
 
 def repo_path(path: str) -> Path:
-    """A spec's repo path (CDD-ORAN layout) mapped to this repository; other paths unchanged."""
-    for old, new in LEGACY_PATHS.items():
-        if path.startswith(old):
-            return new / path.removeprefix(old)
-    return Path(path)
+    """A path field of a spec, relative to the workspace root (absolute paths unchanged)."""
+    return WORKSPACE_ROOT / path
 
 
 def load_spec(path: str | Path) -> dict[str, Any]:
     """A spec, or a sub-spec `{"base": <spec path>, "slice_names" | "exclude_slices": [...]}`.
 
     A sub-spec's other fields override its base (same arms, so the same unit keys); the result
-    carries `base_spec`. The dict equals the CDD-ORAN loader's, so its `spec_sha256` does too.
+    carries `base_spec`.
 
     Raises:
         ValueError: An arm lacks `ref` or a `declare` in (by, tau), its name holds "|", or a
@@ -263,7 +256,7 @@ def merge(
         newline: Line end of the summary file (the stored one was written on Windows, CRLF).
 
     Returns:
-        The summary (the CDD-ORAN keys), also written to `<out without .gz>.summary.json`.
+        The summary, also written to `<out without .gz>.summary.json`.
     """
     paths = [Path(p) for p in inputs]
     out = Path(out)

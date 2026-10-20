@@ -5,7 +5,7 @@ raw rejection rates with 95 % seed-cluster bootstrap CIs and cell-validity marks
 the declared first-order bias term. Not a figure (no SPEC): run ``uv run python -m
 oran_causal.figures.figs.tab_appC_x6``. The told-width grid is fig_appC_x6_width (not here).
 
-Source: extras/diag/diag_tables.json (DIAG s.X6): ``x6.arms[*]`` with base ``pmrt_nl_eq`` and width
+Source: posthoc_x5_x6/diag/diag_tables.json (DIAG s.X6): ``x6.arms[*]`` with base ``pmrt_nl_eq`` and width
 2 (the four centring x redraw arms) or centre ``exact`` (width 1): ``null_raw`` / ``plac_raw``
 ``{rate, hits, n, ci, validity}``, ``bias.null.{mean, ci}``, ``seeds``; ``x6.predictions.outcome``.
 Rows only select stored values. Post hoc, exploratory, one cell (E1 R2, n 1000), fresh seeds; C1-C3

@@ -2,11 +2,8 @@ id: bridging
 platform: kaggle
 claims: []
 protocol:
-  path: bridging/EXP_B.md
-  sha256: 578ebc0f35a569922ec2703efe39033a90a402fa78ea7503ee46e92ba11ae4c4
-code_origin:
-- CDD-ORAN@0c89106:cdd_oran/xmethod/exp_b.py
-- CDD-ORAN@0c89106:scratchpad/xmethod/exp_b_tables.py
+  path: bridging/PROTOCOL.md
+  sha256: 4b994c3dada1b439c943fbd0beee541bb803b96b247603ffd14837b3bf81d2c0
 seeds:
 - block: e6p_discovery_v4_episodes
   range:
@@ -24,8 +21,8 @@ stages:
 - name: campaign
   driver: oran_causal.experiments.bridging.run:run
   inputs:
-  - specs/exp_b/exp_b.json
-  - specs/exp_b/counts_v4.json
+  - specs/bridging/exp_b.json
+  - specs/bridging/counts_v4.json
   - bridging/exp_b/gt_v4.json
   outputs:
   - bridging/exp_b/merged.jsonl.gz
@@ -33,18 +30,17 @@ stages:
     cpu_h: 82.0
     basis: M
 frozen_inputs:
-- path: specs/exp_b/exp_b.json
-  sha256: 5cb441d1249304002518573bbed4445a0b3d0bf565ec03e1edf43568dad8b8da
-- path: specs/exp_b/exp_b_pilot.json
-  sha256: 603160b372f4847a82ee01b84b08802abb6f4bb53729fe2832690c457795efbe
-- path: specs/exp_b/exp_b_rest.json
-  sha256: 773242cbdac2315249ef13e9f4608a5032cd0e3771bf336da1ff2457d4a0f64e
-- path: specs/exp_b/counts_v4.json
+- path: specs/bridging/exp_b.json
+  sha256: 73700a12280d14bb473a2ff2263de248e70b812d40cdf5e79c74f72d13bc6257
+- path: specs/bridging/exp_b_pilot.json
+  sha256: f1a67070e38c7e5fad9270ba8eb4998280fa537f277359919bc2687e88fa1118
+- path: specs/bridging/exp_b_rest.json
+  sha256: 805f56699820ade4ad351c8352f637cd4bacc455a63aa77f0b354fc315b15f38
+- path: specs/bridging/counts_v4.json
   sha256: 5b443bfff99ad357f5edfebe701a0effbe445d0606c0204f9179a8cad7e9dbcc
 records:
 - set: bridging
   manifest: manifests/bridging.sha256
-  zenodo_doi: null
 tiers:
   t0: rebuild EXP_B_TABLES and EXP_B_COSTS from the merged records (bytes)
   t1: null

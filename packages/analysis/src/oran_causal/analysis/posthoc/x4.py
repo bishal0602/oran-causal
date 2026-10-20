@@ -30,7 +30,7 @@ from oran_causal.analysis.posthoc.common import (
     shard_files,
     sub_filter,
 )
-from oran_causal.analysis.posthoc.paths import ARTIFACTS, RECORDS, write_text
+from oran_causal.analysis.posthoc.paths import ARTIFACTS, PROTOCOL_NAME, RECORDS, write_text
 from oran_causal.analysis.system import stats, study3
 
 SUB = "x4"
@@ -45,7 +45,7 @@ COMPARE = ("noarb", "never_sleep", "MG:PMRT", "CS:PMRT", "CS:GT")
 SKIP = frozenset({"cpu_s", "secs", "rss_mb", "sub", "aliases", "signature", "alias_of", "x4"})
 GUARDS = ("svr", "nonprot_embb_viol", "ll_viol", "rlf")
 DRIVER = "x4_random_defer"
-DECLARED = "scratchpad/xmethod/EXTRAS_PROTOCOL.md Amendments 2026-10-05"
+DECLARED = f"{PROTOCOL_NAME} Amendments 2026-10-05"
 RTOL = 1e-9
 
 
@@ -182,7 +182,7 @@ def analyse(
         The output tree (`x4_tables.json`).
     """
     warnings.simplefilter("ignore", RuntimeWarning)
-    art = read_json(artifacts / "E6P_CERTSAFE.json")
+    art = read_json(artifacts / "study3_certsafe.json")
     Rs, _ = alias_filled(
         sorted(stored.glob("*/res_*.jsonl")), study3.job_filter("eval"), art["alias_of"]
     )

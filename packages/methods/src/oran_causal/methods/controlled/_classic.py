@@ -438,7 +438,7 @@ class ClassicBase:
             ValueError: `truth_free` is False.
         """
         if not truth_free:
-            raise ValueError("xm-classic tuning is truth-free only (CONTRACT sec 5)")
+            raise ValueError("xm-classic tuning is truth-free only")
         base = self.default_config()
         base.update(config or {})
         res = [self.run(d, base) for d in dev]

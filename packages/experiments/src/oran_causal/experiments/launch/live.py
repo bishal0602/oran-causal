@@ -4,7 +4,7 @@ import dataclasses
 from collections.abc import Sequence
 
 from oran_causal.experiments.campaign.provenance import GitRunner
-from oran_causal.experiments.launch import hosts, kaggle, plan, vps
+from oran_causal.experiments.launch import hosts, kaggle, plan, settings, vps
 from oran_causal.experiments.launch.runner import Dirs
 
 LIST_HEADER_LINES = 2
@@ -74,11 +74,12 @@ class LiveBackend:
 
 def default_ssh_vps() -> vps.Vps:
     """The shared production VPS over SSH."""
-    return vps.Vps(vps.Ssh(vps.remote_env(hosts.VPS_BASE)), hosts.VPS_SHARED)
+    return vps.Vps(vps.Ssh(vps.remote_env(settings.vps_base())), hosts.VPS_SHARED)
 
 
 def default_instabox() -> vps.Vps:
     """The instabox host over SSH, scopes in the login user's systemd instance."""
     return vps.Vps(
-        vps.Ssh(vps.remote_env(hosts.INSTABOX_BASE), host=vps.INSTABOX_HOST), hosts.INSTABOX
+        vps.Ssh(vps.remote_env(settings.instabox_base()), host_setting=settings.INSTABOX_HOST),
+        hosts.INSTABOX,
     )

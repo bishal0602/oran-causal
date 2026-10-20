@@ -3,12 +3,17 @@
 import hashlib
 from pathlib import Path
 
+from oran_causal.analysis import recorded
+
 WORKSPACE_ROOT = Path(__file__).resolve().parents[6]
 RECORDS = WORKSPACE_ROOT / "data" / "records"
 ARTIFACTS = WORKSPACE_ROOT / "packages" / "experiments" / "artifacts"
 PROTOCOLS = WORKSPACE_ROOT / "packages" / "experiments" / "protocols"
 SPECS = WORKSPACE_ROOT / "packages" / "experiments" / "specs"
-EXTRAS_PROTOCOL = PROTOCOLS / "posthoc" / "EXTRAS_PROTOCOL.md"
+PROTOCOL = PROTOCOLS / "posthoc" / "PROTOCOL.md"
+CITED_PROTOCOL = recorded.recorded("protocols/posthoc/PROTOCOL.md")
+PROTOCOL_NAME = CITED_PROTOCOL.name
+PROTOCOL_BASENAME = PROTOCOL_NAME.rsplit("/", 1)[-1]
 PRIMARY = "loadsp_c+wby1s"
 
 

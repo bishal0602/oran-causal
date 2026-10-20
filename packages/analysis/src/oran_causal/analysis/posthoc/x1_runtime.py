@@ -25,6 +25,7 @@ from typing import Any
 
 import numpy as np
 
+from oran_causal.analysis import recorded
 from oran_causal.analysis.records import iter_records as _iter_file
 
 VERSION = "xm-exp-c/1"
@@ -569,7 +570,7 @@ def _md_head(out: Mapping[str, Any], title: str) -> list[str]:
     lines = [
         f"# Experiment C: runtime per method ({title})",
         "",
-        f"Generated {out['generated_utc']} by `scratchpad/xmethod/exp_c_runtime.py` "
+        f"Generated {out['generated_utc']} by `{recorded.code_name('x1_runtime')}` "
         f"({out['version']}). Unit = one "
         f"(method, dataset): record `cpu_s` = process CPU time of `method.run`, single thread "
         f"(data "

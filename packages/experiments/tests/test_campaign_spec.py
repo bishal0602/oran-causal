@@ -1,4 +1,5 @@
 import hashlib
+import json
 
 import pytest
 
@@ -10,7 +11,7 @@ from oran_causal.experiments.campaign.spec import (
     sha_lf,
     spec_sha256,
 )
-from oran_causal.experiments.paths import STUDY4_PROTOCOL
+from oran_causal.experiments.paths import SPECS, STUDY4_PROTOCOL
 
 
 def test_expand_counts_restrictions_and_lams(kit, shipped):
@@ -102,7 +103,10 @@ def test_guard_verified_by_commit_blob_or_frozen_copy(kit):
 @pytest.mark.claim("PRO-FROZEN")
 def test_shipped_protocol_is_the_frozen_one_and_dev_is_unguarded(kit, shipped):
     sha = hashlib.sha256(STUDY4_PROTOCOL.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
-    assert sha == "c5f7a4fe4dff4bfdeef3ccebac2dcc3748dfa9c2d0c3d17f2ac9d6246379fa22"
+    assert (
+        sha
+        == json.loads((SPECS / "eval" / "full.json").read_text(encoding="utf-8"))["protocol_sha256"]
+    )
     assert eval_authorised(kit.eval_spec(sha), shipped)[0]
     assert not eval_authorised(kit.eval_spec("0" * 64), shipped)[0]
     with_sha = {**kit.small_spec(), "protocol_sha256": "0" * 64}

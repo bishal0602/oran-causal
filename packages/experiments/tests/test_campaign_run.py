@@ -237,7 +237,7 @@ def test_isolated_wall_limit_kills_child(kit, opts, tmp_path, monkeypatch):
 
 def test_method_load_failure_is_an_error_record_not_a_crash(kit, opts, tmp_path):
     spec = kit.small_spec()
-    spec["arms"]["d_by"]["ref"] = "cdd_oran.xmethod.no_such_module:Nope"
+    spec["arms"]["d_by"]["ref"] = "no_such_arm"
     out = tmp_path / "r.jsonl"
     run_part(spec, ONE, out, opts())
     recs = kit.read_jsonl(out)

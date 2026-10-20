@@ -1,5 +1,5 @@
-"""F6: validity across logging designs (replaces the 20-row forest fig_study4_validity in the body;
-that figure, with its CIs and every arm, moves to the ESM). One message: tests that ignore how the
+"""F6: validity across logging designs (the body summary of the forest fig_study4_validity, which
+keeps its CIs and every arm in the ESM). One message: tests that ignore how the
 logs were produced lose their 5 % error rate once the logging is not independent; tests that use the
 logging design keep it.
 
@@ -11,8 +11,8 @@ none), the confounded null edge for R3 (E4 only, all four lam). Rates are pooled
 the cells of report.json V1_validity + V6_E4; build-time assertions check that this reproduces every
 rate the verdict table V4_verdicts prints (and its R1 + R2 pool for PMRT, which the table does not
 split by regime). Panel (b) has only the two designs the verdict table scores for design-blind
-methods (C1: R1 / R2); their descriptive confounded-policy rates go to the appendix text, not here
-(advisor, 2026-10-13). Design-adjusted Granger has no R3 run: its line simply stops. CIs are
+methods (C1: R1 / R2); their descriptive confounded-policy rates go to the appendix text, not here.
+Design-adjusted Granger has no R3 run: its line simply stops. CIs are
 omitted: the PMRT per-regime rates have no cluster-bootstrap CI in the report, and the ESM forest
 keeps every CI. Two arms of the forest are left out here and stay in the ESM forest: plain partial
 correlation, HAC (fixed-b), which shares hue and marker with plain partial correlation and tracks it
@@ -54,7 +54,7 @@ USES = [T.HERO, "pmrt_eq", "pcorr_eq", "granger_eq", "rcot2_eq"]
 SCORED = {**dict.fromkeys(BLIND, ("R1", "R2")), **{a: tuple(DESIGNS) for a in USES}}
 YLIM = (0.02, 1.25)
 YTICKS = [0.02, 0.05, 0.1, 0.2, 0.5, 1]
-# [SOUL 2026-10-13] semantic zones (DESIGN s.5): terracotta above the report's validity limit
+# semantic zones (DESIGN s.5): terracotta above the report's validity limit
 # valid_ub (a pooled rate above it cannot be valid, whatever its CI); a thin teal band marking the
 # nominal level (visual width only, +-10 %)
 NOMINAL_BAND = (0.045, 0.055)
@@ -168,7 +168,6 @@ def build():
     # first) then sit over their own panels (b) shows only the designs the verdict table scores for
     # design-blind methods (no empty column); width ratio 3 : 2 keeps the spacing between designs
     # equal in both panels. Their descriptive confounded-policy rates are in the appendix text
-    # (reviews/2026-10-13/briefs/N3_confounded_designblind.md)
     blind_designs = ["R1", "R2"]
     fig, (a, b) = plots.figure(
         "full",

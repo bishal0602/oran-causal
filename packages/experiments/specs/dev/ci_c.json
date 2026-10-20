@@ -4,7 +4,7 @@
  "budget_cpu_s": 7200,
  "arms": {
   "pcorr_eq": {
-   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "ref": "pcorr",
    "config": {
     "arm": "eq"
    },
@@ -13,7 +13,7 @@
    "native_partner": "pcorr_native"
   },
   "pcorr_native": {
-   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "ref": "pcorr",
    "config": {
     "arm": "native"
    },
@@ -21,7 +21,7 @@
    "analysis": "secondary"
   },
   "pcorr_hac": {
-   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "ref": "pcorr_hac",
    "config": {
     "arm": "native"
    },
@@ -30,7 +30,7 @@
    "set_D": false
   },
   "pcorr_hac_fb": {
-   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "ref": "pcorr_hac",
    "config": {
     "arm": "native",
     "inference": "fixed_b"
@@ -40,7 +40,7 @@
    "set_D": true
   },
   "rcot2_eq": {
-   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "ref": "rcot2",
    "config": {
     "arm": "eq"
    },
@@ -49,7 +49,7 @@
    "native_partner": "rcot2_native"
   },
   "rcot2_native": {
-   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "ref": "rcot2",
    "config": {
     "arm": "native"
    },
@@ -57,7 +57,7 @@
    "analysis": "secondary"
   },
   "pcorr_eq_min": {
-   "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+   "ref": "pcorr",
    "config": {
     "arm": "eq_min"
    },
@@ -66,7 +66,7 @@
    "native_partner": "pcorr_native"
   },
   "rcot2_eq_min": {
-   "ref": "cdd_oran.xmethod.methods.rcot2:RCoT2Method",
+   "ref": "rcot2",
    "config": {
     "arm": "eq_min"
    },
@@ -75,7 +75,7 @@
    "native_partner": "rcot2_native"
   },
   "pcorr_hac_eq_min": {
-   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "ref": "pcorr_hac",
    "config": {
     "arm": "eq_min"
    },
@@ -84,7 +84,7 @@
    "native_partner": "pcorr_hac"
   },
   "pcorr_hac_fb_eq_min": {
-   "ref": "cdd_oran.xmethod.methods.pcorr_hac:PcorrHac",
+   "ref": "pcorr_hac",
    "config": {
     "arm": "eq_min",
     "inference": "fixed_b"
@@ -94,7 +94,7 @@
    "native_partner": "pcorr_hac_fb"
   },
   "mscr_eq": {
-   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "ref": "mscr",
    "config": {
     "arm": "eq"
    },
@@ -105,7 +105,7 @@
    "label": "single-conditioner max statistic; cannot condition on the joint design set"
   },
   "mscr_native": {
-   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "ref": "mscr",
    "config": {
     "arm": "native"
    },
@@ -113,7 +113,7 @@
    "analysis": "secondary"
   },
   "mscr_eq_min": {
-   "ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod",
+   "ref": "mscr",
    "config": {
     "arm": "eq_min"
    },

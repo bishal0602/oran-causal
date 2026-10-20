@@ -30,7 +30,8 @@ from typing import Any
 
 import numpy as np
 
-from oran_causal.analysis.posthoc.paths import PRIMARY, RECORDS, write_text
+from oran_causal.analysis import recorded
+from oran_causal.analysis.posthoc.paths import PRIMARY, PROTOCOL_BASENAME, RECORDS, write_text
 from oran_causal.core.scoring import confusion
 from oran_causal.sim.system.decision import gt as GT
 from oran_causal.sim.system.decision.records import dec, iter_records
@@ -58,7 +59,7 @@ VARIANTS: dict[str, tuple[float, float, float]] = {
 STATUSES = ("TRUE", "NULL", "INDET")
 TOL = 1e-12
 PAPER_S1 = (0.92, 0.79, (29, 21, 10))
-DECLARED = "EXTRAS_PROTOCOL.md amendment 2026-10-11 X9-X13"
+DECLARED = f"{PROTOCOL_BASENAME} amendment 2026-10-11 X9-X13"
 MAP_KINDS = {"MG:rand": "comparator map", "blanket2": "comparator map", "MG:PMRT": "PMRT map"}
 
 Cell = dict[str, Any]
@@ -95,14 +96,14 @@ def studies(records: Path = RECORDS) -> dict[str, Study]:
         "S1": Study(
             "S1",
             s1 / "e6p-disc-v4an-pmrt-1" / "out" / "analysis_v4.json",
-            "scratchpad/e6_dev/runs/e6p-disc-v4an-pmrt-1/out/analysis_v4.json",
+            recorded.record_label("study1_raw/e6p-disc-v4an-pmrt-1/out/analysis_v4.json"),
             s1 / "e6p-disc-v4an-pmrt-1" / "job_inputs.txt",
             (s1 / "e6p-disc-v4gt-1-a", s1 / "e6p-disc-v4gt-1-b"),
         ),
         "S2": Study(
             "S2",
             s2 / "e6p-conf-discan-2" / "out" / "disc_conf.json",
-            "scratchpad/e6_dev/runs/e6p-conf-discan-2/out/disc_conf.json",
+            recorded.record_label("study2_raw/e6p-conf-discan-2/out/disc_conf.json"),
             s2 / "e6p-conf-discan-2" / "job_inputs.txt",
             (s2 / "e6p-conf-gt-1-a", s2 / "e6p-conf-gt-1-b"),
         ),

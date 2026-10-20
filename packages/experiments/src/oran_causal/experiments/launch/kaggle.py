@@ -15,11 +15,9 @@ from pathlib import Path
 from typing import Any
 
 from oran_causal.experiments.campaign.provenance import GitRunner
-from oran_causal.experiments.launch import bundle
+from oran_causal.experiments.launch import bundle, settings
 from oran_causal.experiments.launch.runner import RUNS_DIR, Clock, Dirs, Runner, run_process
 
-OWNER = "bishalpanta"
-KAGGLE_CLI = Path.home() / ".cloudtools" / "Scripts" / "kaggle.exe"
 DEFAULT_PULL = r"^(?!.*\.npz$)"
 DATASET_WAIT_S = 900
 PUSH_RETRY_S = 60
@@ -130,7 +128,7 @@ def kernel_source(job: KaggleJob) -> str:
     )
 
 
-def dataset_metadata(job: KaggleJob, owner: str = OWNER) -> dict[str, Any]:
+def dataset_metadata(job: KaggleJob, owner: str) -> dict[str, Any]:
     """`dataset-metadata.json` of the code dataset."""
     return {
         "title": f"{job.name}-code",
@@ -139,7 +137,7 @@ def dataset_metadata(job: KaggleJob, owner: str = OWNER) -> dict[str, Any]:
     }
 
 
-def kernel_metadata(job: KaggleJob, owner: str = OWNER) -> dict[str, Any]:
+def kernel_metadata(job: KaggleJob, owner: str) -> dict[str, Any]:
     """`kernel-metadata.json`: private script kernel with internet (the session runs `uv sync`)."""
     return {
         "id": f"{owner}/{job.name}",
@@ -160,9 +158,13 @@ def stage(
     out: Path,
     root: Path = bundle.WORKSPACE_ROOT,
     git: GitRunner | None = None,
-    owner: str = OWNER,
+    owner: str | None = None,
 ) -> bundle.Bundle:
-    """Writes `out/dataset` (bundle zip, marker, metadata) and `out/kernel` (script, metadata)."""
+    """Writes `out/dataset` (bundle zip, marker, metadata) and `out/kernel` (script, metadata).
+
+    `owner` defaults to the `ORAN_CAUSAL_KAGGLE_OWNER` setting.
+    """
+    owner = owner or settings.kaggle_owner()
     ds, kd = out / "dataset", out / "kernel"
     kd.mkdir(parents=True, exist_ok=True)
     marker = json.dumps({"name": job.name})
@@ -189,19 +191,30 @@ class KaggleClient:
 
     Attributes:
         runner: Runs an argv in a directory with a timeout and returns its output.
-        executable: The CLI path.
-        owner: Account the datasets and kernels belong to.
+        executable: The CLI; None reads ORAN_CAUSAL_KAGGLE_CLI (else `kaggle` on PATH) when used.
+        owner: Account the datasets and kernels belong to; None reads ORAN_CAUSAL_KAGGLE_OWNER when
+            used.
         clock: Time source for the waiting loops.
     """
 
     runner: Runner = run_process
-    executable: str = str(KAGGLE_CLI)
-    owner: str = OWNER
+    executable: str | None = None
+    owner: str | None = None
     clock: Clock = dataclasses.field(default_factory=Clock)
+
+    @property
+    def cli(self) -> str:
+        """The Kaggle CLI."""
+        return self.executable or settings.kaggle_cli()
+
+    @property
+    def account(self) -> str:
+        """The Kaggle account."""
+        return self.owner or settings.kaggle_owner()
 
     def run(self, *args: str, cwd: Path | None = None, timeout: float = 900) -> str:
         """One CLI call."""
-        return self.runner([self.executable, *args], cwd, timeout)
+        return self.runner([self.cli, *args], cwd, timeout)
 
     def create_dataset(self, out: Path) -> str:
         """Creates the code dataset from `out/dataset` (relative `-p`)."""
@@ -218,7 +231,7 @@ class KaggleClient:
         """
         t0 = self.clock.now()
         while True:
-            status = self.run("datasets", "status", f"{self.owner}/{name}-code", timeout=120)
+            status = self.run("datasets", "status", f"{self.account}/{name}-code", timeout=120)
             if "ready" in status.lower():
                 return self.clock.now() - t0
             if self.clock.now() - t0 > DATASET_WAIT_S:
@@ -242,11 +255,11 @@ class KaggleClient:
 
     def status(self, name: str) -> str:
         """Kernel status line."""
-        return self.run("kernels", "status", f"{self.owner}/{name}", timeout=60)
+        return self.run("kernels", "status", f"{self.account}/{name}", timeout=60)
 
     def output(self, name: str, dst: Path, pattern: str | None) -> str:
         """Downloads the kernel output into `dst` (`pattern` None = everything)."""
-        args = ["kernels", "output", f"{self.owner}/{name}", "-p", dst.name, "-o"]
+        args = ["kernels", "output", f"{self.account}/{name}", "-p", dst.name, "-o"]
         if pattern is not None:
             args += ["--file-pattern", pattern]
         return self.run(*args, cwd=dst.parent, timeout=3600)
@@ -263,7 +276,7 @@ def launch(
     out = dirs.work / job.name
     if out.exists():
         shutil.rmtree(out)
-    built = stage(job, out, dirs.root, git, client.owner)
+    built = stage(job, out, dirs.root, git, client.account)
     created = client.create_dataset(out)
     if re.search("error", created, re.IGNORECASE):
         raise RuntimeError(f"dataset create failed (the name must be new per launch): {created}")

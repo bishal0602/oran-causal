@@ -5,7 +5,7 @@ differences in R (random-rejection referee minus each comparator); (c) rejected 
 control-parameter family. Not a figure (no SPEC): run ``uv run python -m
 oran_causal.figures.figs.tab_appC_x4``.
 
-Source: extras/x4/x4_tables.json (XR4, X4_REPORT.md for column meaning only):
+Source: posthoc_x4/x4/x4_tables.json (XR4, X4_REPORT.md for column meaning only):
 ``rows.<arm>.{defer_rate, R, R_ci90, retention, guard_ratio, eligible, requests, rejected,
 defer_by_family_phase}``, ``contrasts.<X4 arm>.<comparator>.{dR, ci90}``, ``p``, ``n_seeds``.
 Allowed re-aggregation: rejected requests per family = pre + post warm-up counts of
@@ -33,7 +33,7 @@ GROUPS = [
 
 
 def label(arm: str, p: dict) -> str:
-    """Row label inside its group (paper terms: TERMINOLOGY s.7; method names via
+    """Row label inside its group (method names via
     oran_causal.figures.methods).
     """
     if arm in p:
@@ -102,7 +102,7 @@ def latex(rs: list[dict], meta: dict) -> str:
             "Post hoc check X4: descriptive, no hypothesis, no criterion, no verdict; Study 3 unchanged.",
             f"{meta['n_seeds']} Study 3 evaluation seeds; R and paired differences with 90 % paired seed-bootstrap CIs."
             " Guard ratios vs accept-all; eligible = retention >= .90 and every guard ratio <= 1.10 (point).",
-            "Host note (PAPER_PLAN X4.4): X4 ran on a different host than the stored arms; |dR| <= 4e-4 there.",
+            "Host note: X4 ran on a different host than the stored arms; |dR| <= 4e-4 there.",
             "(c) rejected requests summed over warm-up and scored window.",
         ],
         module=NAME,

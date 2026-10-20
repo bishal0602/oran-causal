@@ -33,7 +33,7 @@ from oran_causal.methods.controlled._classic import (
 )
 
 RNG_TAG_CDL = 7804
-SOURCE = "refactor/codebase@65b56f3 cdd_oran/models/cdl.py"
+SOURCE = "Causal Dynamics Learning (Wang et al. 2022), conference configuration"
 
 
 def fit_seed(data: Dataset, fit_idx: int) -> int:
@@ -152,7 +152,7 @@ class CDLMethod(ClassicBase):
     """CDL arm (native only)."""
 
     name = "cdl"
-    version = f"{SOURCE} port, offline 130-epoch rule (cap 16k steps)"
+    version = f"{SOURCE}, offline 130-epoch rule (cap 16k steps)"
     uses_p = False
     method_idx = 7
     defaults: ClassVar[dict[str, Any]] = {

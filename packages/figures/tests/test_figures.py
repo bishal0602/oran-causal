@@ -34,7 +34,7 @@ def test_figure_builds(build_figure, figure_name):
 
 
 def test_text_floor(build_figure, paper_figure_name):
-    """[G5 2026-10-12, journal artwork rule] Every visible text of a paper figure is Arial at >=
+    """Journal artwork rule: every visible text of a paper figure is Arial at >=
     style.MIN_PT (8 pt).
     """
     from matplotlib.text import Text

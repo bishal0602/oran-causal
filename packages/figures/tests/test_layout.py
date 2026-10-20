@@ -1,5 +1,5 @@
-"""Layout checks (oran_causal.figures.checks) on every registered figure: the classes of the
-2026-10-05 figure review, plus clipped markers and touching INVALID crosses (2026-10-06).
+"""Layout checks (oran_causal.figures.checks) on every registered figure: overlapping text,
+misplaced legends and labels, hidden series, tick hygiene, clipped markers and touching INVALID crosses.
 """
 
 import matplotlib

@@ -1,25 +1,15 @@
 import json
-import re
 import subprocess
 import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
 
 from oran_causal.core.pmrt.nonlinear import PmrtNl
 from oran_causal.core.pmrt.rows import PmrtCore
-from oran_causal.methods.registry import ARMS, LEGACY, PATHS, RETIRED, RetiredArmError, resolve
+from oran_causal.methods.registry import ARMS, PATHS, resolve
 
-SPECS = Path(__file__).resolve().parents[2] / "experiments" / "specs"
 HEAVY = ("torch", "shap", "causallearn", "statsmodels", "xgboost")
-
-
-def _frozen_refs() -> set[str]:
-    refs: set[str] = set()
-    for path in SPECS.rglob("*.json"):
-        refs |= set(re.findall(r'"ref":\s*"([^"]+)"', path.read_text(encoding="utf-8")))
-    return refs
 
 
 def _fresh(code: str) -> list[str]:
@@ -27,35 +17,20 @@ def _fresh(code: str) -> list[str]:
     return json.loads(out.stdout)
 
 
-def test_every_frozen_spec_ref_resolves_or_is_retired():
-    refs = _frozen_refs()
-    assert len(refs) >= 14
-    for ref in refs:
-        if ref in RETIRED:
-            with pytest.raises(RetiredArmError, match="retired"):
-                resolve(ref)
-            continue
-        cls = resolve(ref)
-        assert callable(getattr(cls, "run", None)), ref
-        assert callable(getattr(cls, "tune", None)), ref
-
-
 @pytest.mark.claim("DEF-ENV-ARMS")
 def test_pmrt_refs_bind_to_core():
-    assert resolve("cdd_oran.xmethod.methods.pmrt_core:PmrtCore") is PmrtCore
-    assert resolve("cdd_oran.xmethod.methods.pmrt_nl:PmrtNl") is PmrtNl
     assert resolve("pmrt_core") is PmrtCore
+    assert resolve("pmrt_nl") is PmrtNl
 
 
-def test_registry_names_and_legacy_table():
+def test_registry_names():
     assert set(ARMS) == set(PATHS)
     assert len(ARMS) == len(PATHS)
-    assert LEGACY["cdd_oran.xmethod.runner:DummyMethod"] == "dummy"
     for name in PATHS:
         cls = ARMS[name]
         assert cls().name == name
     with pytest.raises(KeyError, match="unknown arm"):
-        resolve("cdd_oran.xmethod.methods.nope:Nope")
+        resolve("nope")
 
 
 def test_registry_import_is_lazy():

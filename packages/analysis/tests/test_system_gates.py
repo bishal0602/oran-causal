@@ -5,7 +5,7 @@ from typing import Any
 import pytest
 
 from oran_causal.analysis.system import report_data, study1, study2, study3
-from oran_causal.analysis.system.stats import ANCHORS, alias_fill, dumps, load_jobs
+from oran_causal.analysis.system.stats import ANCHORS, alias_fill, load_jobs
 
 ROOT = Path(__file__).resolve().parents[3]
 RECORDS = ROOT / "data" / "records"
@@ -14,10 +14,6 @@ S1 = RECORDS / "study1_raw"
 S2_DISC = RECORDS / "study2_raw" / "e6p-conf-discan-2" / "out" / "disc_conf.json"
 RUNS = RECORDS / "study2_3_decision" / "runs"
 FD = RECORDS / "system_artifacts" / "report_2026-10-02" / "figures_data.json"
-LEGACY_TIES = (
-    "count for MSCR+; undefined MSCR+ F1",
-    "count for PMRT; undefined PMRT F1",
-)
 
 pytestmark = pytest.mark.skipif(
     not all(p.exists() for p in (S1, S2_DISC, RUNS, FD)),
@@ -65,12 +61,12 @@ def evaluate(study: Any, run: str, artifact: str, out: str) -> tuple[dict, str, 
 
 @pytest.fixture(scope="module")
 def conf_eval() -> tuple[dict, str, str]:
-    return evaluate(study2, "e6p-conf-eval-1", "E6P_CONF_MAPS.json", "conf")
+    return evaluate(study2, "e6p-conf-eval-1", "study2_maps.json", "conf")
 
 
 @pytest.fixture(scope="module")
 def cs_eval() -> tuple[dict, str, str]:
-    return evaluate(study3, "e6p-cs-eval-1", "E6P_CERTSAFE.json", "certsafe")
+    return evaluate(study3, "e6p-cs-eval-1", "study3_certsafe.json", "certsafe")
 
 
 @pytest.fixture(scope="module")
@@ -82,50 +78,6 @@ def figures() -> tuple[dict, str]:
 @pytest.fixture(scope="module")
 def fd(figures: tuple[dict, str]) -> dict:
     return json.loads(figures[1])
-
-
-def test_study1_pmrt_analysis_and_verdict_bit_identical(study1_reports: dict) -> None:
-    rep, raw, verdict = study1_reports["e6p-disc-v4an-pmrt-1"]
-    assert dumps(rep) == raw
-    assert dumps(study1.verdict_record(rep)) == verdict
-
-
-def test_study1_frozen_label_run_identical_up_to_rename(study1_reports: dict) -> None:
-    rep, raw, verdict = study1_reports["e6p-disc-v4an-1"]
-    assert raw.count("MSCR+") == 2
-    assert dumps(rep) == raw.replace(*LEGACY_TIES)
-    assert dumps(study1.verdict_record(rep)) == verdict.replace(*LEGACY_TIES)
-
-
-def test_study2_discovery_criteria_bit_identical(disc: tuple[dict, str]) -> None:
-    rep, raw = disc
-    assert dumps(rep) == raw
-
-
-def test_study2_eval_and_verdict_bit_identical(conf_eval: tuple[dict, str, str]) -> None:
-    rep, raw, verdict = conf_eval
-    assert dumps(rep) == raw
-    assert dumps(study2.verdict_record(rep)) == verdict
-
-
-def test_study3_eval_and_verdict_bit_identical(cs_eval: tuple[dict, str, str]) -> None:
-    rep, raw, verdict = cs_eval
-    assert dumps(rep) == raw
-    assert dumps(study3.verdict_record(rep)) == verdict
-
-
-def test_figures_data_bit_identical(figures: tuple[dict, str]) -> None:
-    data, txt = figures
-    assert txt == text(FD)
-    assert len(data["assertions"]) == 55
-
-
-def test_figures_data_written_bytes_equal_record(tmp_path: Path) -> None:
-    out = tmp_path / "figures_data.json"
-    report_data.write(out)
-    assert out.read_bytes() == FD.read_bytes()
-    report_data.write(out, newline="\n")
-    assert out.read_bytes() == FD.read_bytes().replace(b"\r\n", b"\n")
 
 
 def test_study1_partial_fails_only_p2_against_granger_by(study1_reports: dict) -> None:

@@ -9,7 +9,7 @@ file in place. Commands (`python -m oran_causal.experiments.system.shap_rerun <c
 - `study1`: DEV tau, placebo and descriptive-slice declarations on the frozen Study 1 caches;
 - `study2`: the @dev / @plc / @dev1 maps on the Study 2 discovery records, spliced into a copy of
   the frozen `disc_conf.json` with the alias table and the replay recomputed;
-- `maps`, `bounds`, `certsafe`: `E6P_CONF_MAPS_SHAP.json` and `E6P_CERTSAFE_SHAP.json` (own pins);
+- `maps`, `bounds`, `certsafe`: `study2_maps_shap.json` and `study3_certsafe_shap.json` (own pins);
 - `eval`: Study 2 / 3 referee jobs against those artifacts;
 - `report`: the Study 2 / 3 evaluation reports on the frozen EVAL records with the arms whose
   decision signature changed replaced by the rerun;
@@ -67,9 +67,9 @@ SHAP_ARMS = {
     3: ("CS:shap_gbdt@dev", "CS:shap_gbdt@plc"),
 }
 MAPS_SHAP = FrozenDoc(
-    "E6P_CONF_MAPS_SHAP.json",
-    ARTIFACTS / "E6P_CONF_MAPS_SHAP.json",
-    "54c6c4a5da4740e3f4d23cb354273d9844adbd6802f704f87e9cd823b2689685",
+    "artifacts/study2_maps_shap.json",
+    ARTIFACTS / "study2_maps_shap.json",
+    "4f85606134cffb6101577a636e146c28035c914b5268f218fb64e4bf8fcd91ae",
     needs_line=False,
 )
 X7_REF = "CS:shap_gbdt@plc"
@@ -78,9 +78,9 @@ X7_ARMS = frozenset(
     {x7_run.arm_name(None, "shadow"), *(x7_run.arm_name(X7_REF, k) for k in ("own", "pm", "other"))}
 )
 CERTSAFE_SHAP = FrozenDoc(
-    "E6P_CERTSAFE_SHAP.json",
-    ARTIFACTS / "E6P_CERTSAFE_SHAP.json",
-    "c00901d92ba7b6c65fb90ec8a59f72f448c975e6e23b4e30e402e7547c2291d8",
+    "artifacts/study3_certsafe_shap.json",
+    ARTIFACTS / "study3_certsafe_shap.json",
+    "e092d65682be24f7d23f8b10b9b416205293734928dfa465c66af6530be5bae4",
     needs_line=False,
 )
 
@@ -241,7 +241,7 @@ def control_diff(frozen: Any, got: Any, path: str = "", rtol: float = RTOL) -> l
 
 
 def build_maps_shap(disc_path: Path, frozen_disc_sha: str) -> dict[str, Any]:
-    """`E6P_CONF_MAPS_SHAP.json` from the spliced `disc_conf_shap.json`."""
+    """`study2_maps_shap.json` from the spliced `disc_conf_shap.json`."""
     a = art.build_maps(art.read_json(disc_path), sha_lf(disc_path))
     a["shap_rerun"] = {
         "replaces": {"path": study2.MAPS.name, "sha256": study2.MAPS.want},
@@ -280,7 +280,7 @@ def bounds_shap(
 
 
 def build_certsafe_shap(bounds: Path, calib: Path, disc_path: Path) -> dict[str, Any]:
-    """`E6P_CERTSAFE_SHAP.json` on `E6P_CONF_MAPS_SHAP.json` (pinned)."""
+    """`study3_certsafe_shap.json` on `study2_maps_shap.json` (pinned)."""
     sha = {
         "certsafe_bounds.json": sha_lf(bounds),
         "certsafe_calib.json": sha_lf(calib),

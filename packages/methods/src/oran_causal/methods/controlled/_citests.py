@@ -449,7 +449,7 @@ class CITestBase:
             ValueError: `truth_free` is False or `dev` spans more than one cell.
         """
         if not truth_free:
-            raise ValueError("citests: tuning is truth-free only (CONTRACT sec 5)")
+            raise ValueError("citests: tuning is truth-free only")
         if len({cell_key(d) for d in dev}) != 1:
             raise ValueError(
                 "citests: tune() takes the DEV datasets of exactly one (world, regime, n) cell"

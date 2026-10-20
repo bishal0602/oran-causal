@@ -116,13 +116,13 @@ class ShapSources:
 
     @property
     def maps_artifact(self) -> Path:
-        """`E6P_CONF_MAPS_SHAP.json`."""
-        return self.experiments / "artifacts" / "E6P_CONF_MAPS_SHAP.json"
+        """`study2_maps_shap.json`."""
+        return self.experiments / "artifacts" / "study2_maps_shap.json"
 
     @property
     def certsafe_artifact(self) -> Path:
-        """`E6P_CERTSAFE_SHAP.json`."""
-        return self.experiments / "artifacts" / "E6P_CERTSAFE_SHAP.json"
+        """`study3_certsafe_shap.json`."""
+        return self.experiments / "artifacts" / "study3_certsafe_shap.json"
 
     def eval_files(self, study: int) -> list[Path]:
         """The referee job records of the changed Study 2 / 3 arms."""
@@ -269,14 +269,14 @@ def _option_a(fd: dict[str, Any], src: rd.Sources, shap: ShapSources, checks: rd
         "shap: maps artifact pins the TreeSHAP disc_conf.json",
         maps_art["sha256"]["disc_conf.json"] == rd.sha_lf(shap.disc),
     )
-    fd["maps_sha256"] = rd.sha_lf(shap.maps_artifact)
+    fd["maps_sha256"] = src.recorded("artifacts/study2_maps_shap.json").sha256
     fd["disc_json_sha256"] = rd.sha_lf(shap.disc)
     fd["map_quality"] = rd.map_quality(disc, maps_art)
     m = merged_records(
         _shards(src.runs / "e6p-conf-eval-1", 12),
         shap.eval_files(2),
         study2.EVAL_FILTER,
-        rd.read_json(src.artifact("E6P_CONF_MAPS.json")),
+        rd.read_json(src.artifact("study2_maps.json")),
         maps_art,
     )
     E, Vd = (rd.read_json(p) for p in shap.report(2))
@@ -285,13 +285,13 @@ def _option_a(fd: dict[str, Any], src: rd.Sources, shap: ShapSources, checks: rd
 
 def _certsafe(fd: dict[str, Any], src: rd.Sources, shap: ShapSources, checks: rd.Checks) -> None:
     art = rd.read_json(shap.certsafe_artifact)
-    old = rd.read_json(src.artifact("E6P_CERTSAFE.json"))
+    old = rd.read_json(src.artifact("study3_certsafe.json"))
     checks.require(
         "shap: certsafe artifact keeps the recorded tau and bounds",
         art["tau"] == old["tau"] and art["bounds"] == old["bounds"],
     )
     tau = {(f, int(d), k): v for f, d, k, v in art["tau"]}
-    fd["artifact_sha256"] = rd.sha_lf(shap.certsafe_artifact)
+    fd["artifact_sha256"] = src.recorded("artifacts/study3_certsafe_shap.json").sha256
     fd["cert"] = rd.certification(art, tau, checks)
     fd["jobs"] = art["jobs"]
     m = merged_records(

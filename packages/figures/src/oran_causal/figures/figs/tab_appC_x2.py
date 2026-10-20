@@ -1,13 +1,12 @@
 """Post hoc check X2 (Appendix C.2; booktabs LaTeX + csv): the compact table next to
-fig_appC_x2_dose (PAPER_PLAN question 14: a small figure plus a compact table). Pooled truth-null
+fig_appC_x2_dose. Pooled truth-null
 raw rejection rate (p <= .05) of the R2 design in E1-E3 (n 1000 and 4000, 40 measurement seeds per
 design) per method, against the dither width at 20 setpoint blocks and the number of setpoint blocks
 at width 0.10, with the cell-validity mark. Not a figure (no SPEC): run ``uv run python -m
 oran_causal.figures.figs.tab_appC_x2``.
 
 Source: XR ``extras_tables.json``, ``pooled`` rows with experiment X2, regime R2, key ``null_raw``
-(rate, hits, n, seed-cluster 95 % CI, validity). Raw rates, as the figure and Study 4 ([DECIDED
-2026-10-06, user], plan row X.2); the csv also carries the BY-declared rates (``null_decl``). Rows
+(rate, hits, n, seed-cluster 95 % CI, validity). Raw rates, as the figure and Study 4; the csv also carries the BY-declared rates (``null_decl``). Rows
 only select stored values. NOTEARS and SHAP-DAG declare by a threshold and give no p-values, so they
 have no raw rate (csv only); pc_eq has no paper name. Design-adjusted partial correlation has no
 rate at 5 setpoint blocks: the frozen arm stops on a rank-deficient source design there (XR Notes).
@@ -65,7 +64,7 @@ def latex(tab: dict, rs: list[dict]) -> str:
         NAME,
         SOURCES,
         [
-            "Post hoc check X2: " + tab["wording"],
+            "Post hoc check X2: dither width; exploratory, no verdict.",
             f"Pooled truth-null raw p <= .05 rejection rates, R2 of E1-E3, n 1000 and 4000, {'/'.join(map(str, sorted(n)))} candidate tests per"
             " design; mark = condition-validity label (* INVALID, unmarked VALID).",
             "The 0.10 column is the 20-block design (the Study 4 R2 design). -- : design-adjusted partial correlation is"

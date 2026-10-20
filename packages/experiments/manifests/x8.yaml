@@ -4,10 +4,8 @@ claims:
 - EMP-S1-STRICT
 - PRO-POSTHOC
 protocol:
-  path: posthoc/EXTRAS_PROTOCOL.md
-  sha256: 292a4f6b52783ad170da39bc5f7476d2194fd1d6a25fa20e78e5026818a27ccb
-code_origin:
-- CDD-ORAN@0c89106:scratchpad/e6_dev/k0n_tail_check.py
+  path: posthoc/PROTOCOL.md
+  sha256: 8270cdc0024f718f37ca7c25ddb9c7279d3ff1b156d66d53780a9304f38772ab
 seeds:
 - block: e6p_discovery_v4_episodes
   range:
@@ -21,7 +19,7 @@ stages:
   args:
     B: 9999
   inputs:
-  - artifacts/E6P_PMRT_V4.json
+  - artifacts/study1_pmrt.json
   - study1_raw/e6p-disc-v4ev-1-a
   - study1_raw/e6p-disc-v4ev-1-b
   outputs:
@@ -40,15 +38,13 @@ stages:
     cpu_h: 0.0
     basis: M
 frozen_inputs:
-- path: artifacts/E6P_PMRT_V4.json
-  sha256: 9991c390df3a53ef12b553990da52c6adab25d4087bb029f1427e20a898e6a91
+- path: artifacts/study1_pmrt.json
+  sha256: 6f8e543145ad0e76afca653b17c4ea13b010c70d6b3134b109cd45fa0bcc99eb
 records:
 - set: posthoc_x8
   manifest: manifests/posthoc_x8.sha256
-  zenodo_doi: null
 - set: study1_raw
   manifest: manifests/study1_raw.sha256
-  zenodo_doi: null
 tiers:
   t0: summarise the stored variants
   t1: null

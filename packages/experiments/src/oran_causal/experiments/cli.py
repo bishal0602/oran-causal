@@ -1,6 +1,6 @@
 """Command line entry point for the oran-causal workspace.
 
-`check`, `data fetch`, `paper-values`, `reproduce`, `verify` and `run system` are parsed here.
+`check`, `data verify`, `paper-values`, `reproduce`, `verify` and `run system` are parsed here.
 `campaign`, `bridging`, `posthoc` and the launcher commands (`launch`, `colab`, `kaggle`, `vps`,
 `dispatch`, `fingerprint`) hand their arguments to the command line of their package.
 """
@@ -117,15 +117,9 @@ def _input(text: str) -> tuple[str, str]:
 def _add_data(commands: argparse._SubParsersAction) -> None:
     data = commands.add_parser("data", help="record sets: verify against data/manifests")
     sub = data.add_subparsers(dest="data_command", required=True)
-    fetch = sub.add_parser("fetch", help="verify present sets; download absent ones")
-    fetch.add_argument("--set", dest="sets", action="append", help="record set (repeatable)")
-    fetch.add_argument("--records", type=Path, default=None, help="records directory")
-    fetch.add_argument("--verify-only", action="store_true", help="never download")
-    fetch.add_argument("--base-url", default=None, help="Zenodo records endpoint")
-    pack = sub.add_parser("pack", help="build the Zenodo deposit archives of record sets")
-    pack.add_argument("--set", dest="sets", action="append", help="record set (default: all)")
-    pack.add_argument("--records", type=Path, default=None, help="records directory")
-    pack.add_argument("--out", type=Path, required=True, help="output directory")
+    verify = sub.add_parser("verify", help="hash the present sets against their manifests")
+    verify.add_argument("--set", dest="sets", action="append", help="record set (repeatable)")
+    verify.add_argument("--records", type=Path, default=None, help="records directory")
 
 
 def _add_paper_values(commands: argparse._SubParsersAction) -> None:
@@ -220,11 +214,7 @@ def _records(path: Path | None) -> Path:
 def _data(a: argparse.Namespace, out: Out) -> int:
     from oran_causal.experiments.reproduce import data
 
-    if a.data_command == "pack":
-        rows = data.pack(a.sets, a.out.resolve(), _records(a.records))
-    else:
-        base = a.base_url or data.ZENODO_RECORDS
-        rows = data.fetch(a.sets, _records(a.records), verify_only=a.verify_only, base_url=base)
+    rows = data.verify(a.sets, _records(a.records))
     out(table(rows))
     return 0 if passed(rows) else 1
 

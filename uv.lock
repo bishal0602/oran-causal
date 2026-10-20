@@ -1067,7 +1067,6 @@ name = "oran-causal-figures"
 version = "0.1.0"
 source = { editable = "packages/figures" }
 dependencies = [
-    { name = "fonttools" },
     { name = "matplotlib" },
     { name = "networkx" },
     { name = "numpy" },
@@ -1080,7 +1079,6 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "fonttools", specifier = ">=4.66.1" },
     { name = "matplotlib", specifier = ">=3.11.2" },
     { name = "networkx", specifier = ">=3.7" },
     { name = "numpy" },

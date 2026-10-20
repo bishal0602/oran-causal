@@ -1,15 +1,15 @@
 """The frozen referee artifacts of Studies 2 and 3: build and verify.
 
-- Study 2 maps artifact (`E6P_CONF_MAPS.json`, schema `e6p-conf-maps/1`): every map arm of the
+- Study 2 maps artifact (`study2_maps.json`, schema `e6p-conf-maps/1`): every map arm of the
   Study 2 discovery output (`disc_conf.json`) with its provenance, decision signature, alias
   target and decision table; the simulated jobs; the MapGateV2 constants.
-- Study 3 certsafe artifact (`E6P_CERTSAFE.json`, schema `e6p-certsafe/1`): per certified-safe
+- Study 3 certsafe artifact (`study3_certsafe.json`, schema `e6p-certsafe/1`): per certified-safe
   arm its source map, bound method, certification classes, uncertified classes, signature and
   decision table, built from the guard-edge bounds on the Study 2 DISC units
   (`certsafe_bounds.json`), the DEV calibration (`certsafe_calib.json`) and the GT cells.
 
-Both artifacts pin the code that froze them by sha256. That code is CDD-ORAN's; its hashes are
-kept here as the frozen `LEGACY_SHA256` values, so verification checks the pins against them.
+Both artifacts pin the code that froze them by sha256; verification checks the pins against
+`RECORDED_CODE_SHA256`.
 """
 
 import json
@@ -28,8 +28,8 @@ from oran_causal.experiments.system.common import (
     CONF_DRIVER,
     CS_ANALYZER,
     CS_DRIVER,
-    LEGACY_SHA256,
     MAPGATE,
+    RECORDED_CODE_SHA256,
     FrozenDoc,
     Record,
     repro_diff,
@@ -44,7 +44,7 @@ SCHEMA_MAPS = "e6p-conf-maps/1"
 SCHEMA_BOUNDS = "e6p-certsafe-bounds/1"
 SCHEMA_CALIB = "e6p-certsafe-calib/1"
 SCHEMA_CERTSAFE = "e6p-certsafe/1"
-V4_ARTIFACT_SHA256 = "9991c390df3a53ef12b553990da52c6adab25d4087bb029f1427e20a898e6a91"
+V4_ARTIFACT_SHA256 = "6f8e543145ad0e76afca653b17c4ea13b010c70d6b3134b109cd45fa0bcc99eb"
 TAU_RULE = "tau(f, d, k) = (rho - 1) * G_k / (max(N(f, d), 1) * 3)"
 BETA_RTOL = 1e-9
 
@@ -67,7 +67,7 @@ def _mapgate(**extra: Any) -> dict[str, Any]:
         "warmup_s": 0.0,
         **extra,
         "directional": True,
-        "sha256": LEGACY_SHA256[MAPGATE],
+        "sha256": RECORDED_CODE_SHA256[MAPGATE],
     }
 
 
@@ -136,8 +136,8 @@ def build_maps(disc: Mapping[str, Any], disc_sha: str, allow_dry: bool = False) 
         ),
         "sha256": {
             "disc_conf.json": disc_sha,
-            CONF_ANALYZER: LEGACY_SHA256[CONF_ANALYZER],
-            CONF_DRIVER: LEGACY_SHA256[CONF_DRIVER],
+            CONF_ANALYZER: RECORDED_CODE_SHA256[CONF_ANALYZER],
+            CONF_DRIVER: RECORDED_CODE_SHA256[CONF_DRIVER],
             "v4_artifact": disc["artifact"]["sha256"],
             "disc_code": disc["code_sha256"],
         },
@@ -161,10 +161,10 @@ def verify_maps(
         "signatures": all(al["signature"][x] == a["arms"][x]["signature"] for x in maps),
         "alias": al["alias_of"] == a["alias_of"] and al["jobs"] == a["jobs"],
         "arms_complete": sorted(maps) == sorted(rf.MAP_ARMS),
-        "mapgate_sha": a["mapgate"]["sha256"] == LEGACY_SHA256[MAPGATE],
+        "mapgate_sha": a["mapgate"]["sha256"] == RECORDED_CODE_SHA256[MAPGATE],
         "mapgate_consts": (a["mapgate"]["theta"], a["mapgate"]["k_conf"]) == (rf.THETA, rf.K_CONF),
-        "analyzer_sha": a["sha256"][CONF_ANALYZER] == LEGACY_SHA256[CONF_ANALYZER],
-        "driver_sha": a["sha256"][CONF_DRIVER] == LEGACY_SHA256[CONF_DRIVER],
+        "analyzer_sha": a["sha256"][CONF_ANALYZER] == RECORDED_CODE_SHA256[CONF_ANALYZER],
+        "driver_sha": a["sha256"][CONF_DRIVER] == RECORDED_CODE_SHA256[CONF_DRIVER],
         "v4_artifact_sha": a["sha256"]["v4_artifact"] == V4_ARTIFACT_SHA256,
         "mode_full": a["mode"] == "full" or allow_dry,
         "not_invalid": a["discovery_label"] != "INVALID",
@@ -268,8 +268,8 @@ def bounds_report(
         "sha256": {
             "maps_artifact": sha["maps_artifact"],
             "disc_conf.json": sha["disc_conf.json"],
-            CERTSAFE_CODE: LEGACY_SHA256[CERTSAFE_CODE],
-            CS_ANALYZER: LEGACY_SHA256[CS_ANALYZER],
+            CERTSAFE_CODE: RECORDED_CODE_SHA256[CERTSAFE_CODE],
+            CS_ANALYZER: RECORDED_CODE_SHA256[CS_ANALYZER],
         },
         "platform": platform,
     }
@@ -425,7 +425,7 @@ def build_certsafe(
         "mapgate": _mapgate(),
         "sha256": dict(
             sha,
-            **{k: LEGACY_SHA256[k] for k in (CERTSAFE_CODE, CS_ANALYZER, CS_DRIVER)},
+            **{k: RECORDED_CODE_SHA256[k] for k in (CERTSAFE_CODE, CS_ANALYZER, CS_DRIVER)},
         ),
         "platform": {"bounds": bounds.get("platform"), "calib": calib.get("platform")},
     }
@@ -460,10 +460,10 @@ def verify_certsafe(
         "maps_equal": all(
             maps[k] == m for k, m in maps_from_artifact(maps_doc.path).items() if k in maps
         ),
-        "mapgate_sha": a["mapgate"]["sha256"] == LEGACY_SHA256[MAPGATE],
-        "certsafe_sha": a["sha256"][CERTSAFE_CODE] == LEGACY_SHA256[CERTSAFE_CODE],
-        "analyzer_sha": a["sha256"][CS_ANALYZER] == LEGACY_SHA256[CS_ANALYZER],
-        "driver_sha": a["sha256"][CS_DRIVER] == LEGACY_SHA256[CS_DRIVER],
+        "mapgate_sha": a["mapgate"]["sha256"] == RECORDED_CODE_SHA256[MAPGATE],
+        "certsafe_sha": a["sha256"][CERTSAFE_CODE] == RECORDED_CODE_SHA256[CERTSAFE_CODE],
+        "analyzer_sha": a["sha256"][CS_ANALYZER] == RECORDED_CODE_SHA256[CS_ANALYZER],
+        "driver_sha": a["sha256"][CS_DRIVER] == RECORDED_CODE_SHA256[CS_DRIVER],
         "mode_full": a["mode"] == "full",
         "jobs": loaded["alias"]["jobs"] == a["jobs"],
     }

@@ -1,9 +1,9 @@
 """Check X1, runtime (Appendix C.1; booktabs LaTeX + csv): a timing run specified in the frozen
-protocol (PROTOCOL_A R-55), not post hoc. Median / max CPU seconds per (method, data set) by n on
+Study 4 protocol (R-55), not post hoc. Median / max CPU seconds per (method, data set) by n on
 one uncontended Kaggle reference host, single thread, data generation excluded. Not a figure (no
 SPEC): run ``uv run python -m oran_causal.figures.figs.tab_appC_runtime``.
 
-Source: exp_c/paper/exp_c_runtime.json (the json behind EXP_C_RUNTIME.md; R-60 X1 paper timing run),
+Source: exp_c_runtime.json (the json behind EXP_C_RUNTIME.md; X1 timing run),
 key ``table``: one row per arm x n with ``cost_ref.{median, max}`` (Kaggle-reference CPU-s),
 ``n_ok`` / ``n_units`` and ``hosts``; ``budget_cpu_s``, ``ref_host``. Rows only select stored
 values. Of the 24 timed arms, the 18 with a paper name are shown; the eq_min variants, pc_eq and
@@ -57,7 +57,7 @@ def latex(rs: list[dict], meta: dict) -> str:
         NAME,
         SOURCES,
         [
-            "Check X1 (runtime): timing run specified in the frozen protocol (PROTOCOL_A R-55); descriptive, no verdict. Median / max CPU-s per (method, data set), Kaggle reference host"
+            "Check X1 (runtime): timing run specified in the Study 4 protocol; descriptive, no verdict. Median / max CPU-s per (method, data set), Kaggle reference host"
             f" ({meta['ref_host']}), single thread, data generation excluded; {'/'.join(map(str, units))} units per method and n;"
             f" budget {meta['budget']:.0f} CPU-s per unit; -- = not in the method's grid.",
             f"Shown: {len(shown)} of {len(meta['timed'])} timed arms; left out (no paper name): {', '.join(left)}.",

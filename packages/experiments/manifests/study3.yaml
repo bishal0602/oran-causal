@@ -8,11 +8,8 @@ claims:
 - PRO-SEEDS
 - PRO-TUNE
 protocol:
-  path: study3/E6P_CERTSAFE_PROTOCOL.md
-  sha256: cdd2c7e63fe3b81efe07c6cedea331b81124eca078f056e87f3008e6d2850b4a
-code_origin:
-- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_certsafe.py
-- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_certsafe_analyze.py
+  path: study3/PROTOCOL.md
+  sha256: cb15cab229b2b3e1196f8dc977d2869bce085fbe4ca9e1dbac86506ad1998281
 seeds:
 - block: e6p_certsafe_episodes
   range:
@@ -27,8 +24,8 @@ stages:
     study: 3
     stage: eval
   inputs:
-  - artifacts/E6P_CERTSAFE.json
-  - artifacts/E6P_CONF_MAPS.json
+  - artifacts/study3_certsafe.json
+  - artifacts/study2_maps.json
   outputs:
   - study2_3_decision/runs/e6p-cs-eval-1
   - study2_3_decision/runs/e6p-cs-evalan-1
@@ -41,7 +38,7 @@ stages:
     study: 3
     stage: dev
   inputs:
-  - protocols/study3/E6P_CERTSAFE_PROTOCOL.md
+  - protocols/study3/PROTOCOL.md
   outputs:
   - study2_3_decision/runs/e6p-cs-dev-1
   cost:
@@ -60,17 +57,15 @@ stages:
     cpu_h: 0.3
     basis: M
 frozen_inputs:
-- path: artifacts/E6P_CERTSAFE.json
-  sha256: 303ac557be16ecd49723ee92850fde0e4e6d8c4c1cecde62aa0d0c48ec2da210
-- path: artifacts/E6P_CONF_MAPS.json
-  sha256: 6c82357b913d5ee11d501ff1209ec5e2068732e85181dcd27a5216109ff8940a
+- path: artifacts/study3_certsafe.json
+  sha256: 935c00030e325b186b6bae584ea66906487b4fb7e045253093e86d86d9b3cc36
+- path: artifacts/study2_maps.json
+  sha256: c3c69db6601da7d8773d6c6f7a359007e419f4f8776898cf2e7d251a8c1e84a1
 records:
 - set: study2_3_decision
   manifest: manifests/study2_3_decision.sha256
-  zenodo_doi: null
 - set: system_artifacts
   manifest: manifests/system_artifacts.sha256
-  zenodo_doi: null
 tiers:
   t0: recompute the gate bounds and the evaluation from the stored jobs (bytes)
   t1: one referee job (CS:PMRT, 120 s smoke)

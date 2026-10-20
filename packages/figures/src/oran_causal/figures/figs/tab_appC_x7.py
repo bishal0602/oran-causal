@@ -7,7 +7,7 @@ each referee and its two attribution replays (only its prot_min rejections; ever
 prot_min), with the paired difference in R vs the subset and the seeds on which the record equals
 the subset's. Not a figure (no SPEC): run ``uv run python -m oran_causal.figures.figs.tab_appC_x7``.
 
-Source: extras/x7/x7_tables.json (XR7, X7_REPORT.md for column meaning only):
+Source: posthoc_x7/x7/x7_tables.json (XR7, X7_REPORT.md for column meaning only):
 ``agreement.stream_ref.<arm>.post. {overall, prot_min|+1, ptx, carrier, sleep}.{agree, n}``,
 ``agreement.stream_own.<arm>.post.overall.agree``, ``rows.<arm>.{R, R_ci90, retention, eligible}``,
 ``diff_vs_ref.<arm>.{dR, dR_ci90, seeds_bit_identical_to_ref}`` (stored referee vs stored subset,
@@ -115,7 +115,7 @@ def latex(t: dict, agree: list[dict], outcome: list[dict]) -> str:
             " compare stored records, replay rows compare with the subset's re-run on the replay host (never mixing"
             " hosts). Identical seeds = seeds whose record equals the subset's in every outcome field (of 160)."
             " Dagger = not eligible (retention < .90); every other row is eligible.",
-            "Host note (PAPER_PLAN X7.5): re-runs vs stored records differ on some seeds by a few violations,"
+            "Host note: re-runs vs stored records differ on some seeds by a few violations,"
             " dR within [-0.0004, +0.0003].",
         ],
         module=NAME,

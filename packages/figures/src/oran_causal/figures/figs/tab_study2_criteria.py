@@ -5,7 +5,7 @@ recovery R and the verdict precedence. Booktabs LaTeX + csv; not a figure (no SP
 python -m oran_causal.figures.figs.tab_study2_criteria``. Replaces tab_design_criteria (Table 6) as
 the place where Study 2's criteria appear (advisor, 2026-10-12).
 
-Rules and thresholds: the frozen protocol E6P_CONFOUNDED_PROTOCOL.md s.7.1-7.2, with every threshold
+Rules and thresholds: the frozen protocol protocols/study2/PROTOCOL.md s.7.1-7.2, with every threshold
 read at build time from the analyzer outputs' ``rule`` fields: conf_disc_conf.json (K0, K0n, K1, X2,
 X3 ``need``; G rule; the discovery ``label.precedence``) and conf_verdict.json (D1 margin, D2 alpha
 and procedure, the D1 map set, the verdict precedence). The eligibility thresholds are stored in no
@@ -25,7 +25,7 @@ from oran_causal.figures.figs import _tabm as TM
 from oran_causal.figures.paths import protocol
 
 NAME = "tab_study2_criteria"
-PROTOCOL_PARTS = ("study2", "E6P_CONFOUNDED_PROTOCOL.md")  # s.7.2 eligibility definition (text)
+PROTOCOL_PARTS = ("study2", "PROTOCOL.md")  # s.7.2 eligibility definition (text)
 SOURCES = [ST.SRC_FD, ST.SRC_CONF, TM.SRC_CONF_VERDICT, protocol_note(*PROTOCOL_PARTS)]
 HERO = "MG:PMRT"
 

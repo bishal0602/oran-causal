@@ -35,25 +35,19 @@ from oran_causal.analysis.posthoc.common import (
     shard_files,
     sub_filter,
 )
-from oran_causal.analysis.posthoc.paths import ARTIFACTS, RECORDS, write_text
+from oran_causal.analysis.posthoc.paths import ARTIFACTS, PROTOCOL_NAME, RECORDS, write_text
 from oran_causal.analysis.system import stats, study3
 
 SUB = "x7"
 REF = "sub:ES+PowerES"
 REFS = ("CS:granger@dev", "CS:granger_by", "CS:two_tower@dev", "CS:shap_gbdt@dev")
-SHORT = {
-    "CS:granger@dev": "granger",
-    "CS:granger_by": "granger_by",
-    "CS:two_tower@dev": "two_tower",
-    "CS:shap_gbdt@dev": "shap",
-}
 KINDS = ("shadow", "own", "pm", "other")
 FAMS = ("prot_min", "ptx", "carrier", "sleep")
 SHADOW_ARM = "X7:sub|shadow"
 AGREE_BOOT, AGREE_KEY = 2000, (20261005, 7)
 SKIP = x4.SKIP | {"agree", "x7"}
 DRIVER = "x7_subset_check"
-DECLARED = "scratchpad/xmethod/EXTRAS_PROTOCOL.md Amendments 2026-10-05 X7"
+DECLARED = f"{PROTOCOL_NAME} Amendments 2026-10-05 X7"
 RTOL = 1e-9
 PerSeed = np.ndarray
 Selector = Callable[[str], bool]
@@ -280,7 +274,7 @@ def analyse(
     Returns:
         The output tree (`x7_tables.json`).
     """
-    art = read_json(artifacts / "E6P_CERTSAFE.json")
+    art = read_json(artifacts / "study3_certsafe.json")
     Rs, _ = alias_filled(
         sorted(stored.glob("*/res_*.jsonl")), study3.job_filter("eval"), art["alias_of"]
     )

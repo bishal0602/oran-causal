@@ -15,7 +15,7 @@ from matplotlib import font_manager
 
 from oran_causal.figures import palette as P
 
-# [G5 2026-10-12, user decision] Journal artwork rule (Springer: Helvetica or Arial, 8-12 pt):
+# Journal artwork rule (Springer: Helvetica or Arial, 8-12 pt):
 # Arial, from the system's font files (not vendored: Arial may not be redistributed; its fsType 8
 # permits embedding in the PDF).
 FONT_FAMILY = "Arial"
@@ -34,13 +34,12 @@ HALF = 2.5  # \includegraphics[width=0.49\textwidth]
 ASPECT = 0.55  # default height / width
 MAX_HEIGHT = 4.5
 
-# Type scale (pt) [G5 2026-10-12, user decision: journal rule 8-12 pt; 2026-10-18 soft-modern scale]: one scale for
-# every figure (DESIGN s.3)
+# Type scale (pt, within the journal's 8-12 pt): one scale for every figure (DESIGN s.3)
 TICK_PT = 8.0
 LABEL_PT = 9.5
 LEGEND_PT = 8.0
 PANEL_PT = 11.0
-MIN_PT = 8.0  # floor for any figure text at print size (figures are built at print width); was 7.0
+MIN_PT = 8.0  # floor for any figure text at print size (figures are built at print width)
 ANNOT_PT = 8.0
 TAG_PT = 8.0  # panel tags, bold beside the bold PANEL_PT letter
 
@@ -53,7 +52,6 @@ LW_GRID = 0.9
 LW_REF = 0.9
 LW_WHISKER = 0.8
 MARKER_SIZE = 4.0
-SPINE_OFFSET = 3  # pt, see finish()
 
 RC = {
     # output

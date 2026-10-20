@@ -5,8 +5,8 @@ counts of used p-values at or below .05, 1e-3, 2e-4 and 1e-4, for the primary co
 eight descriptive ones; then the redraw p against its normal approximation. Not a figure (no SPEC):
 run ``uv run python -m oran_causal.figures.figs.tab_appC_x8``.
 
-Source: extras/x8/summary.json (written by scratchpad/e6_dev/k0n_tail_check.py summarize; X8,
-EXTRAS_PROTOCOL amendment 2026-10-11, declared before the run), keys ``n_variants``, ``B``,
+Source: posthoc_x8/x8/summary.json (X8, posthoc protocol amendment 2026-10-11, declared before the
+run), keys ``n_variants``, ``B``,
 ``primary``, ``checks``, ``combos.<stat+layer>.{n_p, variants_with_decl, n_le_<a>, rate_le_<a>}``,
 ``arms_p2_vs_normal.<stat>``. Post hoc, descriptive apart from the three pre-stated checks X8a-c; it
 changes no verdict.

@@ -1,6 +1,6 @@
-"""Paper-wide xApp and KPI styling (DESIGN s.12.2) [DECIDED 2026-10-06, user; slots per panel]. The single source of
+"""Paper-wide xApp and KPI styling (DESIGN s.12.2; slots per panel). The single source of
 how an xApp, the control parameter it writes, or a KPI looks; figures pass code keys (``ES``, ``PowerES``,
-``SliceGuarantee``, ``Coverage``; ``sleep`` …; ``pv`` …) and get the TERMINOLOGY paper names on the figure.
+``SliceGuarantee``, ``Coverage``; ``sleep`` …; ``pv`` …) and get the paper names on the figure.
 
 Rules (each checked by ``audit`` on every registered figure, tests/test_entities.py):
   * entity in method figure - xApp / parameter / KPI hues never share a figure with method series (oran_causal.figures.methods);
@@ -34,7 +34,7 @@ COVERAGE_LS = (
 
 @dataclass(frozen=True)
 class Entity:
-    name: str  # paper label (TERMINOLOGY s.3 / s.4)
+    name: str  # paper label
     slot: int | None  # DESIGN s.5.2 entity slot 1-6; None = neutral gray
     color: str
     marker: str | None
@@ -87,17 +87,13 @@ CODE_NAMES = ("PowerES", "SliceGuarantee")
 # Planned figures that use entity colours (DESIGN s.12.2); every other planned figure uses none.
 FIGURE_USE = {
     "fig_intro_conflict": "xapps",
-    "fig_system_e6p": "xapps",
+    "fig_system": "xapps",
     "fig_study4_env_e1": "node-roles",
     "fig_study4_env_e2": "node-roles",
     "fig_study4_env_e3": "node-roles",
     "fig_study4_env_e4": "node-roles",
     "fig_study4_env_e5": "node-roles",
 }
-
-
-def xapp(key: str) -> Entity:
-    return XAPPS[ALIASES.get(key, key)]
 
 
 def param_label(param: str) -> str:
@@ -263,8 +259,7 @@ def _colours(art) -> list:
 
 
 def _entity_hued(fig) -> list[str]:
-    """[one palette, 2026-10-06] Methods and entities now share the palette hues, so this is
-    tag-based: untagged artists (no gid) drawn in a palette hue or its tint, outside node-role
+    """Methods and entities share the palette hues, so this is tag-based: untagged artists (no gid) drawn in a palette hue or its tint, outside node-role
     panels and colour bars = a series not styled through oran_causal.figures.methods (e.g. the
     default colour cycle).
     """
@@ -285,44 +280,6 @@ def _entity_hued(fig) -> list[str]:
                 except ValueError:
                     continue
     return hits
-
-
-def foreign_colours(fig) -> list[str]:
-    """[DECIDED 2026-10-06, user: one palette = specimen set] Drawn colours that are not palette
-    hues, neutrals or a tint of one (palette.allowed). Colormap output is exempt: images, meshes,
-    colour-bar axes and patches tagged ``cmap-cell`` (heatmap cells shaded from harbor_seq /
-    harbor_div).
-    """
-    from matplotlib.collections import QuadMesh
-    from matplotlib.image import AxesImage
-
-    bad = []
-    groups = [
-        ax.findobj()
-        for ax in fig.axes
-        if not (hasattr(ax, "_colorbar") or ax.get_label() == "<colorbar>")
-    ]
-    groups += [leg.findobj() for leg in fig.legends]
-    for objs in groups:
-        for art in objs:
-            if isinstance(art, (AxesImage, QuadMesh)) or art.get_gid() == "cmap-cell":
-                continue
-            if (
-                getattr(art, "get_array", None)
-                and art.get_array() is not None
-                and not isinstance(art, Line2D)
-            ):
-                continue  # mappable collection
-            for c in _colours(art):
-                try:
-                    if isinstance(c, str) and c.lower() in ("none", ""):
-                        continue
-                    if to_rgba(c)[3] > 0 and not P.allowed(c):
-                        bad.append(f"{type(art).__name__} gid={art.get_gid()!r} colour {to_rgb(c)}")
-                        break
-                except ValueError:
-                    continue
-    return bad
 
 
 def audit(fig) -> dict[str, list[str]]:

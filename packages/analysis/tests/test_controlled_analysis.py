@@ -376,7 +376,7 @@ def test_pilot_subset_matches_the_campaign_aggregate(synth: Any) -> None:
             "pmrt_eq": arms["pmrt_eq"],
             "corr": arms["corr"],
             "granger_native": {
-                "ref": "cdd_oran.xmethod.methods.granger:Granger",
+                "ref": "granger",
                 "config": {"arm": "native"},
                 "declare": "by",
                 "worlds": ["E3"],

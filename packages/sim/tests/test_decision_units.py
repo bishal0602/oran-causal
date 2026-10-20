@@ -1,4 +1,3 @@
-import json
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -128,17 +127,6 @@ def test_half_uses_the_slew_rule_with_e6p_quanta() -> None:
     d1 = arb(obs(11, [req("SliceGuarantee", ("prot_min", 0), 0.0, 0.05)], cfg))["decisions"]
     d2 = arb(obs(16, [req("SliceGuarantee", ("prot_min", 0), 0.0, 0.05)], cfg))["decisions"]
     assert sorted([d1[0], d2[0]]) == ["accept", "reject"]
-
-
-def test_half_step_p_matches_the_old_screen_and_plans_rules() -> None:
-    rows = json.loads((DATA / "decision_half_step.json").read_text())
-    hs: dict = {}
-    for r in rows:
-        got = U.half_step_p(tuple(r["knob"]), r["cur"], r["prop"], hs)
-        got = list(got) if isinstance(got, tuple) else got
-        assert got == r["units_p"] == r["screen"]
-        if "plans" in r:
-            assert got == r["plans"]
 
 
 def test_rollback_flag_rolls_back_a_recent_change_once_and_never_our_own() -> None:

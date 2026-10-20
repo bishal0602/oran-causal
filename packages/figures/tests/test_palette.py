@@ -12,7 +12,7 @@ def test_every_method_colour_is_harbor():
 
 
 def test_method_list():
-    """[DECIDED 2026-10-08, user] one fixed colour per method, paper-wide (DESIGN s.12.1)."""
+    """One fixed colour per method, paper-wide (DESIGN s.12.1)."""
     assert M.color("pmrt") == M.color("pmrt_gbm") == P.BLUE
     assert M.color("pmrt_lin") == M.color("pmrt_lin_r3") == P.PMRT_LIN
     assert M.color("corr") == P.GOLD

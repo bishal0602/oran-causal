@@ -2,7 +2,7 @@
 
 Plant as Study 1. Collection runs the directional unit arbiter (a reject unit defers only its
 opening direction) from t = 0 with the incumbent logging policy (per-unit probability rows).
-Stages and seeds (block 186000-187999, protocol `E6P_CONFOUNDED_PROTOCOL.md` section 6):
+Stages and seeds (block 186000-187999, protocol `protocols/study2/PROTOCOL.md` section 6):
 
 | stage | seeds | jobs |
 |---|---|---|
@@ -26,9 +26,9 @@ from typing import Any
 from oran_causal.analysis.system import study2 as astudy2
 from oran_causal.experiments.paths import ARTIFACTS
 from oran_causal.experiments.system.common import (
-    LEGACY_SHA256,
     LOAD_FACTOR_L40,
     MAPGATE,
+    RECORDED_CODE_SHA256,
     Block,
     FrozenDoc,
     Job,
@@ -99,13 +99,13 @@ TAGS = {
 }
 PROTOCOL = protocol_doc(
     "study2",
-    "E6P_CONFOUNDED_PROTOCOL.md",
-    "f719f43085cf1f95cf7c487e0e2c015e4377f9d83a9d4daa5484f42a996c7a1b",
+    "PROTOCOL.md",
+    "71e57ae93b2ee79bcbe5d76d645189a988ebbd15d96c3b6a83da0806ca5adc5f",
 )
 MAPS = FrozenDoc(
-    "docs/benchmark/artifacts/E6P_CONF_MAPS.json",
-    ARTIFACTS / "E6P_CONF_MAPS.json",
-    "6c82357b913d5ee11d501ff1209ec5e2068732e85181dcd27a5216109ff8940a",
+    "artifacts/study2_maps.json",
+    ARTIFACTS / "study2_maps.json",
+    "c3c69db6601da7d8773d6c6f7a359007e419f4f8776898cf2e7d251a8c1e84a1",
     needs_line=False,
 )
 COLLECTION = Collection(
@@ -448,7 +448,7 @@ def run(
         part,
         smoke,
         conf_stage=stage,
-        mapgate_sha256=LEGACY_SHA256[MAPGATE],
+        mapgate_sha256=RECORDED_CODE_SHA256[MAPGATE],
         schema=SCHEMA_EVAL if stage == "eval" else SCHEMA,
         protocol=PROTOCOL.name,
         **st,

@@ -1,7 +1,7 @@
 """Study 2: quality of the causal maps learned from confounded incumbent logs (system-level simulator), scored against
 the Study 2 knockout ground truth; shown descriptively (map quality was not a criterion fixed before evaluation).
 
-Edge ledger [DECIDED 2026-10-08, user; sample "M2b", replaces the annotated count heatmap]: one row per map under
+Edge ledger: one row per map under
 family banners (bold method name, DEV / placebo threshold sub-rows, as the referee figures), and
   * one stacked bar of the map's edges by ground-truth status, in the Study 1 edge-status colours (DESIGN s.12.1
     exception, as fig_study1_discovery): teal GT-TRUE with the right sign, terracotta GT-TRUE with the wrong sign, light
@@ -21,8 +21,8 @@ from oran_causal.figures import methods as M
 from oran_causal.figures import palette as P
 from oran_causal.figures import plots
 from oran_causal.figures import style as S
-from oran_causal.figures.figs import _s12a as H
-from oran_causal.figures.figs import _s23r as R
+from oran_causal.figures.figs import _method_rows as H
+from oran_causal.figures.figs import _referee as R
 from oran_causal.figures.figs import _studies as ST
 from oran_causal.figures.registry import FigSpec
 
@@ -95,7 +95,7 @@ def build():
     ylim = (y0 - 0.3, y1 + 1.0)
     fig, (a, t) = plots.figure(
         "full", aspect=0.95, ncols=2, sharey=True, width_ratios=[1.43, 1.22]
-    )  # [2026-10-12] t wider for 7 pt heads
+    )  # t wider for 7 pt heads
     cols = [k for k, *_ in CATS] + [PLACEBO]
     cx = lambda j: j + 0.5 + (SEP if cols[j] == PLACEBO else 0)
     for yy, code in zip(ys, flat, strict=False):

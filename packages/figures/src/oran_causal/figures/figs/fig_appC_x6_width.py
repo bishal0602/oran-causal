@@ -3,7 +3,7 @@ changes none of C1-C3): truth-null raw rejection rate (p <= .05) of PMRT-GBM and
 dither width is told to the method as x .5, .8, 1 (exact), 1.25, 1.5 or 2 of the true width (told
 law used for both centring and redraws). One cell: E1 R2, n 1000, kappa .25, 200 fresh datasets, 12
 truth-null candidates per dataset (2400 per point). Shown next to fig_appC_x3_misspec; extends X3
-panel (a) on fresh data (PAPER_PLAN row X.6b).
+panel (a) on fresh data.
 
 Source: DIAG ``diag/diag_tables.json``, ``x6.curve`` (one row per base arm x told width; key
 ``null_raw``: rate, 95 % bootstrap CI). Row selection only. The 2 x 2 centring x redraw ablation

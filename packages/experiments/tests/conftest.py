@@ -11,12 +11,26 @@ import pytest
 
 from oran_causal.experiments.campaign.run import Providers, RunOptions
 from oran_causal.experiments.campaign.spec import ProtocolTexts, shipped_protocol
+from oran_causal.experiments.launch import settings
 from oran_causal.experiments.launch.runner import Clock
 
 DATA = Path(__file__).parent / "data"
-DUMMY = "cdd_oran.xmethod.runner:DummyMethod"
+DUMMY = "dummy"
 COMMIT = {"commit": "0" * 40, "dirty": False, "source": "test", "dirty_paths": None}
 PROTOCOL_TEXT = "# Protocol\n\nFROZEN: yes (2026-10-04)\nbody\n"
+
+
+@pytest.fixture(autouse=True)
+def no_launch_settings(monkeypatch: pytest.MonkeyPatch) -> None:
+    for name in (
+        settings.VPS_HOST,
+        settings.INSTABOX_HOST,
+        settings.VPS_BASE,
+        settings.INSTABOX_BASE,
+        settings.KAGGLE_OWNER,
+        settings.KAGGLE_CLI,
+    ):
+        monkeypatch.delenv(name, raising=False)
 
 
 def quiet_providers(**changes: Any) -> Providers:
@@ -160,7 +174,7 @@ def mini_workspace(root: Path) -> Path:
         "packages/core/tests/test_a.py": "def test(): ...\n",
         "packages/figures/pyproject.toml": "[project]\nname = 'figures'\n",
         "packages/figures/src/oran_causal/figures/__init__.py": "F = 1\n",
-        "packages/experiments/protocols/study4/PROTOCOL_A.md": "FROZEN: yes\n",
+        "packages/experiments/protocols/study4/PROTOCOL.md": "FROZEN: yes\n",
         "packages/experiments/manifests/seeds.json": "{}\n",
         "packages/experiments/artifacts/table.json": "[1]\n",
         "packages/experiments/specs/dev/s.json": "{}\n",

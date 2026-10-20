@@ -10,6 +10,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
+from oran_causal.analysis import recorded
 from oran_causal.analysis.bridging import costs, tables
 from oran_causal.analysis.controlled.report import ReportRequest, run_report
 from oran_causal.analysis.system import report_data, study1, study2, study3
@@ -28,22 +29,18 @@ from oran_causal.experiments.system import artifacts
 
 STUDY4_FREEZE_COMMIT = "93856c230d84abda2ff3b894218dd6cb0ecd47f9"
 STUDY4_FROZEN_UTC = "2026-10-05T07:33:00Z"
-STUDY4_LABELS = {
-    "spec": "scratchpad/xmethod/specs/eval/full.json",
-    "merged": "scratchpad/xmethod/results/eval/merged.jsonl.gz",
-}
+STUDY4_MERGED = "study4_eval/eval/merged.jsonl.gz"
 STUDY4_DEV_SPECS = ("full", "ci_c", "pmrt_nl", "cdl")
 STUDY1_RUNS = ("e6p-disc-v4an-pmrt-1", "e6p-disc-v4an-1")
-STUDY1_LEGACY_TIES = ("count for MSCR+; undefined MSCR+ F1", "count for PMRT; undefined PMRT F1")
+STUDY1_MSCR_TIES = ("count for MSCR+; undefined MSCR+ F1", "count for PMRT; undefined PMRT F1")
 BRIDGING_FACTORS = "factors_vps_py3.12.13.json"
-BRIDGING_FACTORS_LABEL = f"scratchpad/xmethod/results/exp_b/{BRIDGING_FACTORS}"
 BRIDGING_BUDGET = 7200.0
 
 
 def study4(ctx: Context) -> list[Check]:
     """The Study 4 EVAL report (`report.json`, `REPORT.md`, `csv/*`) from the merged records."""
     ev, dev = ctx.records / "study4_eval" / "eval", ctx.records / "study4_dev"
-    skips = missing("study4", ctx, "study4_eval/eval/merged.jsonl.gz", "study4_dev/fmax_sim")
+    skips = missing("study4", ctx, STUDY4_MERGED, "study4_dev/fmax_sim")
     if skips:
         return skips
     out = ctx.item_dir("study4")
@@ -72,7 +69,8 @@ def study4_report(merged: Path, dev: Path, out: Path) -> int:
         dependence=dev / "fmax_sim" / "dependence.json",
         dev_merged=[dev / "dev" / n / "merged.jsonl.gz" for n in STUDY4_DEV_SPECS],
         generated_utc=STUDY4_FROZEN_UTC,
-        input_labels={str(spec): STUDY4_LABELS["spec"], str(merged): STUDY4_LABELS["merged"]},
+        input_labels={str(merged): recorded.record_label(STUDY4_MERGED)},
+        cite_recorded=True,
     )
     return run_report(request, lambda _: None)
 
@@ -98,7 +96,7 @@ def _study1(ctx: Context) -> list[Check]:
         raw, verdict = _read(d / "analysis_v4.json"), _read(d / "verdict_v4.json")
         rep = study1.recompute(json.loads(raw))
         if run == "e6p-disc-v4an-1":
-            raw, verdict = raw.replace(*STUDY1_LEGACY_TIES), verdict.replace(*STUDY1_LEGACY_TIES)
+            raw, verdict = raw.replace(*STUDY1_MSCR_TIES), verdict.replace(*STUDY1_MSCR_TIES)
         target = f"study1 {run}"
         checks.append(compare_text("system", f"{target} analysis_v4.json", dumps(rep), raw))
         vtext = dumps(study1.verdict_record(rep))
@@ -117,9 +115,10 @@ def _study2_disc(ctx: Context) -> Check:
     )
 
 
-def _verify_check(name: str, fresh: dict[str, Any], stored: dict[str, Any]) -> Check:
-    same = fresh["checks"] == stored["checks"] and fresh["sha256"] == stored["sha256"]
-    if same and fresh["ok"]:
+def _verify_check(name: str, artifact: str, fresh: dict[str, Any], stored: dict[str, Any]) -> Check:
+    cited = recorded.recorded(f"artifacts/{artifact}")
+    same = fresh["checks"] == stored["checks"] and stored["sha256"] == cited.sha256
+    if same and fresh["ok"] and fresh["matches_pin"]:
         return Check("system", name, Status.PASS, "artifact re-verified; checks and sha256 equal")
     return Check("system", name, Status.DIFF, f"ok {fresh['ok']}, checks or sha256 differ")
 
@@ -143,7 +142,7 @@ def _referee(ctx: Context, study: Any, run: str, artifact: str, key: str) -> lis
     rep = study.evaluate(jobs, heads, inputs) | {"timing_s": stored["timing_s"]}
     name = "study2" if study is study2 else "study3"
     return [
-        _verify_check(f"{name} {vkey}", fresh, stored[vkey]),
+        _verify_check(f"{name} {vkey}", artifact, fresh, stored[vkey]),
         compare_text("system", f"{name} eval_{key}.json", dumps(rep), raw),
         compare_text(
             "system", f"{name} verdict_{key}.json", dumps(study.verdict_record(rep)), verdict
@@ -165,8 +164,8 @@ def system(ctx: Context) -> list[Check]:
     if skips:
         return skips
     checks = [*_study1(ctx), _study2_disc(ctx)]
-    checks += _referee(ctx, study2, "e6p-conf-eval-1", "E6P_CONF_MAPS.json", "conf")
-    checks += _referee(ctx, study3, "e6p-cs-eval-1", "E6P_CERTSAFE.json", "certsafe")
+    checks += _referee(ctx, study2, "e6p-conf-eval-1", "study2_maps.json", "conf")
+    checks += _referee(ctx, study3, "e6p-cs-eval-1", "study3_certsafe.json", "certsafe")
     out = ctx.item_dir("system") / "figures_data.json"
     report_data.write(out)
     return [*checks, compare_bytes("system", out, ctx.records / fd_rel)]
@@ -182,11 +181,15 @@ def bridging(ctx: Context) -> list[Check]:
     if skips:
         return skips
     out = ctx.item_dir("bridging")
-    spec = json.loads(_read(SPECS / "exp_b" / "exp_b.json"))
+    spec = json.loads(_read(SPECS / "bridging" / "exp_b.json"))
     merged = exp_b / "merged.jsonl.gz"
     tables.tables(spec, merged, exp_b / "gt_v4.json", out, json.loads(_read(v4)))
     costs.costs(
-        merged, exp_b / BRIDGING_FACTORS, BRIDGING_BUDGET, out, label=BRIDGING_FACTORS_LABEL
+        merged,
+        exp_b / BRIDGING_FACTORS,
+        BRIDGING_BUDGET,
+        out,
+        label=recorded.record_label(f"bridging/exp_b/{BRIDGING_FACTORS}"),
     )
     names = (tables.TABLES_JSON, tables.TABLES_MD, costs.COSTS_JSON, costs.COSTS_MD)
     return [compare_bytes("bridging", out / n, exp_b / n) for n in names]

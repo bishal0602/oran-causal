@@ -44,7 +44,7 @@ def dev_seeds(spec: Spec) -> list[int]:
     seeds = seed_range(spec["seeds"])
     bad = [x for x in seeds if x not in DEV_SEEDS]
     if bad:
-        raise ValueError(f"seeds outside the DEV block 3000000-3000199 (CONTRACT 6): {bad[:5]}")
+        raise ValueError(f"seeds outside the DEV block 3000000-3000199: {bad[:5]}")
     return seeds
 
 
@@ -121,7 +121,7 @@ def method_config(spec: Spec, method: str, dataset: DatasetKey) -> dict[str, Any
 
 
 def registry_resolve(ref: str) -> Any:
-    """Resolves a registry name or a legacy `module:Name` ref through the methods registry."""
+    """Resolves a registry name through the methods registry."""
     return resolve(ref)
 
 

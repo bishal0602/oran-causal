@@ -1,5 +1,5 @@
-"""Global method-colour mapping (oran_causal.figures.methods, DESIGN s.12, [DECIDED 2026-10-08,
-user]): table invariants, the mapping rules on every registered figure, one hue per method inside a
+"""Global method-colour mapping (oran_causal.figures.methods, DESIGN s.12): table
+invariants, the mapping rules on every registered figure, one hue per method inside a
 figure, the same style for a method in every figure, and each rule firing on a broken figure.
 """
 
@@ -47,8 +47,6 @@ def _styles(fig) -> dict[str, set]:
     [
         "fig_study1_discovery",
         "fig_study2_maps",
-        "fig_decision_referee",
-        "fig_decision_referee_v3",
         "fig_study2_deferrals",
         "fig_study3_certification",
         "fig_appC_x2_dose",
@@ -81,7 +79,7 @@ def test_marker_shape_is_the_base_method():
 
 
 def test_family_cues():
-    """[DECIDED 2026-10-18, user] Design-based and design-adjusted methods are solid, design-blind ones dashed."""
+    """Design-based and design-adjusted methods are solid, design-blind ones dashed."""
     for code in ("pmrt_nl_eq", "pcorr_eq", "pmrt_r3"):
         assert M.style(code)["ls"] == "-", code
     for code in ("corr", "pcorr_native", "two_tower", "cdl", "granger_by"):
@@ -97,7 +95,7 @@ def test_family_cues():
 
 
 def test_gate_has_no_marker_cue():
-    """CS:<map> looks exactly like MG:<map> ([DECIDED 2026-10-08, user]: no gate ring; the banners
+    """CS:<map> looks exactly like MG:<map> (no gate ring; the banners
     name the gate).
     """
     for m in ("PMRT", "corr@dev", "granger_by"):
@@ -124,10 +122,6 @@ def test_unplotted_methods_refuse_a_marker():
 # --- rules on every registered figure -------------------------------------------------------------------------------
 @pytest.mark.parametrize("rule", RULES)
 def test_mapping_rules(build_figure, figure_name, rule):
-    if rule == "wording" and not FIGS[figure_name].SPEC.paper:
-        pytest.skip("style specimens use generic 'Proposed / Baseline' names; not in the paper")
-    if rule in ("one hero", "frozen PMRT") and figure_name == "specimen_key":
-        pytest.skip("the key sheet shows the Studies 1-3 PMRT points beside the Study 4 series")
     problems = M.audit(build_figure(figure_name))[rule]
     assert not problems, f"{figure_name}: " + "; ".join(problems)
 

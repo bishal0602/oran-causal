@@ -15,7 +15,6 @@ from oran_causal.experiments.campaign.spec import (
 )
 
 EVAL_CAP_FACTOR = 2.0
-FROZEN_EVAL_PYTHON = "3.12.14"
 MERGE_SETS = (
     "python",
     "lock_sha256",
@@ -122,9 +121,7 @@ def check_eval_preconditions(
     """EVAL run preconditions.
 
     Refuses an unauthorised protocol, an interpreter the workspace pin does not admit, unknown
-    or dirty code, and installed packages that differ from `uv.lock`. Re-runs use the
-    workspace interpreter and lock; `FROZEN_EVAL_PYTHON` is only the provenance of the frozen
-    EVAL records.
+    or dirty code, and installed packages that differ from `uv.lock`.
     """
     ok, why = eval_authorised(spec, texts)
     if not ok:

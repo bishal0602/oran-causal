@@ -1,22 +1,22 @@
-"""Paper-wide method styling (DESIGN s.5.1 / s.12, Q8: one global method-colour mapping, decided 2026-10-05 by the user,
-mapping filled 2026-10-06 overnight with the panel's changes). The single source of how a method looks: every figure
+"""Paper-wide method styling (DESIGN s.5.1 / s.12: one global method-colour mapping). The single source of how a
+method looks: every figure
 that shows a method (Studies 1-4, bridging analysis, Appendix C) styles it through this module, by arm code.
 
 Encoding:
-  * colour = method ([DECIDED 2026-10-08, user] DESIGN s.12 banner): one fixed colour per method for the whole
+  * colour = method (DESIGN s.12 banner): one fixed colour per method for the whole
     paper, from Harbor's six hues plus three Harbor tints (palette.py). PMRT / PMRT-GBM blue; no figure shows two
     methods in one hue (Studies 1-3 and Study 4 reuse a hue only for methods that never share a figure). Methods
     that are drawn only in ink rows or tables are neutral gray. References / static rules ink / gray. Banners,
     legends and captions name the three families (design-based, design-adjusted, design-blind); colour never
     means "valid".
-  * line style: solid for every method ([DECIDED 2026-10-08, user]: no dashes); references are ink / gray with
-    their own dash.
+  * line style: design-based and design-adjusted methods solid, design-blind ones dashed (a grayscale cue);
+    references are ink / gray with their own dash.
   * marker = base method, the same shape in every family (plain and design-adjusted partial correlation are both
     ``^``). PMRT-GBM and the frozen PMRT never share a glyph.
   * exactly one hero method per figure (``hero=True``: filled marker, 1.9 pt, on top); its MG and CS referee arms
     both carry it. In Study 4 the hero is emphasis only; no legend or caption calls it "proposed" or "best".
-  * edge-certified arms (``CS:<map>``) look exactly like their map's arm ([DECIDED 2026-10-08, user]: the ink gate ring
-    is dropped; the banners name the gate); ``MG:<map>`` looks the same in Study 2 and Study 3 figures.
+  * edge-certified arms (``CS:<map>``) look exactly like their map's arm (no gate ring; the banners name
+    the gate); ``MG:<map>`` looks the same in Study 2 and Study 3 figures.
 Artists carry ``gid`` tags (``method:<key>[:hero][:cs]``, ``row:<key>``, ``band:<key>``) that tests/test_methods.py
 reads to check the rules on every registered figure.
 """
@@ -54,8 +54,8 @@ class Family:
     fill: str | None = None  # default band / bar fill colour; None = same as color
 
 
-# [DECIDED 2026-10-08, user] Colour = method (fixed, paper-wide; palette.py). Design-blind families are dashed
-# (2026-10-18, grayscale cue); the family is named by banners, legends and captions. Methods without a colour (ink rows / tables
+# Colour = method (fixed, paper-wide; palette.py). Design-blind families are dashed
+# (grayscale cue); the family is named by banners, legends and captions. Methods without a colour (ink rows / tables
 # only) are neutral gray.
 FAMILIES = {
     "based": Family("Design-based tests", P.HERO, P.HERO, "-", 0),
@@ -73,7 +73,7 @@ FAMILY_ORDER = list(
 
 @dataclass(frozen=True)
 class Method:
-    name: str  # paper name (TERMINOLOGY s.6), as in legends
+    name: str  # paper name, as in legends
     family: str
     marker: (
         str | None
@@ -131,9 +131,7 @@ METHODS = {
     "random": Method("Random map", "random", "+"),
     "accept_all": Method("Accept-all", "static", "|", rows_only=True),
     "never_sleep": Method("Never-sleep", "static", "|", rows_only=True),
-    "sg_only": Method(
-        "Slice Guarantee only", "static", "|", rows_only=True
-    ),  # xApp paper names (TERMINOLOGY s.3)
+    "sg_only": Method("Slice Guarantee only", "static", "|", rows_only=True),  # xApp paper names
     "es_only": Method("ES only", "static", "|", rows_only=True),
     "poweres_only": Method("Power ES only", "static", "|", rows_only=True),
     "es_poweres": Method("ES + Power ES", "static", "|", rows_only=True),
@@ -282,7 +280,7 @@ def plot(ax, x, y, code: str, hero: bool = False, label: str | None = None, **kw
 
 
 def band(ax, x, lo, hi, code: str, hero: bool = False, **kw):
-    """95 % CI band in the series hue (DESIGN s.7; [2026-10-06] 0.14 hero / 0.08 others, so up to
+    """95 % CI band in the series hue (DESIGN s.7; 0.14 hero / 0.08 others, so up to
     three overlapping bands stay light instead of merging into one dark mass).
     """
     return ax.fill_between(
@@ -304,7 +302,7 @@ def invalid(ax, xs, code: str, **kw) -> None:
 
 
 def bar(ax, x, h, code: str, width: float, hero: bool = False, label: str | None = None, **kw):
-    """Bars (DESIGN s.7, [DECIDED 2026-10-08, user]): every bar a full-strength fill in its method
+    """Bars (DESIGN s.7): every bar a full-strength fill in its method
     colour, no edge. Edge-certified arms (``CS:<map>``) add a light white ``////`` hatch.
     """
     arm = resolve(code)
@@ -342,7 +340,7 @@ def row_point(
 ):
     """One labelled forest row: the estimate in the method's glyph with an ink CI whisker.
     ``ink=True`` keeps the glyph's shape and fill but draws it in ink (fig_study4_validity (a):
-    family banners carry the family there). ``fill`` [G5 2026-10-12] overrides the fill state when
+    family banners carry the family there). ``fill`` overrides the fill state when
     fill encodes something other than the hero (the merged decision figure: open = Study 2 without
     the gate, filled = Study 3 edge-certified); None keeps the default.
     """
@@ -355,7 +353,7 @@ def row_point(
         face = mc
     tick = (
         arm.method.marker == "|"
-    )  # [G3 2026-10-12] static rules: an unbroken interval with a taller estimate tick
+    )  # static rules: an unbroken interval with a taller estimate tick
     ms, mew = (st["ms"] + 2.4, 1.0) if tick else (st["ms"], 0.4 if hero else 0.8)
     if (
         ci is not None

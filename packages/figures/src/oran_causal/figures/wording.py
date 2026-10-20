@@ -1,4 +1,4 @@
-"""Visible-text guard (TERMINOLOGY s.9-10, user decisions 2026-10-05): internal code names never
+"""Visible-text guard: internal code names never
 appear in figure text, caption hints or the visible part of a generated LaTeX table.
 tests/test_wording.py runs ``audit`` on every registered figure, ``check`` on every caption hint and
 ``tex_visible`` + ``check`` on every table in the journal's ``tables/``. Data files (csv) keep arm
@@ -10,7 +10,7 @@ from pathlib import Path
 
 from matplotlib.text import Text
 
-# pattern -> paper wording (TERMINOLOGY s.10)
+# pattern -> paper wording
 BANNED = {
     r"E6[-_ ]?P(?![a-z])": 'the simulator is "the system-level simulator" (never E6-P / E6P)',
     r"\bStudy A\b": '"Study 4"',

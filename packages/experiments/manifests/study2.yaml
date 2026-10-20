@@ -9,13 +9,8 @@ claims:
 - PRO-FROZEN
 - PRO-SEEDS
 protocol:
-  path: study2/E6P_CONFOUNDED_PROTOCOL.md
-  sha256: f719f43085cf1f95cf7c487e0e2c015e4377f9d83a9d4daa5484f42a996c7a1b
-code_origin:
-- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_conf.py
-- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_conf_analyze.py
-- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_opta_ka.py
-- CDD-ORAN@0c89106:scratchpad/e6_dev/e6p_opta_kb_analyze.py
+  path: study2/PROTOCOL.md
+  sha256: 71e57ae93b2ee79bcbe5d76d645189a988ebbd15d96c3b6a83da0806ca5adc5f
 seeds:
 - block: e6p_confounded_episodes
   range:
@@ -33,7 +28,7 @@ stages:
     - disc
     - placebo
   inputs:
-  - protocols/study2/E6P_CONFOUNDED_PROTOCOL.md
+  - protocols/study2/PROTOCOL.md
   outputs:
   - study2_raw/e6p-conf-dev-2-a
   - study2_raw/e6p-conf-disc-1-a
@@ -48,7 +43,7 @@ stages:
     study: 2
     stage: gt
   inputs:
-  - protocols/study2/E6P_CONFOUNDED_PROTOCOL.md
+  - protocols/study2/PROTOCOL.md
   outputs:
   - study2_raw/e6p-conf-gt-1-a
   - study2_raw/e6p-conf-gt-1-b
@@ -74,7 +69,7 @@ stages:
     study: 2
     stage: eval
   inputs:
-  - artifacts/E6P_CONF_MAPS.json
+  - artifacts/study2_maps.json
   outputs:
   - study2_3_decision/runs/e6p-conf-eval-1
   - study2_3_decision/runs/e6p-conf-evalan-1
@@ -82,20 +77,17 @@ stages:
     cpu_h: 58.74
     basis: M
 frozen_inputs:
-- path: artifacts/E6P_CONF_MAPS.json
-  sha256: 6c82357b913d5ee11d501ff1209ec5e2068732e85181dcd27a5216109ff8940a
-- path: artifacts/E6P_PMRT_V4.json
-  sha256: 9991c390df3a53ef12b553990da52c6adab25d4087bb029f1427e20a898e6a91
+- path: artifacts/study2_maps.json
+  sha256: c3c69db6601da7d8773d6c6f7a359007e419f4f8776898cf2e7d251a8c1e84a1
+- path: artifacts/study1_pmrt.json
+  sha256: 6f8e543145ad0e76afca653b17c4ea13b010c70d6b3134b109cd45fa0bcc99eb
 records:
 - set: study2_raw
   manifest: manifests/study2_raw.sha256
-  zenodo_doi: null
 - set: study2_3_decision
   manifest: manifests/study2_3_decision.sha256
-  zenodo_doi: null
 - set: system_artifacts
   manifest: manifests/system_artifacts.sha256
-  zenodo_doi: null
 tiers:
   t0: recompute the discovery analysis and the evaluation criteria from the stored jobs (bytes)
   t1: null

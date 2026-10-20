@@ -25,7 +25,7 @@ from typing import Any
 import numpy as np
 
 from oran_causal.analysis.posthoc.common import ci_close
-from oran_causal.analysis.posthoc.paths import ARTIFACTS, RECORDS, write_text
+from oran_causal.analysis.posthoc.paths import ARTIFACTS, PROTOCOL_NAME, RECORDS, write_text
 from oran_causal.analysis.system import stats, study2, study3
 
 GUARDS = ("svr", "nonprot_embb_viol", "ll_viol", "rlf")
@@ -72,7 +72,7 @@ QUOTED = [
     ("CS:GT", "retention", 1.294, 3),
     ("noarb", "V", 175.30, 2),
 ]
-DECLARED = "scratchpad/xmethod/EXTRAS_PROTOCOL.md amendment 2026-10-11 X9"
+DECLARED = f"{PROTOCOL_NAME} amendment 2026-10-11 X9"
 CSV_COLUMNS = (
     "study",
     "arm",
@@ -223,7 +223,7 @@ def study3_block(records: Path, artifacts: Path, x4_tables: Mapping[str, Any]) -
     """The Study 3 block of the table."""
     files = eval_files(records, "e6p-cs-eval-1")
     R, _ = stats.load_jobs(files, study3.job_filter("eval"))
-    art = json.loads((artifacts / "E6P_CERTSAFE.json").read_text(encoding="utf-8"))
+    art = json.loads((artifacts / "study3_certsafe.json").read_text(encoding="utf-8"))
     stats.alias_fill(R, art["alias_of"])
     frozen = json.loads(
         (records / "system_artifacts" / "decision" / "cs_eval.json").read_text(encoding="utf-8")
@@ -271,7 +271,7 @@ def study3_of(
 def study2_block(records: Path, artifacts: Path) -> dict[str, Any]:
     """The Study 2 block of the table."""
     files = eval_files(records, "e6p-conf-eval-1")
-    art = json.loads((artifacts / "E6P_CONF_MAPS.json").read_text(encoding="utf-8"))
+    art = json.loads((artifacts / "study2_maps.json").read_text(encoding="utf-8"))
     R, _ = stats.load_jobs(files, study2.EVAL_FILTER)
     stats.alias_fill(R, art["alias_of"])
     frozen = json.loads(

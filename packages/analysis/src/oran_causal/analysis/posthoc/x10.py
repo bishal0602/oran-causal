@@ -24,7 +24,7 @@ from typing import Any
 
 import numpy as np
 
-from oran_causal.analysis.posthoc.paths import ARTIFACTS, RECORDS, write_text
+from oran_causal.analysis.posthoc.paths import ARTIFACTS, PROTOCOL_NAME, RECORDS, write_text
 from oran_causal.analysis.posthoc.refs import RefereeTools
 from oran_causal.analysis.posthoc.x9 import REF, eval_files, identity
 from oran_causal.analysis.system import stats, study3
@@ -34,7 +34,7 @@ ARM = "CS:PMRT"
 RTOL = 1e-9
 FD_RTOL = 1e-6
 STATUS = "POST HOC, DESCRIPTIVE"
-DECLARED_BY = "scratchpad/xmethod/EXTRAS_PROTOCOL.md amendment 2026-10-11 X10"
+DECLARED_BY = f"{PROTOCOL_NAME} amendment 2026-10-11 X10"
 COLUMNS = (
     "class",
     "rel",
@@ -222,7 +222,7 @@ def analyse(
         ReproductionError: If the frozen certification outcome is not reproduced.
     """
     sysd = records / "system_artifacts"
-    art = json.loads((artifacts / "E6P_CERTSAFE.json").read_text(encoding="utf-8"))
+    art = json.loads((artifacts / "study3_certsafe.json").read_text(encoding="utf-8"))
     fd = json.loads((sysd / "report_2026-10-02" / "figures_data.json").read_text(encoding="utf-8"))[
         "certsafe"
     ]

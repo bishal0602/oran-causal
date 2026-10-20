@@ -2,7 +2,7 @@
 
 Plant, referee constants and arm runner are Study 2's; the maps are Study 2's frozen maps
 artifact (nothing is re-discovered). Stages and seeds (block 191000-191999, protocol
-`E6P_CERTSAFE_PROTOCOL.md`):
+`protocols/study3/PROTOCOL.md`):
 
 | stage | seeds | jobs |
 |---|---|---|
@@ -23,8 +23,8 @@ from oran_causal.experiments.paths import ARTIFACTS
 from oran_causal.experiments.system import study2
 from oran_causal.experiments.system.common import (
     CERTSAFE_CODE,
-    LEGACY_SHA256,
     MAPGATE,
+    RECORDED_CODE_SHA256,
     Block,
     FrozenDoc,
     Job,
@@ -51,13 +51,13 @@ PRIMARY_ARM = astudy3.PRIMARY_ARM
 ALL_ARMS = astudy3.ALL_ARMS
 PROTOCOL = protocol_doc(
     "study3",
-    "E6P_CERTSAFE_PROTOCOL.md",
-    "cdd2c7e63fe3b81efe07c6cedea331b81124eca078f056e87f3008e6d2850b4a",
+    "PROTOCOL.md",
+    "cb15cab229b2b3e1196f8dc977d2869bce085fbe4ca9e1dbac86506ad1998281",
 )
 CERTSAFE = FrozenDoc(
-    "docs/benchmark/artifacts/E6P_CERTSAFE.json",
-    ARTIFACTS / "E6P_CERTSAFE.json",
-    "303ac557be16ecd49723ee92850fde0e4e6d8c4c1cecde62aa0d0c48ec2da210",
+    "artifacts/study3_certsafe.json",
+    ARTIFACTS / "study3_certsafe.json",
+    "935c00030e325b186b6bae584ea66906487b4fb7e045253093e86d86d9b3cc36",
     needs_line=False,
 )
 
@@ -213,8 +213,8 @@ def run(
         part,
         smoke,
         cs_stage=stage,
-        mapgate_sha256=LEGACY_SHA256[MAPGATE],
-        certsafe_sha256=LEGACY_SHA256[CERTSAFE_CODE],
+        mapgate_sha256=RECORDED_CODE_SHA256[MAPGATE],
+        certsafe_sha256=RECORDED_CODE_SHA256[CERTSAFE_CODE],
         schema=study2.SCHEMA_EVAL,
         protocol=PROTOCOL.name,
         **st,

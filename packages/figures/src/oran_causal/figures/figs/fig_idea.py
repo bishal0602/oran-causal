@@ -10,9 +10,9 @@ PMRT statistic (arm loadsp_c, the primary) for sleep -> neighbour protected-slic
 B = 9999 redraws of the logged decisions on the pooled randomised logs (600 episodes) and on the
 placebo logs (40 episodes), observed value as a bold line labelled with its z, one-sided p-value
 (the declaration p_d, d = +1) in the panel subtitle. The redraws come from
-figures/data/fig_idea_redraws.json, written by figures/scripts/fig_idea_redraws.py from the stored
-evaluation logs with the frozen code; the build re-derives the observed z and the p-values from
-them and asserts both against the stored analyzer output (v4_analysis.json).
+figures/data/fig_idea_redraws.json, computed from the stored evaluation logs; the build
+re-derives the observed z and the p-values from them and asserts both against the stored analyzer
+output (v4_analysis.json).
 """
 
 import json

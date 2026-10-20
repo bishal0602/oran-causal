@@ -1,11 +1,11 @@
-"""Study 1, the small-subsample comparison (ESM; [G5 2026-10-12, P3] split from
-fig_study1_discovery, whose panels (d, e) it was: restructure plan, "Fig 4d-e to the ESM"). PMRT
+"""Study 1, the small-subsample comparison (ESM; the companion of
+fig_study1_discovery). PMRT
 minus each per-subsample baseline (correlation, Granger, Granger + BY) on the 10 subsamples of 60
 episodes, where criterion P2 failed against Granger + BY: (a) indirect F1 with the P2 win counts (FD
 v4.P2), (b) overall precision (FD v4.per_slice). PMRT blue dots, filled where PMRT >= baseline. Tied
 values on a row are stacked 2.3 pt apart (a display offset; the caption states it). The win counts
 are asserted against the stored P2 wins (_study1.load). The artifacts call a subsample a "slice";
-the figure says "subsample" (restructure plan, terms: "slice" means the network slice only).
+the figure says "subsample" ("slice" means the network slice only).
 """
 
 import matplotlib.pyplot as plt
@@ -17,7 +17,7 @@ from oran_causal.figures import palette as P
 from oran_causal.figures import plots
 from oran_causal.figures import style as S
 from oran_causal.figures.data import source_note
-from oran_causal.figures.figs import _s12a as H
+from oran_causal.figures.figs import _method_rows as H
 from oran_causal.figures.figs import _studies as ST
 from oran_causal.figures.figs import _study1 as D
 from oran_causal.figures.registry import FigSpec
@@ -122,7 +122,7 @@ def subsample_panels(axs, d):
     L.tidy_grid([axs])
     L.panel_header(axs[0], "a", "Indirect F1 per subsample")
     L.panel_header(axs[1], "b", "Overall precision per subsample")
-    for ax in axs:  # [G5] tags and the inner letter stay out of the layout
+    for ax in axs:  # tags and the inner letter stay out of the layout
         for t in ax.texts:
             if t.get_gid() == "panel-tag" or (ax is axs[1] and t.get_gid() == "panel-letter"):
                 t.set_in_layout(False)

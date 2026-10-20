@@ -6,7 +6,7 @@ table, PMRT last. The placebo-calibrated threshold is set on the same placebo lo
 placebo-edge count, so that count is in-sample. Not a figure (no SPEC): run ``uv run python -m
 oran_causal.figures.figs.tab_study2_threshold``.
 
-Source: extras/revision/x12_threshold.json (X12, EXTRAS_PROTOCOL amendment 2026-10-11; the script
+Source: posthoc_x9_x16/revision/x12_threshold.json (X12, posthoc protocol amendment 2026-10-11; the script
 reproduced conf_disc_conf.json edge_quality and FD option_a.map_quality for all 14 maps before
 writing), keys ``repro.ok``, ``gt.n_true`` and ``rows.<i>.{arm, method, variant, edges, true_right,
 true_wrong, null, indet, placebo_edges, recall_true_right}``. Cross-checked against FD
@@ -36,7 +36,7 @@ COLS = [
 CSV_ONLY = ("recall_true_right",)
 FD_KEYS = ("edges", "true_right", "true_wrong", "null", "indet", "placebo_edges")
 LAST = ["MG:granger_by", "MG:PMRT"]  # no tuned threshold; PMRT is the last row
-MAX_FP = 1  # the @plc rule's placebo budget (E6P_CONFOUNDED_PROTOCOL s.4.2)
+MAX_FP = 1  # the @plc rule's placebo budget (protocols/study2/PROTOCOL.md s.4.2)
 
 
 def check(t: dict):

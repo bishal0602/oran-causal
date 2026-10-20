@@ -1,7 +1,7 @@
 """The declared X2, X3, X5 and X6 campaign specs, rebuilt from the frozen EVAL spec.
 
 Arms are copied from `specs/eval/full.json` (ref, config, declare); the experiment designs are those
-of `protocols/posthoc/EXTRAS_PROTOCOL.md`. The frozen copies live in `specs/extras/`; `diff_frozen`
+of `protocols/posthoc/PROTOCOL.md`. The frozen copies live in `specs/posthoc/`; `diff_frozen`
 checks the rebuilt specs against them.
 
     python -m oran_causal.experiments.posthoc.extras_specs check [--dir DIR]
@@ -21,9 +21,9 @@ from oran_causal.experiments.paths import SPECS
 
 type Spec = dict[str, Any]
 
-PROTOCOL_REL = "scratchpad/xmethod/EXTRAS_PROTOCOL.md"
+PROTOCOL_REL = "protocols/posthoc/PROTOCOL.md"
 FROZEN_SPEC = SPECS / "eval" / "full.json"
-FROZEN_DIR = SPECS / "extras"
+FROZEN_DIR = SPECS / "posthoc"
 KAPPA = 0.25
 X2_TUNE = (EXTRAS_SEEDS.start, EXTRAS_SEEDS.start + 19)
 X2_MEASURE = (EXTRAS_SEEDS.start + 20, EXTRAS_SEEDS.start + 59)
@@ -250,7 +250,7 @@ def build_cost_agg(specs: Mapping[str, Spec], dev: Mapping[str, Any]) -> Spec:
                 arm, _, rest = k.partition("|")
                 if arm == base:
                     out[f"{a}|{rest}"] = v
-    names = ", ".join(f"scratchpad/xmethod/results/dev/{n}/agg.json" for n in DEV_AGGS)
+    names = ", ".join(f"data/records/study4_dev/dev/{n}/agg.json" for n in DEV_AGGS)
     return {
         "about": f"R-60 extras DEV cost table: 'cost' of {names}; told arms = their base arm",
         "cost": dict(sorted(out.items())),

@@ -1,0 +1,86 @@
+sets:
+  - name: study1_raw
+    description: "Study 1 randomised logs: eval, placebo, GT, dev episodes; v4 analysis jobs"
+    manifest: manifests/study1_raw.sha256
+    files: 958
+    bytes: 752158165
+  - name: study1_train
+    description: "Training and bench episodes for the frozen PMRT v4 artifact"
+    manifest: manifests/study1_train.sha256
+    files: 963
+    bytes: 1869240588
+  - name: study2_raw
+    description: "Study 2 confounded logs: discovery, placebo, GT, dev episodes; discovery analysis job"
+    manifest: manifests/study2_raw.sha256
+    files: 1012
+    bytes: 735880597
+  - name: study2_3_decision
+    description: "Studies 2-3 referee evaluation, analysis, calibration and bounds jobs"
+    manifest: manifests/study2_3_decision.sha256
+    files: 1279
+    bytes: 74266995
+  - name: study4_eval
+    description: "Study 4 EVAL records, report, tables"
+    manifest: manifests/study4_eval.sha256
+    files: 15
+    bytes: 115403836
+  - name: study4_dev
+    description: "Study 4 DEV records and calibration inputs (F_max, kappa, estimand, equivalence checks)"
+    manifest: manifests/study4_dev.sha256
+    files: 109
+    bytes: 149958034
+  - name: bridging
+    description: "Bridging analysis (Exp B) records and tables"
+    manifest: manifests/bridging.sha256
+    files: 15
+    bytes: 2587826
+  - name: posthoc_x1
+    description: "X1 runtime records and calibration"
+    manifest: manifests/posthoc_x1.sha256
+    files: 51
+    bytes: 11171465
+  - name: posthoc_x2_x3
+    description: "X2 dose-response and X3 misspecification records and reports"
+    manifest: manifests/posthoc_x2_x3.sha256
+    files: 19
+    bytes: 21204891
+  - name: posthoc_x4
+    description: "X4 random-rejection referee records"
+    manifest: manifests/posthoc_x4.sha256
+    files: 10
+    bytes: 605049
+  - name: posthoc_x5_x6
+    description: "X5 / X6 diagnostics records and tables"
+    manifest: manifests/posthoc_x5_x6.sha256
+    files: 13
+    bytes: 9813257
+  - name: posthoc_x7
+    description: "X7 subset-equivalence records"
+    manifest: manifests/posthoc_x7.sha256
+    files: 16
+    bytes: 3584893
+  - name: posthoc_x8
+    description: "X8 placebo tail check records"
+    manifest: manifests/posthoc_x8.sha256
+    files: 15
+    bytes: 25664184
+  - name: posthoc_x9_x16
+    description: "X9-X16 revision outputs"
+    manifest: manifests/posthoc_x9_x16.sha256
+    files: 21
+    bytes: 1890462
+  - name: system_artifacts
+    description: "System-simulator decision outputs and figures_data.json"
+    manifest: manifests/system_artifacts.sha256
+    files: 71
+    bytes: 4377826
+  - name: freeze
+    description: "Study 4 freeze manifests and notes"
+    manifest: manifests/freeze.sha256
+    files: 9
+    bytes: 92480
+  - name: shap_rerun
+    description: "shap_gbdt rerun with TreeSHAP: Study 1-3 maps, bounds, referee evaluation and reports"
+    manifest: manifests/shap_rerun.sha256
+    files: 248
+    bytes: 18732057

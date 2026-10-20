@@ -109,8 +109,7 @@ def test_runner_kappa_in_keys_configs_and_records(tmp_path):
     assert recs["dummy|E1|R1|k0.3|n100|s3000001"]["job"]["kappa"] == 0.3
 
 
-def test_legacy_ref_and_registry_name_resolve_to_the_dummy_arm():
-    assert isinstance(runner.load_method("cdd_oran.xmethod.runner:DummyMethod"), DummyMethod)
+def test_registry_name_resolves_to_the_dummy_arm():
     assert isinstance(runner.load_method("dummy"), DummyMethod)
     instance = DummyMethod()
     assert runner.load_method("x", resolve=lambda ref: instance) is instance

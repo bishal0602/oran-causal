@@ -5,7 +5,7 @@ Clopper-Pearson CIs, one-sided exact binomial p vs .05 and Holm-adjusted p; (b) 
 confounded-null rate of PMRT-Lin and PMRT-Lin with R3 covariates in the eight cells. Not a figure
 (no SPEC): run ``uv run python -m oran_causal.figures.figs.tab_appC_x5``.
 
-Source: extras/diag/diag_tables.json (DIAG s.X5): ``x5.primary[*].{lam, n, n_, hits, rate, rate_key,
+Source: posthoc_x5_x6/diag/diag_tables.json (DIAG s.X5): ``x5.primary[*].{lam, n, n_, hits, rate, rate_key,
 cp_ci, p_binom_gt05, p_holm, outcome}`` and ``x5.cells[*].{arm, spec, lam, n, seeds, plac, conf}``
 with each rate's ``{rate, hits, n, cp_ci, r30}`` (r30 = the cell-validity label, shown with the
 Appendix A marks). Rows only select stored values; the primary rates are checked against the

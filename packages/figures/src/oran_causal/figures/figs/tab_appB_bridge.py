@@ -4,10 +4,10 @@ GT-TRUE edges, the GT-NULL rejection rate, the placebo-column rejection rate (60
 the rejection rate on the placebo logs; the frozen PMRT row is the reference. Not a figure (no
 SPEC): run ``uv run python -m oran_causal.figures.figs.tab_appB_bridge``.
 
-Source: exp_b_tables.json (EXP_B s.9), keys ``cells["<arm>|<slice>|<rule>"]`` (rec / null / plac /
+Source: exp_b_tables.json (bridging protocol s.9), keys ``cells["<arm>|<slice>|<rule>"]`` (rec / null / plac /
 plac_log rate and n_datasets) and ``v4_frozen_reference`` (recall and null_rate per slice; placebo
-logs = its placebo null_rate). The rule is each method's primary declaration rule as in the EXP_B
-s.9 headline: BY (q .05) for the p-value methods, the leave-one-slice-out placebo threshold tau for
+logs = its placebo null_rate). The rule is each method's primary declaration rule as in the bridging
+protocol's s.9 headline: BY (q .05) for the p-value methods, the leave-one-slice-out placebo threshold tau for
 the threshold-only methods (in-sample for pooled and placebo logs). Allowed re-aggregation: the
 coverage column sums ``n_datasets`` over the four measure slice kinds (of 72). Arms without a paper
 name (pc_eq, mscr_eq) are left out; PC is the paper's PC (native covariates).
@@ -78,7 +78,7 @@ def latex(rs: list[dict]) -> str:
         NAME,
         SOURCES,
         [
-            "Bridging analysis on the simulator logs of Studies 1-3: post hoc, descriptive, no verdict (EXP_B s.9).",
+            "Bridging analysis on the simulator logs of Studies 1-3: post hoc, descriptive, no verdict.",
             "Rule: BY = Benjamini-Yekutieli at q .05; Plac. = placebo-calibrated threshold (leave one slice out; in-sample"
             " for pooled and the placebo logs). Rates are shares of hypotheses; slices 60 / 120 / 300 episodes and"
             " pooled (all 600). GT-NULL is an equivalence label, not a sharp null. Data sets = measure data sets with a"

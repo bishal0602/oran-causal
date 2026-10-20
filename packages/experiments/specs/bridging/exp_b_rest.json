@@ -1,0 +1,6 @@
+{
+ "base": "packages/experiments/specs/bridging/exp_b.json",
+ "name": "exp_b_rest",
+ "note": "every unit of exp_b except the pilot slices",
+ "exclude_slices": ["s60_0", "placebo"]
+}

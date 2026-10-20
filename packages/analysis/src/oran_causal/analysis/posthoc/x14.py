@@ -29,7 +29,7 @@ from typing import Any
 import numpy as np
 
 from oran_causal.analysis.posthoc import x11
-from oran_causal.analysis.posthoc.paths import PRIMARY, RECORDS, write_text
+from oran_causal.analysis.posthoc.paths import PRIMARY, PROTOCOL_BASENAME, RECORDS, write_text
 from oran_causal.sim.system.decision import gt as GT
 from oran_causal.sim.system.decision.vocab import HYPOTHESES
 
@@ -45,7 +45,7 @@ STORED_KEYS = {
     "n_declared": "n_declared",
     "far_declared": "far_declared",
 }
-DECLARED = "EXTRAS_PROTOCOL.md amendment 2026-10-11 X14"
+DECLARED = f"{PROTOCOL_BASENAME} amendment 2026-10-11 X14"
 Analysis = tuple[str, str, str, str, x11.Decl, Mapping[str, Any]]
 
 

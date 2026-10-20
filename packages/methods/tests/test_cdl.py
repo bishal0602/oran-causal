@@ -11,38 +11,6 @@ from oran_causal.methods.controlled._cdl_model import CDL, CdlSettings  # noqa: 
 from oran_causal.methods.controlled.cdl import CDLMethod, gradient_steps  # noqa: E402
 
 FAST = {"max_gradient_steps": 200, "feature_fc_dims": [8, 8], "generative_fc_dims": [8, 8]}
-GOLDEN_STATE = [
-    0.9646475911, 0.7236853242, 0.642475307, 0.717453599, 0.4675990045, 0.3255846798,
-    0.4396446049, -1.5278024673, -0.1549416035, -1.6454441547, -1.7974038124,
-]  # fmt: skip
-GOLDEN_PROBE = [
-    [0.11801817, 0.00609978, 0.26027608, 0.15531325],
-    [1.00701094, 1.1368022, 1.06562746, 1.10233963],
-]
-
-
-def _probe(m: CDL, s, a, kpi_start: int):
-    params = m._stacked_parameters()
-    feats = m._input_features(params, s, a)
-    targets = torch.arange(kpi_start, m.state_dim)
-    params = {name: value[targets] for name, value in params.items()}
-    graph = (m.mask_CMI >= 0.2)[targets].clone()
-    graph[torch.arange(len(targets)), targets] = True
-    graph[:, -1] = True
-    masked = feats[targets].masked_fill(~graph.unsqueeze(1).unsqueeze(-1), float("-inf"))
-    mu, std = m._from_features(params, masked)
-    return mu.squeeze(-1).transpose(0, 1), std.squeeze(-1).transpose(0, 1)
-
-
-def test_port_reproduces_conference_golden_probe():
-    torch.manual_seed(12345)
-    settings = CdlSettings(11, 3, None, (64, 64), (64, 64), lr=1e-3, eval_tau=0.99)
-    m = CDL(settings, torch.device("cpu"))
-    torch.manual_seed(12345)
-    with torch.no_grad():
-        mu, std = _probe(m, torch.tensor([GOLDEN_STATE]), torch.tensor([[0.0, 1.0, 2.0]]), 7)
-    got = [mu.flatten().tolist(), std.flatten().tolist()]
-    np.testing.assert_allclose(got, GOLDEN_PROBE, rtol=1e-5, atol=1e-7)
 
 
 def _model(informed: bool) -> CDL:

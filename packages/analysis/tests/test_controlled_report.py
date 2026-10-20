@@ -27,7 +27,6 @@ from oran_causal.analysis.controlled.tables import clean
 from oran_causal.analysis.records import file_sha256, load_many
 
 DATA = Path(__file__).parent / "data"
-QUIET = ChunkOptions(log=lambda _: None)
 
 
 def canonical(x: Any) -> str:
@@ -317,7 +316,7 @@ def test_eval_mode_refuses_dev_seeds(synth: Any, tmp_path: Path) -> None:
 
 
 def stamped_study(synth: Any, tmp_path: Path) -> tuple[dict[str, Any], Path, Path, Path]:
-    protocol = tmp_path / "PROTOCOL_A.md"
+    protocol = tmp_path / "PROTOCOL.md"
     protocol.write_text("# P\n\nFROZEN: yes (test)\n", encoding="utf-8")
     sha = file_sha256(protocol)
     spec = {

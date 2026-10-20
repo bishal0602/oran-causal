@@ -4,11 +4,8 @@ claims:
 - EMP-RUNTIME
 - PRO-POSTHOC
 protocol:
-  path: posthoc/EXTRAS_PROTOCOL.md
-  sha256: 292a4f6b52783ad170da39bc5f7476d2194fd1d6a25fa20e78e5026818a27ccb
-code_origin:
-- CDD-ORAN@0c89106:scratchpad/xmethod/exp_c_timing.py
-- CDD-ORAN@0c89106:scratchpad/xmethod/exp_c_runtime.py
+  path: posthoc/PROTOCOL.md
+  sha256: 8270cdc0024f718f37ca7c25ddb9c7279d3ff1b156d66d53780a9304f38772ab
 seeds:
 - block: XMETHOD_DEV
   range:
@@ -26,7 +23,7 @@ stages:
 - name: timing
   driver: oran_causal.experiments.posthoc.x1_timing:run
   inputs:
-  - specs/exp_c/timing.json
+  - specs/posthoc/timing.json
   outputs:
   - posthoc_x1/exp_c/paper
   - posthoc_x1/exp_c/calib
@@ -36,7 +33,7 @@ stages:
 - name: runtime_table
   driver: oran_causal.analysis.posthoc.x1_runtime:build
   inputs:
-  - specs/exp_c/timing.json
+  - specs/posthoc/timing.json
   - posthoc_x1/exp_c
   outputs:
   - runtime table of the paper
@@ -44,12 +41,11 @@ stages:
     cpu_h: 0.0
     basis: M
 frozen_inputs:
-- path: specs/exp_c/timing.json
-  sha256: ce7cebd4c1ec2253a5f37e8669ff90f3ab3fd7173bcacb22fe2be384da631a95
+- path: specs/posthoc/timing.json
+  sha256: a9d037b20f4c9e5d315681b25ad0a6c183294ef717871415574d8f70cc064a2d
 records:
 - set: posthoc_x1
   manifest: manifests/posthoc_x1.sha256
-  zenodo_doi: null
 tiers:
   t0: rebuild the runtime table from the stored timing records
   t1: null

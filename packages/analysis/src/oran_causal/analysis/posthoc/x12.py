@@ -22,12 +22,12 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
-from oran_causal.analysis.posthoc.paths import RECORDS, write_text
+from oran_causal.analysis.posthoc.paths import PROTOCOL_NAME, RECORDS, write_text
 from oran_causal.analysis.posthoc.refs import RefereeTools
 
 METHODS = ("corr", "granger", "shap_gbdt", "int", "qacm", "two_tower")
 KEYS = ("edges", "true_right", "true_wrong", "null", "indet", "placebo_edges")
-DECLARED = "scratchpad/xmethod/EXTRAS_PROTOCOL.md amendment 2026-10-11 X12"
+DECLARED = f"{PROTOCOL_NAME} amendment 2026-10-11 X12"
 COLUMNS = (
     "arm",
     "method",

@@ -1,4 +1,4 @@
-"""Environment truth-graph panels (oran_causal.figures.envgraph, DESIGN s.8 [NEW 2026-10-05]): node
+"""Environment truth-graph panels (oran_causal.figures.envgraph, DESIGN s.8): node
 order and crossing counts.
 """
 

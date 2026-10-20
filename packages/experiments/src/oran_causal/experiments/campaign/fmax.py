@@ -1,4 +1,4 @@
-"""F_max calibration of the Study 4 validity rule (PROTOCOL_A section 10, ruling R-30).
+"""F_max calibration of the Study 4 validity rule (Study 4 protocol section 10, ruling R-30).
 
 `dependence`: on DEV seeds 3_000_100-3_000_199 (n 1000, kappa .25) every primary null
 candidate is tested with a fast partial-correlation z given the equal-information covariates;

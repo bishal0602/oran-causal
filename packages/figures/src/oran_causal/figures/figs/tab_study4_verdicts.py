@@ -2,7 +2,7 @@
 plus a csv. Not a figure (no SPEC): run ``uv run python -m oran_causal.figures.figs.tab_study4_verdicts``.
 
 Each cell counts the claim's cells in that environment as the report does (REPORT V1 / V4: INVALID / VALID /
-counted; the rest are INCONCLUSIVE), kappa .25, every n. Cell sets per claim (PROTOCOL_A s.10, REPORT s.2-5):
+counted; the rest are INCONCLUSIVE), kappa .25, every n. Cell sets per claim (protocol s.10, REPORT s.2-5):
   C1   the design-blind set D (report.json V4_verdicts.C1.D), R2 cells (C1 expects INVALID)
   C2a  PMRT-GBM, R1 + R2 cells
   C2b  the C2b members (design-adjusted partial correlation, Granger), R1 + R2 cells

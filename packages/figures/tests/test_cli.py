@@ -16,7 +16,6 @@ def test_list_names_every_figure(capsys):
     assert cli.main(["list"]) == 0
     listed = capsys.readouterr().out.splitlines()
     assert any(line.startswith("fig_method_pmrt") for line in listed)
-    assert any(line.startswith("specimen_bars") for line in listed)
 
 
 def test_unknown_figure_is_refused(capsys):
@@ -37,14 +36,9 @@ def test_preview_only_skips_the_pdf(out_dir):
     assert not (out_dir / "figures").exists()
 
 
-def test_specimens_never_reach_the_journal(out_dir):
-    assert cli.main(["build", "specimen_bars", "--out", str(out_dir)]) == 0
-    assert not (out_dir / "figures").exists()
-
-
 def test_pdf_is_one_arial_page_of_the_declared_width(out_dir):
-    cli.main(["build", "fig_system_e6p", "--out", str(out_dir)])
-    data = (out_dir / "figures" / "fig_system_e6p.pdf").read_bytes()
+    cli.main(["build", "fig_system", "--out", str(out_dir)])
+    data = (out_dir / "figures" / "fig_system.pdf").read_bytes()
     assert len(re.findall(rb"/Type\s*/Page\b", data)) == 1
     names = {
         re.sub(r"^[A-Z]{6}\+", "", m.decode())
@@ -57,6 +51,6 @@ def test_pdf_is_one_arial_page_of_the_declared_width(out_dir):
 
 
 def test_pdf_layout_reads_the_same_page(build_figure):
-    layout = pdf_layout(build_figure("fig_system_e6p"))
+    layout = pdf_layout(build_figure("fig_system"))
     assert layout["pages"] == 1
     assert all(f.startswith("Arial") for f in layout["fonts"])

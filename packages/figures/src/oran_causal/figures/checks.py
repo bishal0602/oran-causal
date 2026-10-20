@@ -1,12 +1,11 @@
 """Layout checks run on every registered figure (tests/test_layout.py). Each returns a list of
 problems (strings).
 
-The classes they catch come from the 2026-10-05 figure review: overlapping text (letters, tags,
-labels, legends), legends below or inside the axes, text intruding into another panel, labels
-floating far from their data anchor, isolated markers from NaN-masked lines, coincident markers of
-different series (a hidden series), bare tick marks on unlabeled shared axes, repeated tick labels
-across a row, cramped facets, and artists outside the canvas. [2026-10-06] Two more from the Q8
-check: markers half clipped at the axes edge, and INVALID crosses that touch.
+The classes they catch: overlapping text (letters, tags, labels, legends), legends below or
+inside the axes, text intruding into another panel, labels floating far from their data anchor,
+isolated markers from NaN-masked lines, coincident markers of different series (a hidden series),
+bare tick marks on unlabeled shared axes, repeated tick labels across a row, cramped facets,
+artists outside the canvas, markers half clipped at the axes edge, and INVALID crosses that touch.
 """
 
 from itertools import combinations

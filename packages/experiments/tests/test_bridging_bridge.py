@@ -156,17 +156,13 @@ def test_end_to_end(tmp_path: Path) -> None:
         "pcorr_eq": ("pcorr", {"arm": "eq"}),
         "pmrt_eq": ("pmrt_core", {"covariates": "eq"}),
     }
-    refs = {"corr": "Corr", "pcorr": "PCorrMethod", "pmrt_core": "PmrtCore"}
     spec: dict[str, Any] = {
         "name": "t",
         "budget_cpu_s": 600,
         "slices": ["60", "placebo"],
         "gt": str(tmp_path / "gt.json"),
         "counts": str(tmp_path / "counts.json"),
-        "arms": {
-            a: {"ref": f"cdd_oran.xmethod.methods.{m}:{refs[m]}", "config": c, "declare": "by"}
-            for a, (m, c) in arms.items()
-        },
+        "arms": {a: {"ref": m, "config": c, "declare": "by"} for a, (m, c) in arms.items()},
     }
     c = R.counts_from_tables(spec, tabs)
     Path(spec["counts"]).write_text(json.dumps({"counts": c}), encoding="utf-8")

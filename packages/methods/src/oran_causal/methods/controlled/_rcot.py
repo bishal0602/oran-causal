@@ -1,9 +1,7 @@
-"""RCoT numerics of the frozen E2 RCoT discovery (random Fourier features, statistic, nulls).
+"""RCoT numerics of the E2 RCoT discovery (random Fourier features, statistic, nulls).
 
-Source: CDD-ORAN@0c89106 `cdd_oran/e2slice/discovery_rcot.py` (lifted there from the
-calibration study) and `discovery_rcot_v2.py` (`block_perm_reps` = 299). The statistic is
-T = n ||Cxy||_F^2 of the RFF residuals of candidate and target on Z (Strobl, Zhang and
-Visweswaran 2019, RCoT).
+The statistic is T = n ||Cxy||_F^2 of the RFF residuals of candidate and target on Z (Strobl,
+Zhang and Visweswaran 2019, RCoT); the block-permutation null uses `block_perm_reps` = 299.
 """
 
 import dataclasses

@@ -143,7 +143,7 @@ def pmrt_placebo(ctx: Context) -> list[Check]:
         find_records([str(src)]), "placebo", ctx.item_dir("t1") / "cache", "placebo", 1
     )
     pool = pmrt.load_pmrt_pool([str(p) for p in cache], stages=["placebo"])
-    params, priors = load_artifact(ARTIFACTS / "E6P_PMRT_V4.json")
+    params, priors = load_artifact(ARTIFACTS / "study1_pmrt.json")
     run = pmrt.run_integrated(
         pmrt.pmrt_data(pool), params, pmrt_config(params, PMRT_B), SPLIT["placebo"]
     )

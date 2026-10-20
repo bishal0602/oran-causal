@@ -37,6 +37,5 @@ Tests that back a paper claim use `@pytest.mark.claim("<ID>")`. The registry is 
 
 ## Commits
 
-- Subject under 70 characters (100 at most if needed). No body unless citing a migration source.
+- Subject under 70 characters (100 at most if needed). No body.
 - No `Co-Authored-By` or other attribution trailer.
-- Cite the CDD-ORAN source (`CDD-ORAN@<sha>:<path>`) in the body of migration commits.

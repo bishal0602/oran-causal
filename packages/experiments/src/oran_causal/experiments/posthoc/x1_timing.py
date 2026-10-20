@@ -48,25 +48,25 @@ from oran_causal.experiments.paths import SPECS
 from oran_causal.sim.controlled.datasets.generate import generate_dataset
 
 VERSION = "xm-exp-c-timing/1"
-SPEC_PATH = SPECS / "exp_c" / "timing.json"
+SPEC_PATH = SPECS / "posthoc" / "timing.json"
 EVAL_SPEC_PATH = SPECS / "eval" / "full.json"
-EVAL_SPEC_LABEL = "scratchpad/xmethod/specs/eval/full.json"
+EVAL_SPEC_LABEL = "specs/eval/full.json"
 CALIB_ANCHORS = ("pcorr_eq", "rcot2_eq", "shap_dag", "pmrt_nl_eq", "cdl", "mscr_eq_min")
 DROPPED = ("pdcor", "cmi_knn")
 EXTRA_ARMS = {
     "pmrt_nl_eq": {
-        "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+        "ref": "pmrt_core",
         "config": {"covariates": "eq", "statistic": "gbm"},
-        "source": "xm/dev-runs specs/dev/pmrt_nl.json (R-42 / R-52 winner)",
+        "source": "specs/dev/pmrt_nl.json (R-42 / R-52 winner)",
     },
     "cdl": {
-        "ref": "cdd_oran.xmethod.methods.cdl:CDLMethod",
+        "ref": "cdl",
         "config": {"arm": "native"},
-        "source": "xm/dev-runs specs/dev/cdl.json (R-50)",
+        "source": "specs/dev/cdl.json (R-50)",
     },
 }
 CALIB_ONLY_ARMS = {
-    "mscr_eq_min": {"ref": "cdd_oran.xmethod.methods.mscr:MSCRMethod", "config": {"arm": "eq_min"}},
+    "mscr_eq_min": {"ref": "mscr", "config": {"arm": "eq_min"}},
 }
 MAX_N = {"mscr_eq": 1000, "mscr_native": 1000, "mscr_eq_min": 1000}
 PAPER_EXCLUDE = ("mscr_eq_min",)
@@ -144,8 +144,7 @@ def make_spec(
         "version": VERSION,
         "kappa": KAPPA,
         "seeds": SEEDS,
-        "source": f"arms from {eval_label} (feat/v2) minus {list(DROPPED)}, "
-        f"plus {sorted(EXTRA_ARMS)}",
+        "source": f"arms from {eval_label} minus {list(DROPPED)}, plus {sorted(EXTRA_ARMS)}",
         "arms": dict(sorted(arms.items())),
         "blocks": {
             "calib": {"arms": list(CALIB_ANCHORS), "ns": [500, 1000, 4000], "cell": ["E2", "R2"]},

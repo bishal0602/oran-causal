@@ -1,12 +1,10 @@
 """Harbor palette: the single source of color for every journal figure.
 
-[DECIDED 2026-10-08, user] Harbor's six entity hues are also the method palette: one fixed colour per method for
-the whole paper (methods.py), plus three Harbor tints for PMRT-Lin, QACM and INT. The muted method set (navy, clay,
-sand, sage) and the five hues added on 2026-10-06 (lavender, umber, sky, rose, aubergine) are retired.
+Harbor's six entity hues are also the method palette: one fixed colour per method for the whole paper
+(methods.py), plus three Harbor tints for PMRT-Lin, QACM and INT.
 - Methods and entities (xApps, KPIs, NCPs) share these hues but never share a figure (DESIGN s.12.2).
 - Heatmaps: SEQ for magnitudes, DIV for signed values (rates: centred at the nominal level).
-- [DECIDED 2026-10-18, user] Soft-modern redesign: the six hues and three tints were deepened to at least 3:1 on white
-  (DESIGN s.2); panels sit on the FIELD gray.
+- The six hues and three tints reach at least 3:1 on white (DESIGN s.2); panels sit on the FIELD gray.
 No colour may be defined anywhere else.
 """
 
@@ -24,13 +22,12 @@ ENTITIES = [
 ENTITY_MARKERS = ["o", "s", "^", "D", "v", "P"]
 BLUE, TERRACOTTA, TEAL, GOLD, PURPLE, GREEN = ENTITIES
 
-# --- methods [DECIDED 2026-10-08, user] -------------------------------------------------------------------------
+# --- methods ----------------------------------------------------------------------------------------------------
 HERO = BLUE  # PMRT / PMRT-GBM, and the hero component of a diagram
 PMRT_LIN = "#638DC8"  # lighter BLUE: PMRT-Lin (open marker) and PMRT-Lin, R3 covariates
 SLATE = "#6F8DB8"  # muted blue: QACM (Studies 1-3)
 LILAC = "#A07AB2"  # lighter PURPLE: INT (Studies 1-3)
 METHODS = [*ENTITIES, PMRT_LIN, SLATE, LILAC]
-METHOD_MARKERS = ["o", "s", "^", "D", "v", "P", "X", "h", "p"]
 
 # --- neutrals and special roles ----------------------------------------------------------------------------------
 INK = "#262B33"  # all text, CI whiskers, correct graph edges
@@ -44,7 +41,7 @@ WHITE = "#FFFFFF"
 FIELD = "#EFF1F4"  # panel background (facet field) and null map tiles
 LEGEND_FC, LEGEND_EC = "#F6F7F9", "#D5D9DF"  # legend box
 
-# --- semantic roles [2026-10-13, user: "proper use of the Harbor palette", figures were "bland and soulless"] -------
+# --- semantic roles ---------------------------------------------------------------------------------------------
 # Colour carries meaning paper-wide. Draw semantic artists with gid "sem:<role>" (e.g. "sem:good-zone").
 OURS = BLUE  # our method and our components
 GOOD = TEAL  # valid, safe, correct, right sign
@@ -74,9 +71,6 @@ DIV_CMAP = LinearSegmentedColormap.from_list(
     "harbor_div", DIV
 )  # negative = navy, zero = gray, positive = rust
 ENTITY_CMAP = ListedColormap(ENTITIES, name="harbor_entities")
-RUST_CMAP = LinearSegmentedColormap.from_list(
-    "harbor_rust", DIV[3:]
-)  # rust half of DIV: near-white -> rust (counts of errors)
 
 NEUTRALS = [
     INK,

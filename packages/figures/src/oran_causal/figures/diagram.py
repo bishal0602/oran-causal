@@ -37,9 +37,8 @@ def canvas(width: str = "full", height_pt: float = 180) -> tuple[Figure, Axes]:
     S.apply()
     w_in = {"full": S.FULL, "half": S.HALF}[width]
     fig = plt.figure(figsize=(w_in, height_pt / 72))
-    # [2026-10-12] the axes stops EDGE_PT short of each side edge (data units stay figure points): a
-    # full-width axes plus the savefig pad came out 373.7 bp wide, wider than \textwidth (370.6 bp),
-    # so LaTeX shrank 7 pt text to 6.94
+    # the axes stops EDGE_PT short of each side edge (data units stay figure points): a full-width
+    # axes plus the savefig pad is wider than \textwidth, and LaTeX would shrink the text
     ax = fig.add_axes((EDGE_PT / (w_in * 72), 0, 1 - 2 * EDGE_PT / (w_in * 72), 1))
     ax.set_xlim(EDGE_PT, w_in * 72 - EDGE_PT)
     ax.set_ylim(height_pt, 0)  # y grows downward, like a page

@@ -1,4 +1,4 @@
-"""Environment truth-graph panel (DESIGN.md s.8 [NEW 2026-10-05], design G-A): a layered bipartite drawing of a
+"""Environment truth-graph panel (DESIGN.md s.8): a layered bipartite drawing of a
 ground-truth causal graph from actions (knobs) to KPIs, sized for a narrow page column.
 
     g = EnvGraph(acts, kpis, edges, placebos=["Pl"])      edges: (src, dst, kind), kind in KINDS
@@ -13,7 +13,7 @@ merge into one arrow stub (bundled by target). Edges of another kind (gated, con
 so a crowded KPI stays legible. Lagged KPI -> KPI edges are arcs on the right of the KPI column, nested by span; the
 outermost arc of each nest is labelled t−1 (the legend states it for all). The R3 behaviour policy on Z (E4) is a dotted purple curve on the left of the action column. Node
 roles use the fixed entity slots of DESIGN s.12: action blue, KPI teal, context Z purple; the placebo action is
-neutral gray (2026-10-06: the gold entity slot was ΔE 4 from the design-blind series then on the same page).
+neutral gray, so it never comes close to a method series on the same page.
 """
 
 from collections.abc import Sequence
@@ -30,9 +30,7 @@ from oran_causal.figures import style as S
 
 ACTION = P.ENTITIES[0]  # entity slot 1
 KPI = P.ENTITIES[2]  # entity slot 3
-PLACEBO = (
-    P.NEUTRAL
-)  # [2026-10-06] neutral gray (was entity slot 4 gold: ΔE 4 to the then design-blind series)
+PLACEBO = P.NEUTRAL
 CONTEXT = P.ENTITIES[4]  # entity slot 5
 KINDS = ("true", "gated", "context", "policy")
 EDGE = {
@@ -42,7 +40,7 @@ EDGE = {
     "policy": {"color": CONTEXT, "ls": (0, (1.2, 1.4)), "lw": 0.9},
 }
 EDGE_LABEL = {
-    "true": "Edge (one step later)",  # [G5] shorter: 8 pt Arial in the 1.37 in column
+    "true": "Edge (one step later)",  # fits 8 pt Arial in the 1.37 in column
     "gated": "Gated edge",
     "context": "Z → KPI",
     "policy": "R3 policy on Z",
@@ -313,8 +311,8 @@ def draw_env_graph(
     column, ``kpi_inset`` how far the KPI column stays inside the action column's top and bottom,
     ``label_pt`` / ``lag_pt`` the node-label and t−1 sizes.
     """
-    label_pt = S.MIN_PT if label_pt is None else label_pt  # [G5] 8 pt floor (was ANNOT_PT - 0.5)
-    lag_pt = S.MIN_PT if lag_pt is None else lag_pt  # [G5] 8 pt floor (was ANNOT_PT - 1)
+    label_pt = S.MIN_PT if label_pt is None else label_pt
+    lag_pt = S.MIN_PT if lag_pt is None else lag_pt
     ax.set_xlim(0, width_pt)
     ax.set_ylim(0, height_pt)
     ax.axis("off")

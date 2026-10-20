@@ -77,7 +77,7 @@ def test_paper_names_pass(ok):
 def test_tex_comments_ignored(tmp_path):
     p = tmp_path / "t.tex"
     p.write_text(
-        "% Sources: CDD-ORAN/scratchpad/e6_dev E6P\n50\\% & PMRT \\\\ % E6-P note\n",
+        "% Sources: MSCR+ arbiter knob E6P\n50\\% & PMRT \\\\ % E6-P note\n",
         encoding="utf-8",
     )
     assert not wording.check(wording.tex_visible(p))

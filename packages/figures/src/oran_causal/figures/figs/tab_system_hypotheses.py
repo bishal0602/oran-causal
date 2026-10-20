@@ -5,8 +5,8 @@ run ``uv run python -m oran_causal.figures.figs.tab_system_hypotheses``.
 
 Source: ``v4_analysis.json`` gt.cells (via ``_studies.v4_gt_cells()``), status and sign as stored.
 The status counts are checked against FD ``v4.gt.counts`` (re-aggregation: counting cells). Families
-are labelled with their plain name and writer xApp (``entities.param_plain_label``), relations and KPIs with the
-TERMINOLOGY s.4 paper names. The Study 2 ground truth (confounded logs) has its own labels and is
+are labelled with their plain name and writer xApp (``entities.param_plain_label``), relations and KPIs with their
+paper names. The Study 2 ground truth (confounded logs) has its own labels and is
 not shown here.
 """
 
@@ -18,24 +18,22 @@ from oran_causal.figures.figs import _tabm as TM
 
 NAME = "tab_system_hypotheses"
 SOURCES = [ST.SRC_V4, ST.SRC_FD]
-FAMILIES = ["carrier", "sleep", "ptx", "prot_min"]  # TERMINOLOGY s.3 order
-RELATIONS = {"own": "own", "nbr": "neighbour", "far": "far"}  # TERMINOLOGY s.4
+FAMILIES = ["carrier", "sleep", "ptx", "prot_min"]  # paper order
+RELATIONS = {"own": "own", "nbr": "neighbour", "far": "far"}
 KPIS = {
     "pv": ("protected-slice", "violations"),
     "v": ("service", "violations"),
     "rlf": ("radio-link", "failures"),
     "e": ("energy", ""),
     "load": ("served", "load"),
-}  # TERMINOLOGY s.4 (entities.KPIS names)
+}  # entities.KPIS names
 
 
 def _label(c: dict) -> str:
     if c["status"] == "TRUE":
         return {1: "true $+$", -1: "true $-$"}[c["sign"]]
     if c["status"] in ("NULL", "INDET"):
-        return {"NULL": "null", "INDET": "indeterminate"}[
-            c["status"]
-        ]  # prose words (TERMINOLOGY GT row)
+        return {"NULL": "null", "INDET": "indeterminate"}[c["status"]]  # prose words
     raise AssertionError(f"unknown ground-truth status {c['status']}")
 
 

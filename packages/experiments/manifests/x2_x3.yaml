@@ -4,10 +4,8 @@ claims:
 - EMP-X3
 - PRO-POSTHOC
 protocol:
-  path: posthoc/EXTRAS_PROTOCOL.md
-  sha256: 292a4f6b52783ad170da39bc5f7476d2194fd1d6a25fa20e78e5026818a27ccb
-code_origin:
-- CDD-ORAN@0c89106:cdd_oran/xmethod/extras.py
+  path: posthoc/PROTOCOL.md
+  sha256: 8270cdc0024f718f37ca7c25ddb9c7279d3ff1b156d66d53780a9304f38772ab
 seeds:
 - block: XMETHOD_EXTRAS
   range:
@@ -46,13 +44,13 @@ stages:
     - x2_b80
     - x3_told
   inputs:
-  - specs/extras/x2_d02.json
-  - specs/extras/x2_d05.json
-  - specs/extras/x2_d10.json
-  - specs/extras/x2_d20.json
-  - specs/extras/x2_b05.json
-  - specs/extras/x2_b80.json
-  - specs/extras/x3_told.json
+  - specs/posthoc/x2_d02.json
+  - specs/posthoc/x2_d05.json
+  - specs/posthoc/x2_d10.json
+  - specs/posthoc/x2_d20.json
+  - specs/posthoc/x2_b05.json
+  - specs/posthoc/x2_b80.json
+  - specs/posthoc/x3_told.json
   outputs:
   - posthoc_x2_x3/x2_*/merged.jsonl.gz
   - posthoc_x2_x3/x3_told/merged.jsonl.gz
@@ -70,24 +68,23 @@ stages:
     cpu_h: 0.0
     basis: M
 frozen_inputs:
-- path: specs/extras/x2_d02.json
-  sha256: 8a20c37e3376d0911b22b3aa72ee020677b9e837432a20e2a0dad500a5eaa2a0
-- path: specs/extras/x2_d05.json
-  sha256: 3c93fc66de0cf1011825e450f5199f033ce05e613752e75d07997e8b10fb4317
-- path: specs/extras/x2_d10.json
-  sha256: f440d10b1f54438fce851a65aad7aa01c9ce2844ffdda34a563fe41bbb50dea7
-- path: specs/extras/x2_d20.json
-  sha256: 52ae06bfd2654f344c86bbe37a70037bd5b124d819315d3f842a09c040dbba74
-- path: specs/extras/x2_b05.json
-  sha256: 2211558dd7d8a4a67b05a3b44706aa8131bb5a51727cdb728363b389598c93de
-- path: specs/extras/x2_b80.json
-  sha256: e8606af701704be8a6423f7d7c7470df096e0f6ecfa1451110ca22e62f21625c
-- path: specs/extras/x3_told.json
-  sha256: 40472ccf9007f11931670851df150c9322291cde7c99bc5e9fb21e14bf3e811e
+- path: specs/posthoc/x2_d02.json
+  sha256: f149e0508e4ded7f646611a17af26f45785455a9dfce130b974285bfcf096ff5
+- path: specs/posthoc/x2_d05.json
+  sha256: fde9ddcb6ebadada35348f2dbc2786e3f62683dbcbee8773d5ef0dea11571578
+- path: specs/posthoc/x2_d10.json
+  sha256: 07652c9308c9c41513092b7898666d29481b0444ced0bf0045076ea9259ec75a
+- path: specs/posthoc/x2_d20.json
+  sha256: 8a30d66eb9c64d86e3bb6153509e239d662f359ea94fb4dc4e0fb1cb4b27a679
+- path: specs/posthoc/x2_b05.json
+  sha256: 0f5b9f79c9470e72eef6d18cb405e2d6c64eb0d953baa614a0a73293f70b8e65
+- path: specs/posthoc/x2_b80.json
+  sha256: c56059388bb6d2ada39f9849164fc3d8e50dfc73f21ac54a971f24b58712b85d
+- path: specs/posthoc/x3_told.json
+  sha256: 2ce60b618784d5af5117e314fb5f910958526bac3d7e4cb13f354c7a0bcf4343
 records:
 - set: posthoc_x2_x3
   manifest: manifests/posthoc_x2_x3.sha256
-  zenodo_doi: null
 tiers:
   t0: analyse the stored X2 and X3 records (bytes equal on linux; the windows provenance differs)
   t1: null

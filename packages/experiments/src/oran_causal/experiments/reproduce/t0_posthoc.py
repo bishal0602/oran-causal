@@ -11,6 +11,7 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any
 
+from oran_causal.analysis import recorded
 from oran_causal.analysis.controlled.tables import clean
 from oran_causal.analysis.posthoc import (
     x1_runtime,
@@ -39,10 +40,7 @@ from oran_causal.experiments.reproduce.checks import (
 )
 from oran_causal.experiments.reproduce.context import Context, guarded, missing
 
-X1_LEGACY_DIR = (
-    r"D:\academia\major-project\CDD-ORAN-wt\xm-citests\scratchpad\xmethod\results"
-    r"\exp_c\paper\raw\xm-expc-paper-k1" + "\\"
-)
+X1_RAW = "posthoc_x1/exp_c/paper/raw/xm-expc-paper-k1/"
 X2X3_SPECS = ("x2_d02", "x2_d05", "x2_d10", "x2_d20", "x2_b05", "x2_b80", "x3_told")
 X15_SLOPE = "ols_dR_on_V_AA"
 X16_SKIP = ("sha256", "env", "timing_s", "data")
@@ -62,10 +60,11 @@ def x1(ctx: Context) -> list[Check]:
     """X1 runtime table of the paper run."""
     d = ctx.records / "posthoc_x1" / "exp_c"
     out = ctx.item_dir("posthoc/x1")
-    files = sorted((d / "paper" / "raw" / "xm-expc-paper-k1").glob("res_*.jsonl"))
-    recs, info = x1_runtime.load(files, {str(f.absolute()): X1_LEGACY_DIR + f.name for f in files})
+    files = sorted((ctx.records / X1_RAW).glob("res_*.jsonl"))
+    label = recorded.record_label(X1_RAW)
+    recs, info = x1_runtime.load(files, {str(f.absolute()): label + f.name for f in files})
     stored = json.loads((d / "paper" / "exp_c_runtime.json").read_text(encoding="utf-8"))
-    specs = x1_runtime.load_specs([SPECS / "exp_c" / "timing.json"])
+    specs = x1_runtime.load_specs([SPECS / "posthoc" / "timing.json"])
     doc = x1_runtime.build(recs, info, generated_utc=stored["generated_utc"], arm_specs=specs)
     md = (d / "paper" / "EXP_C_RUNTIME.md").read_text(encoding="utf-8")
     title = md.split("\n", 1)[0].split("(", 1)[1].rsplit(")", 1)[0]

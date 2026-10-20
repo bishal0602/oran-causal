@@ -408,7 +408,7 @@ class EvalInputs:
 
     Attributes:
         disc: The discovery analysis (`disc_conf.json`).
-        maps: The parsed maps artifact (`E6P_CONF_MAPS.json`).
+        maps: The parsed maps artifact (`study2_maps.json`).
         maps_verify: The artifact verification report (`ok`, `driver_matches`, ...).
         frozen: Whether the protocol is frozen.
         argv: Command line recorded in the report.

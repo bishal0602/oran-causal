@@ -27,7 +27,7 @@ from oran_causal.analysis.controlled.cells import build_cells, screen
 from oran_causal.analysis.controlled.fmax import boot_mult, fmax_simulate, load_dependence
 from oran_causal.analysis.controlled.protocol import ALPHA, VALID_UB
 from oran_causal.analysis.controlled.validity import cluster_ci
-from oran_causal.analysis.posthoc.paths import EXTRAS_PROTOCOL, SPECS, lf_sha256, write_text
+from oran_causal.analysis.posthoc.paths import CITED_PROTOCOL, PROTOCOL_BASENAME, SPECS, write_text
 from oran_causal.analysis.posthoc.x2x3 import load_spec, rate_text, rate_view, repro_check
 from oran_causal.analysis.records import load_records
 from oran_causal.core.scoring import PLACEBO, PLACEBO_CONF
@@ -856,9 +856,9 @@ def tables_md(t: Mapping[str, Any]) -> str:
     lines = [
         "# R-60 diagnostics X5 / X6: tables",
         "",
-        "EXPLORATORY, post hoc (EXTRAS_PROTOCOL.md Amendments 2026-10-05). Rates are raw p <= .05 "
-        "over testable candidates; boot CI = frozen seed-cluster bootstrap, CP = Clopper-Pearson. "
-        "R-30 labels are descriptive.",
+        f"EXPLORATORY, post hoc ({PROTOCOL_BASENAME} Amendments 2026-10-05). Rates are raw "
+        "p <= .05 over testable candidates; boot CI = frozen seed-cluster bootstrap, "
+        "CP = Clopper-Pearson. R-30 labels are descriptive.",
         "",
     ]
     if t.get("x5_step1"):
@@ -876,7 +876,7 @@ def combine_tables(out_dir: str | Path, protocol_sha256: str | None = None) -> d
     Writes `diag_tables.json` and `DIAG_TABLES.md` next to them.
     """
     d = Path(out_dir)
-    t: dict[str, Any] = {"protocol_sha256": protocol_sha256 or lf_sha256(EXTRAS_PROTOCOL)}
+    t: dict[str, Any] = {"protocol_sha256": protocol_sha256 or CITED_PROTOCOL.sha256}
     for k in TOP:
         f = d / f"diag_{k}.json"
         if f.exists():

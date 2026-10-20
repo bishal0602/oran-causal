@@ -1,6 +1,5 @@
-"""Appendix A template: one page per Study 4 environment (TERMINOLOGY s.9), layout E1-B (chosen
-2026-10-05): (a) the environment's ground-truth causal graph in a narrow left column
-(oran_causal.figures.envgraph, design G-A), right of it a 2 x 2 grid of (b, c) the truth-null
+"""Appendix A template: one page per Study 4 environment: (a) the environment's ground-truth causal graph in a narrow left column
+(oran_causal.figures.envgraph), right of it a 2 x 2 grid of (b, c) the truth-null
 rejection rate vs n and (d, e) recall vs n in R1 and R2, for the design-based tests, design-adjusted
 partial correlation and two design-blind methods. The logging designs R1 / R2 are defined in the
 caption. E4 has no truth-null candidate in R1 / R2 (REPORT V0), so its rate panels show the placebo
@@ -85,7 +84,7 @@ GRAPHS = {
         extra=[("Z", "K1", "context")],
     ),
 }
-# TERMINOLOGY s.2 one-line mechanism of each environment (caption hints); E2 without "gated" to
+# one-line mechanism of each environment (caption hints); E2 without "gated" to
 # match the paper (App. A title; no gated edge is drawn)
 BLURB = {
     "E1": "clean identifiable linear graph",

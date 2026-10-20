@@ -150,7 +150,7 @@ def seed_list(seeds: Any, spec: Spec, texts: ProtocolTexts) -> list[int]:
     out = seed_range(seeds)
     bad = [x for x in out if x not in DEV_SEEDS and x < EVAL_FLOOR]
     if bad:
-        raise ValueError(f"seeds outside the DEV block 3000000-3000199 (CONTRACT 6): {bad[:5]}")
+        raise ValueError(f"seeds outside the DEV block 3000000-3000199: {bad[:5]}")
     ev = [x for x in out if x >= EVAL_FLOOR]
     if ev:
         ok, why = eval_authorised(spec, texts)

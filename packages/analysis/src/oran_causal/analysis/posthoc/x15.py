@@ -27,7 +27,8 @@ from typing import Any
 import numpy as np
 from scipy import stats as sps
 
-from oran_causal.analysis.posthoc.paths import ARTIFACTS, RECORDS, write_text
+from oran_causal.analysis import recorded
+from oran_causal.analysis.posthoc.paths import ARTIFACTS, PROTOCOL_NAME, RECORDS, write_text
 from oran_causal.analysis.posthoc.x9 import REF, eval_files, repro
 from oran_causal.analysis.system import stats, study2, study3
 
@@ -36,7 +37,8 @@ KEY = (stats.EVAL_BOOT_KEY[0], stats.EVAL_BOOT_KEY[1])
 BLOCKS = ("study2", "study3")
 BLOCK_SPLIT = 190000
 RTOL = 1e-9
-DECLARED = "scratchpad/xmethod/EXTRAS_PROTOCOL.md amendment 2026-10-11 X15"
+DECLARED = f"{PROTOCOL_NAME} amendment 2026-10-11 X15"
+STUDY3_PROTOCOL = recorded.recorded("protocols/study3/PROTOCOL.md").name.rsplit("/", 1)[-1]
 QUOTED = {
     "study2": {
         "MG:PMRT.R": (0.470, 3),
@@ -102,7 +104,7 @@ def load(
     dec = records / "system_artifacts" / "decision"
     if block == "study2":
         files = eval_files(records, "e6p-conf-eval-1")
-        art = json.loads((artifacts / "E6P_CONF_MAPS.json").read_text(encoding="utf-8"))
+        art = json.loads((artifacts / "study2_maps.json").read_text(encoding="utf-8"))
         R, _ = stats.load_jobs(files, study2.EVAL_FILTER)
         stats.alias_fill(R, art["alias_of"])
         frozen = json.loads((dec / "conf_eval.json").read_text(encoding="utf-8"))
@@ -110,7 +112,7 @@ def load(
     else:
         files = eval_files(records, "e6p-cs-eval-1")
         R, _ = stats.load_jobs(files, study3.job_filter("eval"))
-        art = json.loads((artifacts / "E6P_CERTSAFE.json").read_text(encoding="utf-8"))
+        art = json.loads((artifacts / "study3_certsafe.json").read_text(encoding="utf-8"))
         stats.alias_fill(R, art["alias_of"])
         frozen = json.loads((dec / "cs_eval.json").read_text(encoding="utf-8"))
         arms = ["noarb", REF, "MG:PMRT"]
@@ -356,7 +358,7 @@ def _q2(
             q2[nm]["perm_block_diff_dV"] = perm_test(va, S2["w"], vb, S3["w"], next(sub))
             q2[nm]["ks"] = ks(xa, xb)
         else:
-            q2[nm]["note"] = "Study 3 has no MG:GT arm (E6P_CERTSAFE_PROTOCOL.md s.4); Study 2 only"
+            q2[nm]["note"] = f"Study 3 has no MG:GT arm ({STUDY3_PROTOCOL} s.4); Study 2 only"
     return q2, dr
 
 

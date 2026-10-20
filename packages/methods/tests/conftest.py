@@ -60,7 +60,7 @@ def classic_synth(
     nonlinear: bool = False,
     burn: int = 50,
 ) -> tuple[Dataset, Truth]:
-    """Synthetic SCM of the classic tests (CDD-ORAN `xmethod/methods/_classic_synth.py`).
+    """Synthetic SCM of the classic tests.
 
     Y0 = b A0 + .5 b K0_t + e, Y1 = -b A1 + e, Y2 = .7 b K1_t + e; A2 and P_placebo are exact
     nulls. R1: iid U(0, 1) actions; R2: bounded slow setpoint plus U(-.25, .25) dither.
@@ -118,7 +118,7 @@ def ci_candidates() -> tuple[tuple[str, str], ...]:
 
 
 def ci_synth(kind: str, n: int, seed: int, world: str = "SYN") -> tuple[Dataset, Truth]:
-    """Synthetic data of the CI tests (CDD-ORAN `xmethod/methods/_citests_synth.py`).
+    """Synthetic data of the CI tests.
 
     `"planted"`: K0 <- .6 P0, K1 <- -.6 P1, K2 <- .8 P2 1{P3 > .4}, K3 <- .5 lagged K3;
     `"null"`: K_j(t+1) = .5 K_j(t) + noise.

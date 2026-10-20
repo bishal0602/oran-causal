@@ -169,7 +169,7 @@ def broken(mutate: Any) -> dict[str, Any]:
         (lambda d: d["tiers"].pop("t3"), "missing t3"),
         (lambda d: d.update(stages=[]), "no stages"),
         (lambda d: d.update(records=[]), "no records"),
-        (lambda d: d["records"][0].update(zenodo_doi=3), "string"),
+        (lambda d: d["records"][0].update(manifest=3), "string"),
         (lambda d: d.update(claims="EMP"), "list"),
         (lambda d: d["equivalence"][0].pop("rule"), "missing rule"),
     ],
@@ -222,7 +222,7 @@ def test_check_flags_a_wrong_hash() -> None:
 
 def test_check_flags_a_wrong_protocol_hash() -> None:
     found = problems_of(lambda d: d["protocol"].update(sha256="1" * 64))
-    assert "protocol study3/E6P_CERTSAFE_PROTOCOL.md" in found[0]
+    assert "protocol study3/PROTOCOL.md" in found[0]
 
 
 def test_check_flags_missing_files() -> None:
@@ -240,23 +240,22 @@ def test_check_flags_missing_files() -> None:
 def test_check_flags_record_set_mismatches() -> None:
     def mutate(d: dict[str, Any]) -> None:
         d["records"][0]["set"] = "no_such_set"
-        d["records"][1]["zenodo_doi"] = "10.5281/zenodo.1"
+        d["records"][1]["manifest"] = d["records"][0]["manifest"]
 
     found = problems_of(mutate)
-    assert any("no_such_set is not in zenodo.yaml" in p for p in found)
-    assert any("doi None differs from the manifest" in p for p in found)
+    assert any("no_such_set is not in record_sets.yaml" in p for p in found)
+    want = "system_artifacts lives in manifests/system_artifacts.sha256, not manifests/study2_3"
+    assert any(want in p for p in found)
 
 
-def test_check_flags_bad_drivers_and_origin() -> None:
+def test_check_flags_bad_drivers() -> None:
     def mutate(d: dict[str, Any]) -> None:
         d["stages"][0]["driver"] = "oran_causal.experiments.nothing:run"
         d["stages"][1]["driver"] = "no_colon"
-        d["code_origin"][0] = "elsewhere:file.py"
 
     found = problems_of(mutate)
     assert any("stage eval" in p and "nothing" in p for p in found)
     assert any("expected module:callable" in p for p in found)
-    assert any("lacks the CDD-ORAN@0c89106:" in p for p in found)
 
 
 def test_check_flags_frozen_in_a_tier_the_item_lacks() -> None:

@@ -1,4 +1,4 @@
-"""The frozen PMRT artifact of the Study 1 fresh-seed re-test (`E6P_PMRT_V4.json`).
+"""The frozen PMRT artifact of the Study 1 fresh-seed re-test (`study1_pmrt.json`).
 
 One pure-data JSON file holds every learned piece the integrated PMRT statistic and its
 declaration layers use, all fitted before any Study 1 record existed: the statistic settings,
@@ -23,12 +23,12 @@ from oran_causal.core.pmrt.units import PMRT_VERSION, PmrtConfig
 from oran_causal.methods.system.pmrt import COL_ARMS, FLOOR, MAX_OF, N_PRIOR, STATS, THR, Q
 from oran_causal.sim.system.decision.vocab import HYPOTHESES
 
-ARTIFACT_NAME = "E6P_PMRT_V4.json"
-ARTIFACT_SHA256 = "9991c390df3a53ef12b553990da52c6adab25d4087bb029f1427e20a898e6a91"
+ARTIFACT_NAME = "study1_pmrt.json"
+ARTIFACT_SHA256 = "6f8e543145ad0e76afca653b17c4ea13b010c70d6b3134b109cd45fa0bcc99eb"
 ARTIFACT_SCHEMA = "e6p-pmrt/1"
-LEGACY_SCHEMA = "e6p-mscrplus-frozen/1"
-SCHEMAS = (ARTIFACT_SCHEMA, LEGACY_SCHEMA)
-LEGACY_NAME = "E6P_MSCRPLUS_V4_FROZEN.json"
+MSCRPLUS_SCHEMA = "e6p-mscrplus-frozen/1"
+SCHEMAS = (ARTIFACT_SCHEMA, MSCRPLUS_SCHEMA)
+MSCRPLUS_NAME = "study1_mscr_plus.json"
 N_PLANNED = (60, 120, 600)
 LEARNED_KEYS = (
     "config",
@@ -98,7 +98,7 @@ def _priors(layer: dict[str, Any]) -> dict[str, Prior]:
 
 
 def load_artifact(path: str | os.PathLike[str]) -> tuple[dict[str, Any], dict[str, Prior]]:
-    """Loads a frozen PMRT artifact (current or legacy schema).
+    """Loads a frozen PMRT artifact (PMRT or MSCR+ schema).
 
     Returns:
         (params usable by `lean_columns` and `run_integrated`, the layer prior per statistic
@@ -165,13 +165,13 @@ def _layer_problems(layer: dict[str, Any], priors: dict[str, Prior]) -> list[str
 
 
 def verify(
-    path: str | os.PathLike[str], legacy: str | os.PathLike[str] | None = None
+    path: str | os.PathLike[str], superseded: str | os.PathLike[str] | None = None
 ) -> dict[str, Any]:
     """Checks a frozen artifact against its pinned hash and the code's settings.
 
     Checks: sha256 = sidecar = `ARTIFACT_SHA256`; schema and version; the stored config builds
     the default `PmrtConfig`; statistic arms; the layer's level, floor, threshold, cap and prior
-    size, and its directions and planned-size weights recomputed from its prior; with `legacy`,
+    size, and its directions and planned-size weights recomputed from its prior; with `superseded`,
     the superseded artifact's hash and identical learned content.
 
     Returns:
@@ -188,8 +188,8 @@ def verify(
     if tuple(a["statistic_arms"]) != COL_ARMS or tuple(a["max_of"]) != MAX_OF:
         bad.append("arms")
     bad += [f"layer.{k}" for k in _layer_problems(a["layer"], priors)]
-    if legacy is not None:
-        if a.get("supersedes", {}).get("sha256") != sha_file(legacy):
+    if superseded is not None:
+        if a.get("supersedes", {}).get("sha256") != sha_file(superseded):
             bad.append("supersedes")
-        bad += [f"legacy.{k}" for k in learned_diff(a, _read(legacy))]
+        bad += [f"superseded.{k}" for k in learned_diff(a, _read(superseded))]
     return {"sha256": sha, "hyp": len(a["hyp"]), "problems": bad}

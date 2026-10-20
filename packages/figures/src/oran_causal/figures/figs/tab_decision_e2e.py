@@ -4,21 +4,21 @@ maps, with recovery R, the paired difference in R against never-sleep, energy re
 guard ratios, the request-level rejection rate and eligibility. Not a figure (no SPEC): run ``uv run
 python -m oran_causal.figures.figs.tab_decision_e2e``.
 
-Source: extras/revision/x9_decision_e2e.json (X9, EXTRAS_PROTOCOL amendment 2026-10-11; the script
+Source: posthoc_x9_x16/revision/x9_decision_e2e.json (X9, posthoc protocol amendment 2026-10-11; the script
 reproduced the frozen cs_eval.json values for all 26 arms before writing), key ``study3.rows``: per
 arm ``R``, ``R_ci90``, ``retention``, ``guard_ratio``, ``guard_ratio_ci90``, ``rejection_rate``,
 ``eligible``, ``alias_of``, ``dR_vs_never_sleep`` (+ ``_ci90``). Aliased arms (identical seed
 records to their target) are not rows; the caption note names them. Post hoc, descriptive, no
 verdict; Study 3 is unchanged.
 
-W14 (appendix adjudication 2026-10-12, C.1): the three random-rejection rows of post hoc check X4
-join the table as a fourth group, read from extras/x4/x4_tables.json (the artifact of tab_appC_x4):
+The three random-rejection rows of post hoc check X4 form a fourth group, read from
+posthoc_x4/x4/x4_tables.json (the artifact of tab_appC_x4):
 ``rows.<arm>.{defer_rate, R, retention, guard_ratio, eligible}`` and
 ``contrasts.<arm>.never_sleep.{dR, ci90}`` (random-rejection referee minus never-sleep, 90 % paired
 seed bootstrap). X4 ran on another host; its stored accept-all and never-sleep R must equal X9's
 within 1e-3 (the host note: |dR| <= 4e-4).
 
-G5 (P3, 2026-10-12; restructure plan FU 2.4, the decision scorecard): a Study 2 block comes first,
+A Study 2 block comes first,
 so that the primary metric and the guards of both studies sit in one table. Same columns, read from
 X9 key ``study2.rows`` (the stored option (a) EVAL arms with the same fields); every value the Study
 2 figure shows (R, retention, guard ratios, eligibility) is checked against its source, FD
@@ -26,7 +26,7 @@ X9 key ``study2.rows`` (the stored option (a) EVAL arms with the same fields); e
 referees; as in the Study 3 block, aliased arms and placebo-calibrated thresholds are not rows. The
 random-rejection rows ran on the Study 3 seeds and stay in the Study 3 block.
 
-G6 (2026-10-13; cold read P4b, Table 14): a "Slice Guarantee only" static row in both blocks, the R
+A "Slice Guarantee only" static row in both blocks, the R
 = 1 reference of recovery, so that its retention (about 0, not eligible) is printed beside
 never-sleep. X9 has no such row, so it is read from FD ``option_a.eval.arms`` /
 ``certsafe.eval.arms`` key ``sub:SliceGuarantee`` and checked against the analyzer outputs
@@ -44,7 +44,7 @@ X4 = ("posthoc_x4", "x4", "x4_tables.json")
 SOURCES = [source_note(*X9), source_note(*X4), ST.SRC_FD + " (sub:SliceGuarantee)"]
 RANDOM = ["X4:rand@0.25", "X4:rand@0.352", "X4:rand@0.5"]
 GUARDS = [("svr", "SVR"), ("nonprot_embb_viol", "eMBB"), ("ll_viol", "LL"), ("rlf", "RLF")]
-SG = "sub:SliceGuarantee"  # [G6] the R = 1 static rule, from FD (not in X9)
+SG = "sub:SliceGuarantee"  # the R = 1 static rule, from FD (not in X9)
 GROUPS = [
     ("Static rules", ["noarb", "never_sleep", SG]),
     ("Map-driven referees", ["MG:PMRT", "CS:PMRT", "CS:GT"]),
@@ -52,7 +52,7 @@ GROUPS = [
     ("Random-rejection referee", RANDOM),
 ]
 GROUPS2 = [
-    ("Static rules", ["noarb", "never_sleep", SG]),  # Study 2 block [G5]
+    ("Static rules", ["noarb", "never_sleep", SG]),  # Study 2 block
     ("Map-driven referees", ["MG:PMRT", "MG:GT", "MG:rand"]),
     ("Ungated referees on associational maps (DEV-tuned thresholds)", None),
 ]
@@ -80,7 +80,7 @@ def label(arm: str, p: dict | None = None) -> str:
 
 def ret(x) -> str:
     """Retention at two decimals; three when it would round to zero (Slice Guarantee only, about
-    -0.002) [G6].
+    -0.002).
     """
     if not A.nan(x) and x != 0 and abs(x) < 0.005:
         return A.signed(x, 3, plus=False)
@@ -88,7 +88,7 @@ def ret(x) -> str:
 
 
 def _sg_row(study: str, n_seeds: int) -> dict:
-    """[G6] Slice Guarantee only from FD, checked against the study's analyzer output; no Rej. and
+    """Slice Guarantee only from FD, checked against the study's analyzer output; no Rej. and
     no Delta R.
     """
     key, parts = {
@@ -157,7 +157,7 @@ def _row(arm: str, r: dict, study: str) -> dict:
 
 
 def rows2() -> tuple[list[dict], list[str]]:
-    """Study 2 block [G5]: X9 ``study2.rows``, checked against the Study 2 figure's source (FD
+    """Study 2 block: X9 ``study2.rows``, checked against the Study 2 figure's source (FD
     option_a.eval.arms).
     """
     t = load_json(*X9)["study2"]
@@ -257,12 +257,12 @@ def latex(rs: list[dict], meta: dict) -> str:
         SOURCES,
         [
             "Post hoc analysis X9: descriptive, no verdict; Study 3 unchanged.",
-            "Study 2 block [G5]: X9 study2.rows (= FD option_a.eval.arms, checked); 160 other seeds, no gate.",
+            "Study 2 block: X9 study2.rows (= FD option_a.eval.arms, checked); 160 other seeds, no gate.",
             f"{meta['n_seeds']} Study 3 evaluation seeds; R and dR (arm minus never-sleep) with 90 % paired seed-bootstrap"
             " CIs (R CI and guard-ratio CIs in the csv); guard ratios vs accept-all; rejection rate = rejected / requests reaching the referee.",
             f"Aliased arms (identical records, not shown): {al}.",
             "Study 2: aliased arms and placebo-calibrated thresholds not shown (as in the Study 3 block).",
-            "Slice Guarantee only [G6]: FD option_a / certsafe .eval.arms.sub:SliceGuarantee (= conf_eval / cs_eval, checked);"
+            "Slice Guarantee only: FD option_a / certsafe .eval.arms.sub:SliceGuarantee (= conf_eval / cs_eval, checked);"
             " R = 1 by definition; no stored rejection rate or dR (--).",
             "Random-rejection rows: post hoc check X4 (x4_tables.json), run on another host; dR = random-rejection"
             " referee minus never-sleep.",

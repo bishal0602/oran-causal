@@ -1,8 +1,7 @@
 """Lazy registry of the controlled-study arms.
 
 `ARMS[name]` imports the arm's module, and with it its heavy dependencies (torch, shap,
-causal-learn, xgboost), only on lookup. `resolve` also accepts the legacy
-`cdd_oran...:Name` references of the frozen specs. Every returned class implements
+causal-learn, xgboost), only on lookup. Every returned class implements
 `oran_causal.core.data.Method`.
 """
 
@@ -28,21 +27,6 @@ PATHS: dict[str, tuple[str, str]] = {
     "pmrt_nl": ("oran_causal.core.pmrt.nonlinear", "PmrtNl"),
 }
 
-_LEGACY_MODULE = "cdd_oran.xmethod.methods."
-LEGACY: dict[str, str] = {
-    "cdd_oran.xmethod.runner:DummyMethod": "dummy",
-    **{f"{_LEGACY_MODULE}{name}:{PATHS[name][1]}": name for name in PATHS if name != "dummy"},
-}
-
-RETIRED: dict[str, str] = {
-    f"{_LEGACY_MODULE}cmi_knn:CMIKnnMethod": "cmi_knn (dropped by the port map; dev specs only)",
-    f"{_LEGACY_MODULE}pdcor:PDCorMethod": "pdcor (dropped by the port map; dev specs only)",
-}
-
-
-class RetiredArmError(LookupError):
-    """A frozen reference names an arm that was not ported."""
-
 
 class _Lazy(Mapping[str, type]):
     def __getitem__(self, name: str) -> type:
@@ -60,15 +44,11 @@ ARMS: Mapping[str, type] = _Lazy()
 
 
 def resolve(ref: str) -> type:
-    """The arm class of a registry name or a legacy `cdd_oran...:Name` reference.
+    """The arm class of a registry name.
 
     Raises:
-        RetiredArmError: The reference names an arm that was not ported.
-        KeyError: Unknown name or reference.
+        KeyError: Unknown name.
     """
-    if ref in RETIRED:
-        raise RetiredArmError(f"{ref!r} is retired: {RETIRED[ref]}")
-    name = LEGACY.get(ref, ref)
-    if name not in PATHS:
-        raise KeyError(f"unknown arm or reference {ref!r}")
-    return ARMS[name]
+    if ref not in PATHS:
+        raise KeyError(f"unknown arm {ref!r}")
+    return ARMS[ref]

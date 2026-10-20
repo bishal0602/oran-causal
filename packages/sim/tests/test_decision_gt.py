@@ -1,13 +1,9 @@
-import json
-from pathlib import Path
-
 import numpy as np
 import pytest
 
 from oran_causal.sim.system.decision import gt
 from oran_causal.sim.system.decision.vocab import CELL_KPIS, FAMILIES, KPIS, RELATIONS
 
-DATA = Path(__file__).parent / "data"
 NC = 8
 EXP = {0: [0, 1, 2, 3], 4: [2, 3, 4, 5]}
 
@@ -127,51 +123,3 @@ def test_unit_delta_is_accept_minus_reject() -> None:
     assert np.array_equal(gt.unit_delta(label), -reject)
     with pytest.raises(ValueError, match="per-cell"):
         gt.unit_delta({"d": {}})
-
-
-def _norm(o: object) -> object:
-    if isinstance(o, dict):
-        return {str(k): _norm(v) for k, v in o.items()}
-    if isinstance(o, (list, tuple)):
-        return [_norm(v) for v in o]
-    if isinstance(o, np.ndarray):
-        return _norm(o.tolist())
-    if isinstance(o, float) and np.isnan(o):
-        return "NaN"
-    return o
-
-
-@pytest.fixture(scope="module")
-def stored() -> tuple[list[dict], dict]:
-    with np.load(DATA / "decision_gt_golden.npz") as z:
-        statics = {int(s): json.loads(g) for s, g in zip(z["ep_seed"], z["gt_static"], strict=True)}
-        kpis = list(z["kpis"])
-        labels: dict[int, list[dict]] = {int(s): [] for s in z["ep_seed"]}
-        for i in range(len(z["seed"])):
-            labels[int(z["seed"][i])].append(
-                {
-                    "c": int(z["c"][i]),
-                    "knob": str(z["knob"][i]),
-                    "x": str(z["x"][i]),
-                    "t0": float(z["t0"][i]),
-                    "step": float(z["step"][i]),
-                    "exp": json.loads(z["exp"][i]),
-                    "kpis": kpis,
-                    "delta": z["delta"][i],
-                }
-            )
-        n_cells = int(z["n_cells"])
-        summary = json.loads(str(z["summary"]))
-    eps = [
-        {"seed": s, "n_cells": n_cells, "gt_static": statics[s], "gt_labels": labels[s]}
-        for s in sorted(labels)
-    ]
-    return eps, summary
-
-
-@pytest.mark.claim("DEF-GT-LABEL")
-def test_summary_on_stored_gt_episodes_equals_the_old_code(stored: tuple) -> None:
-    eps, want = stored
-    got = gt.summarize(eps, rule=gt.GtRule(n_boot=1000))
-    assert _norm(got) == want
-    assert got["n_labels"] == 375

@@ -4,7 +4,7 @@
  "note": "R-58(3) input: pmrt_nl_eq cost in E4 R3 (all lam) at n 24000 (2 DEV seeds) and n 8000 (1 seed); 4 parts on a 4-vCPU Kaggle session (1 process per vCPU). Cost only.",
  "arms": {
   "pmrt_nl_eq": {
-   "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+   "ref": "pmrt_core",
    "config": {
     "covariates": "eq",
     "statistic": "gbm"

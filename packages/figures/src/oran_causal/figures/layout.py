@@ -1,5 +1,4 @@
-"""Figure-composition helpers: the layout rules every multi-panel figure shares (DESIGN.md s.4, s.6, s.7 and the
-[NEW 2026-10-05] rules there). Figure modules call these instead of placing legends, panel headers, INVALID marks,
+"""Figure-composition helpers: the layout rules every multi-panel figure shares (DESIGN.md s.4, s.6, s.7). Figure modules call these instead of placing legends, panel headers, INVALID marks,
 dodges or reference labels by hand, and end ``build()`` with ``finalize(fig)``.
 
     panel_header(ax, "a", "E1, R2")      letter + tag with a fixed hierarchy and gap (DESIGN s.3)
@@ -12,7 +11,7 @@ dodges or reference labels by hand, and end ``build()`` with ``finalize(fig)``.
     label_line(ax, x, y, text)           data-anchored label next to a line, offset <= 6 pt (DESIGN s.4)
     banner(fig, ax, y, h, text)          category header as a full-width banner row (DESIGN s.7)
     method_rows(rows) / method_labels()  row-wise (forest / grid) layout with a gap between methods and the bold
-                                         method name on its first sub-row (DESIGN s.7 [NEW 2026-10-05])
+                                         method name on its first sub-row (DESIGN s.7)
     finalize(fig)                        resolves letters and legend columns after one layout pass
 """
 
@@ -39,11 +38,9 @@ RATE_TICKS = [0, 0.01, 0.05, 0.2, 1]
 RATE_LIM = (
     -0.003,
     1.35,
-)  # [2026-10-06] headroom so a marker at rate 0 or 1 is never half clipped (checks)
+)  # headroom so a marker at rate 0 or 1 is never half clipped (checks)
 INVALID_MS = S.MARKER_SIZE + 0.4
-INVALID_STEP_PT = (
-    INVALID_MS + 1.2
-)  # [2026-10-06] crosses sharing an x are spaced this far apart (never touch)
+INVALID_STEP_PT = INVALID_MS + 1.2  # crosses sharing an x are spaced this far apart (never touch)
 
 
 def _root(fig) -> Figure:
@@ -72,7 +69,7 @@ def _reg(fig, key: str) -> list:
 def panel_header(ax: Axes, letter: str, tag: str | None = None, inset: bool = False) -> None:
     """Bold letter at the top-left, left of the axes' tick-label / y-label column; optional tag at
     the axes' left edge on the same baseline. ``finalize`` moves the letter so the gap to the tag is
-    at least LETTER_GAP_PT. ``inset`` [NEW 2026-10-05]: for a panel without a label column (a graph
+    at least LETTER_GAP_PT. ``inset``: for a panel without a label column (a graph
     or diagram canvas at the page edge), the letter starts at the axes' left edge and the tag
     follows LETTER_GAP_PT after it.
     """
@@ -137,8 +134,7 @@ def invalid_handle() -> Line2D:
 
 
 LEGEND_TOP_LOC = "outside upper center"
-INVALID_LABEL = "INVALID condition"  # [G3 2026-10-12] was "INVALID cell (no recall)"; "INVALID condition (no recall)"
-# is 20 pt wider and pushed the E4 page legend into one column (letter b then hit the y label)
+INVALID_LABEL = "INVALID condition"  # short, so the E4 page legend keeps two columns
 
 
 def fig_legend(
@@ -213,13 +209,6 @@ def _same_y(a: Axes, b: Axes) -> bool:
         and np.allclose(a.get_ylim(), b.get_ylim())
         and list(a.get_yticks()) == list(b.get_yticks())
     )
-
-
-def hide_x(ax: Axes) -> None:
-    """An unlabeled shared x axis: no tick marks, tick labels, x label or bottom spine (no dangling ticks)."""
-    ax.tick_params(axis="x", which="both", bottom=False, labelbottom=False)
-    ax.set_xlabel("")
-    ax.spines["bottom"].set_visible(False)
 
 
 def hide_y_labels(ax: Axes) -> None:

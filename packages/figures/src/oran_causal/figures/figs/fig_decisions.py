@@ -22,7 +22,7 @@ from oran_causal.figures import methods as M
 from oran_causal.figures import palette as P
 from oran_causal.figures import plots
 from oran_causal.figures import style as S
-from oran_causal.figures.figs import _s23r as R
+from oran_causal.figures.figs import _referee as R
 from oran_causal.figures.figs import _studies as ST
 from oran_causal.figures.registry import FigSpec
 
@@ -36,7 +36,6 @@ SPEC = FigSpec(
 
 HEIGHT = 3.0
 XLIM, YLIM = (0.68, 1.64), (-0.07, 0.72)
-LIMIT_TINT = 0.14
 
 
 def _a(study: str, code: str) -> dict:

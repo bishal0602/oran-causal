@@ -55,13 +55,13 @@ def gt_maps() -> dict[str, dict]:
 
 @pytest.fixture(scope="module")
 def conf() -> dict[str, Any]:
-    doc = json.loads((ARTIFACTS / "E6P_CONF_MAPS.json").read_text(encoding="utf-8"))
+    doc = json.loads((ARTIFACTS / "study2_maps.json").read_text(encoding="utf-8"))
     return rf.load_conf_maps(doc)
 
 
 @pytest.fixture(scope="module")
 def certsafe_doc() -> dict[str, Any]:
-    return json.loads((ARTIFACTS / "E6P_CERTSAFE.json").read_text(encoding="utf-8"))
+    return json.loads((ARTIFACTS / "study3_certsafe.json").read_text(encoding="utf-8"))
 
 
 @pytest.fixture(scope="module")

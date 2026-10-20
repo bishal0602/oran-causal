@@ -11,7 +11,7 @@ Source: XR ``extras_tables.json``, ``pooled`` rows with experiment X3; R2 key ``
 (``("width", 0.8)``, ``("shift", 0.02)``, ``("lam", 2.0)``; the exact design is ``("exact", 1.0)``).
 Row selection only. Series (DESIGN s.12.1): PMRT-GBM (hero), PMRT-Lin, PMRT-Lin with R3 covariates
 and design-adjusted partial correlation; the level is the x axis, not a series. Required wording
-(PAPER_PLAN s.5 item 6) goes in the caption: a degradation curve, not evidence against C2a.
+(posthoc protocol s.6) goes in the caption: a degradation curve, not evidence against C2a.
 """
 
 from oran_causal.figures import layout as L

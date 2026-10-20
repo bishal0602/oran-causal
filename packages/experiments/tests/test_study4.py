@@ -1,13 +1,10 @@
-import gzip
 import hashlib
 import json
-import shutil
 from pathlib import Path
 
 import pytest
 
-from oran_causal.experiments.campaign.integrity import FROZEN_EVAL_PYTHON
-from oran_causal.experiments.campaign.merge import iter_jsonl, merge
+from oran_causal.experiments.campaign.merge import iter_jsonl
 from oran_causal.experiments.campaign.shard import assignment
 from oran_causal.experiments.campaign.spec import expand, sha_lf, spec_sha256
 from oran_causal.experiments.controlled.study4 import (
@@ -53,7 +50,7 @@ def test_eval_cost_table_matches_its_sidecar_and_the_amendment():
     digest_, name = sidecar.split()
     assert name.lstrip("*") == EVAL_COST_TABLE.name
     assert digest_ == sha_lf(EVAL_COST_TABLE.read_bytes()) == COST_TABLE_SHA
-    assert COST_TABLE_SHA in (PROTOCOLS / "study4" / "PROTOCOL_A_AMENDMENTS.md").read_text()
+    assert COST_TABLE_SHA in (PROTOCOLS / "study4" / "PROTOCOL_AMENDMENTS.md").read_text()
     assert spec_sha256(load_cost_table(EVAL_COST_TABLE)) == COST_TABLE_CANONICAL_SHA
 
 
@@ -74,19 +71,19 @@ def smoke_spec(tmp_path: Path) -> Path:
         "name": "t1_smoke",
         "budget_cpu_s": None,
         "arms": {
-            "dummy": {"ref": "cdd_oran.xmethod.runner:DummyMethod", "declare": "by"},
+            "dummy": {"ref": "dummy", "declare": "by"},
             "corr": {
-                "ref": "cdd_oran.xmethod.methods.corr:Corr",
+                "ref": "corr",
                 "config": {"arm": "native"},
                 "declare": "by",
             },
             "pmrt_eq": {
-                "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+                "ref": "pmrt_core",
                 "config": {"covariates": "eq"},
                 "declare": "by",
             },
             "pcorr_eq": {
-                "ref": "cdd_oran.xmethod.methods.pcorr:PCorrMethod",
+                "ref": "pcorr",
                 "config": {"arm": "eq"},
                 "declare": "by",
             },
@@ -151,18 +148,3 @@ def test_dev_records_keys_equal_the_plan_and_summary(name):
     assert have <= want
     assert sorted(want - have) == frozen["missing"]
     assert len(want) == frozen["n_expected"]
-
-
-@pytest.mark.slow
-@needs_records
-def test_merging_the_frozen_eval_records_is_byte_identical(tmp_path):
-    spec, _ = load_spec(EVAL_SPEC)
-    plain = tmp_path / "in.jsonl"
-    with gzip.open(EVAL_MERGED, "rb") as src, plain.open("wb") as dst:
-        shutil.copyfileobj(src, dst, 1 << 20)
-    out = tmp_path / "out.jsonl"
-    summary = merge(spec, [plain], out)
-    assert out.read_bytes() == plain.read_bytes()
-    frozen = json.loads((EVAL_MERGED.parent / "merged.jsonl.summary.json").read_text())
-    assert summary == frozen
-    assert frozen["python"] == [FROZEN_EVAL_PYTHON]

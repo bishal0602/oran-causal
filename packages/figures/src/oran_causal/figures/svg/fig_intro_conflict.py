@@ -2,7 +2,7 @@
 
 Each xApp is a coloured line running down through the parameter it writes to the KPI it targets; the conflict type is
 read off where the two lines meet: at the parameter tier (direct), at the KPI tier (indirect), or nowhere, with a
-hidden side effect reaching the other xApp's KPI (implicit). Chosen by the user 2026-10-09 (prototype B).
+hidden side effect reaching the other xApp's KPI (implicit).
 
 Examples and sources (passages checked against the archive copies; cited in the caption, not in the figure):
   a  ES vs CCO on transmit power: QACM (Wadud et al., IEEE TGCN 2024), Sec. VIII-A: "the ES xApp sets TXP to 6 dBm
@@ -32,9 +32,7 @@ from oran_causal.figures.svg.figkit import (
     tint,
 )
 
-# [G5 2026-10-12] Arial, all text >= 8 pt (journal rule; was >= 7 pt) [2026-10-12, review] all text
-# >= 7 pt at print size: W just under   extwidth (370.6 bp) so LaTeX never shrinks it, panel
-# descriptions on two lines, everything below them 8 pt lower
+# Arial, all text >= 8 pt (journal rule); W just under \textwidth (370.6 bp) so LaTeX never shrinks it
 W, H = 368.5, 175
 s = Svg(W, H)
 
@@ -71,9 +69,7 @@ def interchange(x, y):
 
 
 def terminal(x, name, color, dot=None):
-    for i, line in enumerate(
-        reversed(name.split("|"))
-    ):  # [G5] a long name stacks upwards on two lines
+    for i, line in enumerate(reversed(name.split("|"))):  # a long name stacks upwards on two lines
         s.text(x, Y_NAME - 2 - i * LEAD, line, 8.0, 700, INK, anchor="middle")
     s.circle(x if dot is None else dot, Y_TOP + 1.5, 2.6, fill=color, stroke="none", z=6)
 
@@ -115,7 +111,7 @@ lab(a, Y_KPI + 11, ["power", "consumption"])
 lab(b, Y_KPI + 11, ["DL", "throughput"])
 
 # ============================================================ b  Indirect
-cx = GUT + 1 * PW + PW / 2 - 11  # [G5] was - 4: Arial 8 pt 'antenna' cleared the separator
+cx = GUT + 1 * PW + PW / 2 - 11  # Arial 8 pt 'antenna' clears the separator
 a, b = cx - 19, cx + 19
 heading(1, "Indirect", ["different parameters,", "one shared KPI"])
 terminal(a, "MRO", PURPLE)

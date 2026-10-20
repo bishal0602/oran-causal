@@ -12,7 +12,7 @@ PARSED_HELP = (
     [],
     ["check"],
     ["data"],
-    ["data", "fetch"],
+    ["data", "verify"],
     ["paper-values"],
     ["reproduce"],
     ["verify"],
@@ -243,41 +243,21 @@ def test_verify_passes_the_frozen_and_rerun_records(
     assert (tmp_path / "verify_study3.md").exists()
 
 
-def test_data_fetch_reports_each_set(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_data_verify_reports_each_set(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     from oran_causal.experiments.reproduce import data
 
-    def fake(names: Any, root: Path, *, verify_only: bool, base_url: str) -> list[Check]:
-        return [Check("data", f"{n}:{verify_only}", Status.PASS) for n in names]
+    seen: list[Path] = []
 
-    monkeypatch.setattr(data, "fetch", fake)
+    def fake(names: Any, root: Path) -> list[Check]:
+        seen.append(root)
+        return [Check("data", n, Status.PASS) for n in names]
+
+    monkeypatch.setattr(data, "verify", fake)
     lines, out = collect()
-    args = ["data", "fetch", "--set", "freeze", "--verify-only", "--records", str(tmp_path)]
+    args = ["data", "verify", "--set", "freeze", "--records", str(tmp_path)]
     assert cli.main(args, out=out) == 0
-    assert "| data | freeze:True | pass |  |" in lines[0]
-
-
-def test_data_pack_passes_its_flags_on(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    from oran_causal.experiments.reproduce import data
-
-    seen: list[tuple[Any, Path, Path]] = []
-
-    def fake(names: Any, out: Path, root: Path) -> list[Check]:
-        seen.append((names, out, root))
-        return [Check("data", "freeze", Status.PASS)]
-
-    monkeypatch.setattr(data, "pack", fake)
-    args = [
-        "data",
-        "pack",
-        "--set",
-        "freeze",
-        "--out",
-        str(tmp_path / "o"),
-        "--records",
-        str(tmp_path),
-    ]
-    assert cli.main(args, out=lambda _: None) == 0
-    assert seen == [(["freeze"], (tmp_path / "o").resolve(), tmp_path.resolve())]
+    assert "| data | freeze | pass |  |" in lines[0]
+    assert seen == [tmp_path.resolve()]
 
 
 def test_paper_values_command_passes_its_flags_on(monkeypatch: pytest.MonkeyPatch) -> None:

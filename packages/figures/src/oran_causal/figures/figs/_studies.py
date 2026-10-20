@@ -15,14 +15,12 @@ V4_PARTS = (*DECISION, "v4_analysis.json")  # Study 1 analyzer output (GT cells,
 CONF_PARTS = (*DECISION, "conf_disc_conf.json")  # Study 2 discovery analyzer output
 CONF_EVAL_PARTS = (*DECISION, "conf_eval.json")  # Study 2 referee evaluation
 CS_EVAL_PARTS = (*DECISION, "cs_eval.json")  # Study 3 referee evaluation
-CS_BOUNDS_PARTS = (*DECISION, "cs_bounds.json")  # Study 3 certification bounds
 
 SRC_FD = source_note(*FD_PARTS)
 SRC_V4 = source_note(*V4_PARTS)
 SRC_CONF = source_note(*CONF_PARTS)
 SRC_CONF_EVAL = source_note(*CONF_EVAL_PARTS)
 SRC_CS_EVAL = source_note(*CS_EVAL_PARTS)
-SRC_CS_BOUNDS = source_note(*CS_BOUNDS_PARTS)
 
 _cache: dict = {}
 

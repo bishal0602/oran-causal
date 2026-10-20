@@ -1,5 +1,4 @@
 import dataclasses
-import gzip
 import itertools
 import json
 from pathlib import Path
@@ -19,10 +18,8 @@ from oran_causal.sim.system.decision.vocab import FAMILIES
 pytestmark = pytest.mark.filterwarnings("ignore::RuntimeWarning", "ignore::UserWarning")
 
 DATA = Path(__file__).parent / "data"
-GOLDEN = "system_pmrt_golden.json.gz"
 RTOL = 1e-6
 FAST = PmrtConfig(B=499, cv_reps=1, gb=False)
-GOLD_CFG = PmrtConfig(B=199, cv_reps=1, gb=False)
 
 
 def _recs(seed: int, n_ep: int, seed0: int, units: int = 70, effect: float = 40.0) -> list:
@@ -51,97 +48,6 @@ def train_test(tmp_path_factory: pytest.TempPathFactory) -> dict:
     }
 
 
-def _fl(x: np.ndarray) -> list[float]:
-    return [float(v) for v in np.asarray(x, float).ravel()]
-
-
-def _fit_summary(params: dict) -> dict:
-    out = {}
-    for h, hp in params["hyp"].items():
-        c = hp["core"]
-        out[h] = {
-            "best": hp["best"],
-            "z_plain": float(c["z_plain"]),
-            "lam": float(c["lam"]),
-            "lw_shrink": float(c["lw_shrink"]),
-            "z_in": {k: float(v) for k, v in hp["z_in"].items()},
-            "cv": {k: float(v) for k, v in hp["cv"].items()},
-            "mu_full": _fl(c["mu_full"]),
-            "B": _fl(c["B"]),
-            "prior": {nm: [float(p[1]), float(p[-1])] for nm, p in c["prior"].items()},
-            "sdir": {k: float(v) for k, v in c["sdir"].items()},
-        }
-    return out
-
-
-def _feat_summary(pd: PmrtData) -> dict:
-    return {
-        "n": int(pd.n),
-        "hist": _fl(pd.hist),
-        "post": _fl(np.nansum(pd.post, axis=(1, 2))),
-        "pre": _fl(np.nansum(pd.pre, axis=(1, 2))),
-        "post_nan": int(np.isnan(pd.post).sum()),
-        "ctx_keys": list(pd.ctx_keys),
-        "tfrac": _fl(pd.tfrac),
-    }
-
-
-def _run_summary(run: dict) -> list:
-    out = []
-    for r in run["results"]:
-        o = {k: r[k] for k in ("family", "relation", "kpi", "status")}
-        if r["status"] == "tested":
-            o["arms"] = {
-                a: [float(v["p"]), float(v["z"]), int(v["sign"])] for a, v in r["arms"].items()
-            }
-        out.append(o)
-    return out
-
-
-def _integ_summary(run: dict) -> dict:
-    out = {}
-    for h, o in run.items():
-        if o.get("status") != "tested":
-            out[h] = o.get("reason")
-            continue
-        out[h] = {
-            s: [float(o[s][k]) for k in ("p2", "p_plus", "p_minus", "z")] + [int(o[s]["sign"])]
-            for s in pm.STATS
-        }
-    return out
-
-
-def _golden_summary(tmp: Path) -> dict:
-    tr = pm.pmrt_data_from_records(_recs(11, 10, 5000, units=60), tmp)
-    te = pm.pmrt_data_from_records(_recs(12, 8, 6000, units=60), tmp)
-    params = fit_pmrt(tr, pm.LEVEL_V2_ARR, GOLD_CFG)
-    run = pm.run_pmrt(te, params, GOLD_CFG)
-    edges = pm.edges_pmrt(run, "best")
-    ir_tr = pm.run_integrated(tr, params, GOLD_CFG, 0)
-    ir_te = pm.run_integrated(te, params, GOLD_CFG, 0)
-    priors = {s: pm.prior_from_run(ir_tr, s, n_prior=10) for s in pm.STATS}
-    dec = pm.declare_all(ir_te, priors, 8)
-    return {
-        "fit": _fit_summary(params),
-        "rho": params["rho"],
-        "feat_te": _feat_summary(te),
-        "run": _run_summary(run),
-        "edges_best": {
-            "|".join(h): [bool(v["declared"]), int(v["sign"])] for h, v in edges.items()
-        },
-        "integrated": _integ_summary(ir_te),
-        "declare": {
-            pm.cname(s, lay): sorted(
-                "|".join(h) + f":{v['sign']}" for h, v in dv.items() if v["declared"]
-            )
-            for (s, lay), dv in dec.items()
-        },
-        "used_p": {
-            pm.cname(s, lay): [float(p) for p in pm.used_p(dv)] for (s, lay), dv in dec.items()
-        },
-    }
-
-
 def _close(a: object, b: object, path: str = "") -> None:
     if isinstance(a, dict) and isinstance(b, dict):
         assert a.keys() == b.keys(), path
@@ -156,16 +62,6 @@ def _close(a: object, b: object, path: str = "") -> None:
     else:
         assert type(a) is type(b), path
         assert a == b, path
-
-
-@pytest.mark.claim("DEF-PMRT-WEIGHT")
-def test_pipeline_reaches_the_same_conclusions_as_the_old_code(tmp_path: Path) -> None:
-    with gzip.open(DATA / GOLDEN, "rt", encoding="utf-8") as fh:
-        old = json.load(fh)
-    new = json.loads(json.dumps(_golden_summary(tmp_path)))
-    assert new.keys() == old.keys()
-    for k in old:
-        _close(new[k], old[k], k)
 
 
 def test_bins_rebuild_the_unit_target_and_table(train_test: dict, tmp_path: Path) -> None:

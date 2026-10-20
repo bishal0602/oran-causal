@@ -1,5 +1,4 @@
-"""Post hoc check X3 (Appendix C.3; booktabs LaTeX + csv): the compact table next to fig_appC_x3_misspec (PAPER_PLAN
-question 14: a small figure plus a compact table). The data are generated with the frozen design and the design is
+"""Post hoc check X3 (Appendix C.3; booktabs LaTeX + csv): the compact table next to fig_appC_x3_misspec. The data are generated with the frozen design and the design is
 told to the method wrong. Null-edge raw rejection rate (p <= .05) with the cell-validity mark:
   * truth-null edges of R2 (E1-E2, n 1000, 60 seeds) against the told dither width (x .5, .8, 1, 1.25, 2) and the told
     setpoint switch delay (+2 %, +5 % of a block);
@@ -9,7 +8,7 @@ Not a figure (no SPEC): run ``uv run python -m oran_causal.figures.figs.tab_appC
 
 Source: XR ``extras_tables.json``, ``pooled`` rows with experiment X3; R2 key ``null_raw``, R3 key ``conf_raw`` (rate,
 hits, n, seed-cluster 95 % CI, validity), matched by base arm and ``design_key`` (``("exact", 1.0)`` = the exact
-design). Rows only select stored values. Required wording (PAPER_PLAN s.5 item 6) belongs to the caption: a
+design). Rows only select stored values. Required wording (posthoc protocol s.6) belongs to the caption: a
 degradation curve, not evidence against C2a.
 """
 
@@ -65,12 +64,12 @@ def latex(tab: dict, rs: list[dict]) -> str:
         NAME,
         SOURCES,
         [
-            "Post hoc check X3: " + tab["wording"],
+            "Post hoc check X3: misspecified design; exploratory, no verdict.",
             f"Raw p <= .05 rejection rates; R2 truth-null edges of E1-E2 (n 1000, {'/'.join(map(str, sorted(n2)))} candidate"
             f" tests per design), E4 R3 confounded null edge (lambda 1, n 1000, {'/'.join(map(str, sorted(n3)))} tests: one"
             " edge per seed). Mark = condition-validity"
             " label (* INVALID, ~ INCONCLUSIVE, unmarked VALID). Told multipliers are told / true; 1 = the exact design.",
-            "Caption must carry the required X3 sentence (PAPER_PLAN s.5 item 6).",
+            "The caption states that this is a degradation curve, not evidence against C2a.",
         ],
         module=NAME,
     )

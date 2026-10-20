@@ -830,15 +830,6 @@ def declare_all(
     return out
 
 
-def used_p(decl: Mapping[Any, Mapping[str, Any]]) -> list[float]:
-    """The finite p-values a declaration used over its tested hypotheses."""
-    return [
-        v["p"]
-        for v in decl.values()
-        if v.get("status") != "undetermined" and np.isfinite(v.get("p", np.nan))
-    ]
-
-
 def cname(stat: str, layer: str) -> str:
     """Name of a (statistic, layer) combination."""
     return f"{stat}+{layer}"

@@ -1,7 +1,7 @@
 # Compute plan of the re-run tiers t2 and t3 (`oran-causal reproduce --tier t2|t3 --dry-run`).
 # Costs are CPU-hours on the Kaggle reference host (Xeon 2.20 GHz). Basis: M measured as a sum of
-# record cpu_s, P protocol estimate, E extrapolation; source: the 2026-10-15 re-run cost audit of
-# CDD-ORAN (EVAL eval/csv/cost.csv, exp_c calib factors.json, X4 and X7 reports).
+# record cpu_s, P protocol estimate, E extrapolation; source: the 2026-10-15 re-run cost audit
+# (EVAL eval/csv/cost.csv, exp_c calib factors.json, X4 and X7 reports).
 # A stage listed in `frozen_in` reuses the frozen records in that tier. A range [low, high] is an
 # extrapolation without a measured sum. Study 4 is priced unit by unit from its spec and the frozen
 # DEV-projected cost table.

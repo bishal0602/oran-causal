@@ -1,8 +1,8 @@
 """Shared names and read-only loaders for the Study 4 / bridging-analysis figures.
 
-Paper names follow TERMINOLOGY.md s.6.1 / 6.5 / 12 (never the code names). Method styling (colour =
+Figures print paper names, never the code names. Method styling (colour =
 method, line style = family, marker = base method, one hero per figure) lives in
-``oran_causal.figures.methods`` (DESIGN s.12, Q8 mapping 2026-10-06); figures pass arm codes.
+``oran_causal.figures.methods`` (DESIGN s.12); figures pass arm codes.
 """
 
 import gzip
@@ -27,7 +27,7 @@ SRC_CELLS = source_note(*EVAL, "csv", "validity_cells.csv")
 WORLDS = ["E1", "E2", "E3", "E4", "E5"]
 NS = [500, 1000, 4000, 8000, 24000]
 
-# every Study 4 arm with a paper name (TERMINOLOGY s.6.5; names from oran_causal.figures.methods);
+# every Study 4 arm with a paper name (names from oran_causal.figures.methods);
 # arms without one (eq_min variants, pc_eq, mscr_eq) are never shown
 PAPER = {
     a: M.name(a)
@@ -65,7 +65,7 @@ SLICE_EPISODES = {
     "120": 120,
     "300": 300,
     "pooled": 600,
-}  # pooled = all 600 eval episodes (EXP_B s.2)
+}  # pooled = all 600 eval episodes (bridging protocol s.2)
 
 
 def series(ax, x, y, lo, hi, arm: str, arms, step_pt: float = L.DODGE_PT, invalid_x=(), **kw):
@@ -177,9 +177,3 @@ def placebo_p_bridge(arms, splits=range(20, 30)) -> dict[str, np.ndarray]:
             e["p"] for e in r["edges"] if e["source"] == PLACEBO and e.get("p") is not None
         ]
     return {a: np.asarray(v, float) for a, v in out.items()}
-
-
-def ecdf(p: np.ndarray, grid: np.ndarray) -> np.ndarray:
-    """Share of p-values <= each grid value."""
-    s = np.sort(p)
-    return np.searchsorted(s, grid, side="right") / len(s)

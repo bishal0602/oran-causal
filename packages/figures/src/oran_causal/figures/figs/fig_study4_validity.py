@@ -4,13 +4,13 @@ table (report.json V4_verdicts: design-blind methods C1 R1 / R2; design-adjusted
 R1 / R2 and C3_eq_arms R3; PMRT arms C2a R1 + R2 pooled, no per-regime split there, and C3 R3); (b)
 the same rate in each environment E1-E5 (validity_cells.csv: the mean of the environment's n cells,
 which is its pooled rate since every cell has the same edges x 40 seeds; no CI), printed in cells
-shaded by the rate ([DECIDED 2026-10-06, user] harbor_div centred at the nominal .05, two-slope norm
+shaded by the rate (harbor_div centred at the nominal .05, two-slope norm
 0-1, labelled colour bar). Null edges are truth-null edges; E4 has no truth-null candidate in R1 /
 R2 (REPORT V0), so its R1 / R2 rates are the placebo edge, and its R3 rate is the confounded null
 edge (C3; R3 exists in E4 only, all four lam). Rates use the shared symlog rate axis (0 drawn at 0,
-no floor). Rows are labelled directly (method, regime), so no legend. Method separation (V-A2,
-chosen 2026-10-05; DESIGN s.7): an extra gap between methods, the bold method name on the method's
-first regime row (layout.method_rows / method_labels). Points (DESIGN s.12, panel 2026-10-06): the
+no floor). Rows are labelled directly (method, regime), so no legend. Method separation (DESIGN
+s.7): an extra gap between methods, the bold method name on the method's
+first regime row (layout.method_rows / method_labels). Points (DESIGN s.12): the
 method's glyph from oran_causal.figures.methods drawn in ink (the family banners carry the family;
 the light method colours would make some of the worst failures the faintest marks); PMRT-GBM is the
 one filled (hero) glyph.
@@ -95,13 +95,11 @@ ROWS = [
     )
 ]
 PITCH, BANNER_H = L.ROW_PITCH, L.BANNER_H  # data units on the shared row axis
-# [DECIDED 2026-10-06, user] rate heatmaps: diverging harbor_div centred at the nominal .05 (blue
+# rate heatmaps: diverging harbor_div centred at the nominal .05 (blue
 # below, near-white at .05, rust above), two-slope linear norm on 0-1, labelled colour bar
 NORM = TwoSlopeNorm(vmin=0.0, vcenter=0.05, vmax=1.0)
 CBAR_TICKS = [0, 0.05, 0.5, 1]
-VALUE_PT = (
-    S.ANNOT_PT
-)  # [G3 2026-10-12] 7.5 pt tried: stacked rows then overlap (checks.text_overlaps)
+VALUE_PT = S.ANNOT_PT  # larger values make stacked rows overlap (checks.text_overlaps)
 
 
 def _get(v: dict, path: tuple):
@@ -157,15 +155,15 @@ def build():
 
 
 def build_panel(which: str):
-    """[G5 2026-10-12, P3] ``pooled``: panel (a) alone, the body figure; ``env``: panel (b) alone,
-    the ESM figure fig_study4_validity_env (restructure plan: Fig 12b to the ESM). Same rows,
+    """``pooled``: panel (a) alone, the body figure; ``env``: panel (b) alone, the ESM figure
+    fig_study4_validity_env. Same rows,
     banners and method labels in both.
     """
     v = load_json(*T.EVAL, "report.json")["tables"]["V4_verdicts"]
     c = T.cells()
     fig, ax = plots.figure(
         "full", aspect=0.8 if which == "pooled" else 10
-    )  # [G5] (a) alone: 0.8 x 5.15 in
+    )  # (a) alone: 0.8 x 5.15 in
     banners, groups, subrows, ylim = _layout()
     for yy, name, r, spec in subrows:
         if which == "pooled":

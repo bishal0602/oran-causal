@@ -18,7 +18,7 @@ TUNE = list(range(3_000_000, 3_000_020))
 MEAS = list(range(3_000_100, 3_000_112))
 PSHA, SSHA, COMMIT = "p" * 64, "s" * 64, "abc"
 PKGS = {"numpy": "2.0.2"}
-CI = "cdd_oran.xmethod.methods.ci:CI"
+CI = "ci"
 LIBERAL = {("corr", "R2"), ("ci_native", "R2")}
 
 SPEC: dict[str, Any] = {
@@ -27,12 +27,12 @@ SPEC: dict[str, Any] = {
     "budget_cpu_s": 7200,
     "arms": {
         "pmrt_eq": {
-            "ref": "cdd_oran.xmethod.methods.pmrt_core:PmrtCore",
+            "ref": "pmrt_core",
             "config": {"covariates": "eq"},
             "declare": "by",
         },
         "corr": {
-            "ref": "cdd_oran.xmethod.methods.corr:Corr",
+            "ref": "corr",
             "config": {"arm": "native"},
             "declare": "by",
             "analysis": "primary",
@@ -45,17 +45,17 @@ SPEC: dict[str, Any] = {
         },
         "ci_native": {"ref": CI, "config": {"arm": "native"}, "declare": "by"},
         "pcorr_hac": {
-            "ref": "cdd_oran.xmethod.methods.hac:HAC",
+            "ref": "hac",
             "config": {"arm": "native"},
             "declare": "by",
         },
         "pc_eq": {
-            "ref": "cdd_oran.xmethod.methods.pc:PC",
+            "ref": "pc",
             "config": {"arm": "eq"},
             "declare": "tau",
         },
         "pc_native": {
-            "ref": "cdd_oran.xmethod.methods.pc:PC",
+            "ref": "pc",
             "config": {"arm": "native"},
             "declare": "tau",
         },

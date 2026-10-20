@@ -1,6 +1,6 @@
 """Study 1 discovery tests over the v4 episodes: PMRT and the baselines on fresh slices.
 
-The frozen PMRT artifact (`E6P_PMRT_V4.json`) is run on the EVAL episodes pooled (split 0,
+The frozen PMRT artifact (`study1_pmrt.json`) is run on the EVAL episodes pooled (split 0,
 n_target 600) and on the 60-, 120- and 300-episode slices (splits 20 + i, 40 + k, 60 + m), with
 every (statistic, layer) combination; the primary is loadsp_c + wby1s. The placebo episodes run
 at split 9 (n_target 40), and the null-outcome variants (cyclic `lab_series` shifts 1-4 inside
@@ -442,7 +442,7 @@ def artifact_status(path: Path = ARTIFACT) -> dict[str, Any]:
     sha = sha_lf(path)
     v = pmrt_artifact.verify(path)
     return {
-        "path": f"docs/benchmark/artifacts/{path.name}",
+        "path": f"artifacts/{path.name}",
         "sha256": sha,
         "sha_ok": sha == pmrt_artifact.ARTIFACT_SHA256,
         "schema": a.get("schema"),

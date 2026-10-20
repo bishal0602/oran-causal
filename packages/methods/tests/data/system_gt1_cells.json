@@ -1,4 +1,4 @@
-{"source": "CDD-ORAN@0c89106:scratchpad/e6_dev/decision/step1_v1_gt_tables.json [dir][cells]", "fields": ["family", "relation", "kpi", "status", "mean"], "rows": [
+{"source": "GT-1 cell table of the system decision study (v1 GT episodes, directed cells)", "fields": ["family", "relation", "kpi", "status", "mean"], "rows": [
   ["carrier", "own", "pv", "TRUE", -9.36936936936937],
   ["carrier", "own", "v", "TRUE", -135.31906906906906],
   ["carrier", "own", "e", "TRUE", 6623.235704567518],

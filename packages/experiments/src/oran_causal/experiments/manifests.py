@@ -27,11 +27,10 @@ from oran_causal.experiments.paths import MANIFESTS, MEMBER_ROOT, PROTOCOLS, WOR
 TIERS = ("t0", "t1", "t2", "t3")
 COST_TIERS = ("t2", "t3")
 BASES = ("M", "P", "E")
-ORIGIN_PREFIX = "CDD-ORAN@0c89106:"
 SEEDS_FILE = MANIFESTS / "seeds.json"
 CLAIMS_FILE = WORKSPACE_ROOT / "spec" / "claims.yaml"
 DATA_ROOT = WORKSPACE_ROOT / "data"
-ZENODO_FILE = DATA_ROOT / "zenodo.yaml"
+RECORD_SETS_FILE = DATA_ROOT / "record_sets.yaml"
 
 
 class ManifestError(ValueError):
@@ -119,14 +118,12 @@ class RecordSet:
     """A stored record set.
 
     Attributes:
-        set: Name in `data/zenodo.yaml`.
+        set: Name in `data/record_sets.yaml`.
         manifest: `data/`-relative path of its `.sha256` manifest.
-        zenodo_doi: DOI once deposited, else None.
     """
 
     set: str
     manifest: str
-    zenodo_doi: str | None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -146,7 +143,6 @@ class Manifest:
         platform: Reference lane of its re-run (`kaggle`, `colab`, `vps`), as in `tiers.yaml`.
         claims: Registered claim IDs the item supports.
         protocol: Frozen protocol, if the item has one of its own.
-        code_origin: `CDD-ORAN@0c89106:<path>` entries the item was ported from.
         seeds: Seed blocks.
         stages: Stages in run order.
         frozen_inputs: Frozen files with their hashes.
@@ -159,7 +155,6 @@ class Manifest:
     platform: str
     claims: tuple[str, ...]
     protocol: Protocol | None
-    code_origin: tuple[str, ...]
     seeds: tuple[Seed, ...]
     stages: tuple[Stage, ...]
     frozen_inputs: tuple[FrozenInput, ...]
@@ -283,13 +278,8 @@ def _seed(value: Any, where: str) -> Seed:
 
 
 def _record_set(value: Any, where: str) -> RecordSet:
-    row = _table(value, where, ("set", "manifest", "zenodo_doi"))
-    doi = row["zenodo_doi"]
-    if doi is not None:
-        doi = _text(doi, f"{where}.zenodo_doi")
-    return RecordSet(
-        _text(row["set"], f"{where}.set"), _text(row["manifest"], f"{where}.manifest"), doi
-    )
+    row = _table(value, where, ("set", "manifest"))
+    return RecordSet(_text(row["set"], f"{where}.set"), _text(row["manifest"], f"{where}.manifest"))
 
 
 def _tiers(value: Any, where: str) -> dict[str, str | None]:
@@ -314,7 +304,6 @@ def parse(doc: Any, source: str = "manifest") -> Manifest:
             "id",
             "platform",
             "claims",
-            "code_origin",
             "seeds",
             "stages",
             "frozen_inputs",
@@ -354,7 +343,6 @@ def parse(doc: Any, source: str = "manifest") -> Manifest:
         _text(row["platform"], f"{source}.platform"),
         _texts(row["claims"], f"{source}.claims"),
         protocol,
-        _texts(row["code_origin"], f"{source}.code_origin"),
         tuple(
             _seed(s, f"{source}.seeds[{i}]")
             for i, s in enumerate(_items(row["seeds"], f"{source}.seeds"))
@@ -502,21 +490,19 @@ def _check_files(m: Manifest, protocols: Path, member: Path) -> list[str]:
     return problems
 
 
-def _check_records(m: Manifest, data: Path, zenodo: Mapping[str, Mapping[str, Any]]) -> list[str]:
+def _check_records(
+    m: Manifest, data: Path, record_sets: Mapping[str, Mapping[str, Any]]
+) -> list[str]:
     problems = []
     for r in m.records:
         if not (data / r.manifest).is_file():
             problems.append(f"{m.id}: record manifest {r.manifest} is missing")
-        entry = zenodo.get(r.set)
+        entry = record_sets.get(r.set)
         if entry is None:
-            problems.append(f"{m.id}: record set {r.set} is not in zenodo.yaml")
+            problems.append(f"{m.id}: record set {r.set} is not in record_sets.yaml")
         elif entry["manifest"] != r.manifest:
             problems.append(
                 f"{m.id}: record set {r.set} lives in {entry['manifest']}, not {r.manifest}"
-            )
-        elif entry.get("doi") != r.zenodo_doi:
-            problems.append(
-                f"{m.id}: record set {r.set} doi {entry.get('doi')!r} differs from the manifest"
             )
     return problems
 
@@ -529,14 +515,13 @@ def check(
     protocols: Path = PROTOCOLS,
     member: Path = MEMBER_ROOT,
     data: Path = DATA_ROOT,
-    zenodo: Mapping[str, Mapping[str, Any]] | None = None,
+    record_sets: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> list[str]:
     """Checks a manifest against the repository; returns the problems found.
 
     Verifies that claim IDs are registered, seed ranges agree with `seeds.json`, the protocol and
-    frozen inputs exist with the stated hashes, `code_origin` names CDD-ORAN paths, every driver
-    imports, `frozen_in` stages belong to a tier of the item, and the record sets match
-    `data/zenodo.yaml`.
+    frozen inputs exist with the stated hashes, every driver imports, `frozen_in` stages belong to
+    a tier of the item, and the record sets match `data/record_sets.yaml`.
 
     Args:
         m: The manifest.
@@ -545,20 +530,15 @@ def check(
         protocols: Directory of the protocol files.
         member: Experiments member root that `frozen_inputs` paths are relative to.
         data: The `data/` directory.
-        zenodo: Record sets by name (default: `data/zenodo.yaml`).
+        record_sets: Record sets by name (default: `data/record_sets.yaml`).
     """
     known = set(claims) if claims is not None else claim_ids()
     if registry is None:
         registry = json.loads(SEEDS_FILE.read_text(encoding="utf-8"))
-    if zenodo is None:
-        sets = yaml.safe_load(ZENODO_FILE.read_text(encoding="utf-8"))["sets"]
-        zenodo = {s["name"]: s for s in sets}
+    if record_sets is None:
+        sets = yaml.safe_load(RECORD_SETS_FILE.read_text(encoding="utf-8"))["sets"]
+        record_sets = {s["name"]: s for s in sets}
     problems = [f"{m.id}: claim {c} is not registered" for c in m.claims if c not in known]
-    problems += [
-        f"{m.id}: code_origin {o!r} lacks the {ORIGIN_PREFIX} prefix"
-        for o in m.code_origin
-        if not o.startswith(ORIGIN_PREFIX)
-    ]
     for s in m.stages:
         try:
             resolve_driver(s.driver)
@@ -571,5 +551,5 @@ def check(
         ]
     problems += _check_seeds(m, registry)
     problems += _check_files(m, protocols, member)
-    problems += _check_records(m, data, zenodo)
+    problems += _check_records(m, data, record_sets)
     return problems

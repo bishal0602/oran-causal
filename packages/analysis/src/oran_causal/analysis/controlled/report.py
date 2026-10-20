@@ -27,6 +27,7 @@ from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+from oran_causal.analysis import recorded
 from oran_causal.analysis.controlled.cells import Cells, Rows, build_cells, screen
 from oran_causal.analysis.controlled.fmax import Dependence, load_dependence
 from oran_causal.analysis.controlled.integrity import (
@@ -58,6 +59,7 @@ SHARED_FIELDS = ("code", "run_mode", "integrity", "pkgs", "host")
 EVAL_MIN_SEED = 3_100_000
 CELL = ("arm", "world", "regime", "lam", "n", "kappa")
 Pins = Mapping[str, str]
+PROTOCOL_NAME = "protocols/study4/PROTOCOL.md"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -80,6 +82,8 @@ class ReportRequest:
             frozen report.
         input_labels: Replacement labels for input paths in the recorded inputs, keyed by path.
         min_flag_seeds: Seeds below which a cell is `few_seeds` (DEV testing only).
+        cite_recorded: Cite the spec and the protocol by the names and sha256 the stored records
+            carry (`oran_causal.analysis.recorded`), to reproduce a stored report.
     """
 
     spec: PathLike
@@ -96,6 +100,7 @@ class ReportRequest:
     generated_utc: str | None = None
     input_labels: Pins = dataclasses.field(default_factory=dict)
     min_flag_seeds: int = MIN_FLAG_SEEDS
+    cite_recorded: bool = False
 
 
 def split_by_arm(
@@ -658,7 +663,7 @@ COMP_HEAD = [
 ]
 
 
-def _md_header(out: Tables, meta: dict[str, Any], mark: list[str]) -> list[str]:
+def _md_header(out: Tables, meta: dict[str, Any], mark: list[str], protocol_name: str) -> list[str]:
     dev = meta["mode"] == "DEV"
     v11 = out["V11_integrity"]
     protocol = v11["protocol"]
@@ -678,7 +683,7 @@ def _md_header(out: Tables, meta: dict[str, Any], mark: list[str]) -> list[str]:
         "",
         *mark,
         f"Generator `{REPORT_VERSION}` on `{out['analysis']}`; spec `{out['spec_name']}` (sha256 "
-        f"{(meta['spec_sha256'] or '-')[:16]}); protocol docs/xmethod/PROTOCOL_A.md ({ptxt}); "
+        f"{(meta['spec_sha256'] or '-')[:16]}); protocol {protocol_name} ({ptxt}); "
         f"integrity **{v11['label']}**{failed}.",
         f"Primary PMRT arm (focal): {out['focal']}; primary kappa {out['primary_kappa']}; "
         f"generated {meta['utc']}.",
@@ -905,13 +910,14 @@ def _md_kappa_and_grid(out: Tables, mark: list[str]) -> list[str]:
     return lines
 
 
-def report_md(out: Tables, meta: dict[str, Any]) -> str:
+def report_md(out: Tables, meta: dict[str, Any], protocol_name: str = PROTOCOL_NAME) -> str:
     """Renders `REPORT.md`: the pre-registered sections and the appendix with every table.
 
     Args:
         out: Tables from `assemble`.
         meta: Report metadata (`mode`, `utc`, `spec_sha256`, `inputs`, `records_by_arm`,
             `notes`, `csv`).
+        protocol_name: The protocol's name in the header.
     """
     dev = meta["mode"] == "DEV"
     mark = [f"> **{DEV_MARK}**", ""] if dev else []
@@ -920,7 +926,7 @@ def report_md(out: Tables, meta: dict[str, Any]) -> str:
     def tag(arm: str) -> str:
         return f" [{labels[arm]}]" if arm in labels else ""
 
-    lines = _md_header(out, meta, mark)
+    lines = _md_header(out, meta, mark, protocol_name)
     lines += _md_claim(out, mark)
     lines += _md_c1(out["V4_verdicts"], mark, tag)
     lines += _md_c2a(out, mark, tag)
@@ -969,10 +975,30 @@ def _resolve_spec(request: ReportRequest) -> tuple[Spec, str, list[str]]:
     return eval_spec, file_sha256(request.spec), []
 
 
+def _input_meta(request: ReportRequest, path: PathLike) -> tuple[str, str]:
+    cited = recorded.lookup(path) if request.cite_recorded else None
+    if cited is not None:
+        return cited.name, cited.sha256
+    return request.input_labels.get(str(path), str(path).replace("\\", "/")), file_sha256(path)
+
+
 def _inputs_meta(request: ReportRequest) -> list[tuple[str, str]]:
     paths = [request.spec, *request.dev_specs, *request.merged]
-    labels = request.input_labels
-    return [(labels.get(str(p), str(p).replace("\\", "/")), file_sha256(p)) for p in paths]
+    return [_input_meta(request, p) for p in paths]
+
+
+def _cite_recorded(
+    request: ReportRequest, spec: Spec, spec_sha: str, protocol: dict[str, Any]
+) -> tuple[Spec, str, dict[str, Any], str]:
+    cited = recorded.lookup(request.spec)
+    if cited is None:
+        raise SystemExit(f"{request.spec} is not a recorded input")
+    proto = recorded.lookup(request.protocol) if request.protocol else None
+    if proto is None:
+        return spec, cited.sha256, protocol, PROTOCOL_NAME
+    if protocol.get("ok"):
+        protocol = {**protocol, "spec_protocol_sha256": proto.sha256, "file_sha256": proto.sha256}
+    return {**spec, "protocol_sha256": proto.sha256}, cited.sha256, protocol, proto.name
 
 
 def run_report(request: ReportRequest, log: Callable[[str], None] = print) -> int:
@@ -986,11 +1012,15 @@ def run_report(request: ReportRequest, log: Callable[[str], None] = print) -> in
         0 for a FINAL EVAL report, 2 otherwise (a DEV rehearsal is never final).
     """
     spec, spec_sha, notes = _resolve_spec(request)
+    protocol = protocol_check(spec, request.protocol)
+    protocol_name = PROTOCOL_NAME
+    if request.cite_recorded:
+        spec, spec_sha, protocol, protocol_name = _cite_recorded(request, spec, spec_sha, protocol)
     dep: Dependence | None = load_dependence(request.dependence)
     inputs = IntegrityInputs(
         freeze_commit=request.freeze_commit,
         spec_sha=spec_sha,
-        protocol=protocol_check(spec, request.protocol),
+        protocol=protocol,
         amendments=load_amendments(request.amendments),
         dep=dep,
     )
@@ -1013,7 +1043,9 @@ def run_report(request: ReportRequest, log: Callable[[str], None] = print) -> in
     }
     payload = {"meta": meta, "spec": spec if request.dev else None, "tables": out}
     (target / "report.json").write_text(to_json(payload), encoding="utf-8", newline="\n")
-    (target / "REPORT.md").write_text(report_md(out, meta), encoding="utf-8", newline="\n")
+    (target / "REPORT.md").write_text(
+        report_md(out, meta, protocol_name), encoding="utf-8", newline="\n"
+    )
     log(
         f"[report] {mode} {out['V11_integrity']['label']}: claim {out['V4_verdicts']['claim']} "
         f"{out['V4_verdicts']['components']} -> {request.out_dir}"
@@ -1053,6 +1085,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="label recorded for an input path instead of the path (repeatable)",
     )
     ap.add_argument("--min-flag-seeds", type=int, default=MIN_FLAG_SEEDS, help="DEV testing only")
+    ap.add_argument(
+        "--cite-recorded",
+        action="store_true",
+        help="cite the spec and protocol as the stored records do (reproduces a stored report)",
+    )
     return ap
 
 
@@ -1081,5 +1118,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         generated_utc=a.utc,
         input_labels=dict(x.split("=", 1) for x in a.input_label),
         min_flag_seeds=a.min_flag_seeds,
+        cite_recorded=a.cite_recorded,
     )
     return run_report(request)

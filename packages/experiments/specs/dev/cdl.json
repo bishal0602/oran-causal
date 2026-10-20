@@ -1,10 +1,10 @@
 {
  "name": "dev_cdl",
  "budget_cpu_s": 7200,
- "note": "R-51 (user GO 2026-10-03): cdl (feat/v2 5a811de files only) on the full DEV grid, same blocks and seeds as dev_full (tune 3000000-019, measure 3000100-119 + 3000120-159 for R-21 cells)",
+ "note": "R-51 (2026-10-03): cdl on the full DEV grid, same blocks and seeds as dev_full (tune 3000000-019, measure 3000100-119 + 3000120-159 for R-21 cells)",
  "arms": {
   "cdl": {
-   "ref": "cdd_oran.xmethod.methods.cdl:CDLMethod",
+   "ref": "cdl",
    "config": {
     "arm": "native"
    },

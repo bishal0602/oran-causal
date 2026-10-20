@@ -27,7 +27,7 @@ from typing import Any
 
 import numpy as np
 
-from oran_causal.analysis.posthoc.paths import EXTRAS_PROTOCOL, lf_sha256
+from oran_causal.analysis.posthoc.paths import PROTOCOL, lf_sha256
 from oran_causal.analysis.posthoc.x2x3 import check_told
 from oran_causal.core.data import Dataset, Design, Method, Truth
 from oran_causal.core.pmrt import nonlinear
@@ -348,7 +348,7 @@ def x6_execute(
     return execute
 
 
-def protocol_sha256(path: Path = EXTRAS_PROTOCOL) -> str | None:
+def protocol_sha256(path: Path = PROTOCOL) -> str | None:
     """LF sha256 of the extras protocol where present."""
     return lf_sha256(path) if path.exists() else None
 

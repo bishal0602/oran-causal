@@ -19,7 +19,7 @@ from oran_causal.experiments.paths import STUDY4_PROTOCOL, WORKSPACE_ROOT
 
 MANIFEST = "MANIFEST.json"
 DOT = "_dot_"
-FROZEN_COPY_REL = "_bundle/PROTOCOL_A.frozen.md"
+FROZEN_COPY_REL = "_bundle/PROTOCOL.frozen.md"
 PROTOCOL_REL = STUDY4_PROTOCOL.relative_to(WORKSPACE_ROOT).as_posix()
 CORE_FILES = ("pyproject.toml", "uv.lock", ".python-version")
 RUN_MEMBERS = ("core", "sim", "methods", "analysis", "experiments")

@@ -1,9 +1,8 @@
 """Study map: Studies 1-4 and the bridging analysis, with their data, episodes / seeds, analysed units and verdict.
 Booktabs LaTeX + csv; not a figure (no SPEC): run ``uv run python -m oran_causal.figures.figs.tab_design_studies``. Kept separate
-from tab_design_criteria (PAPER_PLAN s.4 [DECIDE] merge).
+from tab_design_criteria.
 
-No protocol commit column: commit hashes appear only in the data and code availability statement (TERMINOLOGY s.8,
-PAPER_PLAN s.5.1 / question 6), although the PAPER_PLAN s.4 row lists "protocol commit".
+No protocol commit column: commit hashes appear only in the data and code availability statement.
 
 Sources and keys:
   Study 1   FD v4.slices.n_episodes.pooled, v4.gt.n_episodes, v4.pooled_units, v4.verdict; v4_analysis.json
@@ -14,7 +13,7 @@ Sources and keys:
   Study 4   report.json tables.V1_validity (primary block: environments, regimes, n, cells, planned seeds, tuning
             seeds), tables.V11_integrity.by_role_status (measure / tune records), tables.V4_verdicts.{claim,components}.
   Bridging  exp_b_tables.json status (records per method: ok / infeasible); the logs are Study 1's evaluation and
-            placebo episodes (EXP_B s.1; counts from v4_analysis.json data).
+            placebo episodes (bridging protocol s.1; counts from v4_analysis.json data).
 Re-aggregation: counts of arms, cells and records, the n range, and the sums of the bridging status counts.
 """
 
@@ -31,7 +30,7 @@ LABELS = {
     "3": "Study 3: edge-certified referee",
     "4": "Study 4: validity across controlled diagnostic environments (E1--E5)",
     "B": "Bridging analysis: the Study 4 methods on the Study 1 simulator logs",
-}  # TERMINOLOGY s.9; data are Study 1 only (V2 B15, 2026-10-11)
+}  # the bridging data are Study 1 only
 
 
 def _study123() -> list[dict]:
@@ -144,7 +143,7 @@ def latex(rs: list[dict]) -> list[str]:
         SOURCES,
         [
             "No protocol commit column: commit hashes only in the data and code availability "
-            "statement (TERMINOLOGY s.8)."
+            "statement."
         ],
     )
     out += [

@@ -25,6 +25,8 @@ from typing import Any
 
 import numpy as np
 
+from oran_causal.analysis.recorded import Recorded
+from oran_causal.analysis.recorded import recorded as recorded_input
 from oran_causal.analysis.system import study1, study2, study3
 from oran_causal.analysis.system.stats import (
     GUARD_KEYS,
@@ -190,6 +192,10 @@ class Sources:
     def protocol(self, study: int, name: str) -> Path:
         """A frozen protocol document."""
         return self.experiments / "protocols" / f"study{study}" / name
+
+    def recorded(self, rel: str) -> Recorded:
+        """How the stored records cite the experiments input at member-relative path `rel`."""
+        return recorded_input(rel, self.experiments / "manifests" / "recorded.json")
 
 
 def read_json(path: Path) -> Any:
@@ -417,10 +423,10 @@ def v4(src: Sources, checks: Checks) -> dict[str, Any]:
         and sha_lf(src.decision / "v4_verdict.json") == sha_lf(run / "verdict_v4.json"),
     )
     out: dict[str, Any] = {
-        "protocol_sha256": sha_lf(src.protocol(1, "E6P_DISCOVERY_PROTOCOL_V4.md")),
+        "protocol_sha256": src.recorded("protocols/study1/DISCOVERY.md").sha256,
         "artifact_sha256": {
-            "frozen_mscrplus": sha_lf(src.artifact("E6P_MSCRPLUS_V4_FROZEN.json")),
-            "pmrt": sha_lf(src.artifact("E6P_PMRT_V4.json")),
+            "frozen_mscrplus": src.recorded("artifacts/study1_mscr_plus.json").sha256,
+            "pmrt": src.recorded("artifacts/study1_pmrt.json").sha256,
         },
     }
     checks.require(
@@ -637,15 +643,18 @@ def rename(src: Sources, checks: Checks) -> dict[str, Any]:
         and ana["n_diff"] == ADDENDUM_CLAIM["n_diff"]
         and cats["criterion"]["leaves"] == ADDENDUM_CLAIM["criterion_leaves"]
     )
-    out["artifact_sha256"] = {
-        n: sha_lf(src.artifact(n)) for n in ("E6P_MSCRPLUS_V4_FROZEN.json", "E6P_PMRT_V4.json")
-    }
+    mscr, pmrt = (
+        src.recorded(f"artifacts/{n}") for n in ("study1_mscr_plus.json", "study1_pmrt.json")
+    )
+    out["artifact_sha256"] = {Path(r.name).name: r.sha256 for r in (mscr, pmrt)}
+    sup = read_json(src.artifact("study1_pmrt.json"))["supersedes"]
     checks.require(
         "rename: artifact sha256 as in the addendum",
-        out["artifact_sha256"]["E6P_MSCRPLUS_V4_FROZEN.json"].startswith("4735a85a")
-        and out["artifact_sha256"]["E6P_PMRT_V4.json"].startswith("9991c390"),
+        mscr.sha256.startswith("4735a85a")
+        and pmrt.sha256.startswith("9991c390")
+        and sup["sha256"] == sha_lf(src.artifact(sup["artifact"])),
     )
-    out["pmrt_supersedes"] = read_json(src.artifact("E6P_PMRT_V4.json")).get("supersedes")
+    out["pmrt_supersedes"] = {"artifact": Path(mscr.name).name, "sha256": mscr.sha256}
     return out
 
 
@@ -978,11 +987,11 @@ def opt_a_eval(
 def opt_a(src: Sources, checks: Checks) -> dict[str, Any]:
     """Study 2 figure data, asserted against the frozen discovery, maps and evaluation outputs."""
     disc = read_json(src.decision / "conf_disc_conf.json")
-    maps_path = src.artifact("E6P_CONF_MAPS.json")
+    maps_path = src.artifact("study2_maps.json")
     maps_art = read_json(maps_path)
     out: dict[str, Any] = {
-        "protocol_sha256": sha_lf(src.protocol(2, "E6P_CONFOUNDED_PROTOCOL.md")),
-        "maps_sha256": sha_lf(maps_path),
+        "protocol_sha256": src.recorded("protocols/study2/PROTOCOL.md").sha256,
+        "maps_sha256": src.recorded("artifacts/study2_maps.json").sha256,
         "disc_json_sha256": sha_lf(src.decision / "conf_disc_conf.json"),
     }
     checks.require(
@@ -991,7 +1000,7 @@ def opt_a(src: Sources, checks: Checks) -> dict[str, Any]:
     )
     checks.require(
         "opt(a): maps artifact sha256 = .sha256 file",
-        out["maps_sha256"] == src.artifact("E6P_CONF_MAPS.json.sha256").read_text().split()[0],
+        sha_lf(maps_path) == src.artifact("study2_maps.json.sha256").read_text().split()[0],
     )
     checks.require(
         "opt(a): disc_conf.json = the copy the maps artifact pins",
@@ -1288,19 +1297,20 @@ def cs_eval(
 
 def certsafe(src: Sources, checks: Checks) -> dict[str, Any]:
     """Study 3 figure data, asserted against the certsafe artifact, calibration and evaluation."""
-    art_path = src.artifact("E6P_CERTSAFE.json")
+    art_path = src.artifact("study3_certsafe.json")
     art = read_json(art_path)
     cal = read_json(src.decision / "cs_calib.json")
     out: dict[str, Any] = {
-        "protocol_sha256": sha_lf(src.protocol(3, "E6P_CERTSAFE_PROTOCOL.md")),
-        "artifact_sha256": sha_lf(art_path),
+        "protocol_sha256": src.recorded("protocols/study3/PROTOCOL.md").sha256,
+        "artifact_sha256": src.recorded("artifacts/study3_certsafe.json").sha256,
     }
     checks.require(
         "2b: artifact sha256 = .sha256 file",
-        out["artifact_sha256"] == src.artifact("E6P_CERTSAFE.json.sha256").read_text().split()[0],
+        sha_lf(art_path) == src.artifact("study3_certsafe.json.sha256").read_text().split()[0],
     )
     checks.require(
-        "2b: protocol sha256 = artifact record", out["protocol_sha256"] == art["protocol"]["sha256"]
+        "2b: protocol sha256 = artifact record",
+        sha_lf(src.protocol(3, "PROTOCOL.md")) == art["protocol"]["sha256"],
     )
     G, N, rep, n_dev = _calibration(src, cal, checks)
     tau = tau_table(G, N)

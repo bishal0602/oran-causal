@@ -1,6 +1,6 @@
 """F2: calibration of placebo-edge p-values, design-based / design-adjusted vs design-blind tests.
 Empirical CDF of the p-values on log-log axes against the uniform diagonal (a calibrated test lies
-on it). (a) Study 4, R2, kappa .25, measure datasets of E1-E5 pooled; (b) E6-P bridging analysis,
+on it). (a) Study 4, R2, kappa .25, measure datasets of E1-E5 pooled; (b) the bridging analysis,
 the ten 60-episode slices.
 """
 
@@ -43,7 +43,7 @@ PHASES = (
     8,
 )  # marker phases on the 10-step grid: the three arms on the diagonal 3 steps apart
 LIM = (1e-3, 1.0)
-VIEW = (7.5e-4, 1.35)  # [2026-10-06] headroom: markers at 1 (and the 0.001 corner) never clipped
+VIEW = (7.5e-4, 1.35)  # headroom: markers at 1 (and the 0.001 corner) never clipped
 
 
 def _panel(ax, pv: dict):

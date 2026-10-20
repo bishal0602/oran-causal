@@ -3,10 +3,8 @@ platform: kaggle
 claims:
 - PRO-POSTHOC
 protocol:
-  path: posthoc/EXTRAS_PROTOCOL.md
-  sha256: 292a4f6b52783ad170da39bc5f7476d2194fd1d6a25fa20e78e5026818a27ccb
-code_origin:
-- CDD-ORAN@0c89106:cdd_oran/xmethod/diag.py
+  path: posthoc/PROTOCOL.md
+  sha256: 8270cdc0024f718f37ca7c25ddb9c7279d3ff1b156d66d53780a9304f38772ab
 seeds:
 - block: XMETHOD_DIAG
   range:
@@ -29,9 +27,9 @@ stages:
     - x5_fail
     - x6_gbm
   inputs:
-  - specs/extras/x5_adj.json
-  - specs/extras/x5_fail.json
-  - specs/extras/x6_gbm.json
+  - specs/posthoc/x5_adj.json
+  - specs/posthoc/x5_fail.json
+  - specs/posthoc/x6_gbm.json
   outputs:
   - posthoc_x5_x6/x5_adj/merged.jsonl.gz
   - posthoc_x5_x6/diag
@@ -51,16 +49,15 @@ stages:
     cpu_h: 0.0
     basis: M
 frozen_inputs:
-- path: specs/extras/x5_adj.json
-  sha256: e1ae87fd232e8f550f01cd99fa3b7599c30c3e5b8f5ca4342dfa2b6b1e4da0cb
-- path: specs/extras/x5_fail.json
-  sha256: 753aac5ad1d9af80b3aefb385d99f80a0ca9ee3afe04541276d001b2b134b682
-- path: specs/extras/x6_gbm.json
-  sha256: 9f1f55e20ab3e8ee5fbef479e3240cf2f53b3c2af9258b49038e82c650e85c06
+- path: specs/posthoc/x5_adj.json
+  sha256: f2dddf0f04e355cb17d8b11e44572859bf19a560f958a29f3c34994a6dde107e
+- path: specs/posthoc/x5_fail.json
+  sha256: a31ae455dc58e807d9dbd0b5787c94a5f5949d0eb379037e79874f2b1aa21416
+- path: specs/posthoc/x6_gbm.json
+  sha256: d831b485f0aca587d478886be026b216aede06fc3fb99012ec6aad984dde0154
 records:
 - set: posthoc_x5_x6
   manifest: manifests/posthoc_x5_x6.sha256
-  zenodo_doi: null
 tiers:
   t0: analyse the stored X5 and X6 records
   t1: null

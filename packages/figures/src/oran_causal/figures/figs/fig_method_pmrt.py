@@ -1,7 +1,6 @@
 """Section 4: the PMRT pipeline (assignment score, predictable adjustment, matched filter,
-randomization test), the weighted BY declaration layer, the causal map and the referee. Content from
-TERMINOLOGY s.6.1 / s.7 and CDD-ORAN docs/ARCHITECTURE.md s.3 (diagram; no data). One hero
-component: the PMRT block (DESIGN s.9); arrows ink.
+randomization test), the weighted BY declaration layer, the causal map and the referee. A diagram
+with no data. One hero component: the PMRT block (DESIGN s.9); arrows ink.
 """
 
 from oran_causal.figures import diagram as D
@@ -11,7 +10,7 @@ SPEC = FigSpec(
     name="fig_method_pmrt",
     width="full",
     paper=True,
-    sources=["CDD-ORAN/docs/ARCHITECTURE.md s.3", "TERMINOLOGY.md s.6.1, s.7"],
+    sources=["packages/core/src/oran_causal/core/pmrt"],
     caption_hint="The PMRT pipeline. Each logged request gets a design-centred assignment score from its "
     "logged propensity; a predictable (past-only) adjustment removes what earlier data "
     "predict; a matched filter frozen from earlier data combines the receiving cells and time "

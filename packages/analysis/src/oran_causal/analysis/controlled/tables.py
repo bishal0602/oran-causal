@@ -941,7 +941,7 @@ def markdown(out: Tables) -> str:
         f"`{out['analysis']}`, spec `{out['spec_name']}`, primary kappa {out['primary_kappa']}, "
         f"primary PMRT arm "
         f"{focal}; commits {', '.join(c[:9] for c in v11['commits'])}. Protocol: "
-        f"docs/xmethod/PROTOCOL_A.md.",
+        f"protocols/study4/PROTOCOL.md.",
         "",
     ]
     lines += [*md_like(out.get("V0_like_for_like", []), arms, nig), ""]

@@ -45,7 +45,7 @@ CS_ASSOC = tuple(f"CS:{b}" for b in study2.ASSOC)
 CS_ARMS = tuple(CS_OF)
 ALL_ARMS = (*ANCHORS, *REFS, *CS_ARMS)
 PRIMARY_ARM = "CS:PMRT"
-CERTSAFE_KEY = "cdd_oran/decision/certsafe.py"
+CERTSAFE_KEY = "certsafe"
 RLF_CI_MAX = 1.20
 SECONDARY = ("noarb", "incumbent", "never_sleep", "MG:PMRT", "CS:GT", "CS:rand", "CS:blanket2")
 COUNT_GROUPS = ("defer", "defer_units", "units", "policy", "passed")
@@ -129,7 +129,7 @@ class EvalInputs:
 
     Attributes:
         disc: The Study 2 discovery analysis (`disc_conf.json`; K0 and K0n).
-        artifact: The parsed certsafe artifact (`E6P_CERTSAFE.json`).
+        artifact: The parsed certsafe artifact (`study3_certsafe.json`).
         artifact_verify: Its verification report (`ok`, `driver_matches`, ...).
         frozen: Whether the protocol is frozen.
         argv: Command line recorded in the report.

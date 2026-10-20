@@ -19,18 +19,17 @@ from oran_causal.analysis.controlled.cells import build_cells, screen
 from oran_causal.analysis.controlled.protocol import ANALYSIS_VERSION, RATE_KEYS
 from oran_causal.analysis.controlled.tables import clean
 from oran_causal.analysis.controlled.validity import mean_ci, rate
-from oran_causal.analysis.posthoc.paths import EXTRAS_PROTOCOL, SPECS, lf_sha256, write_text
+from oran_causal.analysis.posthoc.paths import CITED_PROTOCOL, PROTOCOL_NAME, SPECS, write_text
 from oran_causal.analysis.records import load_records
 from oran_causal.sim.controlled.datasets.generate import dataset_hash, generate_dataset
 
 EXTRAS_VERSION = "xm-extras/1"
-PROTOCOL_REL = "scratchpad/xmethod/EXTRAS_PROTOCOL.md"
 TOLD_KEYS = ("width", "shift", "lam")
 ABLATION_KEYS = ("centre", "redraw")
 FROZEN_DESIGN = (0.10, 20)
 WORDING = (
     "These supplementary experiments are exploratory: they were declared before launch "
-    f"({PROTOCOL_REL}) on a fresh seed block, use the frozen methods and procedures, and do not "
+    f"({PROTOCOL_NAME}) on a fresh seed block, use the frozen methods and procedures, and do not "
     "change C1-C3."
 )
 TREND_KEYS = ("null_decl", "null_raw", "plac_raw")
@@ -52,7 +51,7 @@ def load_spec(name_or_path: str | Path, spec_dir: Path | None = None) -> Spec:
     """Reads an extras spec by file path or by name in the frozen specs directory."""
     p = Path(name_or_path)
     if not p.exists():
-        p = (spec_dir or SPECS / "extras") / f"{name_or_path}.json"
+        p = (spec_dir or SPECS / "posthoc") / f"{name_or_path}.json"
     return json.loads(p.read_text(encoding="utf-8"))
 
 
@@ -260,7 +259,7 @@ def analyse(
     return {
         "extras_version": EXTRAS_VERSION,
         "analysis": ANALYSIS_VERSION,
-        "protocol_sha256": protocol_sha256 or lf_sha256(EXTRAS_PROTOCOL),
+        "protocol_sha256": protocol_sha256 or CITED_PROTOCOL.sha256,
         "checks": checks,
         "rows": rows,
         "pooled": pooled,
@@ -459,7 +458,7 @@ def analyse_md(out: Mapping[str, Any]) -> str:
     lines = [
         "# R-60 extras: tables",
         "",
-        f"{out['wording']} Declared in `{PROTOCOL_REL}` (LF sha256 "
+        f"{out['wording']} Declared in `{PROTOCOL_NAME}` (LF sha256 "
         f"{out['protocol_sha256']}). Rates: hits / testable candidates, seed-cluster 95 % "
         "bootstrap CI (eval_analysis). The R-30 class is a descriptive label here, not a verdict.",
         "",

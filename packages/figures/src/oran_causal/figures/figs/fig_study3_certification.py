@@ -1,4 +1,4 @@
-"""Study 3 certification (PAPER_PLAN s.6.3, s.7 Discussion P2; claims S3.4, S3.5): for each
+"""Study 3 certification (claims S3.4, S3.5): for each
 rejection class (f, d) the edge-certified referee may use, and each of its six guard edges (own /
 nbr / far relation x service violations v / RLF), (a) the one-sided 90 % upper bound UB90 of the
 rejection harm relative to the class threshold tau (log scale; the edge is certified iff UB90 <=
@@ -95,9 +95,7 @@ def build():
     for cls in classes:
         rows += [(_class_label(cls), None), ("", [f"{r}|{k}" for r, k in EDGES])]
     banners, _, subrows, (y0, _) = L.method_rows(rows, gap=0.45)
-    fig, (a, b) = plots.figure(
-        "full", aspect=0.874, ncols=2, width_ratios=[1.55, 1.0]
-    )  # [G5] 4.5 in (was 0.78): 8 pt rows
+    fig, (a, b) = plots.figure("full", aspect=0.874, ncols=2, width_ratios=[1.55, 1.0])  # 8 pt rows
     ys = {}  # (class, edge) -> y
     k = 0
     for cls in classes:

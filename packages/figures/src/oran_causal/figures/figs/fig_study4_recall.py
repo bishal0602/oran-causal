@@ -1,5 +1,5 @@
-"""F1: Study 4 recall vs n in R2 (E1-E5, kappa .25) beside the E6-P bridging-analysis slices, with
-the frozen PMRT (E6-P v4 primary) as an ink reference line (DESIGN s.12: never styled as a member of
+"""F1: Study 4 recall vs n in R2 (E1-E5, kappa .25) beside the bridging-analysis slices, with
+the frozen PMRT (the Study 1 primary) as an ink reference line (DESIGN s.12: never styled as a member of
 the PMRT-GBM family). INVALID cells carry no recall; they are marked with a cross in the strip above
 the recall scale (layout.recall_axis). Series are dodged horizontally (layout.dodge) so equal
 recalls stay visible. Styles: oran_causal.figures.methods.
@@ -35,7 +35,7 @@ WORLD_NAME = {
 SLICE_TOTAL = T.SLICE_EPISODES[
     "pooled"
 ]  # 600 EVAL episodes; a slice of e episodes gives 600 / e clusters
-MIN_CI_CLUSTERS = 2  # intervals on 2 or fewer clusters are not drawn (V2/V3 review, 2026-10-10)
+MIN_CI_CLUSTERS = 2  # intervals on 2 or fewer clusters are not drawn
 
 
 def _study4_panel(ax, df, world):
@@ -69,8 +69,7 @@ def _bridge_panel(ax, tab):
     eps = np.array([T.SLICE_EPISODES[s] for s in kinds], float)
     M.reference_line(ax, eps, [ref[s]["recall"] for s in kinds])
     # label at the pooled end, text to the left: clear of the rising line and the 60-episode error
-    # bars (team review 2026-10-09: measured 8.1 pt to other marks, 4.0 pt to its own line; was 1.5
-    # pt / touching at 60 episodes)
+    # bars (8.1 pt to other marks, 4.0 pt to its own line)
     L.label_line(ax, eps[-1], ref[kinds[-1]]["recall"], "Frozen PMRT", where="above", ha="right")
     for arm in T.RECALL_ARMS:
         c = [cells[f"{arm}|{s}|by"]["rec"] for s in kinds]
@@ -78,7 +77,7 @@ def _bridge_panel(ax, tab):
         tr = T.series(ax, eps, y, None, None, arm, T.RECALL_ARMS)
         n_pooled = cells[f"{arm}|pooled|by"]["rec"]["n"]
         for xi, yi, v in zip(eps, y, c, strict=False):
-            # [2026-10-12, review] the interval rests on the slices (clusters): 600 / episodes of
+            # the interval rests on the slices (clusters): 600 / episodes of
             # them, i.e. n / pooled n. With 2 clusters (300-episode slices) it is not drawn; the
             # point stays
             clusters = round(SLICE_TOTAL / xi)

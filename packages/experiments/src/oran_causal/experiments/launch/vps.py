@@ -18,13 +18,11 @@ from collections.abc import Callable, Sequence
 from typing import Any, Protocol
 
 from oran_causal.experiments.campaign.provenance import GitRunner, code_info, run_git
-from oran_causal.experiments.launch import bundle
+from oran_causal.experiments.launch import bundle, settings
 from oran_causal.experiments.launch.commands import PIN_CHECK, SetupPlan, sync_command
 from oran_causal.experiments.launch.hosts import VPS_SHARED, HostProfile
 from oran_causal.experiments.launch.runner import Dirs
 
-HOST = "root@vps.brihatech.com"
-INSTABOX_HOST = "instabox"
 UV_TARGET = "uv-x86_64-unknown-linux-gnu"
 NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]{1,48}$")
 OUT_PLACEHOLDER = "{OUT}"
@@ -65,17 +63,24 @@ class Ssh:
 
     Attributes:
         env: Shell prelude that confines the remote environment to the base directory.
-        host: `user@host`.
+        host: SSH destination; None reads `host_setting` when a command runs.
+        host_setting: Environment variable of the destination (default ORAN_CAUSAL_VPS_HOST).
         run: `subprocess.run` replacement (tests).
     """
 
     env: str
-    host: str = HOST
+    host: str | None = None
+    host_setting: str = settings.VPS_HOST
     run: Run = dataclasses.field(default=subprocess.run)
+
+    @property
+    def destination(self) -> str:
+        """The SSH destination."""
+        return self.host or settings.required(self.host_setting)
 
     def _ssh(self, remote: Sequence[str], data: bytes | None, timeout: int) -> tuple[int, bytes]:
         p = self.run(
-            ["ssh", *SSH_OPTS, self.host, *remote],
+            ["ssh", *SSH_OPTS, self.destination, *remote],
             input=data,
             capture_output=True,
             timeout=timeout,

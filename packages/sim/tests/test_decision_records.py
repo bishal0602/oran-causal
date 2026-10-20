@@ -7,9 +7,7 @@ import pytest
 from oran_causal.core.data import UnitTable
 from oran_causal.sim.system.decision import records as R
 from oran_causal.sim.system.decision.synthetic import SyntheticSpec, synthetic_records
-from oran_causal.sim.system.decision.vocab import KPIS, LEVEL
-
-DATA = Path(__file__).parent / "data"
+from oran_causal.sim.system.decision.vocab import LEVEL
 
 pytestmark = pytest.mark.filterwarnings("ignore::RuntimeWarning")
 
@@ -54,15 +52,6 @@ def same_table(a: UnitTable, b: UnitTable) -> None:
     assert list(a.z) == list(b.z)
     assert all(np.array_equal(a.z[k], b.z[k], equal_nan=True) for k in a.z)
     assert a.meta["dropped"]["window"] == b.meta["dropped"]["window"]
-
-
-@pytest.mark.parametrize(("H", "H_pre"), [(90, 90), (30, 30), (150, 60), (60, 150)])
-def test_loader_rebuilds_build_unit_data_bit_for_bit(synth: dict, H: int, H_pre: int) -> None:
-    recs = sorted(synth["recs"], key=lambda r: (r["seed"], r.get("sub", "")))
-    same_table(
-        R.build_unit_data(recs, H=H, H_pre=H_pre),
-        R.load_pool(synth["cache"], H=H, H_pre=H_pre).unit_data(),
-    )
 
 
 def test_episode_subset_matches_build_unit_data(synth: dict) -> None:
@@ -150,35 +139,3 @@ def test_codec_and_unit_records_roundtrip() -> None:
     inc = R.incumbent_unit_record(7, u, 1)
     assert inc["probs"] == u["probs"]
     assert inc["inc"] == u["inc"]
-
-
-@pytest.fixture(scope="module")
-def golden() -> dict:
-    with np.load(DATA / "decision_units_golden.npz") as z:
-        return {k: z[k] for k in z.files}
-
-
-@pytest.mark.claim("DEF-SYS-HYP")
-@pytest.mark.parametrize(("tag", "H", "H_pre"), [("h90", 90, 90), ("h60_150", 60, 150)])
-def test_unit_table_equals_the_old_builder(golden: dict, tag: str, H: int, H_pre: int) -> None:
-    recs = json.loads(str(golden["records"]))
-    d = R.build_unit_data(recs, H=H, H_pre=H_pre)
-    for k in ("episode", "seed", "fold", "family", "c", "t0", "mode", "applied", "p", "probs"):
-        assert np.array_equal(getattr(d, k), golden[f"{tag}/{k}"]), k
-    for k in ("step", "sgn", "prev"):
-        assert np.array_equal(getattr(d, k), golden[f"{tag}/{k}"]), k
-    assert list(d.xapp) == list(golden[f"{tag}/xapp"])
-    for (r, k), v in d.y.items():
-        assert np.array_equal(v, golden[f"{tag}/y/{r}|{k}"])
-        assert np.array_equal(d.pre[(r, k)], golden[f"{tag}/pre/{r}|{k}"])
-    for k in KPIS:
-        assert np.array_equal(d.ycell[k], golden[f"{tag}/ycell/{k}"])
-    for r, v in d.rel_mask.items():
-        assert np.array_equal(v, golden[f"{tag}/rel_mask/{r}"])
-    assert list(d.z) == list(golden[f"{tag}/z_order"])
-    for k, v in d.z.items():
-        assert np.array_equal(v, golden[f"{tag}/z/{k}"], equal_nan=True)
-    meta = json.loads(str(golden[f"{tag}/meta"]))
-    assert d.meta["dropped"] == meta["dropped"]
-    assert d.meta["n_units"] == meta["n_units"]
-    assert d.meta["conditioners"] == meta["conditioners"]

@@ -6,10 +6,10 @@ blocks is the Study 4 R2 design).
 
 Source: XR ``extras_tables.json``, ``pooled`` rows with experiment X2 (regime R2), key ``null_raw``
 (rate, seed-cluster 95 % bootstrap CI). Row selection only. Raw rates, as in the Study 4 rate
-figures; the XR / PAPER_PLAN row X.2 also quotes the BY-declared rate of correlation (0.771 to
+figures; XR also quotes the BY-declared rate of correlation (0.771 to
 0.514), which stays in the compact table. Series (DESIGN s.12.1 style row): PMRT-GBM (hero),
 PMRT-Lin, design-adjusted partial correlation, correlation and plain partial correlation. PMRT-Lin
-with R3 covariates was not an X2 arm (no X2 row in XR), so it is not drawn. NOTEARS and SHAP-DAG are
+with R3 covariates is not an X2 arm (no X2 row in XR), so it is not drawn. NOTEARS and SHAP-DAG are
 table-only: they have no paper style yet (oran_causal.figures.methods: no marker; DESIGN s.12.1
 "tables only"). Design-adjusted partial correlation has no rate at 5 setpoint blocks: the frozen arm
 stops on a rank-deficient source design there, so every candidate is untestable (XR Notes); that

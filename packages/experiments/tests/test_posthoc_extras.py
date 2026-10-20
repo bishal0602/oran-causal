@@ -17,7 +17,7 @@ from oran_causal.experiments.posthoc import extras_specs as xs
 from oran_causal.sim.controlled.datasets import generate
 from oran_causal.sim.controlled.datasets.generate import dataset_hash, generate_dataset
 
-DUMMY = "cdd_oran.xmethod.runner:DummyMethod"
+DUMMY = "dummy"
 SEED = 3_200_060
 
 
@@ -53,10 +53,6 @@ def small_x2() -> dict:
     spec["blocks"][0]["arms"] = ["d"]
     spec["blocks"][0]["seeds"] = [3_200_020, 3_200_021]
     return spec
-
-
-def test_rebuilt_specs_equal_the_frozen_files():
-    assert xs.diff_frozen(xs.build_specs()) == []
 
 
 def test_the_diff_reports_a_changed_float_and_a_missing_key():

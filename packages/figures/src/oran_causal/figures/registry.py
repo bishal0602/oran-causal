@@ -9,7 +9,7 @@ sources=["data/records/..."], caption_hint="...")
 def build() -> matplotlib.figure.Figure: ...
 
 `paper=True` writes <figures_dir>/<name>.pdf (what LaTeX includes) plus a PNG preview.
-`paper=False` writes the preview only (style specimens, drafts).
+`paper=False` writes the preview only (drafts).
 """
 
 import importlib

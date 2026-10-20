@@ -21,14 +21,14 @@ SRC_V4_VERDICT = source_note(*V4_VERDICT_PARTS)
 SRC_CONF_VERDICT = source_note(*CONF_VERDICT_PARTS)
 SRC_CS_VERDICT = source_note(*CS_VERDICT_PARTS)
 
-CS_PROTOCOL_PARTS = ("study3", "E6P_CERTSAFE_PROTOCOL.md")  # s.7 eligibility definition (text)
+CS_PROTOCOL_PARTS = ("study3", "PROTOCOL.md")  # s.7 eligibility definition (text)
 SRC_CS_PROTOCOL = protocol_note(*CS_PROTOCOL_PARTS)
 GUARDS = {
     "svr": "SVR",
     "nonprot_embb_viol": "non-protected eMBB",
     "ll_viol": "LL",
     "rlf": "RLF",
-}  # TERMINOLOGY s.7
+}
 
 _cache: dict = {}
 

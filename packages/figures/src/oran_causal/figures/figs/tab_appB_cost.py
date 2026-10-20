@@ -2,11 +2,11 @@
 set), infeasible units, total CPU time in Kaggle-reference core-hours and the largest CPU-s of one
 unit. Not a figure (no SPEC): run ``uv run python -m oran_causal.figures.figs.tab_appB_cost``.
 
-Source: exp_b_costs.json (EXP_B s.9 Cost; EXP_B_COSTS.md), keys ``arms.<arm>.{n, infeasible,
+Source: exp_b_costs.json (bridging protocol s.9 Cost; EXP_B_COSTS.md), keys ``arms.<arm>.{n, infeasible,
 ref_cpu_s, max_ref_cpu_s}``, ``total_ref_core_h`` and ``budget_cpu_s``. Allowed re-aggregation:
 core-h = ref_cpu_s / 3600; the two arms without a paper name (pc_eq, mscr_eq) are summed into one
 unnamed row so the column adds up to the stored total (checked against ``total_ref_core_h``).
-Infeasible units are counted at the CPU budget (EXP_B s.6).
+Infeasible units are counted at the CPU budget (bridging protocol s.6).
 """
 
 from oran_causal.figures.data import load_json, source_note
@@ -70,7 +70,7 @@ def latex(rs: list[dict], meta: dict) -> str:
         NAME,
         SOURCES,
         [
-            "Bridging analysis cost: post hoc, descriptive (EXP_B s.9 Cost). CPU time in Kaggle-reference core-hours"
+            "Bridging analysis cost: post hoc, descriptive. CPU time in Kaggle-reference core-hours"
             " (other hosts converted with the stored speed factors); infeasible units counted at the budget of"
             f" {meta['budget']:.0f} CPU-s per unit.",
             f"Unnamed row = the arms without a paper name ({o['members']}), summed so the total adds up.",

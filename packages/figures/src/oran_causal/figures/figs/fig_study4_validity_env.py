@@ -1,5 +1,4 @@
-"""Study 4 validity by environment (ESM; [G5 2026-10-12, P3] panel (b) of fig_study4_validity moved
-to the ESM, restructure plan "Fig 12b to the ESM"): the null-edge rejection rate of each method and
+"""Study 4 validity by environment (ESM; the per-environment panel of fig_study4_validity): the null-edge rejection rate of each method and
 regime in each environment E1-E5, printed in cells shaded on harbor_div centred at the nominal .05
 (two-slope norm 0-1, labelled colour bar). Rows, data and shading as fig_study4_validity (shared
 builder ``build_panel("env")``); see that module's docstring. One panel, so no panel letter (DESIGN

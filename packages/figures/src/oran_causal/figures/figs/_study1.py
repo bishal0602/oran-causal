@@ -1,10 +1,10 @@
 """Study 1 data for fig_study1_discovery. Read-only from the record sets through oran_causal.figures.data; every derived quantity is
 re-computed from the stored per-edge declarations and asserted against the stored metrics at build time.
 
-FD  = reports/2026-10-02-v4-pmrt-confounded-certsafe/figures_data.json, key "v4"
-V4  = scratchpad/e6_dev/decision/v4_analysis.json (gt.cells, slices_result.<slice>.metrics.<code>.declared,
+FD  = system_artifacts/report_2026-10-02/figures_data.json, key "v4"
+V4  = system_artifacts/decision/v4_analysis.json (gt.cells, slices_result.<slice>.metrics.<code>.declared,
       placebo_descriptive.<code>.declared)
-Scoring (cdd_oran/decision/edge_score.py): TP = declared and TRUE (any sign), FP = declared and NULL, INDET excluded;
+Scoring (as the Study 1 analyzer): TP = declared and TRUE (any sign), FP = declared and NULL, INDET excluded;
 sign accuracy = share of TP whose declared sign equals the GT sign.
 """
 
@@ -124,7 +124,7 @@ def load() -> dict:
             ss = [s for s in names if slices[PRIMARY][s]["n_eps"] == n]
             w = sum(slices[PRIMARY][s]["ind_f1"] >= slices[b][s]["ind_f1"] for s in ss)
             assert w == fd["P2"][b][key], (b, n, w)
-    # headline numbers of PAPER_PLAN S1.3 / S1.7
+    # headline numbers
     p3 = fd["P3_values"]
     assert _close(p3["ind_f1"], pooled[PRIMARY]["ind_f1"])
     assert p3["n_declared"] == len(pooled[PRIMARY]["declared"])

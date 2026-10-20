@@ -2,8 +2,8 @@
 
 import dataclasses
 
-VPS_BASE = "/opt/oran-causal"
-INSTABOX_BASE = "/data/home/oran-causal"
+from oran_causal.experiments.launch import settings
+
 UNIT_PREFIX = "oran-causal-"
 GIB_KB = 1024 * 1024
 
@@ -34,7 +34,9 @@ class HostProfile:
         swap_max: systemd `MemorySwapMax`, or None.
         load_guard: Pre-launch refusals, or None.
         wall_s: Default per-process timeout so the session ends before the platform's own limit.
-        base: Directory every remote file of a job lives under, or None.
+        base_dir: Directory every remote file of a job lives under; None reads `base_setting`.
+        base_setting: Environment variable of the base directory (see `settings`), or None for a
+            platform without one.
         unit_prefix: Prefix of the job's systemd scope unit.
         user_scope: Run scopes in the login user's systemd instance (`systemd-run --user`), for
             a host where the SSH user is not root.
@@ -46,9 +48,15 @@ class HostProfile:
     swap_max: str | None
     load_guard: LoadGuard | None
     wall_s: int
-    base: str | None = None
+    base_dir: str | None = None
+    base_setting: str | None = None
     unit_prefix: str = UNIT_PREFIX
     user_scope: bool = False
+
+    @property
+    def base(self) -> str | None:
+        """Directory every remote file of a job lives under, or None."""
+        return self.base_dir or (settings.base(self.base_setting) if self.base_setting else None)
 
     @property
     def systemctl(self) -> str:
@@ -86,7 +94,9 @@ class HostProfile:
 
 KAGGLE_CPU = HostProfile("kaggle-cpu", 4, None, None, None, 11 * 3600)
 COLAB_CPU = HostProfile("colab-cpu", 4, None, None, None, 3 * 3600)
-VPS_DEDICATED = HostProfile("vps-dedicated", 16, None, None, None, 23 * 3600, VPS_BASE)
+VPS_DEDICATED = HostProfile(
+    "vps-dedicated", 16, None, None, None, 23 * 3600, base_setting=settings.VPS_BASE
+)
 VPS_SHARED = HostProfile(
     "vps-shared",
     7,
@@ -94,7 +104,7 @@ VPS_SHARED = HostProfile(
     "0",
     LoadGuard(12 * GIB_KB, 1.0, True),
     23 * 3600,
-    VPS_BASE,
+    base_setting=settings.VPS_BASE,
 )
 
 INSTABOX = HostProfile(
@@ -104,7 +114,7 @@ INSTABOX = HostProfile(
     "0",
     LoadGuard(6 * GIB_KB, 1.0, True),
     23 * 3600,
-    INSTABOX_BASE,
+    base_setting=settings.INSTABOX_BASE,
     user_scope=True,
 )
 

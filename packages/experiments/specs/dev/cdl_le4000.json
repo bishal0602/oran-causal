@@ -4,7 +4,7 @@
  "note": "R-58(7): the T1 / freeze view of specs/dev/cdl.json, n <= 4000 only (rule T1 reads n 500 / 1000 / 4000); cdl records at n 8000 / 24000 are descriptive and merged against cdl.json. Same units otherwise.",
  "arms": {
   "cdl": {
-   "ref": "cdd_oran.xmethod.methods.cdl:CDLMethod",
+   "ref": "cdl",
    "config": {
     "arm": "native"
    },

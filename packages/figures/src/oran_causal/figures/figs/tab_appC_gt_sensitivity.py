@@ -6,7 +6,7 @@ bounds), recall and sign accuracy against each label set; Granger + BY's precisi
 comparator column. Every other method's scores are in the csv only. Not a figure (no SPEC): run ``uv
 run python -m oran_causal.figures.figs.tab_appC_gt_sensitivity``.
 
-Source: extras/revision/x11_gt_sensitivity.json (X11, EXTRAS_PROTOCOL amendment 2026-10-11; the
+Source: posthoc_x9_x16/revision/x11_gt_sensitivity.json (X11, posthoc protocol amendment 2026-10-11; the
 script reproduced every stored GT cell and every method's stored scores at the frozen setting before
 writing), keys ``studies.<S1|S2>.reproduced``, ``.variants.<v>.{rel_frac, floor_pv, ci_level,
 delta.pv, counts, methods.<code>.{precision, precision_indet_wrong, precision_indet_right, recall,

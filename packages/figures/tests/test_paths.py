@@ -40,9 +40,9 @@ def test_record_refuses_a_missing_file(tmp_path, monkeypatch):
 @pytest.mark.parametrize(
     "parts",
     [
-        ("study2", "E6P_CONFOUNDED_PROTOCOL.md"),
-        ("study3", "E6P_CERTSAFE_PROTOCOL.md"),
-        ("study4", "PROTOCOL_A.md"),
+        ("study2", "PROTOCOL.md"),
+        ("study3", "PROTOCOL.md"),
+        ("study4", "PROTOCOL.md"),
     ],
 )
 def test_protocols_are_the_frozen_copies(parts):

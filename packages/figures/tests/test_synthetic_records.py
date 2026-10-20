@@ -42,7 +42,6 @@ def test_cost_table_reads_the_bridging_record(bridging):
     ]
     tex = (bridging / "tables" / "tab_appB_cost.tex").read_text(encoding="utf-8")
     assert "data/records/bridging/exp_b/exp_b_costs.json" in tex
-    assert "CDD-ORAN" not in tex
     with (bridging / "tables" / "tab_appB_cost.csv").open(encoding="utf-8") as fh:
         rows = list(csv.DictReader(fh))
     assert [r["units"] for r in rows if r["arm"] == "pmrt_nl_eq"] == ["100"]

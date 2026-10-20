@@ -3,7 +3,7 @@
 Plant P3 surge-L40 (`scenario.make_cfg`), 120 s warm-up + 600 s scored. Each unit's mode is drawn
 by the logging policy pi0 = `PI0_V4` (accept / reject 0.5 for ES, PowerES and SliceGuarantee) from
 t = 0 (`arb_warmup_s` 0); the KPI tap counts warm-up seconds. Stages and seeds (block
-188000-189999, protocol `E6P_DISCOVERY_PROTOCOL_V4.md` section 4):
+188000-189999, protocol `protocols/study1/DISCOVERY.md` section 4):
 
 | stage | seeds | records |
 |---|---|---|
@@ -57,7 +57,7 @@ from oran_causal.sim.system.decision.units import T_UNIT, Policy
 
 SUB = "v4"
 BLOCK = Block(188000, 189999)
-LEGACY_BLOCK = Block(180000, 183999)
+FIRST_BLOCK = Block(180000, 183999)
 FORBIDDEN = (
     Block(150000, 150399),
     Block(155000, 155399),
@@ -74,8 +74,8 @@ STAGES = {
 FROZEN_STAGES = ("eval", "placebo", "gt")
 PROTOCOL = protocol_doc(
     "study1",
-    "E6P_DISCOVERY_PROTOCOL_V4.md",
-    "6857466c91afa296a5cbaabd8fe0be9cb036dd35358736e855adfc540faf84ec",
+    "DISCOVERY.md",
+    "1995be82103b1abd6020e156f1653fe0b32d7c87358b5a203335b289c04062f0",
     needs_line=False,
 )
 TAGS = {
@@ -191,7 +191,7 @@ def registry_status(reg: SeedRegistry | None = None) -> dict[str, bool]:
     """Whether the registry holds both discovery blocks and the RNG tags."""
     reg = reg or SeedRegistry()
     return {
-        "block_180000_183999": reg.covers(LEGACY_BLOCK),
+        "block_180000_183999": reg.covers(FIRST_BLOCK),
         "tags_6612_6617": reg.has_tags(TAGS),
         "block_188000_189999": reg.covers(BLOCK),
     }

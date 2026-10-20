@@ -216,8 +216,6 @@ tile, terracotta triangle; missed = white tile, outlined gray triangle in the tr
 hatch on a 22 % neutral tile; true null = the field gray. The hero's facet is framed in blue, 1.1 pt. Row labels and
 KPI labels on the left facet only. The legend row shows the tiles themselves.
 
-The gallery sheet `specimen_key` draws this whole key in one figure.
-
 ## 9. Mark types
 
 | Chart | Rule |

@@ -1,6 +1,8 @@
 # oran-causal
 
-Causal discovery for xApp conflicts in O-RAN: the PMRT method, both simulators, every experiment, the figures and the manuscript. This repository is the code of the paper. CDD-ORAN (commit `0c89106`) is reference only; each ported file is listed in `docs/PROVENANCE.md`.
+Causal discovery for xApp conflicts in O-RAN: the PMRT method, both simulators, every experiment, the figures and the manuscript. This repository is the code of the paper.
+
+Ported from [CDD-ORAN feat/v2](https://github.com/Adhyadeshdahal/CDD-ORAN/tree/feat/v2).
 
 ## Quick start
 
@@ -17,7 +19,9 @@ Use `--extra cu128` instead of `--extra cpu` on CUDA hosts. The two extras confl
 
 ## Records
 
-Frozen outputs of every study are record sets in `data/records/<set>/`, each pinned by `data/manifests/<set>.sha256`. They are not in git. Zenodo DOIs are not minted yet (`data/zenodo.yaml`); until then copy the sets into `data/records/` and check them with `uv run oran-causal data fetch --verify-only`.
+The outputs of every study are record sets in `data/records/<set>/`, listed in `data/record_sets.yaml` and each pinned by `data/manifests/<set>.sha256`. They are not in git and are available from the corresponding author on request. Copy them into `data/records/` and check them with `uv run oran-causal data verify`.
+
+The stored records cite the protocols, specs and artifacts by the names and sha256 in `packages/experiments/manifests/recorded.json`; checks on stored records accept those, new runs stamp the current files.
 
 ## Reproduce tiers
 
@@ -31,6 +35,13 @@ Frozen outputs of every study are record sets in `data/records/<set>/`, each pin
 | t3 | VPS, Kaggle and Colab, about 1000 CPU-h (about 30 h wall); `--dry-run` prints the plan | Full re-run including the post hoc items X1-X16 |
 
 Launchers: `oran-causal launch`, `colab`, `kaggle`, `vps`, `dispatch`. `oran-causal verify --records DIR` checks a re-run against the frozen conclusions.
+
+Launch settings (environment variables, read when a launcher needs them):
+
+- `ORAN_CAUSAL_VPS_HOST`, `ORAN_CAUSAL_INSTABOX_HOST`: SSH destinations of the `vps` and `instabox` platforms (required for those platforms).
+- `ORAN_CAUSAL_VPS_BASE`, `ORAN_CAUSAL_INSTABOX_BASE`: remote base directories (default `/opt/oran-causal`, `/data/home/oran-causal`).
+- `ORAN_CAUSAL_KAGGLE_OWNER`: Kaggle account of the code datasets and kernels (required for `kaggle`).
+- `ORAN_CAUSAL_KAGGLE_CLI`: the `kaggle` executable (default `kaggle` on PATH).
 
 ## Paper
 
@@ -56,4 +67,4 @@ Launchers: `oran-causal launch`, `colab`, `kaggle`, `vps`, `dispatch`. `oran-cau
 | `paper/` | Manuscript (Springer `sn-jnl`) and `paper/generated/` |
 | `spec/` | Claims registry, printed-value spec |
 | `tests/` | Cross-package tests, including the import layering |
-| `docs/` | Provenance and per-area provenance sections, `TRACEABILITY.md` |
+| `docs/` | `TRACEABILITY.md` |

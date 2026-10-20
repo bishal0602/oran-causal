@@ -63,7 +63,7 @@ def latex(rows: list[dict]) -> str:
         NAME,
         SOURCES,
         [
-            "Secondary, descriptive Study 4 kappa sweep specified in the frozen protocol (PROTOCOL_A V9); no verdict.",
+            "Secondary, descriptive Study 4 kappa sweep specified in the protocol; no verdict.",
             "Entry: mean recall of the true edges, R2, n = 1000 (E4 at lam 1); mark = the condition's validity (* INVALID,"
             " ~ INCONCLUSIVE, unmarked VALID, ° no validity read); --* = INVALID condition, recall not reported;"
             " blank = not in the method's grid.",

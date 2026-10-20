@@ -22,23 +22,26 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
-from oran_causal.analysis.posthoc.paths import PRIMARY, RECORDS, write_text
+from oran_causal.analysis import recorded
+from oran_causal.analysis.posthoc.paths import PRIMARY, PROTOCOL_BASENAME, RECORDS, write_text
 
 STATUSES = ("TRUE", "NULL", "INDET")
 FAMILY_ORDER = ("carrier", "sleep", "ptx", "prot_min")
-DECLARED = "EXTRAS_PROTOCOL.md amendment 2026-10-11 X9-X13"
+DECLARED = f"{PROTOCOL_BASENAME} amendment 2026-10-11 X9-X13"
 RULE = (
     "own-attributable = declared nbr/far edge GT-NULL or GT-INDET while the same (family, KPI) "
     "own edge is GT-TRUE"
 )
+S1_RECORD = "study1_raw/e6p-disc-v4an-pmrt-1/out/analysis_v4.json"
+S2_RECORD = "study2_raw/e6p-conf-discan-2/out/disc_conf.json"
 INPUTS = {
     "S1": (
-        "study1_raw/e6p-disc-v4an-pmrt-1/out/analysis_v4.json",
-        "scratchpad/e6_dev/runs/e6p-disc-v4an-pmrt-1/out/analysis_v4.json",
+        S1_RECORD,
+        recorded.record_label(S1_RECORD),
     ),
     "S2": (
-        "study2_raw/e6p-conf-discan-2/out/disc_conf.json",
-        "scratchpad/e6_dev/runs/e6p-conf-discan-2/out/disc_conf.json",
+        S2_RECORD,
+        recorded.record_label(S2_RECORD),
     ),
 }
 Edge = tuple[str, str, str, int]

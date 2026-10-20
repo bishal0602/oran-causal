@@ -17,7 +17,7 @@ from oran_causal.figures import layout as L
 from oran_causal.figures import methods as M
 from oran_causal.figures import plots
 from oran_causal.figures import style as S
-from oran_causal.figures.figs import _s12a as H
+from oran_causal.figures.figs import _method_rows as H
 from oran_causal.figures.figs import _studies as ST
 from oran_causal.figures.registry import FigSpec
 

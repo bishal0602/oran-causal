@@ -9,7 +9,7 @@ maps (DEV- tuned thresholds; the placebo-calibrated maps, the random map and eve
 comparator are in the csv). Not a figure (no SPEC): run ``uv run python -m
 oran_causal.figures.figs.tab_appC_existence``.
 
-Source: extras/revision/x14_existence.json (X14, EXTRAS_PROTOCOL amendment 2026-10-11; the script
+Source: posthoc_x9_x16/revision/x14_existence.json (X14, posthoc protocol amendment 2026-10-11; the script
 reproduced the frozen material-rule metrics of every stored analysis before writing), keys
 ``studies.<S1|S2>.reproduced``, ``.levels.<0.95|0.9|0.99>.counts`` and
 ``.methods.<code>.<slice>.{mat_n_declared, mat_precision, ex_confirmed, ex_wrong_sign,
@@ -42,7 +42,7 @@ S1_POOLED = [
 S1_SLICES = [
     "loadsp_c+wby1s",
     "granger_by",
-]  # W14 (adjudication C.8): slice block trimmed to the two rows 6.2 cites
+]  # the slice block keeps the two rows Section 6.2 cites
 S2_POOLED = [
     "MG:PMRT",
     "MG:corr@dev",

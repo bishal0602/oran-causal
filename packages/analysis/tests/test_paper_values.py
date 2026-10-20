@@ -163,7 +163,8 @@ def test_committed_values_cover_the_spec_keys() -> None:
 
 
 @pytest.mark.skipif(
-    not (REPO / "data" / "records" / "system_artifacts").is_dir(), reason="frozen records absent"
+    not all((REPO / "data" / "records" / s).is_dir() for s in ("system_artifacts", "shap_rerun")),
+    reason="frozen records absent",
 )
 def test_regeneration_from_the_frozen_records_is_byte_identical() -> None:
     tex, sidecar = pv.generate(REPO)

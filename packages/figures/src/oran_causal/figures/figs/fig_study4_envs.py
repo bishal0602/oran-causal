@@ -1,13 +1,13 @@
 """Study 4, Section 7.2 (beside Table tab_study4_design): the ground-truth causal graph of each controlled diagnostic
 environment E1-E5, so the article alone shows what the validity and recall figures test (the per-environment pages
-A1-A5 move to the electronic supplement). Same graphs (``_env_page.GRAPHS``), node roles, edge kinds and layered
-bipartite drawing as panel (a) of those pages (oran_causal.figures.envgraph, DESIGN s.8.1, design G-A); only the canvas sizes, node
+A1-A5 are in the electronic supplement). Same graphs (``_env_page.GRAPHS``), node roles, edge kinds and layered
+bipartite drawing as panel (a) of those pages (oran_causal.figures.envgraph, DESIGN s.8.1); only the canvas sizes, node
 pitch, column gap and text sizes differ, so every label is >= 7 pt at print size.
 
-Layout (user brief G4, 2026-10-12: one row was too cramped at \\textwidth): E2, with eight actions, takes a tall middle
+Layout (one row is too cramped at \\textwidth): E2, with eight actions, takes a tall middle
 column; E1 above E4 on the left and E3 above E5 on the right, so the letters a-e read across the top row, then the
 bottom row. Each panel has the house header (bold letter, then "E1: <mechanism>" wrapped to the panel width, the
-letter on the first line); the mechanism lines are TERMINOLOGY s.2 (``_env_page.BLURB``). One figure-level legend on
+letter on the first line); the mechanism lines are ``_env_page.BLURB``. One figure-level legend on
 top lists only the node roles and edge kinds the five graphs use.
 """
 

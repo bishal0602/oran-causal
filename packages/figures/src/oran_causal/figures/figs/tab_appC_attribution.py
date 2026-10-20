@@ -5,7 +5,7 @@ many are own-attributable (declared edge null or indeterminate while the same fa
 edge is true). Not a figure (no SPEC): run ``uv run python -m
 oran_causal.figures.figs.tab_appC_attribution``.
 
-Source: extras/revision/x13_attribution.json (X13, EXTRAS_PROTOCOL amendment 2026-10-11; the script
+Source: posthoc_x9_x16/revision/x13_attribution.json (X13, posthoc protocol amendment 2026-10-11; the script
 reproduced every stored declaration count before writing), keys ``studies.<S1|S2>.reproduced``,
 ``.far_hypotheses_by_gt_label.{all_20, by_family}``, ``.methods.<code>.slices.pooled`` and
 ``.methods.<code>.by_slice_kind.{s60, s120, s300}`` (counts ``<rel>_declared``,

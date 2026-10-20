@@ -179,7 +179,7 @@ def test_flip_summary_is_seeded() -> None:
     assert s1["b"]["ci90"][0] <= 2.5 <= s1["b"]["ci90"][1]
 
 
-def test_code_sha256_names_the_ported_modules() -> None:
+def test_code_sha256_names_the_pinned_modules() -> None:
     sha = d2.code_sha256()
     assert set(sha) == {
         "oran_causal.experiments.system.study2_discovery",

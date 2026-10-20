@@ -1,5 +1,5 @@
-"""xApp and KPI colour slots (oran_causal.figures.entities, DESIGN s.12.2) [DECIDED 2026-10-06,
-user; slots per panel]: table invariants, the slots match DESIGN, the five rules on every registered
+"""xApp and KPI colour slots (oran_causal.figures.entities, DESIGN s.12.2; slots per
+panel): table invariants, the slots match DESIGN, the five rules on every registered
 figure, and each rule firing on a broken figure.
 """
 

@@ -1,11 +1,10 @@
 """Criteria definitions of Studies 1-3 (discovery K0, K0n, G, K1, P1, P2, P3, S; referee E, D1, D2,
 D3, S1; paper labels via _tabm.crit) and Study 2's verdict precedence (Studies 1 and 3 carry theirs
 in their own criteria tables). Booktabs LaTeX + csv; not a figure (no SPEC): run ``uv run python -m
-oran_causal.figures.figs.tab_design_criteria``. Kept separate from tab_design_studies (PAPER_PLAN
-s.4 [DECIDE] merge).
+oran_causal.figures.figs.tab_design_criteria``. Kept separate from tab_design_studies.
 
-Definitions are text, shortened from the frozen protocols (E6P_DISCOVERY_PROTOCOL_V4.md s.5,
-E6P_CONFOUNDED_PROTOCOL.md s.7, E6P_CERTSAFE_PROTOCOL.md s.7) and TERMINOLOGY s.7-8; no new claims.
+Definitions are text, shortened from the protocols (protocols/study1/DISCOVERY.md s.5,
+protocols/study2/PROTOCOL.md s.7, protocols/study3/PROTOCOL.md s.7); no new claims.
 Every threshold is read at build time from the analyzer JSONs' ``rule`` fields: v4_verdict.json (K0,
 K0n, K1, P1, P2, P3, S; P2 slice counts), conf_disc_conf.json (Study 2 K1 thresholds, K0 hypothesis
 count), conf_verdict.json (D1 margin, D2 alpha, precedence) and cs_verdict.json (D1 margin, D2
@@ -25,9 +24,8 @@ SOURCES = [
     TM.SRC_CONF_VERDICT,
     TM.SRC_CS_VERDICT,
     TM.SRC_CS_PROTOCOL,
-    protocol_note("study1", "E6P_DISCOVERY_PROTOCOL_V4.md"),
-    protocol_note("study2", "E6P_CONFOUNDED_PROTOCOL.md"),
-    "TERMINOLOGY.md",
+    protocol_note("study1", "DISCOVERY.md"),
+    protocol_note("study2", "PROTOCOL.md"),
 ]
 
 

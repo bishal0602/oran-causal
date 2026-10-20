@@ -1,10 +1,8 @@
 """Small SVG kit for hand-laid diagrams (Figure 1), outside the matplotlib pipeline.
 
 Coordinates are in pt; the SVG is rendered at its pt size by the installed Edge (Playwright) to a
-vector PDF in the journal's figures/ and a PNG preview in preview/. Text widths come from the Arial
-metrics (fontTools) so layout can avoid collisions. [G5 2026-10-12] Arial (journal artwork rule),
-from the system fonts (oran_causal.figures.style). Origin: the 2026-10-09 Figure 1 prototypes
-(subagent), prototype B chosen by the user.
+vector PDF in the journal's figures/ and a PNG preview in preview/. Text is set in Arial (journal
+artwork rule), embedded from the system fonts (oran_causal.figures.style).
 """
 
 from __future__ import annotations
@@ -13,8 +11,6 @@ import math
 import tempfile
 from html import escape
 from pathlib import Path
-
-from fontTools.ttLib import TTFont
 
 from oran_causal.figures.paths import figures_dir, preview_dir
 from oran_causal.figures.style import FONT_FAMILY, arial_files
@@ -33,36 +29,6 @@ RED = "#B94739"
 BLUE = "#4273B0"
 PURPLE = "#955C98"
 GREEN = "#5C9B5E"
-
-_WEIGHT_FILE = {
-    400: "Regular",
-    500: "Bold",
-    600: "Bold",
-    700: "Bold",
-}  # Arial has regular and bold only
-_fonts: dict[str, TTFont] = {}
-
-
-def _font(weight: int, italic: bool) -> TTFont:
-    name = _WEIGHT_FILE[weight]
-    if italic:
-        name = "Italic" if weight < 600 else "BoldItalic"
-    if name not in _fonts:
-        _fonts[name] = TTFont(ARIAL[name])
-    return _fonts[name]
-
-
-def tw(s: str, size: float, weight: int = 400, italic: bool = False) -> float:
-    """Advance width of s in pt."""
-    f = _font(weight, italic)
-    cmap = f.getBestCmap()
-    hm = f["hmtx"]
-    upm = f["head"].unitsPerEm
-    w = 0
-    for ch in s:
-        g = cmap.get(ord(ch))
-        w += hm[g][0] if g else upm * 0.5
-    return w * size / upm
 
 
 def tint(hex_: str, a: float) -> str:
@@ -106,26 +72,6 @@ class Svg:
             f'fill="{fill}" text-anchor="{anchor}" style="{st}">{escape(s)}</text>',
             z,
         )
-
-    def rich(self, x, y, parts, size=8, anchor="start", z=8):
-        """parts: list of (text, dict(weight, fill, italic))."""
-        total = sum(tw(t, size, o.get("weight", 400), o.get("italic", False)) for t, o in parts)
-        if anchor == "middle":
-            x -= total / 2
-        elif anchor == "end":
-            x -= total
-        spans = []
-        for t, o in parts:
-            st = "font-style:italic;" if o.get("italic") else ""
-            spans.append(
-                f'<tspan font-weight="{o.get("weight", 400)}" fill="{o.get("fill", INK)}" '
-                f'style="{st}">{escape(t)}</tspan>'
-            )
-        self.add(
-            f'<text x="{x:.2f}" y="{y:.2f}" font-size="{size}" xml:space="preserve">{"".join(spans)}</text>',
-            z,
-        )
-        return total
 
     def rect(self, x, y, w, h, rx=3, fill="none", stroke=INK, sw=0.8, dash=None, z=4, op=1.0):
         d = f' stroke-dasharray="{dash}"' if dash else ""

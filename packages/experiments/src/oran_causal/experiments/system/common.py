@@ -17,6 +17,7 @@ from typing import Any
 
 import numpy as np
 
+from oran_causal.analysis import recorded
 from oran_causal.experiments.campaign.provenance import code_info
 from oran_causal.experiments.harness.isolation import PeakRSS
 from oran_causal.experiments.launch.fingerprint import numeric_env
@@ -55,20 +56,13 @@ SUM_FIELDS = (
     "rlf",
 )
 DEV_SEEDS = 31
-MAPGATE = "cdd_oran/decision/mapgate.py"
-CERTSAFE_CODE = "cdd_oran/decision/certsafe.py"
-CONF_ANALYZER = "scratchpad/e6_dev/e6p_conf_analyze.py"
-CONF_DRIVER = "scratchpad/e6_dev/e6p_conf.py"
-CS_ANALYZER = "scratchpad/e6_dev/e6p_certsafe_analyze.py"
-CS_DRIVER = "scratchpad/e6_dev/e6p_certsafe.py"
-LEGACY_SHA256 = {
-    MAPGATE: "64ad9d1beb336681d3f384b5d9b1871615bc317f78c0eaa6ca0d9b9dcd426dd9",
-    CONF_ANALYZER: "3d1a0965ce986889bb0dd19a228f0469c29cafd0884e23fe4ed9ffab17e8e000",
-    CONF_DRIVER: "74ae5309b9373632a03a17076ce5ba1f465be32de9b3e32d8cdb0131e786ac9d",
-    CERTSAFE_CODE: "f838af6a39691d5882c9cc8109db25866d40c1db727370fdb980872befbf5daf",
-    CS_ANALYZER: "0adde7aa181e2874b3394636932bb0df8ef71ae58c14aa628dbe9afbe9ee6a33",
-    CS_DRIVER: "41d6d173296345fadf72e49d3e36cf1b49b25168b14966c93943fc83144b7e84",
-}
+MAPGATE = "mapgate"
+CERTSAFE_CODE = "certsafe"
+CONF_ANALYZER = "conf_analyzer"
+CONF_DRIVER = "conf_driver"
+CS_ANALYZER = "certsafe_analyzer"
+CS_DRIVER = "certsafe_driver"
+RECORDED_CODE_SHA256 = recorded.code_sha256()
 
 
 def sha_lf(path: Path) -> str:
@@ -78,10 +72,10 @@ def sha_lf(path: Path) -> str:
 
 @dataclasses.dataclass(frozen=True)
 class FrozenDoc:
-    """A frozen document: its legacy name, its location here and its pinned LF sha256.
+    """A frozen document: its name, its location and its pinned LF sha256.
 
     Attributes:
-        name: The document's path in the original repository (recorded in statuses).
+        name: The name statuses record (its path in the experiments member).
         path: Its location in this workspace.
         want: The pinned LF sha256.
         needs_line: The document must also carry a "FROZEN: yes" line.
@@ -120,8 +114,8 @@ class FrozenDoc:
 
 
 def protocol_doc(study: str, name: str, want: str, needs_line: bool = True) -> FrozenDoc:
-    """Returns the `FrozenDoc` of `protocols/<study>/<name>` (legacy `docs/benchmark/<name>`)."""
-    return FrozenDoc(f"docs/benchmark/{name}", PROTOCOLS / study / name, want, needs_line)
+    """Returns the `FrozenDoc` of `protocols/<study>/<name>`."""
+    return FrozenDoc(f"protocols/{study}/{name}", PROTOCOLS / study / name, want, needs_line)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -181,7 +175,7 @@ def _int_pairs(o: Any) -> Iterator[tuple[int, int]]:
 
 @dataclasses.dataclass(frozen=True)
 class SeedRegistry:
-    """The seed registry (`manifests/seeds.json`, the old `SEED_REGISTRY.json`)."""
+    """The seed registry (`manifests/seeds.json`)."""
 
     path: Path = SEED_REGISTRY
 

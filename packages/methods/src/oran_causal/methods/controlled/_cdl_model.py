@@ -1,10 +1,9 @@
-"""CDL model: port of the authors' conference implementation (NaNA 2026, Causal Dynamics Learning).
+"""CDL model: the authors' conference implementation of Causal Dynamics Learning (Wang et al. 2022).
 
-Source: CDD-ORAN branch `refactor/codebase`, `cdd_oran/models/cdl.py` at commit 65b56f3, via
-CDD-ORAN@0c89106 `cdd_oran/xmethod/methods/_cdl_model.py`. Changes against the source: no
-`CausalModel` base; `target_dim` decouples the predicted variables from the input nodes;
-`informed_drop=False` replaces the changed-parameter mask by the uniformly random mask while
-drawing the same torch random numbers; `fit_step` and `cmi_step` take (s_t, targets, a).
+Changes against the conference code (NaNA 2026): no `CausalModel` base; `target_dim` decouples the
+predicted variables from the input nodes; `informed_drop=False` replaces the changed-parameter mask
+by the uniformly random mask while drawing the same torch random numbers; `fit_step` and `cmi_step`
+take (s_t, targets, a).
 Only the training and CMI methods the offline arm calls are kept.
 """
 

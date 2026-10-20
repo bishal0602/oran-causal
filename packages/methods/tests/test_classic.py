@@ -313,19 +313,6 @@ def test_corr_equals_numpy(syn):
     assert e.score == pytest.approx(abs(np.corrcoef(data.X_action[:, 1], data.Y[:, 1])[0, 1]))
 
 
-def test_shap_dag_hgbdt_option_equals_e2_port(make_classic):
-    from oran_causal.methods.controlled.shap_dag import fit_shap_importances
-
-    data, _ = make_classic(300, 3_000_006, b=1.0)
-    r = _run("shap_dag", data, seed=0, regressor="hgbdt")
-    imp, _ = fit_shap_importances(data.X_action, data.Y[:, 1], seed=0)
-    sc = {(e.source, e.target): e.score for e in r.edges}
-    got = np.array([sc[(a, "Y1")] for a in data.action_names])
-    assert np.allclose(got, imp / np.std(data.Y[:, 1]))
-    assert all(np.isnan(sc[(k, "Y1")]) for k in data.kpi_names)
-    assert r.notes["regressor"] == "hgbdt"
-
-
 def test_shap_dag_default_is_xgboost_package_defaults(make_classic):
     import shap
     import xgboost

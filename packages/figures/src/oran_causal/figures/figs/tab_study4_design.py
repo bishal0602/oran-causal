@@ -2,19 +2,18 @@
 regimes), as a booktabs LaTeX tabular plus a csv for Section 7.2. Not a figure (no SPEC): run
 ``uv run python -m oran_causal.figures.figs.tab_study4_design``.
 
-Source: the frozen protocol, packages/experiments/protocols/study4/PROTOCOL_A.md s.2 (read as text at build time):
+Source: the frozen protocol, packages/experiments/protocols/study4/PROTOCOL.md s.2 (read as text at build time):
   true / null   the "Candidates true / null" sentence (nulls include the placebo edges, placebo action -> each KPI;
                 E4 has no real-action null, so its one null is the placebo edge)
-  regimes       the world table's regimes column (ranges expanded), restricted to R1-R3 (TERMINOLOGY s.12, 7.2: Section
+  regimes       the world table's regimes column (ranges expanded), restricted to R1-R3 (Section
                 7.2 shows R1-R3; R4, the negative control with nothing logged, is summarised in Section 7.2 and
-                given on the E4 page, Online Resource 1, Section S4 (W14), and named in a table note, checked against the protocol's regime table); E4's confounding strengths from the lambda clause
+                given on the E4 page, Online Resource 1, Section S4, and named in a table note, checked against the protocol's regime table); E4's confounding strengths from the lambda clause
   mechanism     the world table's mechanism column in paper wording (MECHANISM below); each row is checked against a
                 key phrase of the protocol row so a protocol change fails the build
-[G5 2026-10-12, P3] The regimes R1-R4 join the table as a second block (restructure plan, Section 7 display items:
-"old Table 11 (+ regimes R1-R4)"): per regime, how actions are logged and its role, from the protocol's regime table
-(REGIME below, each row checked against a key phrase of the protocol row); E4's regimes now list R4, and the R4 table
-note is gone, since the block defines R4.
-The counts were cross-checked once against the EVAL scores (merged.jsonl.gz measure records: n_true, and n_null plus
+The regimes R1-R4 form a second block: per regime, how actions are logged and its role, from the protocol's regime
+table (REGIME below, each row checked against a key phrase of the protocol row); E4's regimes list R4, which the block
+defines.
+The counts agree with the EVAL scores (merged.jsonl.gz measure records: n_true, and n_null plus
 the placebo edges, identical in every regime of a world).
 """
 
@@ -26,9 +25,9 @@ from oran_causal.figures.figs import _tabm as TM
 from oran_causal.figures.paths import protocol
 
 NAME = "tab_study4_design"
-PROTOCOL_PARTS = ("study4", "PROTOCOL_A.md")
+PROTOCOL_PARTS = ("study4", "PROTOCOL.md")
 SOURCES = [protocol_note(*PROTOCOL_PARTS)]
-SHOWN = ("R1", "R2", "R3", "R4")  # [G5] R4 shown too, now that the regime block defines it
+SHOWN = ("R1", "R2", "R3", "R4")  # R4 shown too, since the regime block defines it
 # regime -> (protocol design phrase, protocol role phrase, paper wording of the design, paper
 # wording of the role)
 REGIME = {
@@ -38,10 +37,9 @@ REGIME = {
         "Every action redrawn independently per observation",
         "Reference",
     ),
-    # W21 (P4 7.2): "rows" -> "observations"; the +/-25 % envelope defined as in
-    # cdd_oran/xmethod/worlds/generate.py docstring (R2: "20 setpoints drawn once per corpus
-    # uniformly within +/-25% of the range around the midpoint, each held for n/20 consecutive
-    # rows"; DITHER_ENVELOPE = 0.25)
+    # the +/-25 % envelope as in oran_causal.sim.controlled.datasets.generate (R2: 20 setpoints
+    # drawn once per corpus uniformly within +/-25 % of the range around the midpoint, each held
+    # for n/20 consecutive rows; DITHER_ENVELOPE = 0.25)
     "R2": (
         "20 setpoints per corpus (+/-25 % envelope), held n/20 rows, + i.i.d. U(+/-.10 range) dither",
         "C1 / C2 test bed",
@@ -145,7 +143,7 @@ def latex(rs: list[dict]) -> list[str]:
             "Null candidates include the placebo edges (placebo action -> each KPI); E4 has no "
             "real-action null.",
             "E4: R1 / R2 at confounding strength 1 only; R3 / R4 at every strength.",
-            "Regime block [G5]: PROTOCOL_A s.2 regime table (design and role columns).",
+            "Regime block: the protocol's s.2 regime table (design and role columns).",
         ],
     )
     out += [

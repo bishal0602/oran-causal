@@ -1,8 +1,7 @@
 """Study 1: discovery from randomised logs (system-level simulator, 600 EVAL episodes; verdict
 PARTIAL).
 
-Edge ledger in the Harbor grammar [DECIDED 2026-10-08, user; prototype "B v4", palette "H2";
-replaces the five-panel bar figure]. Methods are labelled table rows under family banners; colour in
+Edge ledger in the Harbor grammar. Methods are labelled table rows under family banners; colour in
 (a-c) shows edge status, not the method (DESIGN s.12.1 exception): teal = declared with the
 ground-truth sign, terracotta = declared with the wrong sign (solid) or false (light terracotta: a
 NULL edge or the placebo logs), gray = ground truth, not scored (INDET) or missed (open circle). A
@@ -13,9 +12,8 @@ statistic x layer combinations that declared each edge. (b) Other 50 edges: the 
 declarations as a stacked bar (right sign / wrong sign / NULL / INDET), total at the end. (c)
 Placebo logs: edges declared on the 40 placebo episodes (FD v4.placebo_declarations; v4_analysis
 placebo_descriptive.<code>.declared). Text column: pooled indirect F1 and overall precision (FD
-v4.pooled); bold below the P3 threshold (v4_verdict.json P3.rule.precision). [G5 2026-10-12, P3] The
-old panels (d, e), PMRT minus each baseline per subsample, are the ESM figure fig_study1_subsamples
-(restructure plan: Fig 4d-e to the ESM); the body figure keeps (a-c). Every count is re-derived from
+v4.pooled); bold below the P3 threshold (v4_verdict.json P3.rule.precision). PMRT minus each
+baseline per subsample is the ESM figure fig_study1_subsamples. Every count is re-derived from
 the stored declarations and asserted against the stored TP, FP, sign accuracy, F1, precision,
 placebo counts, P2 wins and S1.10 ranges (_study1.load). Derived and not stored as keys: the
 wrong-sign split of each method's hits and the per-edge counts of the 9 PMRT combinations.
@@ -33,7 +31,7 @@ from oran_causal.figures import palette as P
 from oran_causal.figures import plots
 from oran_causal.figures import style as S
 from oran_causal.figures.data import source_note
-from oran_causal.figures.figs import _s12a as H
+from oran_causal.figures.figs import _method_rows as H
 from oran_causal.figures.figs import _studies as ST
 from oran_causal.figures.figs import _study1 as D
 from oran_causal.figures.registry import FigSpec
@@ -69,20 +67,18 @@ KPI_X = (
     2.4,
     3.45,
     4.65,
-)  # [G5 2026-10-12] uneven, so the 8 pt labels clear (was 0-4.5 at 7 pt)
-GROUP_X = 6.75  # offset of the second (sleep) group ([G5] was 6.6 at 7 pt;
-# [G3] room between the two blocks for the separator)
+)  # uneven, so the 8 pt labels clear
+GROUP_X = 6.75  # offset of the second (sleep) group; room between the two blocks for the separator
 SPAN_PT, GROUP_PT = (
     -14.5,
     -19.0,
-)  # [G3] y offset (pt below the axes) of the group rule and group label
-# ([G5] 8 pt labels; was -13.5, -18.0)
-OK, ERR, MISS, GT = P.TEAL, P.TERRACOTTA, P.MISSED, P.NEUTRAL  # edge status (palette "H2")
+)  # y offset (pt below the axes) of the group rule and group label
+OK, ERR, MISS, GT = P.TEAL, P.TERRACOTTA, P.MISSED, P.NEUTRAL  # edge status
 NULL_FC, UNSC_FC = P.NULL_FILL, P.UNSCORED_FILL
 MS = 5.0  # status marker size (pt)
 THICK = 0.56  # bar thickness (row units)
 BASE7 = ["corr", "granger", "granger_by", "shap_gbdt", "two_tower", "qacm", "int"]
-HEIGHT = 3.2  # [G5] was 4.5 with the (d, e) row
+HEIGHT = 3.2
 FAM_BASED, FAM_BLIND = "Design-based tests", "Design-blind methods"
 
 
@@ -135,7 +131,7 @@ def build():
     S.apply()
     fig = plt.figure(figsize=(S.FULL, HEIGHT), layout="constrained")
     a, b, t = fig.subplots(1, 3, sharey=True, gridspec_kw={"width_ratios": [1.5, 1.0, 1.17]})
-    c = t  # [G5] (c) is the text column: placebo counts and scores
+    c = t  # (c) is the text column: placebo counts and scores
     banners, groups, subrows, ylim = rows()
     ylim = (ylim[0], ylim[1] + 0.9)  # head room for the text-column heads
     ys = {key: y for y, _, key in subrows}
@@ -204,7 +200,7 @@ def build():
     for tl, h in zip(a.get_xticklabels(), order, strict=False):
         if h in D.CHAIN:
             tl.set_fontweight("bold")
-    # [G3 2026-10-12] the two KPI blocks read as groups: a light rule between them through the
+    # the two KPI blocks read as groups: a light rule between them through the
     # matrix, and a short rule under each block's KPI labels (a table spanner) above its
     # control-parameter label
     a.axvline((KPI_X[-1] + GROUP_X) / 2, color=P.GRID, lw=0.8, zorder=0.5, gid="group-separator")
@@ -263,10 +259,7 @@ def build():
     b.set_xlim(0, omax * 1.22)
     b.set_xticks([0, 10, 20, 30])
     b.set_xlabel("Declared edges")
-    # (c) text column: placebo-log edges, then the pooled scores
-    # -------------------------------------------------------- [G5 2026-10-12] the placebo bars
-    # became a count column: at the journal's 8 pt floor four panels did not keep each data panel >=
-    # 1.0 in wide; the counts were already printed at the bar ends
+    # (c) text column: placebo-log edge counts, then the pooled scores
     assert all(len(d["placebo"][cc]) == 0 for cc in D.PMRT9)
     head = ylim[1] - 0.45
     t.text(0.16, head, "Placebo", ha="right", va="center", fontsize=S.ANNOT_PT, color=P.INK)

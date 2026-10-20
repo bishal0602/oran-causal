@@ -23,7 +23,7 @@ def test_the_base_set_is_exactly_what_a_run_needs(tmp_path: Path, launch_kit):
         "packages/core/pyproject.toml",
         "packages/core/src/oran_causal/core/__init__.py",
         "packages/figures/pyproject.toml",
-        "packages/experiments/protocols/study4/PROTOCOL_A.md",
+        "packages/experiments/protocols/study4/PROTOCOL.md",
         "packages/experiments/manifests/seeds.json",
         "packages/experiments/artifacts/table.json",
     }
