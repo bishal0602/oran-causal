@@ -15,7 +15,7 @@ def out_dir(tmp_path, monkeypatch):
 def test_list_names_every_figure(capsys):
     assert cli.main(["list"]) == 0
     listed = capsys.readouterr().out.splitlines()
-    assert any(line.startswith("fig_method_pmrt") for line in listed)
+    assert any(line.startswith("fig_system") for line in listed)
 
 
 def test_unknown_figure_is_refused(capsys):
@@ -24,15 +24,15 @@ def test_unknown_figure_is_refused(capsys):
 
 
 def test_build_writes_pdf_and_preview_under_the_override(out_dir, capsys):
-    assert cli.main(["build", "fig_method_pmrt", "--out", str(out_dir)]) == 0
-    pdf = out_dir / "figures" / "fig_method_pmrt.pdf"
+    assert cli.main(["build", "fig_system", "--out", str(out_dir)]) == 0
+    pdf = out_dir / "figures" / "fig_system.pdf"
     assert pdf.is_file()
-    assert (out_dir / "preview" / "fig_method_pmrt.png").is_file()
+    assert (out_dir / "preview" / "fig_system.png").is_file()
     assert str(pdf) in capsys.readouterr().out
 
 
 def test_preview_only_skips_the_pdf(out_dir):
-    assert cli.main(["build", "fig_method_pmrt", "--preview", "--out", str(out_dir)]) == 0
+    assert cli.main(["build", "fig_system", "--preview", "--out", str(out_dir)]) == 0
     assert not (out_dir / "figures").exists()
 
 

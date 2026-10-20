@@ -64,7 +64,6 @@ HERMETIC = frozenset(
     {
         "fig_conflict_types",
         "fig_envs",
-        "fig_method_pmrt",
         "fig_study4_envs",
         "fig_system",
     }
