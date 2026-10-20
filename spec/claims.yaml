@@ -361,7 +361,7 @@ claims:
     statement: "The martingale central limit theorem with a random limiting variance and its self-normalised form."
     paper: [prop:s_pmrt]
     spec: spec:thm.pmrt
-    cited: {bibkey: hall1980martingale, locator: "Cor. 3.1, Cor. 3.2", verified: false}
+    cited: {bibkey: hall1980martingale, locator: "Cor. 3.1, Cor. 3.2", verified: true}
 
   - id: CIT-DUR
     kind: theorem-cited
