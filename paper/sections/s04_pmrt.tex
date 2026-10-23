@@ -8,21 +8,14 @@ returns a signed causal effect map with asymptotic control of the FDR. A map-dri
 reject harmful requests, and an edge-certification gate restricts it to rejections whose side effects on the guard
 KPIs are certified small.
 
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=\textwidth]{figures/fig_idea.pdf}
-\caption{Confounded and randomised logging.}
-\label{fig:idea}
-\end{figure}
-
 \subsection{Test statistic}
 \label{sec:pmrt}\claim{DEF-PMRT-WEIGHT}
 
-In reactive logs, network state drives both the mode $W$ and the KPIs (Figure~\ref{fig:idea}a). If the referee accepts
-when an independent uniform draw $U$ falls below a logged propensity $\pi$, state affects the mode only through $\pi$
-(Figure~\ref{fig:idea}b). PMRT tests whether a KPI moves with the modes more than those propensities predict, pairing a
-score of each mode with a weight built from the KPI series and comparing the statistic with redraws from the logged
-design (Figure~\ref{fig:idea}c). It establishes whether an effect exists, not its size.
+In reactive logs, network state drives both the mode $W$ and the KPIs. If the referee accepts when an independent
+uniform draw $U$ falls below a logged propensity $\pi$, state affects the mode only through $\pi$. PMRT tests whether a
+KPI moves with the modes more than those propensities predict, pairing a score of each mode with a weight built from
+the KPI series and comparing the statistic with redraws from the logged design. It establishes whether an effect
+exists, not its size.
 
 Take a family $f$ and its units $u$ in information order: episode, opening time, cell. With $L(\text{accept}) = 1$ and
 $L(\text{reject}) = 0$, the assignment score of unit $u$ is
