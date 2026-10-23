@@ -1,9 +1,8 @@
 \section{Experimental setup}
 \label{sec:design}
 
-The framework is evaluated in a system-level simulation of an O-RAN surge scenario, which provides the logs for
-discovery and the closed-loop runs for conflict mitigation, and in controlled environments with known causal
-structure, which isolate the role of the logging design.
+We evaluate discovery and closed-loop mitigation in a system-level O-RAN surge simulation, and isolate the role of
+the logging design in controlled environments with known causal structure.
 
 \subsection{Simulation environment and scenario}
 \label{sec:scenario}\claim{DEF-SIM-CONST}
@@ -43,14 +42,11 @@ xApp & Parameter & Range & Acts when \tabularnewline
 \subsection{Datasets}
 \label{sec:datasets}\claim{PRO-TUNE}
 
-Discovery is evaluated on uniform-randomised and state-dependent logs of 600 evaluation episodes each, with placebo logs drawn in
-the same way, and validity is further checked on null outcomes made by cyclically shifting the KPI series across
-episodes. Null outcomes exercise more of the design than placebo logs, because they keep the evaluation logs with their
-re-proposals and state-dependent propensities. The maps learned from the state-dependent logs then drive referees in
-closed-loop runs on \val{s2.dec.seeds} fresh seeds, first without and then with the gate; the gated runs use separate
-seeds and a gate calibrated on \val{s3.gate.dev_episodes} development episodes. The controlled environments are
-described in Section~\ref{sec:envs}. All methods and baseline thresholds were tuned on development episodes, separate
-from the evaluation data.
+Discovery uses uniform-randomised and state-dependent logs of 600 evaluation episodes each, matched placebo logs, and
+null outcomes formed by cyclically shifting KPI series across episodes. Unlike placebos, the null outcomes retain the
+re-proposals and state-dependent propensities. Maps learned from the state-dependent logs drive ungated and gated
+referees on separate fresh seeds; the gate is calibrated on \val{s3.gate.dev_episodes} development episodes. All
+methods and baseline thresholds are tuned on development episodes separate from evaluation.
 
 \subsection{Knockout ground truth}
 \label{sec:gt}\claim{DEF-GT-LABEL}
@@ -96,17 +92,17 @@ inconclusive otherwise; a condition is invalid when any of its rates is.
 \label{fig:envs}
 \end{figure}
 
-Three groups of tests are compared. Design-based tests redraw the logged design: PMRT-GBM, the shared construction
-with a gradient-boosting statistic and plain BY control at $q = 0.05$, and PMRT-Lin, its linear counterpart.
-Design-adjusted tests are standard conditional-independence tests with the logged design variables as covariates:
-partial correlation, Granger and RCoT~\cite{strobl2019rcot}. Design-blind methods ignore the design: correlation,
-plain partial correlation, also with heteroskedasticity- and autocorrelation-consistent
-errors~\cite{newey1987hac,kiefer2005fixedb}, plain Granger and RCoT, the structure learners
-PC~\cite{spirtes2000causation} and NOTEARS~\cite{zheng2018notears}, SHAP-DAG after Sharma et
-al.~\cite{Sharma_2025,lundberg2017shap}, the two-tower network, the max-stratified correlation-ratio test of our
-earlier work, and the discovery stage of CDD O-RAN~\cite{dahal2026cddoran}. The controlled environments test the
-randomisation construction that PMRT shares, not its matched-filter statistic or its weighted declaration layer. The validity of the PMRT used in the simulator
-therefore rests on its own null checks there (Section~\ref{sec:res_validity}).
+Three groups of tests are compared. Design-based tests redraw the logged design: PMRT-GBM, which uses a
+gradient-boosting statistic and plain BY control at $q = 0.05$, and its linear counterpart PMRT-Lin.
+Design-adjusted tests condition on the logged design variables: partial correlation, Granger and
+RCoT~\cite{strobl2019rcot}. Design-blind methods ignore those variables: correlation; partial correlation
+with standard or heteroskedasticity- and autocorrelation-consistent errors~\cite{newey1987hac,kiefer2005fixedb};
+Granger; RCoT; PC~\cite{spirtes2000causation}; NOTEARS~\cite{zheng2018notears}; SHAP-DAG after Sharma et
+al.~\cite{Sharma_2025,lundberg2017shap}; the two-tower network; our earlier max-stratified
+correlation-ratio test; and CDD O-RAN's discovery stage~\cite{dahal2026cddoran}. These environments isolate
+the randomisation construction shared by the PMRT variants, not the simulator PMRT's matched-filter
+statistic or weighted declaration layer; its validity therefore rests on the simulator null checks in
+Section~\ref{sec:res_validity}.
 
 \subsection{Baselines and metrics}
 \label{sec:baselines_scores}\claim{DEF-MET-MAP}\claim{DEF-MET-DEC}
@@ -121,15 +117,11 @@ caps the recall a baseline can reach. On the uniform-randomised logs the baselin
 thresholds rather than from confounding, and on the state-dependent logs the baselines are also reported at thresholds
 calibrated on placebo logs.
 
-Maps are scored over the \val{s1.gt.hypotheses} hypotheses; a declaration on a hypothesis whose label is
-indeterminate counts in neither measure. Precision is the share of declarations on determinate hypotheses that are
-true, whatever their sign; recall is the share of true hypotheses that are declared; F1 is their harmonic mean; and
-sign accuracy is the share of declared true edges that carry the ground-truth sign. Referees are compared with static
-rules, such as accept-all, never-sleep, which rejects every request to put a pico to sleep, and the subsets of xApps
-run alone, and with referees driven by the oracle map of true edges, a random map and the associational maps
-(\esm{esm:setup}). The objective is the protected-slice violations $V$, reported as the recovery
-$R = (V_{\mathrm{AA}} - V) / (V_{\mathrm{AA}} - V_{\mathrm{ref}})$, which is 0 for accept-all and 1 for the best
-single-xApp subset. A referee is eligible when it meets the two constraints of Section~\ref{sec:estimand}. Never-sleep
-is the best eligible static rule, because the subset that sets $R = 1$ retains almost none of the energy saving.
-Intervals on decision metrics are 90~\% paired seed-bootstrap intervals, and intervals on rates are 95~\%
-cluster-bootstrap intervals.
+Maps are scored over the \val{s1.gt.hypotheses} hypotheses; indeterminate labels count in neither precision nor
+recall, F1 is their harmonic mean, and sign accuracy is the share of declared true edges with the ground-truth sign.
+Referees are compared with accept-all, never-sleep, single-xApp subsets, and referees driven by the oracle, random and
+associational maps (\esm{esm:setup}). Protected-slice violations $V$ define the recovery
+$R = (V_{\mathrm{AA}} - V)/(V_{\mathrm{AA}} - V_{\mathrm{ref}})$, which is 0 for accept-all and 1 for the best
+single-xApp subset. Eligibility requires the constraints of Section~\ref{sec:estimand}; never-sleep is the best
+eligible static rule because the subset attaining $R = 1$ retains almost no energy saving. Decision intervals are
+90~\% paired seed-bootstrap intervals and rate intervals are 95~\% cluster-bootstrap intervals.

@@ -22,9 +22,9 @@ affect network performance.
 \label{fig:intro_conflict}
 \end{figure}
 
-A growing literature learns such parameter--KPI maps from network
-data~\cite{QACM2024,PACIFISTA,Sharma_2025,santos2026conflictairan}, but establishing causal effects from operational
-logs is difficult because xApps act in response to network state. An energy-saving xApp, for example, may request cell
+Recent work identifies parameter--KPI relationships using learned conflict graphs, sandbox profiles and SHAP-informed
+causal models~\cite{santos2026conflictairan,PACIFISTA,Sharma_2025}. However, establishing causal effects from
+operational logs remains difficult because xApps act in response to network state. For example, an energy-saving xApp may request cell
 sleep precisely when traffic is low, while the subsequent load and service quality of neighbouring cells depend on
 traffic conditions that also influence the observed KPIs. Comparing periods with and without sleep requests can
 therefore mix the effect of the action with the conditions that prompted it. We investigate a designed-logging
@@ -51,17 +51,15 @@ conflict mitigation can achieve.
 
 The paper makes three contributions.
 \begin{enumerate}
-\item \textbf{The test}. PMRT, a design-based test that learns signed causal effect maps from near-RT RIC request
-logs with logged probabilities, with an explicit estimand and the conditions for its asymptotic validity.
-\item \textbf{The validity evidence}. Placebo and null-outcome checks on the simulator, and a study on five
-controlled environments of whether edge tests keep their error rate when the logging design is known. The evidence
-suggests a practical placebo check, a necessary condition only, for learned discovery pipelines on designed logs.
-\item \textbf{The decision study}. A test of whether such a map improves safe decisions, with a map-driven referee
-and an edge-certification gate. In the evaluated scenario the map gave no such improvement, and this gap between a
-valid map and a better safe policy is the paper's central result.
+\item \textbf{The test}. PMRT learns signed causal effect maps from request logs with recorded assignment
+probabilities, with an explicit estimand and conditions for asymptotic validity.
+\item \textbf{The validity evidence}. Simulator null checks and five controlled environments test whether discovery
+methods retain their error rate under known logging designs, and show that passing a placebo check is necessary but
+not sufficient.
+\item \textbf{The decision study}. A map-driven referee and edge-certification gate test whether a valid map improves
+safe decisions; in the evaluated scenario it does not, which is the paper's central result.
 \end{enumerate}
-The work builds on our conference paper on causal discovery-driven conflict mitigation, CDD
-O-RAN~\cite{dahal2026cddoran}, but replaces its method rather than extending it.
+The work replaces, rather than extends, the method of our conference paper CDD O-RAN~\cite{dahal2026cddoran}.
 
 Table~\ref{tab:terms} fixes the terminology used to distinguish the logging design, statistical declarations,
 simulator reference labels and decision-level safety claims.
@@ -76,7 +74,12 @@ simulator reference labels and decision-level safety claims.
 Term & Meaning \\
 \midrule
 Referee & Near-RT RIC rule that accepts or rejects xApp requests. \\
+Eligible referee & Referee that meets the measured energy and guard constraints. \\
+Edge-certification gate & Rule that blocks rejection classes with unresolved undeclared guard edges; not a policy-level
+safety certificate. \\
 Decision unit & Cell--xApp request bundle assigned one accept/reject mode for a fixed hold duration. \\
+Propensity & Probability with which the referee accepts a decision unit, conditional on information available before
+its mode is drawn. \\
 Confounding & Distortion of an action--outcome association by prior network state that affects both the action and the
 outcome. \\
 Uniform-randomised logging & Independent acceptance of each eligible unit with probability 0.5. \\
@@ -85,13 +88,9 @@ Placebo log & Log whose recorded modes do not determine whether requests are app
 Sharp-null declaration & Rejection of the hypothesis that every assignment of a parameter family's modes leaves the
 specified outcome unchanged. \\
 Signed causal effect map & Declared parameter-family--relation--KPI edges with estimated signs and coefficients. \\
-Relation label & Own, neighbour or far cells grouped into the tested outcome. \\
+Oracle map & Knockout reference map supplied to the fixed referee, not an optimal policy. \\
 Knockout ground truth & Simulated accept-minus-reject effects for one unit while every other unit is accepted. \\
 Knockout-null label & Knockout effect whose interval lies inside the materiality band. \\
-Oracle map & Knockout reference map supplied to the fixed referee, not an optimal policy. \\
-Eligible referee & Referee that meets the measured energy and guard constraints. \\
-Edge-certification gate & Rule that blocks rejection classes with unresolved undeclared guard edges; not a policy-level
-safety certificate. \\
 \bottomrule
 \end{tabular*}
 \end{table}

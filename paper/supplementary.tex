@@ -70,7 +70,62 @@ an S refer to the article.}
 \section{Method}
 \label{esm:method}
 
-Algorithm~1 of the article collects the steps of the test for one hypothesis, Table~\ref{tab:s_pipeline} the construction of the weight $w_u$ of unit $u$ for hypothesis $(f, r, k)$ (steps 1 to 7, fitted on training, the 480 earlier and 20 development episodes) and of the inputs of the declaration layer (step 8, which runs steps 1 to 7 on the 480 earlier episodes), and Table~\ref{tab:s_rules} the rules of the test and the referee.
+Algorithm~1 of the article summarises the declaration pipeline. Algorithm~\ref{alg:s_pmrt} gives the complete test for
+one hypothesis, Table~\ref{tab:s_pipeline} the construction of its weight $w_u$ (steps 1 to 7, fitted on training, the
+480 earlier and 20 development episodes) and of the inputs of the declaration layer (step 8, which runs steps 1 to 7
+on the 480 earlier episodes), and Table~\ref{tab:s_rules} the rules of the test and the referee. Every hypothesis uses
+$n_{\mathrm{u}} = 30$, $n_{\mathrm{a}} = n_{\mathrm{r}} = 5$, $n_{\mathrm{e}} = 3$,
+$(t_1, t_2, t_3, t_4) = (30, 60, 90, 150)$~s,
+$(K_{\mathrm{own}}, K_{\mathrm{nbr}}, K_{\mathrm{far}}) = (1, 4, 2)$, $\ell_{\mathrm{h}} = 150$~s,
+$\nu_0 = 20$, $\nu_1 = 50$, $c = 2.5$, $z_o = 2$ and $B = 9999$.
+
+\begin{algorithm}[tbp]
+\caption{Complete PMRT for one hypothesis.}
+\label{alg:s_pmrt}
+\scriptsize
+\begin{algorithmic}[1]
+\Require hypothesis $(f, r, k)$; training units $\mathcal{T}$ of $f$; units $u = 1, \dots, N$ of $f$ in information
+  order with $W_u$, $\mathrm{sgn}_u$, $\pi_u$, $y_u$ and complete pre- and post-windows of length $t_3$; counts
+  $N_{\mathrm{a}}$, $N_{\mathrm{r}}$, $N_{\mathrm{e}}$ of accepted units, rejected units and episodes
+\Require minimum support $n_{\mathrm{u}}, n_{\mathrm{a}}, n_{\mathrm{r}}, n_{\mathrm{e}}$; bin edges
+  $t_1 < t_2 < t_3 < t_4$; slot counts $K_r$; history length $\ell_{\mathrm{h}}$; pseudo-units $\nu_0, \nu_1$;
+  clip constant $c$; orientation threshold $z_o$; redraws $B$
+\Ensure $p$, the one-sided $p_{+1}, p_{-1}$ and the reported sign $\varsigma$, or untested
+\If{$\min\{|\mathcal{T}|, N\} < n_{\mathrm{u}}$ \textbf{or} $N_{\mathrm{a}} < n_{\mathrm{a}}$ \textbf{or}
+  $N_{\mathrm{r}} < n_{\mathrm{r}}$ \textbf{or} $N_{\mathrm{e}} < n_{\mathrm{e}}$ \textbf{or} $y_u \notin \mathbb{R}$
+  for some $u$}
+  \State \Return untested \Comment{never declared}
+\EndIf
+\State $\rho \gets \textsc{RankSlots}(\mathcal{T}; K_r)$ \Comment{step 2}
+\State $\Gamma \gets \textsc{Adjust}(\mathcal{T}, \rho; \ell_{\mathrm{h}})$ \Comment{step 3}
+\State $(\tilde\mu, \Sigma) \gets \textsc{Profile}(\mathcal{T}, \rho, \Gamma)$ \Comment{step 4}
+\State $\psi_A \gets \Sigma_{AA}^{-1} \tilde\mu_A$ for $A \in \{A_3, A_4\}$ \Comment{$A_j$: bins up to $t_j$}
+\State $\hat s \gets \textsc{Scale}(\mathcal{T}, \psi)$ \Comment{step 6}
+\State $o \gets \mathrm{sign}(\mathbf{1}_{A_3}^{\top} \tilde\mu)\, \mathbf{1}\{|z_{\mathrm{train}}| \ge z_o\}$
+  \Comment{step 7}
+\For{$u = 1, \dots, N$}
+  \State $v_u \gets \mathrm{sgn}_u (L(W_u) - \pi_u)$
+  \State $E_u \gets P_u - \Gamma X_u$ \Comment{$P_u$, $X_u$: post-window bins, pre-window features}
+  \State $g_u \gets \psi_{A_u}^{\top} E_u$ \Comment{$A_u$: bins observed for $u$}
+  \State $\bar g_u \gets \textsc{Centre}(g_1, \dots, g_{u-1}; \nu_0, \nu_1)$ \Comment{step 5}
+  \State $s_u \gets \hat s(X_u)$
+  \State $w_u \gets s_u \max\{-c, \min\{c, (g_u - \bar g_u) / s_u\}\}$
+\EndFor
+\State $\sigma^2 \gets \sum_u \pi_u(1 - \pi_u)w_u^2$; $z \gets \sum_u v_u w_u / \sigma$
+\For{$b = 1, \dots, B$}
+  \State $L(W_u^{(b)}) \sim \mathrm{Bernoulli}(\pi_u)$ for $u = 1, \dots, N$ \Comment{other families fixed}
+  \State $z_b \gets \sum_u v_u^{(b)} w_u / \sigma$
+\EndFor
+\State $p \gets \{1 + \#(b: |z_b| \ge |z|)\}/(B + 1)$
+\If{$o \ne 0$}
+  \State $p_d \gets \{1 + \#(b: d o z_b \ge d o z)\}/(B + 1)$ for $d \in \{+1, -1\}$
+  \State $\varsigma \gets \mathrm{sign}(z)\, o$
+\Else
+  \State $\varsigma \gets \mathrm{sign}(z^{\circ})$ \Comment{$p_{\pm 1}$ undefined; $z^{\circ}$: $z$ of the centred
+    $A_3$ total of $E_u$}
+\EndIf
+\end{algorithmic}
+\end{algorithm}
 
 \begin{table}[tbp]
 \caption{Weight construction.}

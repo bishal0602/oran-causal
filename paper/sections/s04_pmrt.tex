@@ -18,14 +18,11 @@ KPIs are certified small.
 \subsection{Test statistic}
 \label{sec:pmrt}\claim{DEF-PMRT-WEIGHT}
 
-In logs written by a reactive controller, the network state drives both the mode $W$ (accept or reject) and the KPIs
-(Figure~\ref{fig:idea}a). When the referee accepts a request whenever an independent uniform draw $U$ falls below a
-logged propensity $\pi$, the state affects the mode only through $\pi$ (Figure~\ref{fig:idea}b), and the propensities
-define what chance alone would produce. A KPI that moves
-with the modes more than the propensities allow is then evidence of an effect, even when the propensities themselves
-depend on the network state. PMRT measures this co-movement with a statistic that pairs a score of each unit's mode
-with a weight built from the KPI series, and compares it with the values obtained when the modes are redrawn from the
-logged propensities (Figure~\ref{fig:idea}c). The test establishes that an effect exists, not how large it is.
+In reactive logs, network state drives both the mode $W$ and the KPIs (Figure~\ref{fig:idea}a). If the referee accepts
+when an independent uniform draw $U$ falls below a logged propensity $\pi$, state affects the mode only through $\pi$
+(Figure~\ref{fig:idea}b). PMRT tests whether a KPI moves with the modes more than those propensities predict, pairing a
+score of each mode with a weight built from the KPI series and comparing the statistic with redraws from the logged
+design (Figure~\ref{fig:idea}c). It establishes whether an effect exists, not its size.
 
 Take a family $f$ and its units $u$ in information order: episode, opening time, cell. With $L(\text{accept}) = 1$ and
 $L(\text{reject}) = 0$, the assignment score of unit $u$ is
@@ -65,58 +62,30 @@ p = \frac{1 + \#\{b : |z_b| \ge |z|\}}{B + 1}, \qquad
 p_d = \frac{1 + \#\{b : d\, o\, z_b \ge d\, o\, z\}}{B + 1},
 \label{eq:pval}\claim{DEF-PMRT-PVAL}
 \end{equation}
-where $\#$ counts redraws. Algorithm~\ref{alg:pmrt} lists the steps for one hypothesis, including the cases left
-untested. Its sub-steps in small capitals are the steps of \esm{tab:s_pipeline} with the same number, fitted on
-the training units. Every hypothesis uses $n_{\mathrm{u}} = 30$,
-$n_{\mathrm{a}} = n_{\mathrm{r}} = 5$, $n_{\mathrm{e}} = 3$, $(t_1, t_2, t_3, t_4) = (30, 60, 90, 150)$~s,
-$(K_{\mathrm{own}}, K_{\mathrm{nbr}}, K_{\mathrm{far}}) = (1, 4, 2)$, $\ell_{\mathrm{h}} = 150$~s,
-$\nu_0 = 20$, $\nu_1 = 50$, $c = 2.5$, $z_o = 2$ and $B = 9999$.
+where $\#$ counts redraws. Algorithm~\ref{alg:pmrt} summarises the declaration pipeline; the complete per-hypothesis
+algorithm and fixed support, window and weight-construction parameters are given in \esm{esm:method}. We use
+$B = 9999$ redraws.
 
-\begin{algorithm}[!tbp]
-\caption{PMRT for one hypothesis.}
+\begin{algorithm}[tbp]
+\caption{PMRT declarations.}
 \label{alg:pmrt}
 \footnotesize
 \begin{algorithmic}[1]
-\Require hypothesis $(f, r, k)$; training units $\mathcal{T}$ of $f$; units $u = 1, \dots, N$ of $f$ in information
-  order with $W_u$, $\mathrm{sgn}_u$, $\pi_u$, $y_u$ and complete pre- and post-windows of length $t_3$; counts $N_{\mathrm{a}}$,
-  $N_{\mathrm{r}}$, $N_{\mathrm{e}}$ of accepted units, rejected units and episodes
-\Require minimum support $n_{\mathrm{u}}, n_{\mathrm{a}}, n_{\mathrm{r}}, n_{\mathrm{e}}$; bin edges
-  $t_1 < t_2 < t_3 < t_4$; slot counts $K_r$; history length $\ell_{\mathrm{h}}$; pseudo-units $\nu_0, \nu_1$;
-  clip constant $c$; orientation threshold $z_o$; redraws $B$
-\Ensure $p$, the one-sided $p_{+1}, p_{-1}$ and the reported sign $\varsigma$, or untested
-\If{$\min\{|\mathcal{T}|, N\} < n_{\mathrm{u}}$ \textbf{or} $N_{\mathrm{a}} < n_{\mathrm{a}}$ \textbf{or}
-  $N_{\mathrm{r}} < n_{\mathrm{r}}$ \textbf{or} $N_{\mathrm{e}} < n_{\mathrm{e}}$ \textbf{or} $y_u \notin \mathbb{R}$
-  for some $u$}
-  \State \Return untested \Comment{never declared}
-\EndIf
-\State $\rho \gets \textsc{RankSlots}(\mathcal{T}; K_r)$ \Comment{step 2}
-\State $\Gamma \gets \textsc{Adjust}(\mathcal{T}, \rho; \ell_{\mathrm{h}})$ \Comment{step 3}
-\State $(\tilde\mu, \Sigma) \gets \textsc{Profile}(\mathcal{T}, \rho, \Gamma)$ \Comment{step 4}
-\State $\psi_A \gets \Sigma_{AA}^{-1} \tilde\mu_A$ for $A \in \{A_3, A_4\}$ \Comment{$A_j$: bins up to $t_j$}
-\State $\hat s \gets \textsc{Scale}(\mathcal{T}, \psi)$ \Comment{step 6}
-\State $o \gets \mathrm{sign}(\mathbf{1}_{A_3}^{\top} \tilde\mu)\, \mathbf{1}\{|z_{\mathrm{train}}| \ge z_o\}$
-  \Comment{step 7}
-\For{$u = 1, \dots, N$}
-  \State $v_u \gets \mathrm{sgn}_u (L(W_u) - \pi_u)$ \Comment{Eq.~\eqref{eq:score}}
-  \State $E_u \gets P_u - \Gamma X_u$ \Comment{$P_u$, $X_u$: post-window bins, pre-window features}
-  \State $g_u \gets \psi_{A_u}^{\top} E_u$ \Comment{$A_u$: bins observed for $u$}
-  \State $\bar g_u \gets \textsc{Centre}(g_1, \dots, g_{u-1}; \nu_0, \nu_1)$ \Comment{step 5}
-  \State $s_u \gets \hat s(X_u)$
-  \State $w_u \gets s_u \max\{-c, \min\{c, (g_u - \bar g_u) / s_u\}\}$
+\Require hypotheses $\mathcal{H}$; training and evaluation units with modes, request directions, propensities and KPI
+  series; redraws $B$
+\Ensure signed declarations or untested hypotheses
+\For{each hypothesis $j = (f, r, k) \in \mathcal{H}$}
+  \State Check the required units, accepted and rejected modes, episodes and outcome windows; otherwise mark $j$
+    untested
+  \State On training episodes, fit the pre-window adjustment, matched filter, scale, clipping rule and prior direction
+  \State For each evaluation unit in information order, compute its assignment score $v_u$ and outcome weight $w_u$
+  \State Compute the observed statistic $z$ from Eq.~\eqref{eq:stat}
+  \State Redraw the modes of family $f$ from their logged propensities $B$ times, holding the weights and other
+    families fixed
+  \State Compute the two-sided and available directional p-values from Eq.~\eqref{eq:pval}, with the reported sign
 \EndFor
-\State $z \gets S / \sigma$ \Comment{Eq.~\eqref{eq:stat}}
-\For{$b = 1, \dots, B$}
-  \State $L(W_u^{(b)}) \sim \mathrm{Bernoulli}(\pi_u)$ for $u = 1, \dots, N$ \Comment{other families fixed}
-  \State $z_b \gets \sum_u v_u^{(b)} w_u / \sigma$
-\EndFor
-\State $p \gets$ two-sided value of Eq.~\eqref{eq:pval}
-\If{$o \ne 0$}
-  \State $p_d \gets$ one-sided value of Eq.~\eqref{eq:pval} for $d \in \{+1, -1\}$
-  \State $\varsigma \gets \mathrm{sign}(z)\, o$
-\Else
-  \State $\varsigma \gets \mathrm{sign}(z^{\circ})$ \Comment{$p_{\pm 1}$ undefined; $z^{\circ}$: $z$ of the centred
-    $A_3$ total of $E_u$}
-\EndIf
+\State Apply the weighted BY step-up to all hypotheses; untested hypotheses are never declared
+\State \Return the rejected hypotheses and their reported signs
 \end{algorithmic}
 \end{algorithm}
 
@@ -134,11 +103,10 @@ $u - 1$ units, and the result rests on four assumptions.
   dominating $S$.
 \end{description}
 
-In operational terms, (A1) requires the RIC to draw each mode with the propensity it logs, set from the past and kept
-away from 0 and 1. Assumption (A2) is the hypothesis under test. Under (A3), the analyst, not the RIC, builds each
-weight from what was known when the unit opened, apart from the KPI under test. Assumption (A4) requires enough logged
-units that none dominates $S$; in the simulator it holds when the clipped weights stay bounded and $\sigma^2 / n$
-settles to a positive limit.
+Operationally, the RIC must draw each mode from its logged, past-determined propensity bounded away from 0 and 1; the
+analyst must build each weight from information available when the unit opened, apart from the KPI under test; and the
+log must contain enough units that none dominates $S$. In the simulator the last condition holds when clipping keeps
+the weights bounded and $\sigma^2/n$ approaches a positive limit.
 
 \begin{proposition}[Asymptotic validity of PMRT]
 \label{prop:pmrt}\claim{ASM-ORIENT}\claim{THM-PMRT-ASY}
@@ -155,31 +123,24 @@ The p-values $p$ and $p_d$ are therefore asymptotically valid. The value $p$ dif
 $2\{1 - \Phi(|z|)\}$ only by a term that vanishes in probability and by Monte Carlo error.
 \end{proposition}
 
-Only the normal limit is asymptotic. Adaptive unit creation, the re-proposal of a rejected request and propensities
-that track the network state are all decided before the unit's draw, and hence are $\mathcal{G}_{u-1}$-measurable, as
-(A1) requires. A fresh-draw lemma (\esm{lem:s_fresh}) then gives each score $v_u$ mean zero given $\mathcal{G}_{u-1}$,
-so with (A3) $S$ is a martingale with predictable variance $\sigma^2$ in every sample, however the design adapts, and
-its limit needs (A4), not a design that can be replayed. The exact randomisation test for sequential experiments of
-Bojinov and Shephard~\cite{bojinov2019timeseries} needs such a replay, which is impossible here: a sharp null on one KPI
-does not fix the network state that creates the units and sets the incumbent's propensities. Adaptivity therefore
-costs exactness in finite samples, placebo logs included, not validity in the limit: the two-unit counterexample below
-is one fixed design, so its $\sigma^2$ cannot grow as (A4) requires. The placebo logs and null outcomes of
-Section~\ref{sec:res_validity} check the finite-sample size.
+Adaptive unit creation, repeated requests and state-dependent propensities do not invalidate the martingale argument
+when their existence, timing and propensity are determined before the current mode is drawn, as (A1) requires. The
+fresh-draw lemma\claim{THM-FRESH} (\esm{lem:s_fresh}) then gives each assignment score conditional mean zero, so under
+the sharp null $S$ has predictable variance $\sigma^2$ in every sample. Assumption (A4) supplies the asymptotic
+calibration through the martingale central limit theorem~\cite[Cor.~3.1 and 3.2]{hall1980martingale}\claim{CIT-HH} and
+the Lindeberg--Feller and P\'olya theorems~\cite[Thm.~3.4.10 and Exercise~3.2.9]{durrett2019probability}\claim{CIT-DUR}.
+The redraw p-value is nevertheless not exact in finite samples: changing a mode can alter the later network state,
+units and propensities, so the adaptive design cannot generally be replayed as required by exact sequential
+randomisation tests~\cite{bojinov2019timeseries}. A fixed design gives a valid tie-inclusive p-value\claim{THM-EXACT},
+exact for a continuous statistic~\cite[Sect.~4]{phipson2010permutation}\claim{CIT-PS}, but PMRT does not meet that
+condition; a two-unit counterexample is given in \esm{ex:s_adaptive}\claim{THM-COUNTEREX}. The placebo and null-outcome
+experiments of Section~\ref{sec:res_validity} assess finite-sample behaviour.
 
-The proof of Proposition~\ref{prop:pmrt} combines the martingale central limit theorem with a random limiting
-variance~\cite[Cor.~3.1 and 3.2]{hall1980martingale}\claim{CIT-HH} for the statistic, the Lindeberg--Feller and
-P\'olya theorems~\cite[Thm.~3.4.10 and Exercise~3.2.9]{durrett2019probability}\claim{CIT-DUR} for the redraws, and the
-fresh-draw lemma\claim{THM-FRESH} (\esm{esm:theory}). Were the units, their order, propensities and weights fixed given the past of the other families,
-the tie-inclusive p-value would be valid\claim{THM-EXACT}, and exact for a continuous
-statistic~\cite[Sect.~4]{phipson2010permutation}\claim{CIT-PS}; PMRT does not meet that condition, and in a two-unit
-design in which a rejected request is proposed again the one-sided redraw p-value is anti-conservative for any fixed
-$t \in (1/2, 3/4)$\claim{THM-COUNTEREX}.
-
-The 60 hypotheses of one analysis are declared together by a weighted Benjamini--Yekutieli (BY)
-step-up~\cite[Thm.~1.3]{benjamini2001dependency}, \cite{blanchard2008fdr} at $q = 0.05$. Hypothesis $j$ enters with a weight $\omega_j$
-and, where a prior direction $d_j$ is set and $p_{d_j}$ is defined, with $p_{d_j}$, and otherwise with $p$; weights and directions are derived
-from the training episodes alone~\cite[Thm.~3.1 and Sect.~5]{roeder2009weighted}. A declaration is a rejected hypothesis with its sign,
-$d_j$ where the one-sided value was used and otherwise the reported sign.
+The 60 hypotheses are declared together by a weighted Benjamini--Yekutieli (BY)
+step-up~\cite[Thm.~1.3]{benjamini2001dependency}, \cite{blanchard2008fdr} at $q = 0.05$. Hypothesis $j$ enters with
+training-derived weight $\omega_j$ and, when available, prior-direction p-value $p_{d_j}$; otherwise it enters with
+$p$~\cite[Thm.~3.1 and Sect.~5]{roeder2009weighted}. A rejection is reported with that prior direction or the test's
+reported sign.
 
 \begin{corollary}[Asymptotic false discovery rate]
 \label{cor:fdr}\claim{ASM-FDR-FIXED}\claim{THM-FDR-ASY}
@@ -194,10 +155,9 @@ the analysed sample size $n$, all fixed from data independent of the evaluation 
 where a false discovery is the rejection of a true sharp null.
 \end{corollary}
 
-The corollary applies the reshaped weighted step-up of Blanchard and
-Roquain~\cite[Thm.~4.2]{blanchard2008fdr}\claim{CIT-BR} through a finite-sample bound whose slack vanishes as the
-sample grows\claim{THM-BY-FIN} (\esm{esm:theory}). Untested hypotheses count in $m$ and are never declared, which is
-conservative.
+The result applies the reshaped weighted step-up of Blanchard and Roquain~\cite[Thm.~4.2]{blanchard2008fdr}
+\claim{CIT-BR} through a finite-sample bound with asymptotically vanishing slack\claim{THM-BY-FIN}
+(\esm{esm:theory}). Counting untested hypotheses in $m$ is conservative because they are never declared.
 
 \subsection{Scope of the guarantees}
 \label{sec:reading}\claim{THM-SCOPE}

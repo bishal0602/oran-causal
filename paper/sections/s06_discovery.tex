@@ -4,14 +4,12 @@
 \subsection{Validity}
 \label{sec:res_validity}\claim{EMP-S1-PLACEBO}\claim{EMP-S2-PLACEBO}\claim{EMP-S1-NULLOUT}\claim{EMP-S1-STRICT}\claim{EMP-S1-SMALLNULL}\claim{EMP-BASE-MAPS}
 
-PMRT made no declaration on the placebo logs of either dataset or on the null outcomes, whose p-values were close to
-uniform (\esm{esm:discovery}). The baselines, in contrast, declared edges on placebo logs, up to \val{s1.placebo.granger_by}
-on the uniform-randomised logs and up to \val{s2.placebo.granger_by} on the state-dependent logs (Figure~\ref{fig:placebo}). Because
-the modes of the uniform-randomised logs are independent of the network state, the declarations there arise from the baselines'
-thresholds rather than from confounding; on the state-dependent logs, four of the seven baselines declared more placebo
-edges, which is consistent with confounding adding to the threshold effect. Because knockout-null labels permit small
-nonzero effects, their raw p-value rate need not equal the sharp-null level; over all \val{s1.null.count}, the rate at
-or below 0.05 was \val{s1.null.rate}.
+PMRT made no declaration on either dataset's placebo logs or on the null outcomes, whose p-values were close to
+uniform (\esm{esm:discovery}). The baselines declared placebo edges under both logging designs
+(Figure~\ref{fig:placebo}). Under uniform randomisation these arise from their thresholds rather than confounding;
+under state-dependent logging, four of seven baselines declared more, consistent with confounding adding to that
+effect. Knockout-null labels permit small nonzero effects, so their raw p-value rate need not equal the sharp-null
+level.
 
 \begin{figure}[tbp]
 \centering
@@ -23,18 +21,12 @@ or below 0.05 was \val{s1.null.rate}.
 \subsection{Agreement with the ground truth}
 \label{sec:res_map}\claim{EMP-S1-MAP}\claim{EMP-S2-MAP}\claim{EMP-S1-CHAIN}\claim{EMP-S1-P2}\claim{EMP-GT-SENS}\claim{EMP-GT-EXIST}
 
-PMRT's maps agreed closely with the knockout ground truth (Figure~\ref{fig:maps}, Table~\ref{tab:maps}). On the
-uniform-randomised logs it declared \val{s1.pmrt.declared} edges, with a precision of \val{s1.map.pmrt.prec} over the
-determinate hypotheses, a recall of \val{s1.map.pmrt.rec} and no wrong sign. On the state-dependent logs, where the
-incumbent's state-dependent propensities were logged, it declared \val{s2.pmrt.declared} edges, with a precision of
-\val{s2.map.pmrt.prec}, a recall of \val{s2.map.pmrt.rec} and again no wrong sign. It declared the edge from pico sleep
-to neighbour protected-slice violations, on which the scenario's conflict rests, and the other three edges of the
-conflict chain, each with the ground-truth sign, on both kinds of log and in every larger subsample of the uniform-randomised
-logs. The baselines either declared fewer true edges or reached a higher recall only with wrong signs and false edges.
-Granger~+~BY, the strongest of them, reached a recall of \val{s1.map.gby.rec} with six wrong signs on each kind of
-log. SHAP-GBDT declared no wrong sign, but it declared \val{s1.map.shap.placebo} edges on the placebo logs of the
-uniform-randomised dataset. Calibrating the baselines' thresholds on the placebo logs themselves still left a placebo edge in
-every map, and no calibrated map reached a recall above \val{s2.plc.rec_max}, wrong signs included.
+PMRT's maps agreed closely with the knockout ground truth on both logging designs (Figure~\ref{fig:maps},
+Table~\ref{tab:maps}). It recovered all four edges of the scenario's conflict chain with the ground-truth signs and
+made no wrong-sign or placebo declaration. The baselines either recovered fewer true edges or gained recall at the
+cost of wrong signs or placebo edges. Granger~+~BY had the strongest recall among them, while SHAP-GBDT avoided wrong
+signs but declared placebo edges. Calibrating the baseline thresholds on the placebo logs themselves still left one
+placebo edge in every map.
 
 On the smallest subsamples of the uniform-randomised logs, PMRT's F1 score on neighbour-relation edges did not consistently
 match that of Granger~+~BY (\esm{fig:s_subsamples}).
@@ -66,22 +58,20 @@ Two-tower    & \val{s1.map.tt.prec} / \val{s2.map.tt.prec} & \val{s1.map.tt.rec}
 \end{tabular*}
 \end{table}
 
-Precision depends on how the ground truth is defined. With the materiality threshold halved it rose to
-\val{s1.gt.half.prec} on both kinds of log, and with it doubled it fell to \val{s1.gt.dbl.pmrt.prec} and
-\val{s2.gt.dbl.pmrt.prec}, because of real effects below the doubled threshold rather than wrong declarations. Under an
-existence rule, which counts any effect whose knockout interval excludes zero, \val{s1.ex.confirmed} of PMRT's
-\val{s1.pmrt.declared} declarations on the uniform-randomised logs and all \val{s2.ex.confirmed} on the state-dependent logs were
-real effects with the declared sign. PMRT made no wrong-sign declaration under any ground-truth variant
-(\esm{esm:discovery}), but under the doubled threshold the ranking of methods is not preserved: the small maps of INT,
-QACM and two-tower kept higher precision at lower recall.
+Precision changed with the materiality threshold because some declared effects fell below the stricter threshold,
+not because their signs were wrong. Under an existence rule, which counts every effect whose knockout interval
+excludes zero, \val{s1.ex.confirmed} of PMRT's \val{s1.pmrt.declared} declarations on the uniform-randomised logs and
+all \val{s2.ex.confirmed} on the state-dependent logs were confirmed with the declared sign. PMRT made no wrong-sign
+declaration under any ground-truth variant, although doubling the threshold changed the ranking of methods
+(\esm{esm:discovery}).
 
 \subsection{Role of the logging design}
 \label{sec:study4}\claim{EMP-S4-C1}\claim{EMP-S4-C2C3}\claim{EMP-S4-E4}\claim{EMP-S4-CDD}\claim{EMP-POWER}
 
 The controlled environments confirm that validity derives from the logging design. Tests that ignored the design
-were close to their nominal rate under independent logging but lost it once actions followed a dithered setpoint, with
-null-edge rates of \val{s4.c1.r2_min} to \val{s4.c1.r2_max}, whereas the design-based and design-adjusted tests remained
-near 0.05 under every logging design (Figure~\ref{fig:logging_validity}; \esm{esm:envs}). Two exceptions stand out:
+were near nominal under independent logging but lost validity once actions followed a dithered setpoint, whereas the
+design-based and design-adjusted tests remained near 0.05 under every logging design
+(Figure~\ref{fig:logging_validity}; \esm{esm:envs}). Two exceptions stand out:
 design-adjusted RCoT was invalid even with the design covariates, and PMRT-Lin, the linear variant, was invalid in
 some conditions under the state-dependent policy, although its pooled rates were valid.
 
@@ -92,38 +82,27 @@ some conditions under the state-dependent policy, although its pooled rates were
 \label{fig:logging_validity}
 \end{figure}
 
-The latent-confounding environment illustrates the mechanism most directly, because there the associational sign is
-reversed at large confounding strength. Under the logged state-dependent policy, the null-edge rate of correlation was
-\val{s4.conf.corr_min} whenever the confounding was present, while that of PMRT-GBM stayed between
-\val{s4.conf.gbm_min} and \val{s4.conf.gbm_max} in every condition. Validity under this policy is not specific to PMRT:
-design-adjusted partial correlation also stayed valid, whereas correlation and plain RCoT were far above nominal, at
-\val{s4.conf.corr_all} and \val{s4.conf.rcot2_all}. A variation of the dither width and of the number of setpoints left
-correlation invalid and the two PMRT methods between \val{s4.dither.min} and \val{s4.dither.max}.
+The latent-confounding environment shows the mechanism directly: strong confounding reverses the associational sign.
+Under the logged state-dependent policy, PMRT-GBM and design-adjusted partial correlation remained valid, whereas
+correlation and plain RCoT were far above nominal. Varying the dither width and number of setpoints left correlation
+invalid and both PMRT methods valid.
 
-Power, unlike validity, differed between the valid tests. In the latent-confounding environment, which has a single true
-edge, the recall of PMRT-GBM did not exceed \val{s4.e4.pmrtgbm.recall_max} at any sample size, whereas design-adjusted
-partial correlation reached \val{s4.e4.pcorr_eq.recall_24k} at the largest (\esm{fig:s_recall}). On the uniform-randomised
-simulator logs, which contain no confounding, the pooled recalls were \val{br.pcorr_eq.recall} for design-adjusted
-partial correlation, without a placebo declaration, \val{br.pcorr_native.recall} for partial correlation with context
-covariates alone, and \val{s1.map.pmrt.rec} for PMRT (\esm{tab:s_bridge}).
+Power, unlike validity, differed between the valid tests. In the latent-confounding environment, design-adjusted
+partial correlation had higher recall than PMRT-GBM at the largest sample size (\esm{fig:s_recall}); on the
+uniform-randomised simulator logs, PMRT had higher pooled recall than either partial-correlation variant
+(\esm{tab:s_bridge}).
 
-The same environments show the limits of a placebo check. With its threshold calibrated on the placebo column, the
-discovery stage of CDD O-RAN passed that check but exceeded the nominal null-edge rate in \val{s4.cdl.invalid} of
-\val{s4.cdl.conditions} conditions. A pipeline that declares placebo edges, as every baseline did on the uniform-randomised
-logs, is thus shown to be invalid, whereas a pipeline that passes the check may still be invalid: the check is a
-necessary condition for validity, but not a sufficient one.
+The same environments show the limits of a placebo check. CDD O-RAN's discovery stage passed after calibration on the
+placebo column but still exceeded the nominal null-edge rate in some conditions. Declaring placebo edges therefore
+reveals invalidity, but passing the check does not establish validity: it is necessary, not sufficient.
 
 \subsection{Conflict mitigation}
 \label{sec:res_decision}\claim{EMP-S2-REFEREE}\claim{EMP-S2-MECH}\claim{EMP-S2-ASSOC}\claim{EMP-S3-GATED}\claim{EMP-S3-ORACLE}\claim{EMP-X15}
 
-Without the gate, the PMRT referee reached the highest recovery of any referee, $R = \val{s2.dec.pmrt.rcv}$, but
-breached the RLF guard and was therefore ineligible (Figure~\ref{fig:decisions}, Table~\ref{tab:decision_e2e}). Its RLF
-ratio was \val{s2.dec.pmrt.rlf} (90~\% confidence interval, CI, \val{s2.dec.pmrt.rlf_lo} to
-\val{s2.dec.pmrt.rlf_hi}), against the limit of 1.10. The breach came from rejected transmit-power requests. PMRT's
-map from the state-dependent logs lacked the edge from the transmit-power offset to neighbour RLFs, which the ground truth
-labels true; the oracle map holds this edge, so its guard-conflict rule accepts the next power-up unit after each
-rejected one. Over all seeds, PMRT's referee rejected \val{s2.defer.ptx_up.pmrt} power-up units against the oracle
-map's \val{s2.defer.ptx_up.gt}, while their sleep rejections were similar (\esm{fig:s_deferrals}).
+Without the gate, the PMRT referee reached the highest recovery but breached the 1.10 RLF limit and was therefore
+ineligible (Figure~\ref{fig:decisions}, Table~\ref{tab:decision_e2e}). The breach came from rejected transmit-power
+requests. PMRT's map lacked the effect of the transmit-power offset on neighbour RLFs, whereas the oracle map contained
+it and consequently deferred more power-up rejections; their sleep rejections were similar (\esm{fig:s_deferrals}).
 
 \begin{figure}[tbp]
 \centering
@@ -155,16 +134,13 @@ Arm & $R$ & $R$ minus never-sleep [90~\% CI] & RLF ratio & Eligible \\
 \end{tabular*}
 \end{table}
 
-With the gate, the PMRT referee met every guard but made the same decisions as the never-sleep rule on every seed, so
-its gain in recovery over that rule was zero. No gated referee improved on never-sleep; the oracle map differed from it
-by \val{s3.dec.gt.dr} (90~\% CI \val{s3.dec.gt.dr_lo} to \val{s3.dec.gt.dr_hi}). The gated runs used fresh seeds, and
-on them the ungated PMRT referee no longer outperformed never-sleep, differing by \val{s3.mgpmrt.dr} at an RLF ratio
-of \val{s3.mgpmrt.rlf}. Pooled over both seed sets, its gain was small, \val{x15.pooled.dr} with an interval that
-barely excludes zero, and its RLF ratio of \val{x15.pooled.rlf} still breached the guard; we attribute the difference
-between the seed sets to seed-level heterogeneity of an adaptive referee (\esm{esm:decision}). Referees using the
-associational maps raised protected-slice violations to \val{s2.assoc.ratio_min} to \val{s2.assoc.ratio_max} times the
-accept-all level with and without the gate, because they rejected Slice Guarantee's protected-share requests; several
-stayed eligible, since the protected slice has no guard of its own (\esm{tab:s_x7}).
+With the gate, the PMRT referee met every guard but made the same decisions as never-sleep on every seed. No gated
+referee improved on that rule, including the referee given the oracle map. The ungated PMRT result varied on the fresh
+seed block; pooled over both blocks, its gain over never-sleep was small and its RLF ratio still breached the guard,
+indicating seed-level heterogeneity of the adaptive referee (\esm{esm:decision}). Referees using the associational
+maps raised protected-slice violations above accept-all with and without the gate because they rejected Slice
+Guarantee's protected-share requests; several stayed eligible because the protected slice has no guard of its own
+(\esm{tab:s_x7}).
 
 \label{sec:disc_decision}\claim{EMP-S3-GATEDIAG}\claim{EMP-X4}
 The gate accounts for the absence of a gain from a valid map. Of the request classes that the PMRT map allows the
@@ -172,7 +148,7 @@ referee to reject, the gate certified only putting picos to sleep. It withheld t
 their two unresolved guard edges, to neighbour RLFs and far service violations, are true in the ground truth, with
 point estimates of harm above their tolerances, so that more logging would not have certified them. The oracle map
 certifies this class only because it declares both edges, and its gated referee gained over never-sleep only in energy
-retention, \val{s3.dec.gt.ret} against \val{s3.dec.ns.ret} (\esm{fig:s_cert}). Rejecting more requests does not
+retention (\esm{fig:s_cert}). Rejecting more requests does not
 compensate for this: a referee that rejected requests at random, at the rate of the ungated referee, had negative
 recovery (\esm{tab:s_arms2}). In this scenario,
 therefore, the guards and the objective, rather than the map, limited the benefit of safe decisions.
