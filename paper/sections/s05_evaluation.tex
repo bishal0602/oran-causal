@@ -43,10 +43,10 @@ xApp & Parameter & Range & Acts when \tabularnewline
 \subsection{Datasets}
 \label{sec:datasets}\claim{PRO-TUNE}
 
-Discovery is evaluated on randomised and on confounded logs of 600 evaluation episodes each, with placebo logs drawn in
+Discovery is evaluated on uniform-randomised and state-dependent logs of 600 evaluation episodes each, with placebo logs drawn in
 the same way, and validity is further checked on null outcomes made by cyclically shifting the KPI series across
 episodes. Null outcomes exercise more of the design than placebo logs, because they keep the evaluation logs with their
-re-proposals and state-dependent propensities. The maps learned from the confounded logs then drive referees in
+re-proposals and state-dependent propensities. The maps learned from the state-dependent logs then drive referees in
 closed-loop runs on \val{s2.dec.seeds} fresh seeds, first without and then with the gate; the gated runs use separate
 seeds and a gate calibrated on \val{s3.gate.dev_episodes} development episodes. The controlled environments are
 described in Section~\ref{sec:envs}. All methods and baseline thresholds were tuned on development episodes, separate
@@ -70,9 +70,9 @@ every other unit accepted. The knockout effect $\tau_{\mathrm{AA}}$ is the mean 
 Pooling the units of a family over \val{s1.gt.episodes} ground-truth episodes gives a mean per hypothesis with a 95~\%
 episode-cluster bootstrap interval. A hypothesis is labelled true, with the sign of its mean, when the interval
 excludes zero and the absolute mean is at least a materiality threshold $\delta_k$, set to 5~\% of the largest
-absolute mean of KPI $k$. It is labelled null when the interval lies within $\pm\delta_k$, and is otherwise left
-unscored. A knockout null is therefore a small effect rather than a sharp null, and the labels depend materially on
-$\delta_k$ (\esm{esm:discovery}). On the randomised logs the ground truth labels 29 of the 60 hypotheses true, 21 null and 10
+absolute mean of KPI $k$. It is labelled knockout-null when the interval lies within $\pm\delta_k$, and is otherwise
+left unscored. This is a practical-equivalence label rather than PMRT's sharp null (Table~\ref{tab:terms}), and it
+depends materially on $\delta_k$ (\esm{esm:discovery}). On the uniform-randomised logs the ground truth labels 29 of the 60 hypotheses true, 21 null and 10
 indeterminate (\esm{esm:setup}).\claim{EMP-GT-LABELS}
 
 \subsection{Controlled environments}
@@ -116,9 +116,9 @@ same unit table (\esm{esm:setup}): correlation, Granger~\cite{granger1969causal}
 (Granger~+~BY), SHAP-GBDT~\cite{Sharma_2025}, a two-tower network~\cite{santos2026conflictairan}, the intent-conflict
 statistic INT of PACIFISTA~\cite{PACIFISTA} and QACM~\cite{QACM2024}. Each threshold was set on development episodes so
 that the far relation received at most one declaration. Because the ground truth labels \val{s1.far.true} of the
-\val{s1.far.total} far hypotheses true on the randomised logs and \val{s2.far.true} on the confounded logs, this rule
-caps the recall a baseline can reach. On the randomised logs the baselines' placebo declarations come from their
-thresholds rather than from confounding, and on the confounded logs the baselines are also reported at thresholds
+\val{s1.far.total} far hypotheses true on the uniform-randomised logs and \val{s2.far.true} on the state-dependent logs, this rule
+caps the recall a baseline can reach. On the uniform-randomised logs the baselines' placebo declarations come from their
+thresholds rather than from confounding, and on the state-dependent logs the baselines are also reported at thresholds
 calibrated on placebo logs.
 
 Maps are scored over the \val{s1.gt.hypotheses} hypotheses; a declaration on a hypothesis whose label is

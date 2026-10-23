@@ -203,30 +203,11 @@ conservative.
 \label{sec:reading}\claim{THM-SCOPE}
 
 A declared edge states that the modes of family $f$ change KPI $k$ somewhere in the cells that relation $r$ covers,
-and the FDR bound covers that claim asymptotically. It does not cover the sign, which need not be the sign of
-$\tau_{\pi}$, nor which relation carries the effect: a unit's neighbour and far cells are the own cells of other units
-of $f$, so an effect of $f$ on its own cells also moves the KPI of their neighbour and far cells, and the far
-hypotheses are no negative control (\esm{tab:s_attr}). Table~\ref{tab:guarantees} summarises what each layer guarantees and what rests on evidence alone.
-
-\begin{table}[tbp]
-\caption{Guarantees of the framework.}
-\label{tab:guarantees}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}>{\raggedright}p{0.27\textwidth}>{\raggedright}p{0.38\textwidth}>{\raggedright\arraybackslash}p{0.29\textwidth}@{}}
-\toprule
-Layer and assumptions & Guarantee & Not covered \\
-\midrule
-Logged design; (A1) & Scores have mean zero given the past (fresh-draw lemma) & logs without propensities \\
-Edge p-value; (A1)--(A4) & Asymptotically valid for the sharp null (Proposition~\ref{prop:pmrt}) & finite samples; weak nulls \\
-Declarations; (A1)--(A4) & FDR over sharp nulls at most $q$, asymptotically (Corollary~\ref{cor:fdr}) & sign, relation, magnitude \\
-Signs & None & wrong signs \\
-Design slope; (A1) & Slope converges to $\tau_{\pi}$ (design-slope lemma) & exact predictability of the outcome centre \\
-Gate & Undeclared guard edges of a rejected class within tolerance, by an approximate 90~\% bound & coverage of the bound; policy-level safety; the protected slice \\
-Decisions & None & other scenarios \\
-\botrule
-\end{tabular*}
-\end{table}
+and the FDR bound covers that claim asymptotically. It does not cover the reported sign, effect magnitude or unique
+spatial attribution: a unit's neighbour and far cells are the own cells of other units of $f$, so an effect of $f$ on
+its own cells also moves the KPI of their neighbour and far cells, and the far hypotheses are no negative control
+(\esm{tab:s_attr}). Table~\ref{tab:terms} summarises these distinctions. The gate similarly screens undeclared guard
+edges but does not certify the resulting policy, whose constraints are evaluated on held-out seeds.
 
 \subsection{Map-driven referee}
 \label{sec:slope}\claim{ASM-SLOPE-CENTRE}
@@ -234,7 +215,7 @@ Decisions & None & other scenarios \\
 
 The referee needs the size of each effect, not only its sign, and takes it from the design slope $\hat\beta$, which
 regresses each unit's centred outcome on its assignment score. Let $e_u = y_u - \tilde y_u$ be the outcome minus an
-outcome centre $\tilde y_u$ computed from earlier units' outcomes and $u$'s pre-window. Under the randomised policy,
+outcome centre $\tilde y_u$ computed from earlier units' outcomes and $u$'s pre-window. Under the uniform-randomised policy,
 \begin{equation}
 \hat\beta = \frac{\sum_u v_u e_u}{\sum_u v_u^2}
           = \frac{1}{N} \sum_u \mathrm{sgn}_u \Bigl( \frac{\mathbf{1}\{W_u = \text{accept}\}\, e_u}{\pi_u}

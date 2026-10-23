@@ -75,7 +75,7 @@ their probabilities, and introduce the predictable matched-filter randomisation 
 decisions to test the sharp null that a parameter family never changes a KPI. Its false discovery rate control is
 asymptotic, needs no network model, and covers these nulls but not effect signs or the cells that carry an effect.
 In one simulated scenario, PMRT declared nothing on placebo logs and no wrong-sign edge, with precision against a
-simulated ground truth of \val{s1.map.pmrt.prec} on randomised and \val{s2.map.pmrt.prec} on confounded logs. A
+simulated ground truth of \val{s1.map.pmrt.prec} on uniform-randomised and \val{s2.map.pmrt.prec} on state-dependent logs. A
 referee acting on the map alone breached a radio-link-failure guard. Behind an edge-certification gate, the referee
 met every guard and matched the best static rule, which never lets a pico cell sleep, and even the ground-truth map
 did no better. Randomised logging thus supports valid discovery, and the decision study locates the remaining limit
@@ -104,9 +104,7 @@ Acknowledgements text.
 
 \bmhead{Supplementary information}
 
-Online Resource~1 (ESM\_1.pdf): the weight construction and declaration rules, the theorem statements with proof
-ideas, the simulation set-up, the supplementary discovery, decision and controlled-environment results with complete
-tables, and the bridging analysis.
+Online Resource~1 (ESM\_1.pdf) contains supplementary methods, proof details, simulation settings, and additional results on discovery, decision-making, controlled environments, and bridging analysis.
 
 \bmhead{Funding}
 

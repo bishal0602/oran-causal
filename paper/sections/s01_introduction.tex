@@ -1,17 +1,19 @@
 \section{Introduction}
 \label{sec:introduction}
 
-In an Open Radio Access Network (O-RAN), applications from different vendors, the xApps, run on the near-real-time
-radio access network (RAN) Intelligent Controller (near-RT RIC) and adjust the control parameters of the same cells,
-often with conflicting objectives. The conflict mitigation report of O-RAN Working Group~3 distinguishes three types
-of conflict~\cite{ORANConflictMit} (Figure~\ref{fig:intro_conflict}). In a direct conflict two xApps write the same
-parameter, as when an energy-saving (ES) xApp lowers the transmit power that a coverage and capacity optimisation
-(CCO) xApp sets high~\cite{QACM2024}. In an indirect conflict they write different parameters that act on the same
-key performance indicator (KPI), as when mobility robustness optimisation (MRO) and mobility load balancing (MLB) both
-move the handover boundary~\cite{ORANConflictMit,wadud2025mobility}. In an implicit conflict, finally, the coupling
-runs through the network without any shared parameter. Indirect and implicit conflicts are the harder to detect, since
-neither request reveals the interaction, and resolving them requires a map of which control parameter moves which
-KPI, and in which direction.
+In an Open Radio Access Network (O-RAN), applications from different vendors, known as xApps, run on the near-real-time
+RAN Intelligent Controller (near-RT RIC) and adjust radio control parameters to pursue different optimisation
+objectives. These objectives can conflict even when the xApps do not write the same parameter. For example, an
+energy-saving xApp may request that a lightly loaded pico cell enter sleep mode. Traffic previously served by that cell
+must then be handled by neighbouring cells, potentially increasing their load and degrading the service experienced by
+users of a protected network slice. A slice-protection xApp may respond by adjusting resource allocation, but its
+actions may not eliminate the degradation introduced by the sleep decision. Thus, a locally beneficial action can have
+adverse effects elsewhere in the network. O-RAN Working Group~3 distinguishes direct conflicts, in which xApps write
+the same parameter; indirect conflicts, in which different parameters affect a common key performance indicator
+(KPI); and implicit conflicts, in which adverse interactions arise through the network without a shared
+parameter~\cite{ORANConflictMit} (Figure~\ref{fig:intro_conflict}). Detecting and resolving indirect and implicit
+conflicts requires more than identifying which xApps issued requests: it requires evidence about how control actions
+affect network performance.
 
 \begin{figure}[b]
 \centering
@@ -20,29 +22,27 @@ KPI, and in which direction.
 \label{fig:intro_conflict}
 \end{figure}
 
-A growing literature learns such maps from network
-data~\cite{QACM2024,PACIFISTA,Sharma_2025,santos2026conflictairan}, but these data are logs written by the controllers
-themselves. An xApp issues a request because of the state of its cell, and the same state drives the KPIs, so an
-association between requests and KPIs mixes the effect of the request with the controller's reaction to the network.
-Relationships learned from such logs are therefore confounded, and a discovery method can report effects where none
-exist; in our evaluation, every associational baseline reported edges on placebo logs, in which no parameter has any
-effect.
+A growing literature learns such parameter--KPI maps from network
+data~\cite{QACM2024,PACIFISTA,Sharma_2025,santos2026conflictairan}, but establishing causal effects from operational
+logs is difficult because xApps act in response to network state. An energy-saving xApp, for example, may request cell
+sleep precisely when traffic is low, while the subsequent load and service quality of neighbouring cells depend on
+traffic conditions that also influence the observed KPIs. Comparing periods with and without sleep requests can
+therefore mix the effect of the action with the conditions that prompted it. We investigate a designed-logging
+approach in which the near-RT RIC's conflict-mitigation layer randomly accepts or rejects xApp requests and records the
+assignment probabilities~\cite{ORANRICARCH}. This creates controlled variation in which requests are applied and
+supports design-based causal testing without requiring a model of the network. The resulting tests assess whether
+parameter families affect KPIs under the specified randomisation design; however, discovering effects does not by
+itself establish their signs, localise them to particular cells, or show that a policy based on the resulting map will
+improve performance safely.
 
-This confounding can be removed within the near-RT RIC itself. Every xApp request already passes through the
-conflict-mitigation layer of the RIC, which accepts or rejects it~\cite{ORANRICARCH}, and we call the rule that makes
-this choice the referee. If the referee draws each decision at random with a probability that it records, the logs
-carry a known experimental design, and redrawing the logged decisions yields a randomisation test of whether a
-parameter affects a KPI. Such a test is design-based: its validity rests on the randomisation performed by the
-referee rather than on a model of the network, at the cost of rejecting some requests at random while the logs are
-collected. We evaluate this approach on three questions: whether a design-based test is valid on such logs, whether
-the causal map it learns agrees with an independent ground truth, and whether decisions taken with the map improve on
-static rules within the safety limits. The evaluation uses a system-level simulation of an O-RAN surge scenario, in
-which energy-saving xApps conflict with a slice-protection xApp, and controlled environments with known causal
-structure.
+We evaluate this approach on three questions: whether a design-based test is valid on such logs, whether the causal
+map it learns agrees with an independent ground truth, and whether decisions taken with the map improve on static
+rules within the safety limits. The evaluation uses a system-level simulation of an O-RAN surge scenario, in which
+energy-saving xApps conflict with a slice-protection xApp, and controlled environments with known causal structure.
 
 The first two answers are positive. The test declared no effect on placebo logs and never reported an effect with the
-wrong sign, and most of the effects it reported were confirmed by a knockout ground truth, on randomised and
-confounded logs alike. In the controlled environments, tests that ignored the logging design lost their error control
+wrong sign, and most of the effects it reported were confirmed by a knockout ground truth, on uniform-randomised and
+state-dependent logs alike. In the controlled environments, tests that ignored the logging design lost their error control
 once the logging followed a dithered setpoint instead of independent draws, whereas tests that used the design kept
 it. The third answer is negative: a referee acting on the map reduced protected-slice violations but breached a
 radio-link-failure limit, and behind a gate that admits only certified-safe rejections it fell back to the best static
@@ -62,3 +62,37 @@ valid map and a better safe policy is the paper's central result.
 \end{enumerate}
 The work builds on our conference paper on causal discovery-driven conflict mitigation, CDD
 O-RAN~\cite{dahal2026cddoran}, but replaces its method rather than extending it.
+
+Table~\ref{tab:terms} fixes the terminology used to distinguish the logging design, statistical declarations,
+simulator reference labels and decision-level safety claims.
+
+\begin{table}[tbp]
+\caption{Interpretation of terms used throughout the paper.}
+\label{tab:terms}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}>{\raggedright}p{0.27\textwidth}>{\raggedright\arraybackslash}p{0.67\textwidth}@{}}
+\toprule
+Term & Meaning \\
+\midrule
+Referee & Near-RT RIC rule that accepts or rejects xApp requests. \\
+Decision unit & Cell--xApp request bundle assigned one accept/reject mode for a fixed hold duration. \\
+Confounding & Distortion of an action--outcome association by prior network state that affects both the action and the
+outcome. \\
+Uniform-randomised logging & Independent acceptance of each eligible unit with probability 0.5. \\
+State-dependent logging & Randomised logging whose recorded acceptance propensity depends on prior network state. \\
+Placebo log & Log whose recorded modes do not determine whether requests are applied. \\
+Sharp-null declaration & Rejection of the hypothesis that every assignment of a parameter family's modes leaves the
+specified outcome unchanged. \\
+Signed causal effect map & Declared parameter-family--relation--KPI edges with estimated signs and coefficients. \\
+Relation label & Own, neighbour or far cells grouped into the tested outcome. \\
+Knockout ground truth & Simulated accept-minus-reject effects for one unit while every other unit is accepted. \\
+Knockout-null label & Knockout effect whose interval lies inside the materiality band. \\
+Oracle map & Knockout reference map supplied to the fixed referee, not an optimal policy. \\
+Eligible referee & Referee that meets the measured energy and guard constraints. \\
+Edge-certification gate & Rule that blocks rejection classes with unresolved undeclared guard edges; not a policy-level
+safety certificate. \\
+\bottomrule
+\end{tabular*}
+\end{table}
+\FloatBarrier

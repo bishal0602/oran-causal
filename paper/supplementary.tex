@@ -262,12 +262,12 @@ Intervals & Decision metrics: 90~\% paired seed-bootstrap, 10\,000 resamples; ra
 \end{table}
 
 \begin{table}[tbp]
-\caption{Knockout ground truth of the 60 hypotheses, randomised logs.}
+\caption{Knockout ground truth of the 60 hypotheses, uniform-randomised logs.}
 \label{tab:s_hyp}
 \input{tables/tab_system_hypotheses}
 \end{table}
 
-Table~\ref{tab:s_baselines} lists the associational baselines. Each ran on the same unit table as PMRT and gave a score and a sign per hypothesis under the same support rule; on the confounded logs each tuned baseline also received a threshold calibrated on the placebo logs, which allows at most one placebo edge.
+Table~\ref{tab:s_baselines} lists the associational baselines. Each ran on the same unit table as PMRT and gave a score and a sign per hypothesis under the same support rule; on the state-dependent logs each tuned baseline also received a threshold calibrated on the placebo logs, which allows at most one placebo edge.
 
 \begin{table}
 \caption{Associational baselines.}
@@ -302,7 +302,7 @@ Accept-all & Accepts every request; $R = 0$ by definition \\
 Freeze & Rejects every request; energy retention 0 \\
 Single-xApp subsets & Only the listed xApps run; the best one sets $R = 1$ \\
 Never-sleep & Rejects pico-sleep requests; the best static rule on development seeds \\
-Incumbent & The logging policy of the confounded logs \\
+Incumbent & The logging policy of the state-dependent logs \\
 Static envelope & Rejects power-up, sleep and macro carrier-off after warm-up (without the gate only) \\
 \midrule
 \multicolumn{2}{@{}l}{\textit{Map-driven referees}} \\
@@ -331,7 +331,7 @@ Scored recovery $R^{*}$ & $R$ for an eligible arm, $\min(R, 0)$ otherwise; an ar
 \end{tabular*}
 \end{table}
 
-Table~\ref{tab:s_envdef} defines the environments and logging designs. A condition is one environment, logging design, confounding strength $\lambda$ and sample size $n \in \{500, 1\,000, 4\,000, 8\,000, 24\,000\}$. A truth-null edge joins a real action to a KPI that it leaves unaffected; a placebo edge joins a KPI to an extra action column logged with a known design that acts on nothing; a confounded-null edge, in the latent-confounding environment only, joins a KPI to such a column drawn by the confounded policy. Redraws stop at the first 20 that reach the observed statistic, up to $B = 9999$.
+Table~\ref{tab:s_envdef} defines the environments and logging designs. A condition is one environment, logging design, confounding strength $\lambda$ and sample size $n \in \{500, 1\,000, 4\,000, 8\,000, 24\,000\}$. A truth-null edge joins a real action to a KPI that it leaves unaffected; a placebo edge joins a KPI to an extra action column logged with a known design that acts on nothing; a confounded-null edge, in the latent-confounding environment only, joins a KPI to such a column drawn by the state-dependent policy. Redraws stop at the first 20 that reach the observed statistic, up to $B = 9999$.
 
 \begin{table}[tbp]
 \caption{Controlled environments and logging designs.}
@@ -358,7 +358,7 @@ Logging design & How actions are logged \tabularnewline
 \midrule
 Independent & \raggedright Every action redrawn independently per observation (reference) \tabularnewline
 Dithered setpoint & \raggedright 20 setpoints within $\pm 25$~\% of the range around its midpoint, each held for $n/20$ observations, plus independent dither of $\pm 10$~\% of the range \tabularnewline
-Confounded policy & \raggedright Latent confounding only: a behaviour policy on an observed confounder, with its probabilities logged \tabularnewline
+State-dependent policy & \raggedright Latent confounding only: a behaviour policy on an observed confounder, with its probabilities logged \tabularnewline
 Unlogged confounding & \raggedright Latent confounding only: the confounder is latent and nothing is logged (negative control) \tabularnewline
 \bottomrule
 \end{tabular*}
@@ -368,7 +368,7 @@ Unlogged confounding & \raggedright Latent confounding only: the confounder is l
 \section{Discovery on the simulator logs}
 \label{esm:discovery}
 
-Tables~\ref{tab:s_validity} to~\ref{tab:s_x8} give the validity checks, Tables~\ref{tab:s_maps_full} to~\ref{tab:s_attr} the map quality under other ground-truth rules, and Figure~\ref{fig:s_subsamples} the per-subsample comparison. On the neighbour-relation edges of the randomised logs, PMRT's F1 score matched that of Granger~+~BY on only \val{s1.p2.gby.wins60} of the \val{s1.p2.n60} smallest subsamples, and on \val{s1.p2.gby.wins120} of the \val{s1.p2.n120} larger ones; the ranges of the two methods overlapped on the smallest subsamples, and the comparison ignores the \val{s1.placebo.granger_by} placebo edges of Granger~+~BY. On the confounded logs the comparison held throughout. The one-sided DAGGER rows of Table~\ref{tab:s_x8} use the reshaped DAGGER procedure, which controls the FDR under arbitrary dependence (Ramdas, Chen, Wainwright and Jordan 2019, Thm.~1(b)).
+Tables~\ref{tab:s_validity} to~\ref{tab:s_x8} give the validity checks, Tables~\ref{tab:s_maps_full} to~\ref{tab:s_attr} the map quality under other ground-truth rules, and Figure~\ref{fig:s_subsamples} the per-subsample comparison. On the neighbour-relation edges of the uniform-randomised logs, PMRT's F1 score matched that of Granger~+~BY on only \val{s1.p2.gby.wins60} of the \val{s1.p2.n60} smallest subsamples, and on \val{s1.p2.gby.wins120} of the \val{s1.p2.n120} larger ones; the ranges of the two methods overlapped on the smallest subsamples, and the comparison ignores the \val{s1.placebo.granger_by} placebo edges of Granger~+~BY. On the state-dependent logs the comparison held throughout. The one-sided DAGGER rows of Table~\ref{tab:s_x8} use the reshaped DAGGER procedure, which controls the FDR under arbitrary dependence (Ramdas, Chen, Wainwright and Jordan 2019, Thm.~1(b)).
 
 \begin{table}
 \caption{Validity checks on the simulator logs.}
@@ -391,7 +391,7 @@ Baselines' placebo edges & Randomised: 1 to 13; confounded: up to 29 & Most: Gra
 \end{table}
 
 \begin{table}
-\caption{Stricter significance check, randomised logs.}
+\caption{Stricter significance check, uniform-randomised logs.}
 \label{tab:s_x8}
 \input{tables/tab_appC_x8}
 \end{table}
@@ -403,7 +403,7 @@ Baselines' placebo edges & Randomised: 1 to 13; confounded: up to 29 & Most: Gra
 \setlength{\tabcolsep}{1pt}
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l *{18}{>{\centering\arraybackslash}p{0.54cm}}@{}}
 \toprule
- & \multicolumn{6}{c}{(a) Randomised logs} & \multicolumn{12}{c}{(b) Confounded logs} \\
+ & \multicolumn{6}{c}{(a) Uniform-randomised logs} & \multicolumn{12}{c}{(b) State-dependent logs} \\
 \cmidrule(lr){2-7}\cmidrule(l){8-19}
  & \multicolumn{6}{c}{Tuned threshold} & \multicolumn{6}{c}{Tuned threshold} & \multicolumn{6}{c}{Placebo-calibrated} \\
 \cmidrule(lr){2-7}\cmidrule(lr){8-13}\cmidrule(l){14-19}
@@ -423,7 +423,7 @@ PMRT         & 28 & 23 & 0 &  2 &  0 & 0.79 & 22 & 18 & 0 &  3 &  0 & 0.62 & \mu
 \par\medskip
 \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l ccccc ccccc@{}}
 \toprule
-(c) Precision & \multicolumn{5}{c}{Randomised logs} & \multicolumn{5}{c}{Confounded logs} \\
+(c) Precision & \multicolumn{5}{c}{Uniform-randomised logs} & \multicolumn{5}{c}{State-dependent logs} \\
 \cmidrule(lr){2-6}\cmidrule(l){7-11}
  & \multicolumn{3}{c}{Material, $\delta_k$} & \multicolumn{2}{c}{Existence} & \multicolumn{3}{c}{Material, $\delta_k$} & \multicolumn{2}{c}{Existence} \\
 \cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-9}\cmidrule(l){10-11}
@@ -437,7 +437,7 @@ Granger + BY & 0.72 & 0.59 & 0.41 & 0.47 & 0.49 & 0.62 & 0.54 & 0.42 & 0.43 & 0.
 \par\smallskip
 {\raggedright\footnotesize
 Ed., declared edges; R, true with the right sign; W, true with the wrong sign; N, null; P, placebo edges; Rec., recall
-over the 29 true hypotheses, (R + W) / 29, whatever the sign. On the 10 true neighbour-relation edges of the randomised logs, PMRT declared 9, all with
+over the 29 true hypotheses, (R + W) / 29, whatever the sign. On the 10 true neighbour-relation edges of the uniform-randomised logs, PMRT declared 9, all with
 the right sign; Granger~+~BY declared 8 (4 with the wrong sign), Granger 6 (2 wrong), correlation 2 (1 wrong), SHAP-GBDT 4
 and INT 3 (all right); two-tower and QACM declared none.\par}
 \end{table}
@@ -463,7 +463,7 @@ and INT 3 (all right); two-tower and QACM declared none.\par}
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{figures/fig_study1_subsamples.pdf}
-\caption{Per-subsample comparison, randomised logs.}
+\caption{Per-subsample comparison, uniform-randomised logs.}
 \label{fig:s_subsamples}
 \end{figure}
 
@@ -654,7 +654,7 @@ Group and design & Methods & \shortstack{Invalid / valid\\/ counted} & Pooled ra
 \raggedright Design-blind, dithered setpoint & \raggedright Six design-blind tests & 95 / 7 / 115 & \raggedright 0.33 to 0.94 (truth-null) \tabularnewline
 \raggedright Design-based, independent and dithered & \raggedright PMRT-GBM & 1 / 18 / 50 & \raggedright truth-null 0.045 (0.043--0.048); placebo 0.048 (0.042--0.054) \tabularnewline
 \raggedright Design-adjusted, independent and dithered & \raggedright Partial correlation, Granger & 0 / 21 / 60 & \raggedright 0.048 and 0.051; 0.050 and 0.056 \tabularnewline
-\raggedright Design-based, confounded policy & \raggedright PMRT-GBM & 0 / 6 / 20 & \raggedright confounded null 0.042; placebo 0.048 \tabularnewline
+\raggedright Design-based, state-dependent policy & \raggedright PMRT-GBM & 0 / 6 / 20 & \raggedright confounded null 0.042; placebo 0.048 \tabularnewline
 \bottomrule
 \end{tabular*}
 
@@ -685,7 +685,7 @@ Group and design & Linear & Rare & Delayed & Confounding & Composed & All \\
 Design-blind, dithered & 22/0/22 & 22/0/22 & 27/0/27 & 2/7/22 & 22/0/22 & 95/7/115 \\
 Design-based, independent and dithered & 1/0/10 & 0/7/10 & 0/3/10 & 0/5/10 & 0/3/10 & 1/18/50 \\
 Design-adjusted, independent and dithered & 0/3/10 & 0/6/10 & 0/4/20 & 0/5/10 & 0/3/10 & 0/21/60 \\
-Design-based, confounded policy & -- & -- & -- & 0/6/20 & -- & 0/6/20 \\
+Design-based, state-dependent policy & -- & -- & -- & 0/6/20 & -- & 0/6/20 \\
 \bottomrule
 \end{tabular}
 
@@ -756,7 +756,7 @@ Tables~\ref{tab:s_env1} to~\ref{tab:s_env5} give every condition at the primary 
 The methods of the controlled environments ran on the randomised simulator logs, with the PMRT of the simulator as a reference row; Table~\ref{tab:s_bridge} gives the pooled recall and the null rates per method and subsample.
 
 \begin{table}
-\caption{Bridging analysis on the randomised logs.}
+\caption{Bridging analysis on the uniform-randomised logs.}
 \label{tab:s_bridge}
 \input{tables/tab_appB_bridge}
 \end{table}

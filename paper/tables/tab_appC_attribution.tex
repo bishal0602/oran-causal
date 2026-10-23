@@ -10,7 +10,7 @@
 \toprule
 \multicolumn{7}{@{}l}{(a) Far-relation hypotheses by ground-truth label} \\
 \midrule
- & \multicolumn{3}{c}{Randomised logs} & \multicolumn{3}{c}{Confounded logs} \\
+ & \multicolumn{3}{c}{Uniform-randomised logs} & \multicolumn{3}{c}{State-dependent logs} \\
 \cmidrule(lr){2-4}\cmidrule(lr){5-7}
 Parameter (writer) & True & Null & Indet. & True & Null & Indet. \\
 \midrule
@@ -33,15 +33,15 @@ All 20 & 8 & 8 & 4 & 9 & 9 & 2 \\
 \cmidrule(lr){2-6}\cmidrule(lr){7-11}
 Method & Decl. & True & Null & Indet. & Own-attr. & Decl. & True & Null & Indet. & Own-attr. \\
 \midrule
-\multicolumn{11}{@{}l}{\textit{Randomised logs, 600 episodes pooled}} \\
+\multicolumn{11}{@{}l}{\textit{Uniform-randomised logs, 600 episodes pooled}} \\
 \quad PMRT & 9 & 9 & 0 & 0 & 0 & 4 & 3 & 0 & 1 & 1 \\
 \quad Granger + BY & 16 & 8 & 6 & 2 & 3 & 10 & 3 & 4 & 3 & 4 \\
 \midrule
-\multicolumn{11}{@{}l}{\textit{Randomised logs, sum over 17 subsamples}} \\
+\multicolumn{11}{@{}l}{\textit{Uniform-randomised logs, sum over 17 subsamples}} \\
 \quad PMRT & 94 & 91 & 3 & 0 & 0 & 30 & 28 & 1 & 1 & 2 \\
 \quad Granger + BY & 191 & 115 & 46 & 30 & 32 & 128 & 52 & 42 & 34 & 46 \\
 \midrule
-\multicolumn{11}{@{}l}{\textit{Confounded logs, discovery episodes pooled}} \\
+\multicolumn{11}{@{}l}{\textit{State-dependent logs, discovery episodes pooled}} \\
 \quad PMRT & 6 & 6 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 0 \\
 \quad Granger + BY & 15 & 7 & 6 & 2 & 3 & 13 & 4 & 7 & 2 & 4 \\
 \bottomrule

@@ -14,7 +14,7 @@ property most likely to transfer to other networks. The randomisation distributi
 propensities alone, whether uniform or state-dependent, so the guarantee holds for any statistic, weighting or prior
 direction fixed before each unit draws its mode. The controlled environments indicate that the guarantee belongs to the
 design rather than to PMRT, since partial correlation adjusted for the design variables also retained its nominal rate
-under a logged confounded policy.
+under a logged state-dependent policy.
 
 Statistical power, in contrast, depends on the choice of statistic: design-adjusted partial correlation reached the
 higher recall in the latent-confounding environment, and PMRT on the randomised simulator logs
@@ -69,10 +69,9 @@ the dithered-setpoint design tested, and their evidence against design-blind tes
 placebo edge only. Results from a single block of seeds carry seed-level heterogeneity larger than their intervals
 suggest (\esm{esm:decision}).
 
-The validity of PMRT is asymptotic rather than exact, even on placebo logs. The ground truth uses a single 90~s horizon
-with every other unit accepted, so it targets $\tau_{\mathrm{AA}}$ rather than $\tau_{\pi}$, and the labels of material
-effects, and with them the precision of PMRT, depend on the threshold $\delta_k$. The FDR bound applies to the edge, not
-to the relation to which the edge is attributed. The design slope and the bounds of the gate rest on an approximately
+The validity of PMRT is asymptotic rather than exact, even on placebo logs. As Table~\ref{tab:terms} summarises, its
+FDR guarantee concerns sharp-null declarations, not signs, relation attribution or knockout materiality labels. The
+ground truth targets $\tau_{\mathrm{AA}}$ rather than $\tau_{\pi}$, and its labels depend on $\delta_k$. The design slope and the bounds of the gate rest on an approximately
 predictable outcome centre; a strictly predictable centre changed the map slopes by \val{x16.map.rel_min} to
 \val{x16.map.rel_max}~\% without a change of sign, moved the bounds by a median of \val{x16.gate.median_pct}~\% of
 their tolerance and altered no certification (\esm{esm:decision}). No guard covers the protected slice, and the gate
