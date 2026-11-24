@@ -41,7 +41,7 @@ SPEC = FigSpec(
     "figures_data.json (option_a.map_quality).",
 )
 
-OK, ERR = P.TEAL, P.TERRACOTTA  # edge status, as fig_study1_discovery (palette "H2")
+OK, ERR = P.EDGE_RIGHT, P.EDGE_WRONG  # edge status, as fig_study1_discovery
 NULL_FC, UNSC_FC = P.NULL_FILL, P.UNSCORED_FILL
 # (key, column head, fill, edge, legend label)
 CATS = [

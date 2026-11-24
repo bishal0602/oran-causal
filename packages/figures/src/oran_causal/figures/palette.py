@@ -53,6 +53,12 @@ CONFOUNDER = PURPLE  # network state, confounding paths
 ZONE_TINT = (
     0.10  # zone fills (bordered by a full-strength limit line); tiles and fills use 0.28-1.0
 )
+# Edge status in the causal-map figures. Right and wrong signs differ in lightness (L* 37 vs 62), not only in hue,
+# so they separate in greyscale; the ground truth is a reference, so it never takes the hero blue.
+EDGE_TRUTH = "#2F4560"  # ground-truth edge: deep slate
+EDGE_RIGHT = "#13606C"  # declared with the right sign: deeper GOOD
+EDGE_WRONG = "#DB7A5F"  # declared with the wrong sign or on a true null: lighter BAD
+EDGE_STATUS = [EDGE_TRUTH, EDGE_RIGHT, EDGE_WRONG]
 # --- continuous --------------------------------------------------------------------------------------------------
 SEQ = [
     "#F2F7FF",
@@ -94,7 +100,7 @@ def allowed(color, tol: float = 0.006) -> bool:
     Alpha is ignored.
     """
     c = to_rgb(color)
-    for base in (*PALETTE, *NEUTRALS):
+    for base in (*PALETTE, *NEUTRALS, *EDGE_STATUS):
         b = to_rgb(base)
         amounts = [(1 - ci) / (1 - bi) for ci, bi in zip(c, b, strict=False) if 1 - bi > 0.02]
         if not amounts:
@@ -144,5 +150,5 @@ def tint(color: str, amount: float) -> tuple[float, float, float]:
 
 
 # --- edge-status fills (bars and column keys in the discovery figures) ----------------------------------------
-NULL_FILL = tint(BAD, 0.25)  # a declared edge on a true null
+NULL_FILL = tint(EDGE_WRONG, 0.25)  # a declared edge on a true null
 UNSCORED_FILL = tint(NEUTRAL, 0.45)  # not scored

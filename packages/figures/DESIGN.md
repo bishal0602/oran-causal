@@ -117,6 +117,15 @@ Use it on zones, tiles, fills, highlighted rows, arrows and key annotations, not
 with gid `sem:<role>`. In a method figure, method series keep their own colours; semantic colour goes on zones and
 marks of status.
 
+**Edge status** (`palette.EDGE_*`; causal maps and the discovery figures). Teal and terracotta share a lightness
+(L* 49, 50), so right and wrong signs would merge in greyscale. Edge-status marks use shades that differ in L*:
+
+| Status | Hex | L* |
+|---|---|---|
+| Ground-truth edge (a reference, never the hero blue) | slate `#2F4560` | 29 |
+| Right sign | edge-teal `#13606C` | 37 |
+| Wrong sign, false edge | edge-terracotta `#DB7A5F` | 62 |
+
 **Zones** (`plots.zone`): a 10 % tint of the role hue, bordered on its limit by a full-strength 0.9 pt line.
 
 **Two encodings, never mixed in one figure:** *methods* (Section 6) or *entities* (Section 7). A figure uses one.
@@ -210,11 +219,12 @@ and an ink label on every box. Entity hues never appear in a method figure, and 
   leader line when the text sits more than 6 pt from its anchor.
 - Coinciding values: dodged horizontally (`layout.dodge`), said in the text that cites the figure.
 
-**Causal maps** (tile grids, `fig_maps`): ground-truth edge = 62 % blue tile, white triangle in the sign;
-right sign = teal tile, white triangle; wrong sign = terracotta tile, white triangle; false edge = 30 % terracotta
-tile, terracotta triangle; missed = white tile, outlined gray triangle in the true sign; not scored = diagonal
-hatch on a 22 % neutral tile; true null = the field gray. The hero's facet is framed in blue, 1.1 pt. Row labels and
-KPI labels on the left facet only. The legend row shows the tiles themselves.
+**Causal maps** (tile grids, `fig_maps`): correct tiles are quiet, errors loud. Each tile carries a chevron in the
+sign. Ground-truth edge = 18 % slate tile, slate chevron; right sign = 20 % edge-teal tile, edge-teal chevron; wrong
+sign = solid edge-terracotta tile, white chevron; false edge = white tile, 1.1 pt edge-terracotta border, terracotta
+chevron; missed = white tile, dashed gray border, gray chevron in the true sign; not scored = light hatch; true null =
+an empty light tile. The hero's facet is framed in blue, 1.1 pt. Method names above the facets; row labels and KPI
+labels on the left facet only. The legend row shows the tiles themselves.
 
 ## 9. Mark types
 

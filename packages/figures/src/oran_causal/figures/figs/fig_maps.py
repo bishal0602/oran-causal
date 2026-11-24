@@ -3,13 +3,14 @@
 One message: PMRT's map looks like the ground truth; the baselines' maps miss edges or get signs
 wrong. Four facets of the 60 hypotheses (rows: 4 parameter families x 3 cell relations; columns: 5
 KPIs): ground truth, PMRT and the two baselines with the highest F1 on these logs (Granger + BY,
-Granger; asserted below). Each tile is empty or a triangle pointing in the sign of the effect of
-raising the parameter. Tiles are the colour field (semantic roles, DESIGN s.5): ground truth - blue
-tint, white triangle; right sign - teal tile, white triangle; wrong sign - terracotta tile, white
-triangle; false edge (ground truth null) - light terracotta tile, terracotta triangle; missed -
-white tile, gray outline triangle in the true sign; not scored (indeterminate) - light gray hatch;
-true null - the gray panel field. PMRT's facet is framed in its blue. The legend row shows the tiles
-themselves. Row labels and KPI labels on the left facet only (one row of facets).
+Granger; asserted below). Each tile is empty or a chevron pointing in the sign of the effect of
+raising the parameter. Correct tiles are quiet and errors loud (edge-status colours, DESIGN s.8):
+ground truth - pale slate tile, slate chevron; right sign - pale teal tile, teal chevron; wrong sign -
+solid terracotta tile, white chevron; false edge (ground truth null) - white tile with a terracotta
+border and chevron; missed - white tile, dashed gray border, gray chevron in the true sign; not
+scored (indeterminate) - light hatch; true null - an empty light tile. PMRT's facet is framed in its
+blue. The legend row shows the tiles themselves. Row labels and KPI labels on the left facet only
+(one row of facets).
 
 Source: V4 gt.cells and slices_result.pooled.metrics.<code>.declared through _study1.load(), which
 re-scores every map against the stored metrics. The tile counts are asserted against tab:maps (a)
@@ -19,6 +20,7 @@ re-scores every map against the stored metrics. The tile counts are asserted aga
 from matplotlib.legend_handler import HandlerBase
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
+from matplotlib.path import Path as MPath
 from matplotlib.transforms import offset_copy
 
 from oran_causal.figures import entities as E
@@ -53,22 +55,21 @@ BASELINES = ["corr", "granger", "granger_by", "shap_gbdt", "two_tower", "qacm", 
 EXPECT = {S1.PRIMARY: (28, 23, 0, 2), "granger": (32, 14, 4, 8), "granger_by": (45, 16, 6, 15)}
 N_TRUE = 29
 
-HATCH = "/////"
-# category -> (tile face, tile edge, triangle face, triangle edge, semantic tag)
+HATCH = "////"
+EMPTY = P.tint(P.FIELD, 0.65)
+CHEVRON_UP = MPath(
+    [(-0.5, -0.28), (0, 0.28), (0.5, -0.28)], [MPath.MOVETO, MPath.LINETO, MPath.LINETO]
+)
+CHEVRON_DOWN = MPath(CHEVRON_UP.vertices * [1, -1], CHEVRON_UP.codes)
+# category -> (tile face, tile edge, edge width, chevron colour, chevron width, semantic tag)
 TILES = {
-    "truth": (P.tint(P.OURS, 0.62), "none", P.WHITE, P.WHITE, "sem:ours-tile"),
-    "right": (P.GOOD, "none", P.WHITE, P.WHITE, "sem:good-tile"),
-    "wrong": (P.BAD, "none", P.WHITE, P.WHITE, "sem:bad-tile"),
-    "false": (P.tint(P.BAD, 0.30), "none", P.BAD, P.BAD, "sem:bad-tile"),
-    "missed": (P.WHITE, P.tint(P.MISSED, 0.7), "none", P.MISSED, "missed-tile"),
-    "indet": (P.tint(P.NEUTRAL, 0.22), "none", None, None, "indet-tile"),
-    None: (
-        P.FIELD,
-        "none",
-        None,
-        None,
-        "null-tile",
-    ),  # true null / nothing declared: the panel field
+    "truth": (P.tint(P.EDGE_TRUTH, 0.18), "none", 0, P.EDGE_TRUTH, 1.3, "truth-tile"),
+    "right": (P.tint(P.EDGE_RIGHT, 0.20), "none", 0, P.EDGE_RIGHT, 1.3, "sem:good-tile"),
+    "wrong": (P.EDGE_WRONG, "none", 0, P.WHITE, 1.5, "sem:bad-tile"),
+    "false": (P.WHITE, P.EDGE_WRONG, 1.1, P.BAD, 1.5, "sem:bad-tile"),
+    "missed": (P.WHITE, P.MISSED, 0.7, P.MISSED, 1.0, "missed-tile"),
+    "indet": (EMPTY, P.tint(P.NEUTRAL_LIGHT, 0.6), 0, None, 0, "indet-tile"),
+    None: (EMPTY, "none", 0, None, 0, "null-tile"),  # true null / nothing declared
 }
 GAP = 0.9  # blank rows between family blocks (family header in the left facet)
 FAMILY_IN_PT = 46  # family header starts left of the longest relation label
@@ -99,10 +100,10 @@ def _tile(gt: dict, declared: int | None) -> tuple[str | None, int]:
 
 
 def _draw_tile(
-    ax, x: float, y: float, cat: str | None, sign: int, size: float = 0.9, ms: float = 6.2
+    ax, x: float, y: float, cat: str | None, sign: int, size: float = 0.88, ms: float = 5.2
 ):
-    """One tile at (x, y) (lower-left in data units, y axis inverted) with its triangle."""
-    fc, ec, tf, te, gid = TILES[cat]
+    """One tile at (x, y) (lower-left in data units, y axis inverted) with its chevron."""
+    fc, ec, elw, gc, glw, gid = TILES[cat]
     pad = (1 - size) / 2
     ax.add_patch(
         Rectangle(
@@ -110,31 +111,27 @@ def _draw_tile(
             size,
             size,
             fc=fc,
-            ec=_edge(cat, ec),
-            lw=0.6 if ec != "none" else 0,
+            ec=ec,
+            lw=elw,
+            ls=(0, (2, 1.2)) if cat == "missed" else "-",
             hatch=HATCH if cat == "indet" else None,
             zorder=1,
             gid=gid,
         )
     )
-    if tf is not None:
+    if gc is not None:
         ax.plot(
             [x + 0.5],
-            [y + 0.5 + (0.04 if sign > 0 else -0.04)],
-            marker="^" if sign > 0 else "v",
+            [y + 0.5 + (0.05 if sign > 0 else -0.05)],
+            marker=CHEVRON_UP if sign > 0 else CHEVRON_DOWN,
             ms=ms,
             ls="",
-            mfc=tf,
-            mec=te,
-            mew=0.9 if tf == "none" else 0.4,
+            mfc="none",
+            mec=gc,
+            mew=glw,
             zorder=3,
             gid=gid.replace("tile", "mark"),
         )
-
-
-def _edge(cat: str | None, ec: str) -> str:
-    """Tile edge colour; the hatch of a not-scored tile is drawn in its (white, zero-width) edge colour."""
-    return P.WHITE if cat == "indet" else ec
 
 
 class _Key:
@@ -146,7 +143,7 @@ class _Key:
 
 class _KeyHandler(HandlerBase):
     def create_artists(self, legend, orig, xdescent, ydescent, width, height, fontsize, trans):
-        fc, ec, tf, te, gid = TILES[orig.cat]
+        fc, ec, elw, gc, glw, gid = TILES[orig.cat]
         side = height * 1.45
         x0, y0 = xdescent + (width - side) / 2, -ydescent + (height - side) / 2
         out = [
@@ -155,24 +152,25 @@ class _KeyHandler(HandlerBase):
                 side,
                 side,
                 fc=fc,
-                ec=_edge(orig.cat, ec),
-                lw=0.6 if ec != "none" else 0,
+                ec=ec,
+                lw=elw,
+                ls=(0, (2, 1.2)) if orig.cat == "missed" else "-",
                 hatch=HATCH if orig.cat == "indet" else None,
                 transform=trans,
                 gid=gid,
             )
         ]
-        if tf is not None:
+        if gc is not None:
             out.append(
                 Line2D(
                     [x0 + side / 2],
                     [y0 + side / 2],
-                    marker="^",
-                    ms=5.4,
+                    marker=CHEVRON_UP,
+                    ms=5.0,
                     ls="",
-                    mfc=tf,
-                    mec=te,
-                    mew=0.9 if tf == "none" else 0.4,
+                    mfc="none",
+                    mec=gc,
+                    mew=glw,
                     transform=trans,
                     gid=gid.replace("tile", "mark"),
                 )

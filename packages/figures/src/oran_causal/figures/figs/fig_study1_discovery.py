@@ -73,7 +73,7 @@ SPAN_PT, GROUP_PT = (
     -14.5,
     -19.0,
 )  # y offset (pt below the axes) of the group rule and group label
-OK, ERR, MISS, GT = P.TEAL, P.TERRACOTTA, P.MISSED, P.NEUTRAL  # edge status
+OK, ERR, MISS, GT = P.EDGE_RIGHT, P.EDGE_WRONG, P.MISSED, P.NEUTRAL  # edge status
 NULL_FC, UNSC_FC = P.NULL_FILL, P.UNSCORED_FILL
 MS = 5.0  # status marker size (pt)
 THICK = 0.56  # bar thickness (row units)
