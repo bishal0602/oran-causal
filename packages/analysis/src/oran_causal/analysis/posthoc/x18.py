@@ -163,12 +163,22 @@ def tau_rows(tau: Mapping) -> list[list[Any]]:
 
 
 def bound_set(
-    art: Mapping[str, Any], bounds: Mapping[str, Any], tools: RefereeTools
+    art: Mapping[str, Any],
+    bounds: Mapping[str, Any],
+    tools: RefereeTools,
+    frozen: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Bound records per method: PMRT and OLS from a bounds file, GT from the artifact."""
+    """Bound records per method: PMRT from a bounds file, OLS from it or `frozen`, GT from `art`.
+
+    The X17 strict bounds file holds only the PMRT bounds; the OLS slope does not use the outcome
+    centre, so its bounds are the frozen ones.
+    """
+    ols = bounds.get("ols") if "ols" in bounds else (frozen or {}).get("ols")
+    if ols is None:
+        raise KeyError("no OLS bounds in the bounds file or the frozen bounds file")
     return {
         "pmrt": tools.bounds_from_json(bounds["pmrt"]),
-        "ols": tools.bounds_from_json(bounds["ols"]),
+        "ols": tools.bounds_from_json(ols),
         "gt": tools.bounds_from_json(art["bounds"]["gt"]),
     }
 
@@ -281,7 +291,7 @@ def run_cert(
     rep = reproduce_frozen(art, inp.frozen_bounds, tools)
     if not rep["ok"]:
         raise ReproductionError("X18 Part B: rho 1.05 does not reproduce: " + json.dumps(rep))
-    bset = bound_set(art, inp.bounds, tools)
+    bset = bound_set(art, inp.bounds, tools, inp.frozen_bounds)
     maps = maps_of(inp.maps)
     stored = stored_signatures(art)
     frozen_unc = {a: _unc(v["uncertified"]) for a, v in art["arms"].items()}

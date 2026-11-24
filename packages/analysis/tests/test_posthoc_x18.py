@@ -1,10 +1,13 @@
 import json
 from pathlib import Path
+from types import SimpleNamespace
+from typing import cast
 
 import numpy as np
 import pytest
 
 from oran_causal.analysis.posthoc import x18
+from oran_causal.analysis.posthoc.refs import RefereeTools
 from oran_causal.analysis.system import stats
 
 SEEDS = list(range(191100, 191112))
@@ -266,3 +269,19 @@ def test_only_the_pmrt_map_takes_the_strict_coefficients():
     doc = {"arms": {"MG:PMRT": {"map": [["sleep", "own", "pv", 2.0]]}, "MG:corr@dev": {"map": []}}}
     assert x18.maps_of(doc) == {"MG:PMRT": [["sleep", "own", "pv", 2.0]]}
     assert x18.maps_of(None) is None
+
+
+def _json_bounds() -> RefereeTools:
+    tools = SimpleNamespace(bounds_from_json=lambda rows: {tuple(r[:3]): r[3] for r in rows})
+    return cast(RefereeTools, tools)
+
+
+def test_strict_bounds_without_ols_take_the_frozen_ols_bounds():
+    art = {"bounds": {"gt": [["sleep", "own", "rlf", {"kind": "ci", "lo": 0.0, "hi": 1.0}]]}}
+    pmrt = [["sleep", "own", "rlf", {"kind": "slope", "beta": 1.0, "se": 0.5}]]
+    ols = [["sleep", "own", "rlf", {"kind": "slope", "beta": 2.0, "se": 0.1}]]
+    got = x18.bound_set(art, {"pmrt": pmrt}, _json_bounds(), {"pmrt": [], "ols": ols})
+    assert got["ols"] == {("sleep", "own", "rlf"): ols[0][3]}
+    assert got["pmrt"] == {("sleep", "own", "rlf"): pmrt[0][3]}
+    with pytest.raises(KeyError):
+        x18.bound_set(art, {"pmrt": pmrt}, _json_bounds())
