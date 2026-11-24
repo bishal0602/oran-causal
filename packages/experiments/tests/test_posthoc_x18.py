@@ -167,4 +167,34 @@ def test_full_run_refuses_off_linux(cert, tmp_path: Path, monkeypatch):
         run18.run(p, tmp_path / "o.jsonl", run18.Part())
     with pytest.raises(ValueError, match="smoke"):
         run18.run(p, tmp_path / "o.jsonl", run18.Part(), short=10.0)
+    with pytest.raises(RuntimeError, match="Linux"):
+        run18.main(["run", "--plan", str(p), "--out", str(tmp_path / "o.jsonl")])
     assert math.isfinite(x18.rho_of(1.3))
+
+
+def test_kaggle_session_runs_its_shards_in_parallel():
+    code = {"commit": "abc", "dirty": False}
+    cmd = run18.session_command("$JOB_OUT", code, run18.Part(1, 2), procs=4)
+    parts = [f"--part {s}/8 --out $JOB_OUT/res_{s}.jsonl" for s in range(4, 8)]
+    assert all(p in cmd for p in parts)
+    assert "--part 3/8" not in cmd
+    assert cmd.count("x18-run run --plan data/records/posthoc_x18/x18_plan.json") == 4
+    assert cmd.endswith("wait")
+    assert cmd.count(f"{run18.PLATFORM_ENV}=kaggle") == 4
+    job = run18.kaggle_job("x18-c-0", code, run18.Part())
+    assert tuple(job.extra) == (run18.PLAN_REL,)
+    assert not job.sources
+
+
+def test_launch_dry_run_checks_the_plan(cert, tmp_path: Path, monkeypatch, capsys):
+    out, art = cert
+    p = tmp_path / "plan.json"
+    p.write_text(json.dumps(x18.make_plan(out, art)), encoding="utf-8")
+    monkeypatch.setattr(run18, "code_info", lambda: {"commit": "abc", "dirty": False})
+    assert run18.main(["launch", "--name", "x18-c-0", "--plan", str(p), "--dry-run"]) == 0
+    assert "x18-run run" in capsys.readouterr().out
+    bad = x18.make_plan(out, art)
+    bad["jobs"][0]["uncertified"] = [["sleep", 1]]
+    p.write_text(json.dumps(bad), encoding="utf-8")
+    with pytest.raises(ValueError, match="signature"):
+        run18.main(["launch", "--name", "x18-c-0", "--plan", str(p), "--dry-run"])

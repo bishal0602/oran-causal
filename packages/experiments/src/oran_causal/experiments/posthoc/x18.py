@@ -8,22 +8,32 @@ and arm `X18:<signature id>`. The reproduction jobs run the stored CS:PMRT on 19
 `X18:repro:CS:PMRT`; `oran_causal.analysis.posthoc.x18 merge` requires them to equal the stored
 records. The plan is made by `oran_causal.analysis.posthoc.x18 plan`.
 
-    python -m oran_causal.experiments.posthoc x18-run --plan x18_plan.json --part i/k --out F.jsonl
-        [--seeds a,b] [--smoke] [--short S]
+    python -m oran_causal.experiments.posthoc x18-run run --plan x18_plan.json --part i/k
+        --out F.jsonl [--seeds a,b] [--smoke] [--short S]
+    python -m oran_causal.experiments.posthoc x18-run launch --name NAME [--plan P]
+        [--kernel j/m] [--procs 4] [--dry-run]
+
+`launch` stages a Kaggle session (the platform of the stored CS:PMRT records) with the plan
+bundled at `PLAN_REL`: kernel j of m runs `procs` shards in parallel, shard j * procs + i of
+m * procs, each into `res_<shard>.jsonl` of the session output.
 """
 
 import argparse
 import json
 import os
 import sys
+import tempfile
 from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
 from oran_causal.analysis.posthoc.x18 import DRIVER, SUB
 from oran_causal.experiments.campaign.host import PLATFORM_ENV
-from oran_causal.experiments.campaign.provenance import COMMIT_ENV, DIRTY_ENV
+from oran_causal.experiments.campaign.provenance import COMMIT_ENV, DIRTY_ENV, LOCK_ENV, code_info
+from oran_causal.experiments.launch import kaggle
+from oran_causal.experiments.launch.commands import LOCK_REL, THREADS, SetupPlan, setup_cmd
 from oran_causal.experiments.launch.fingerprint import numeric_env
+from oran_causal.experiments.launch.runner import Dirs
 from oran_causal.experiments.system import study2, study3
 from oran_causal.experiments.system.common import (
     Job,
@@ -36,6 +46,9 @@ from oran_causal.experiments.system.common import (
 from oran_causal.methods.system import referees as rf
 
 STAGE = "eval"
+PLAN_REL = "data/records/posthoc_x18/x18_plan.json"
+PROCS = 4
+WORK_DIR = Path(tempfile.gettempdir()) / "oran-causal-launch"
 Entry = Mapping[str, Any]
 
 
@@ -170,22 +183,72 @@ def run(
     )
 
 
+def session_command(
+    out_dir: str, code: Mapping[str, Any], kernel: Part, procs: int = PROCS, plan: str = PLAN_REL
+) -> str:
+    """The shell command of one cloud session: environment setup, then `procs` shards in parallel.
+
+    Kernel `j/m` runs shards `j * procs` to `j * procs + procs - 1` of `m * procs`.
+    """
+    env = (
+        f"{PLATFORM_ENV}=kaggle {COMMIT_ENV}={code['commit']} "
+        f"{DIRTY_ENV}={int(bool(code['dirty']))} {LOCK_ENV}={LOCK_REL} {THREADS}"
+    )
+    total = kernel.count * procs
+    runs = "".join(
+        f"({env} python -u -m oran_causal.experiments.posthoc x18-run run --plan {plan} "
+        f"--part {s}/{total} --out {out_dir}/res_{s}.jsonl > {out_dir}/log_{s}.txt 2>&1) & "
+        for s in range(kernel.index * procs, kernel.index * procs + procs)
+    )
+    return setup_cmd(SetupPlan(out_dir=out_dir)) + runs + "wait"
+
+
+def kaggle_job(
+    name: str, code: Mapping[str, Any], kernel: Part, procs: int = PROCS, plan: str = PLAN_REL
+) -> kaggle.KaggleJob:
+    """The Kaggle session of one kernel; the plan file travels in the bundle."""
+    return kaggle.KaggleJob(name, session_command("$JOB_OUT", code, kernel, procs, plan), (plan,))
+
+
+def _launch(a: argparse.Namespace) -> int:
+    check_plan(read_plan(Path(a.plan)))
+    job = kaggle_job(a.name, code_info(), Part.parse(a.kernel), a.procs, Path(a.plan).as_posix())
+    print(f"[x18] kaggle {job.name}: extra {list(job.extra)}")
+    print(f"[x18] cmd: {job.cmd}")
+    if a.dry_run:
+        return 0
+    client = kaggle.KaggleClient(owner=a.owner)
+    print(json.dumps(kaggle.launch(job, client, Dirs(WORK_DIR)), indent=1, default=str))
+    return 0
+
+
 def _parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    ap.add_argument("--plan", required=True)
-    ap.add_argument("--part", default="0/1")
-    ap.add_argument("--out", required=True)
-    ap.add_argument("--seeds", default=None)
-    ap.add_argument("--smoke", action="store_true")
-    ap.add_argument("--short", type=float, default=None)
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    r = sub.add_parser("run")
+    r.add_argument("--plan", required=True)
+    r.add_argument("--part", default="0/1")
+    r.add_argument("--out", required=True)
+    r.add_argument("--seeds", default=None)
+    r.add_argument("--smoke", action="store_true")
+    r.add_argument("--short", type=float, default=None)
+    k = sub.add_parser("launch")
+    k.add_argument("--name", required=True)
+    k.add_argument("--plan", default=PLAN_REL)
+    k.add_argument("--kernel", default="0/1")
+    k.add_argument("--procs", type=int, default=PROCS)
+    k.add_argument("--owner", default=None)
+    k.add_argument("--dry-run", action="store_true")
     return ap
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Command line: run a shard of the X18 Part C jobs."""
+    """Command line: `run` a shard of the X18 Part C jobs or `launch` a Kaggle session."""
     a = _parser().parse_args(argv)
+    if a.cmd == "launch":
+        return _launch(a)
     run(
         Path(a.plan),
         Path(a.out),
