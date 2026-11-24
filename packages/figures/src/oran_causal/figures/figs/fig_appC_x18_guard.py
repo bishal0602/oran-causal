@@ -35,6 +35,7 @@ E_SHOW = 0.90
 DODGE = 0.011
 HEIGHT = 2.6
 LIFT = 0.06
+LABEL_GAP = 0.08
 GATED = (("CS:GT", 0.0, False), ("CS:PMRT", DODGE, True))
 DRAWN = tuple(a for a, _, _ in GATED)
 LABELS = {
@@ -150,8 +151,11 @@ def build():
         for x, c in zip(xs, cs, strict=True):
             _point(ax, x, c["arms"][code], code, lift, hero=hero)
     plots.ref_line(ax, X.FROZEN_L, axis="x")
-    ymax = max(c["arms"][a]["R_ci90"][1] for c in cs for a, _, _ in GATED)
-    L.label_line(ax, X.FROZEN_L, ymax, "limit of the main analysis", where="right")
+    hi = max(r["R_ci90"][1] for r in drawn)
+    span = hi - min(r["R_ci90"][0] for r in drawn)
+    ylab = hi + LABEL_GAP * span
+    ax.set_ylim(top=ylab + LABEL_GAP * span)
+    L.label_line(ax, X.FROZEN_L, ylab, "limit of the main analysis", where="right")
     ax.set_xticks(limits, [f"{x:.2f}" for x in limits])
     ax.set_xlim(limits[0] - 0.03, limits[-1] + 0.03)
     ax.set_xlabel("Guard limit (ratio to accept-all)")
