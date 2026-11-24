@@ -321,8 +321,8 @@ def _rec(kind: str, study: str, sl: str, rep: int, **kw) -> dict:
     return {**base, **kw}
 
 
-def _summary_records(exact: bool) -> list[dict]:
-    rep = {"exact": exact, "close": True, "n_diff": 0 if exact else 1}
+def _summary_records(exact: bool, close: bool = True) -> list[dict]:
+    rep = {"exact": exact, "close": close, "n_diff": 0 if exact else 1}
     recs = [
         _rec("disc", "s1", "pooled", r, repro=rep, repro_declared=True, n_units=9) for r in range(3)
     ]
@@ -377,7 +377,7 @@ def test_summary_statistics_and_reproduction_gate():
     assert "projection" in text
 
 
-def test_report_writes_both_files_and_fails_without_exact_reproduction(tmp_path):
+def test_report_writes_both_files_and_fails_without_a1_reproduction(tmp_path):
     runs = tmp_path / "runs"
     runs.mkdir()
     good = [r for r in _summary_records(True) if r["status"] == "ok"]
@@ -386,6 +386,12 @@ def test_report_writes_both_files_and_fails_without_exact_reproduction(tmp_path)
     assert report.main(["--runs", str(runs), "--out-dir", str(out)]) == 0
     assert json.loads((out / "x19_cost.json").read_text())["reproduced"]
     assert (out / "x19_cost.md").read_text().startswith("# X19")
-    bad = [r for r in _summary_records(False) if r["status"] == "ok"]
+    near = [r for r in _summary_records(False) if r["status"] == "ok"]
+    (runs / "res_0.jsonl").write_text("".join(json.dumps(r) + "\n" for r in near))
+    assert report.main(["--runs", str(runs), "--out-dir", str(out)]) == 0
+    summary = json.loads((out / "x19_cost.json").read_text())
+    assert summary["reproduced"]
+    assert not summary["reproduced_exactly"]
+    bad = [r for r in _summary_records(False, close=False) if r["status"] == "ok"]
     (runs / "res_0.jsonl").write_text("".join(json.dumps(r) + "\n" for r in bad))
     assert report.main(["--runs", str(runs), "--out-dir", str(out)]) == 1

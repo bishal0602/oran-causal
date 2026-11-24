@@ -828,3 +828,29 @@ Kaggle, Colab or instabox), never on the local machine (user rule, 2026-11-24).
 **Cost.** Under 2 CPU-h.
 
 **Outputs.** data/records/posthoc_x19/x19_cost.{json,md}.
+
+### 2026-11-24: Amendment A1 to X17 and X19, reproduction at a numerical tolerance
+
+Declared by the user on 2026-11-24, after the first X17 step-1 run and two X19 runs and before any X17 step-3 or X18
+job. It changes only the reproduction criterion of two checks; no measurement, grid or reading rule changes.
+
+**What was seen.**
+- X17 step 1 on the VPS (commit 06a6968): the frozen centre reproduced the stored map coefficients, gate bounds,
+  uncertified set and unit count (79,499) within relative tolerance 1e-9. The strict centre matched the stored X16
+  strict values only up to about 1e-13 relative (e.g. 7571.351926240846 against 7571.351926240969). The MG:PMRT and
+  CS:PMRT signatures were equal under both centres.
+- X19 runs x19-cost-1 (Kaggle, AMD EPYC 7B12) and x19-cost-2 (Kaggle, Intel Xeon @ 2.20GHz, the X1 reference host):
+  every timed discovery run declared exactly the stored hypotheses; numeric fields of the hypothesis table differed
+  from the stored ones by at most 3.4e-14 absolute.
+- The differences are last-digit floating-point differences between numerical environments, not differences of
+  method. Bit-exact reproduction of the stored values was not reached on any host tried.
+
+**Amended criterion.**
+- X17 step 1, strict centre against X16: every number within relative tolerance 1e-9 (the tolerance of the frozen
+  check of the same step); missing values must match.
+- X19 discovery reproduction: every number of the hypothesis table within relative tolerance 1e-9, and the
+  declarations exactly.
+- Unchanged and still exact: decision signatures, certsafe signatures, uncertified sets and declared edge sets
+  everywhere; the X17 step-3 and X18 Part C reproductions of simulated per-seed records, which run on Kaggle, the
+  platform of the stored records.
+- Both bit-exact outcomes are still computed and reported beside the amended ones.

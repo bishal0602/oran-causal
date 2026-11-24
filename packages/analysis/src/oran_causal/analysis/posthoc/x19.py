@@ -5,7 +5,8 @@ Reads the worker records (`res_*.jsonl`) of `oran_causal.experiments.posthoc.x19
 each phase over the repetitions, the wall seconds and the peak RSS; the referee latencies; the
 logging volume. A host other than the X1 reference host is flagged; its costs convert with X1's
 speed factors. The run fails (exit 1) when a timed discovery run did not reproduce the stored
-hypothesis table exactly, as the protocol requires, after writing the files.
+hypothesis table, as amendment A1 requires (numbers within relative tolerance 1e-9, declarations
+exactly), after writing the files.
 
     python -m oran_causal.analysis.posthoc.x19 --runs DIR [--out-dir DIR]
 """
@@ -140,7 +141,9 @@ def summarise(recs: Sequence[Rec]) -> dict[str, Any]:
         "hosts": hosts,
         "reference_host": REF_HOST,
         "on_reference_host": hosts == [REF_HOST],
-        "reproduced": bool(disc) and all(v["repro"]["exact"] for v in disc.values()),
+        "reproduced": bool(disc)
+        and all(v["repro"]["close"] and v["repro"]["declared_equal"] for v in disc.values()),
+        "reproduced_exactly": bool(disc) and all(v["repro"]["exact"] for v in disc.values()),
         "disc": disc,
         "fit": fit,
         "referee": referee,
@@ -161,7 +164,9 @@ def markdown(s: Mapping[str, Any]) -> str:
         "",
         f"Records {s['records']}; errors {len(s['errors'])}; hosts {', '.join(s['hosts'])}.",
         f"Reference host ({s['reference_host']}): {'yes' if s['on_reference_host'] else 'NO'}.",
-        f"Stored PMRT hypothesis tables reproduced exactly: {'yes' if s['reproduced'] else 'NO'}.",
+        "Stored PMRT hypothesis tables reproduced (A1: numbers within relative 1e-9, declarations"
+        f" exact): {'yes' if s['reproduced'] else 'NO'}; bit-exact:"
+        f" {'yes' if s['reproduced_exactly'] else 'NO'}.",
         "",
         "## Discovery (frozen PMRT, B 9999; CPU-s median [min, max] over repetitions)",
         "",
@@ -250,7 +255,7 @@ def markdown(s: Mapping[str, Any]) -> str:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Writes the summary; exit 1 when a stored hypothesis table did not reproduce exactly."""
+    """Writes the summary; exit 1 when a stored hypothesis table did not reproduce under A1."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--runs", required=True)
     ap.add_argument("--out-dir", default=str(OUT_DIR))

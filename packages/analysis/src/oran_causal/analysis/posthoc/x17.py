@@ -6,7 +6,8 @@ only once its 90 s outcome window has closed); the stored Study 2 and 3 artifact
 frozen centre. This module holds the analysis halves of the declared steps:
 
 * step 1, `analyse`: the frozen setting reproduces the stored map coefficients, gate bounds and
-  uncertified set, and the strict setting reproduces the stored X16 strict values exactly;
+  uncertified set, and the strict setting reproduces the stored X16 strict values within the
+  relative tolerance of amendment A1 (exact equality is reported too);
 * step 2, `analyse`: the MG:PMRT decision signature and the CS:PMRT certsafe signature under both
   centres, the strict PMRT map and the strict guard-edge bounds;
 * step 3, `confirm`: the strict-map MG:PMRT runs on the confirmation seeds against the stored
@@ -123,9 +124,13 @@ def _x16_check(
         rows.append([*h, "se", r["se_strict"], slopes[h]["se"]])
     diffs = [abs(float(a) - float(b)) for *_, a, b in rows if a is not None and b is not None]
     exact = all(a == b for *_, a, b in rows)
+    close = all(
+        a == b if a is None or b is None else x16.close(float(a), float(b)) for *_, a, b in rows
+    )
     return {
         "rows": rows,
         "exact": bool(exact and rows),
+        "close": bool(close and rows),
         "max_abs_diff": max(diffs) if diffs else None,
     }
 
@@ -188,7 +193,7 @@ def analyse(
         and repro_bounds
         and check["uncertified_reproduces"]
         and int(ud.n) == stored_units
-        and x16_check["exact"]
+        and x16_check["close"]
     )
     mg = {c: tools.signature_key(tools.decision_signature(maps[c], theta)) for c in CENTRES}
     cs = {
