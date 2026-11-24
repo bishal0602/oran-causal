@@ -192,7 +192,7 @@ def _repro_rows(ud: UnitTable, maps: Mapping[str, rf.Map]) -> dict[str, Any]:
     rows: dict[str, list] = {"pmrt": [], "ols": []}
     for h, b in maps.get("MG:PMRT", {}).items():
         if b is not None:
-            got = abs(rf.design_slope_bound(ud, *h)["beta"])
+            got = abs(rf.design_slope_bound(ud, *h, window_s=rf.FROZEN_WINDOW_S)["beta"])
             rows["pmrt"].append([*h, abs(b), got, bool(np.isclose(got, abs(b), rtol=BETA_RTOL))])
     for arm in rf.ASSOC_ARMS:
         for h, b in maps.get(arm, {}).items():
@@ -204,14 +204,18 @@ def _repro_rows(ud: UnitTable, maps: Mapping[str, rf.Map]) -> dict[str, Any]:
     return dict(rows, ok=ok)
 
 
-def bounds_tables(ud: UnitTable, maps: Mapping[str, rf.Map]) -> dict[str, Any]:
+def bounds_tables(
+    ud: UnitTable, maps: Mapping[str, rf.Map], window_s: float = rf.FROZEN_WINDOW_S
+) -> dict[str, Any]:
     """Guard-edge bounds on the DISC units: PMRT design slope and naive OLS slope, each with SE.
 
-    Also checks that the unit table reproduces every frozen map |beta| (relative 1e-9).
+    The PMRT bounds use the outcome centre of `window_s` (the frozen one by default, which
+    set the stored Study 3 artifact). Also checks that the unit table reproduces every frozen
+    map |beta| (relative 1e-9), always with the frozen centre.
     """
     keys = [(f, r, k) for f in rf.FAMILIES for r in rf.RELS_V2 for k in rf.GUARD_KPIS]
     return {
-        "pmrt": {h: rf.design_slope_bound(ud, *h) for h in keys},
+        "pmrt": {h: rf.design_slope_bound(ud, *h, window_s=window_s) for h in keys},
         "ols": {h: rf.naive_slope_se(ud, *h) for h in keys},
         "repro": _repro_rows(ud, maps),
     }

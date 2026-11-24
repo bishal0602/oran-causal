@@ -232,12 +232,50 @@ def _absorb(
     st.pool[key[1]] = [pn + 1, py + (yu - py) / (pn + 1), pp + (pu - pp) / (pn + 1)]
 
 
+def _strict_residuals(
+    y: np.ndarray,
+    pre: np.ndarray | None,
+    episode: np.ndarray,
+    sgn: np.ndarray,
+    config: ResidualConfig,
+    t0: np.ndarray,
+    window_s: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    if window_s < 0:
+        raise ValueError(f"window_s must be >= 0, got {window_s}")
+    y = np.asarray(y, float)
+    pre_v = np.zeros_like(y) if (pre is None or not config.use_pre) else np.asarray(pre, float)
+    res = np.zeros(len(y))
+    sigs = np.full(len(y), np.nan)
+    st = _RunningState()
+    k = float(config.prior_n)
+    pending: list[int] = []
+    for u in range(len(y)):
+        while pending and (
+            int(episode[pending[0]]) != int(episode[u]) or t0[pending[0]] + window_s <= t0[u]
+        ):
+            j = pending.pop(0)
+            key_j = (int(episode[j]), 1.0 if sgn[j] > 0 else -1.0)
+            _absorb(st, key_j, (y[j], pre_v[j], res[j]), config.burn)
+        key = (int(episode[u]), 1.0 if sgn[u] > 0 else -1.0)
+        a_y, a_p = _centre(st, key, y[u], pre_v[u], k)
+        b = st.cxy / (st.cpp + config.ridge * max(st.cpp, 1e-300) + 1e-300) if st.cpp > 0 else 0.0
+        res[u] = y[u] - a_y - b * (pre_v[u] - a_p)
+        if st.nr > 0:
+            sigs[u] = np.sqrt(st.r2 / st.nr)
+        pending.append(u)
+    return res, sigs
+
+
 def predictable_residuals(
     y: np.ndarray,
     pre: np.ndarray | None,
     episode: np.ndarray,
     sgn: np.ndarray,
     config: ResidualConfig | None = None,
+    *,
+    t0: np.ndarray | None = None,
+    window_s: float = 0.0,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Running past-only residuals of decision units in information order.
 
@@ -245,17 +283,30 @@ def predictable_residuals(
     and p_s shrunk to the same-sign pooled running means and the running pooled
     within-stratum slope b. sigma_u is the RMS of the past residuals (NaN before any).
 
+    Without `t0`, unit j enters the running state right after it is scored (the frozen
+    centre of Studies 2 and 3). With `t0`, unit j enters the state used for unit u only once
+    its outcome window has closed: j is in an earlier episode, or `t0_j + window_s <= t0_u`
+    (the strict centre, X16 and X17 of the post hoc protocol). Episodes are taken in table
+    order; a window of 0 gives the frozen centre.
+
     Args:
         y: Outcomes.
         pre: Pre-window values, or None.
         episode: Episode id per unit.
         sgn: Request direction per unit.
         config: Running-residual settings; None uses the defaults.
+        t0: Opening second per unit, or None for the frozen centre.
+        window_s: Outcome window in seconds of the strict centre.
 
     Returns:
         (r, sigma), each of shape `[n]`.
+
+    Raises:
+        ValueError: A negative window.
     """
     config = config or ResidualConfig()
+    if t0 is not None:
+        return _strict_residuals(y, pre, episode, sgn, config, np.asarray(t0, float), window_s)
     y = np.asarray(y, float)
     pre_v = np.zeros_like(y) if (pre is None or not config.use_pre) else np.asarray(pre, float)
     res = np.zeros(len(y))

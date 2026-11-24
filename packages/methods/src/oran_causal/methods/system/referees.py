@@ -29,7 +29,14 @@ import numpy as np
 
 from oran_causal.core.data import UnitTable
 from oran_causal.core.design import v_design
-from oran_causal.core.gate import GateSpace, certify, design_slope_se, tau_table
+from oran_causal.core.gate import (
+    FROZEN_WINDOW_S,
+    WINDOW_S,
+    GateSpace,
+    certify,
+    design_slope_se,
+    tau_table,
+)
 from oran_causal.core.pmrt.units import unit_order
 from oran_causal.methods.system.mscr_crt import LEVEL_V2_ARR
 from oran_causal.sim.system.baselines import (
@@ -53,6 +60,7 @@ __all__ = [
     "CAL_ARM",
     "CS_ARMS",
     "CS_OF",
+    "FROZEN_WINDOW_S",
     "GATE_SPACE",
     "GUARDS_V2",
     "GUARD_FIELD",
@@ -68,6 +76,7 @@ __all__ = [
     "SAVING_DIR",
     "THETA",
     "WARM",
+    "WINDOW_S",
     "BlanketGate",
     "CertSafeMapGateV2",
     "Counting",
@@ -545,12 +554,21 @@ def certsafe_signature(
     return (sig[0], *((f, d, ("accept",) if (f, d) in unc else s) for f, d, s in sig[1:]))
 
 
-def design_slope_bound(ud: UnitTable, f: str, rel: str, kpi: str) -> dict[str, Any]:
-    """PMRT design-based slope of a guard edge with its HC0 standard error (information order)."""
+def design_slope_bound(
+    ud: UnitTable, f: str, rel: str, kpi: str, *, window_s: float = WINDOW_S
+) -> dict[str, Any]:
+    """PMRT design-based slope of an edge with its HC0 standard error (information order).
+
+    The outcome centre is the strict one by default; `window_s = FROZEN_WINDOW_S` gives the
+    frozen centre that set the stored Study 2 and 3 artifacts.
+    """
     rows = unit_order(ud, ud.rows_of(f))
     v = v_design(ud.mode[rows], ud.probs[rows], ud.sgn[rows], LEVEL_V2_ARR)
     pre = ud.pre[(rel, kpi)][rows]
-    return design_slope_se(v, ud.y[(rel, kpi)][rows], pre, ud.episode[rows], ud.sgn[rows])
+    y = ud.y[(rel, kpi)][rows]
+    return design_slope_se(
+        v, y, pre, ud.episode[rows], ud.sgn[rows], ud.t0[rows], window_s=window_s
+    )
 
 
 def naive_slope_se(ud: UnitTable, f: str, rel: str, kpi: str) -> dict[str, Any]:

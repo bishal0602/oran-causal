@@ -18,7 +18,6 @@ window must equal the frozen one.
 
 import argparse
 import csv
-import dataclasses
 import hashlib
 import json
 import math
@@ -79,22 +78,6 @@ CSV_COLUMNS = (
 Edge = tuple[str, str, str]
 
 
-@dataclasses.dataclass
-class _State:
-    """Running state of the strict centre."""
-
-    strata: dict[tuple[int, float], tuple[int, float, float]] = dataclasses.field(
-        default_factory=dict
-    )
-    pool: dict[float, list[float]] = dataclasses.field(
-        default_factory=lambda: {1.0: [0, 0.0, 0.0], -1.0: [0, 0.0, 0.0]}
-    )
-    cxy: float = 0.0
-    cpp: float = 0.0
-    r2: float = 0.0
-    nr: int = 0
-
-
 def strict_residuals(
     y: np.ndarray,
     pre: np.ndarray | None,
@@ -104,12 +87,11 @@ def strict_residuals(
     cfg: ResidualConfig,
     h: int = H,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """`predictable_residuals` with delayed entry.
+    """`predictable_residuals` with delayed entry, the strict centre of `core.ridge`.
 
     Unit j joins the running state used for unit u only if `t0_j + h <= t0_u` in the same episode,
     or j is in an earlier episode. Strata, shrinkage, pooled slope, ridge and scale are as in the
-    frozen function. Pending units enter in information order, which is monotone in the entry time
-    `t0_j + h` within an episode.
+    frozen function.
 
     Args:
         y: Outcomes in information order.
@@ -123,57 +105,7 @@ def strict_residuals(
     Returns:
         (r, sigma), each of shape `[n]`.
     """
-    y = np.asarray(y, float)
-    pre_v = np.zeros_like(y) if (pre is None or not cfg.use_pre) else np.asarray(pre, float)
-    n = len(y)
-    res = np.zeros(n)
-    sigs = np.full(n, np.nan)
-    st = _State()
-    k = float(cfg.prior_n)
-    pending: list[int] = []
-
-    def enter(j: int) -> None:
-        g = 1.0 if sgn[j] > 0 else -1.0
-        key = (int(episode[j]), g)
-        ns, my, mp = st.strata.get(key, (0, 0.0, 0.0))
-        pn, py, pp = st.pool[g]
-        if pn >= cfg.burn:
-            rc = min(abs(res[j]), 5.0 * np.sqrt(st.r2 / st.nr)) if st.nr >= 5 else abs(res[j])
-            st.r2 += rc * rc
-            st.nr += 1
-        if ns > 0:
-            f = ns / (ns + 1.0)
-            st.cxy += f * (pre_v[j] - mp) * (y[j] - my)
-            st.cpp += f * (pre_v[j] - mp) ** 2
-        st.strata[key] = (
-            ns + 1,
-            my + (y[j] - my) / (ns + 1),
-            mp + (pre_v[j] - mp) / (ns + 1),
-        )
-        st.pool[g] = [pn + 1, py + (y[j] - py) / (pn + 1), pp + (pre_v[j] - pp) / (pn + 1)]
-
-    for u in range(n):
-        while pending and (
-            int(episode[pending[0]]) != int(episode[u]) or t0[pending[0]] + h <= t0[u]
-        ):
-            enter(pending.pop(0))
-        g = 1.0 if sgn[u] > 0 else -1.0
-        ns, my, mp = st.strata.get((int(episode[u]), g), (0, 0.0, 0.0))
-        pn, py, pp = st.pool[g]
-        if pn == 0:
-            a_y, a_p = (my, mp) if ns else (y[u], pre_v[u])
-        elif ns + k <= 0:
-            a_y, a_p = py, pp
-        else:
-            a_y = (ns * my + k * py) / (ns + k)
-            a_p = (ns * mp + k * pp) / (ns + k)
-        cxy, cpp = st.cxy, st.cpp
-        b = cxy / (cpp + cfg.ridge * max(cpp, 1e-300) + 1e-300) if cpp > 0 else 0.0
-        res[u] = y[u] - a_y - b * (pre_v[u] - a_p)
-        if st.nr > 0:
-            sigs[u] = np.sqrt(st.r2 / st.nr)
-        pending.append(u)
-    return res, sigs
+    return predictable_residuals(y, pre, episode, sgn, cfg, t0=t0, window_s=float(h))
 
 
 def _no_slope(n: int) -> dict[str, Any]:

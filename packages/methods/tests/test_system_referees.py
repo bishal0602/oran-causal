@@ -6,9 +6,14 @@ from typing import Any
 import numpy as np
 import pytest
 
-from oran_causal.core.gate import tau_table
+from oran_causal.core.design import v_design
+from oran_causal.core.gate import design_slope_se, tau_table
+from oran_causal.core.pmrt.units import unit_order
 from oran_causal.methods.system import maps as mp
 from oran_causal.methods.system import referees as rf
+from oran_causal.methods.system.mscr_crt import LEVEL_V2_ARR
+from oran_causal.sim.system.decision.records import build_unit_data
+from oran_causal.sim.system.decision.synthetic import SyntheticSpec, synthetic_records
 from oran_causal.sim.system.decision.units import UnitArbiter
 from oran_causal.sim.system.decision.vocab import FAMILIES
 
@@ -456,3 +461,18 @@ def test_arm_factories_cover_every_arm(conf: dict[str, Any], cs: dict[str, Any])
         rf.cs_arbiter("CS:nope", 0, 120.0, cs)
     with pytest.raises(KeyError):
         rf.anchor_arbiter("sub", 120.0)
+
+
+def test_design_slope_bound_defaults_to_the_strict_centre() -> None:
+    ud = build_unit_data(
+        synthetic_records(np.random.default_rng(5), SyntheticSpec(n_ep=6, units_per_ep=60))
+    )
+    f, rel, kpi = FAMILIES[0], "own", "pv"
+    rows = unit_order(ud, ud.rows_of(f))
+    v = v_design(ud.mode[rows], ud.probs[rows], ud.sgn[rows], LEVEL_V2_ARR)
+    args = (v, ud.y[(rel, kpi)][rows], ud.pre[(rel, kpi)][rows], ud.episode[rows], ud.sgn[rows])
+    t0 = ud.t0[rows]
+    assert rf.design_slope_bound(ud, f, rel, kpi) == design_slope_se(*args, t0, window_s=90.0)
+    frozen = rf.design_slope_bound(ud, f, rel, kpi, window_s=rf.FROZEN_WINDOW_S)
+    assert frozen == design_slope_se(*args, t0, window_s=0.0)
+    assert rf.WINDOW_S == 90.0
