@@ -1,0 +1,100 @@
+id: x17
+platform: kaggle
+claims:
+- EMP-X17
+- PRO-POSTHOC
+protocol:
+  path: posthoc/PROTOCOL.md
+  sha256: 3e65dd814edaed5f860c25a2043be9e2966d8a098c910accba4644d3aa2b8110
+seeds:
+- block: e6p_confounded_episodes
+  range:
+  - 187000
+  - 187003
+  role: Study 2 EVAL seeds, X17 confirmation and A2 control
+  world: E6
+- block: e6p_certsafe_episodes
+  range:
+  - 191100
+  - 191103
+  role: Study 3 EVAL seeds, X17 confirmation and A2 control
+  world: E6
+stages:
+- name: analyse
+  driver: oran_causal.experiments.posthoc.x17:main_analyse
+  inputs:
+  - study2_raw/e6p-conf-disc-1-a
+  - study2_raw/e6p-conf-disc-1-b
+  - posthoc_x9_x16/revision/x16_centre.json
+  - study2_3_decision/runs/e6p-cs-bounds-1/out/certsafe_bounds.json
+  - artifacts/study2_maps.json
+  - artifacts/study3_certsafe.json
+  outputs:
+  - posthoc_x17/x17_centre.json
+  - posthoc_x17/certsafe_bounds_strict.json
+  - posthoc_x17/study2_maps_strict.json
+  cost:
+    cpu_h: 0.2
+    basis: E
+- name: confirm
+  driver: oran_causal.experiments.posthoc.x17:main_run
+  inputs:
+  - posthoc_x17/study2_maps_strict.json
+  outputs:
+  - posthoc_x17/runs/x17-confirm-1/out
+  cost:
+    cpu_h: 0.16
+    basis: M
+- name: control
+  driver: oran_causal.experiments.posthoc.x17:main_run
+  inputs:
+  - posthoc_x17/study2_maps_strict.json
+  - artifacts/study2_maps.json
+  outputs:
+  - posthoc_x17/runs/x17-control-1/out
+  cost:
+    cpu_h: 0.35
+    basis: M
+- name: compare
+  driver: oran_causal.analysis.posthoc.x17:main
+  inputs:
+  - posthoc_x17/runs/x17-confirm-1/out
+  - posthoc_x17/runs/x17-control-1/out
+  - study2_3_decision/runs/e6p-conf-eval-1
+  - study2_3_decision/runs/e6p-cs-eval-1
+  outputs:
+  - posthoc_x17/x17_confirm.json
+  - posthoc_x17/x17_control.json
+  cost:
+    cpu_h: 0.0
+    basis: M
+frozen_inputs:
+- path: artifacts/study2_maps.json
+  sha256: c3c69db6601da7d8773d6c6f7a359007e419f4f8776898cf2e7d251a8c1e84a1
+- path: artifacts/study3_certsafe.json
+  sha256: 935c00030e325b186b6bae584ea66906487b4fb7e045253093e86d86d9b3cc36
+records:
+- set: posthoc_x17
+  manifest: manifests/posthoc_x17.sha256
+- set: study2_raw
+  manifest: manifests/study2_raw.sha256
+- set: study2_3_decision
+  manifest: manifests/study2_3_decision.sha256
+- set: posthoc_x9_x16
+  manifest: manifests/posthoc_x9_x16.sha256
+tiers:
+  t0: null
+  t1: null
+  t2: null
+  t3: null
+equivalence:
+- metric: frozen centre reproduction
+  rule: stored map coefficients, gate bounds and uncertified set within relative tolerance 1e-9 (tiers N and D)
+- metric: strict centre against X16
+  rule: within relative tolerance 1e-9 (amendment A1)
+- metric: decision signatures
+  rule: MG:PMRT and CS:PMRT signatures equal under both centres (tier D)
+- metric: strict against frozen map
+  rule: per seed bit-identical in one Kaggle kernel (amendment A2, tier E)
+- metric: post hoc status
+  rule: descriptive; changes no verdict (PRO-POSTHOC)

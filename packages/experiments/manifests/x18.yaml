@@ -1,0 +1,87 @@
+id: x18
+platform: kaggle
+claims:
+- EMP-X18
+- PRO-POSTHOC
+protocol:
+  path: posthoc/PROTOCOL.md
+  sha256: 3e65dd814edaed5f860c25a2043be9e2966d8a098c910accba4644d3aa2b8110
+seeds:
+- block: e6p_certsafe_episodes
+  range:
+  - 191100
+  - 191259
+  role: Study 3 EVAL seeds, X18 Part C gated policies
+  world: E6
+stages:
+- name: certification
+  driver: oran_causal.analysis.posthoc.x18:main
+  inputs:
+  - study2_3_decision/runs/e6p-cs-bounds-1/out/certsafe_bounds.json
+  - posthoc_x17/certsafe_bounds_strict.json
+  - posthoc_x17/study2_maps_strict.json
+  - artifacts/study3_certsafe.json
+  - artifacts/study3_certsafe_shap.json
+  outputs:
+  - posthoc_x18/x18_certification.json
+  - posthoc_x18/x18_plan.json
+  cost:
+    cpu_h: 0.1
+    basis: E
+- name: part_c
+  driver: oran_causal.experiments.posthoc.x18:run
+  inputs:
+  - posthoc_x18/x18_plan.json
+  outputs:
+  - posthoc_x18/part_c
+  cost:
+    cpu_h: 18.62
+    basis: M
+- name: eligibility
+  driver: oran_causal.analysis.posthoc.x18:main
+  inputs:
+  - posthoc_x18/x18_certification.json
+  - posthoc_x18/x18_plan.json
+  - posthoc_x18/part_c
+  - study2_3_decision/runs/e6p-conf-eval-1
+  - study2_3_decision/runs/e6p-cs-eval-1
+  - shap_rerun
+  outputs:
+  - posthoc_x18/x18_eligibility.json
+  - posthoc_x18/x18_eligibility.csv
+  - posthoc_x18/REVISION_SECTIONS_X18.md
+  cost:
+    cpu_h: 0.2
+    basis: E
+frozen_inputs:
+- path: artifacts/study2_maps.json
+  sha256: c3c69db6601da7d8773d6c6f7a359007e419f4f8776898cf2e7d251a8c1e84a1
+- path: artifacts/study2_maps_shap.json
+  sha256: 4f85606134cffb6101577a636e146c28035c914b5268f218fb64e4bf8fcd91ae
+- path: artifacts/study3_certsafe.json
+  sha256: 935c00030e325b186b6bae584ea66906487b4fb7e045253093e86d86d9b3cc36
+- path: artifacts/study3_certsafe_shap.json
+  sha256: e092d65682be24f7d23f8b10b9b416205293734928dfa465c66af6530be5bae4
+records:
+- set: posthoc_x18
+  manifest: manifests/posthoc_x18.sha256
+- set: posthoc_x17
+  manifest: manifests/posthoc_x17.sha256
+- set: study2_3_decision
+  manifest: manifests/study2_3_decision.sha256
+- set: shap_rerun
+  manifest: manifests/shap_rerun.sha256
+tiers:
+  t0: null
+  t1: null
+  t2: null
+  t3: null
+equivalence:
+- metric: frozen certification
+  rule: rho 1.05 reproduces the stored uncertified sets and signatures (tier D)
+- metric: frozen eligibility
+  rule: the eligibility rule reproduces the frozen Gate A eligibility at L 1.10 and E 0.90 (tier D)
+- metric: Part C reproduction
+  rule: CS:PMRT on 191100-191103 equals its stored records; contrasts with stored comparators carry the S-tier bound
+- metric: post hoc status
+  rule: descriptive; changes no verdict (PRO-POSTHOC)

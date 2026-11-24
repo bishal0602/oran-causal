@@ -69,6 +69,16 @@ sets:
     manifest: manifests/posthoc_x9_x16.sha256
     files: 21
     bytes: 1890462
+  - name: posthoc_x17
+    description: "X17 strict centre: strict maps and bounds, confirmation and A2 control runs"
+    manifest: manifests/posthoc_x17.sha256
+    files: 30
+    bytes: 147458
+  - name: posthoc_x18
+    description: "X18 guard, energy floor and gate budget sweep: certification, Part C runs, eligibility"
+    manifest: manifests/posthoc_x18.sha256
+    files: 53
+    bytes: 4210050
   - name: posthoc_x19
     description: "X19 compute and logging cost: Kaggle timing runs and summary"
     manifest: manifests/posthoc_x19.sha256
