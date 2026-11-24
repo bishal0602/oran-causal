@@ -5,7 +5,7 @@ claims:
 - PRO-POSTHOC
 protocol:
   path: posthoc/PROTOCOL.md
-  sha256: 8270cdc0024f718f37ca7c25ddb9c7279d3ff1b156d66d53780a9304f38772ab
+  sha256: e2ceab01aee657fc08c3bd8befd2044764f5c7f05473c97fb34006947706a443
 seeds:
 - block: XMETHOD_DEV
   range:
