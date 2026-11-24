@@ -39,24 +39,30 @@ mitigation without a step that bounds the effect of each rejection class on ever
 still has to be checked against its guards, which no per-edge certificate guarantees.
 
 \subsection{Integration in the near-RT RIC}
-\label{sec:disc_integration}
+\label{sec:disc_integration}\claim{EMP-X19}
 
 The framework separates a light component on the control path from analyses outside it. The referee belongs to the
 near-RT RIC's conflict-mitigation function, which detects and resolves overlapping or conflicting requests from
 xApps~\cite{ORANRICARCH}. At each unit opening it looks up the map and the certified classes, draws the mode from the
 propensity and holds it for $t_{\mathrm{hold}}$; later requests of the unit only inherit the mode. This adds one lookup
 and one draw per unit to a control loop that the RIC APIs must support at execution times of 10~ms to
-1~s~\cite{ORANRICARCH}. \tbd{X19: per-decision latency of the referee, median and 99th percentile.}
+1~s~\cite{ORANRICARCH}. In our implementation, on one 2.20~GHz Xeon core, a referee decision took a median of
+\val{x19.ref.mg.med}~$\mu$s (99th percentile \val{x19.ref.mg.p99}~$\mu$s) without the gate and \val{x19.ref.cs.med}~$\mu$s
+(\val{x19.ref.cs.p99}~$\mu$s) with it.
 
 The function must record, for every unit, its key (cell, xApp and opening time), the request direction, the drawn mode,
 the propensity used for the draw and the context of the opening request, next to the per-cell KPI series that the RIC
 already collects. The shared data layer of the near-RT RIC provides the platform and authorised xApps with such read and
 write access, and the platform reports files, traces and metrics to the service management and orchestration (SMO)
-framework over O1~\cite{ORANRICARCH}. \tbd{X19: decision units per cell-hour, bytes per unit record and KPI volume per
-cell-second in the simulated scenario.}
+framework over O1~\cite{ORANRICARCH}. In the simulated scenario the referee opened \val{x19.log.s2.cellh} to
+\val{x19.log.s1.cellh} units per cell-hour, each unit record took \val{x19.log.s1.bytes} to \val{x19.log.s2.bytes} bytes
+compressed, and the five KPIs that PMRT reads took \val{x19.log.series} bytes per cell-second as 32-bit values. These
+rates follow from the scenario's traffic and request rates and will differ in a deployed RIC.
 
 PMRT, the design slopes and the gate certification run offline on logs gathered over hours, for example in the SMO or
-the non-real-time RIC. \tbd{X19: CPU time of PMRT for the 60 hypotheses at 600 episodes and 9\,999 redraws.} The
+the non-real-time RIC. On the same core, PMRT tested the 60 hypotheses on 600 episodes with 9\,999 redraws in
+\val{x19.disc.s1.cpu}~CPU-seconds on the uniform-randomised and \val{x19.disc.s2.cpu}~CPU-seconds on the state-dependent
+logs, after a one-off training fit of \val{x19.fit.cpu}~CPU-seconds. The
 resulting map is the kind of dependency information, couplings between RAN parameters, resources and KPIs, that the
 O-RAN conflict-mitigation study proposes to supply to the conflict-mitigation function, for example over
 O1~\cite{ORANConflictMit}. That report studies the exchange without specifying a procedure, and the simulator models

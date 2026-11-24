@@ -74,3 +74,5 @@ Over the 21 hypotheses that the ground truth labels null, the rate of p-values a
 \label{spec:met.cost}
 
 Computation times per method and sample size are reported in Online Resource 1, Section S5.2.\claim{EMP-RUNTIME}
+
+On the Kaggle reference host, single-threaded, PMRT tested the 60 hypotheses at 600 episodes and $B = 9999$ in 67 CPU-seconds on the randomised and 51 on the confounded logs, after a 369 CPU-second training fit. A referee decision took a median of 10 to 11 $\mu$s. The simulated scenario opened 41 to 44 units per cell-hour of 74 to 76 compressed bytes each; the five KPIs PMRT reads took 20 bytes per cell-second (post hoc X19, amendment A1).\claim{EMP-X19}

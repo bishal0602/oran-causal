@@ -661,6 +661,33 @@ claims:
     tests: {min: 1, tier: t0}
     posthoc: true
 
+  - id: EMP-X19
+    kind: empirical
+    statement: "On one 2.20 GHz Xeon core, PMRT tested the 60 hypotheses on 600 episodes with 9 999 redraws in 67 CPU-seconds on the randomised and 51 on the confounded logs after a 369 CPU-second training fit; a referee decision took a median of 10 to 11 microseconds (99th percentile 36 to 37); the simulated scenario opened 41 to 44 units per cell-hour of 74 to 76 compressed bytes each, and the five KPIs PMRT reads took 20 bytes per cell-second."
+    paper: [sec:disc_integration]
+    spec: spec:met.cost
+    depends_on: [DEF-PMRT-STAT, DEF-REF-RULES]
+    code: [oran_causal.analysis.posthoc.x19:summarise]
+    tests: {min: 0, tier: t0}
+    posthoc: true
+    evidence:
+      - record: posthoc_x19/x19_cost.json
+        sha256: bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649
+        pointer: /disc/s1|pooled/cpu_s
+        expect: {median: 66.5}
+      - record: posthoc_x19/x19_cost.json
+        sha256: bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649
+        pointer: /disc/s2|pooled/cpu_s
+        expect: {median: 50.8}
+      - record: posthoc_x19/x19_cost.json
+        sha256: bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649
+        pointer: /referee/MG:PMRT/median_us
+        expect: {median: 9.815}
+      - record: posthoc_x19/x19_cost.json
+        sha256: bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649
+        pointer: /logging/series
+        expect: {needed_f32_bytes_per_cell_s: 20}
+
   - id: EMP-X4
     kind: empirical
     statement: "A referee that rejected requests at random, at the rate of the ungated referee, had negative recovery."

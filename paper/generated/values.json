@@ -5563,6 +5563,162 @@
    "fmt": ".1f|x100|math",
    "text": "$-2.9$"
   },
+  "x19.disc.s1.cpu": {
+   "args": {
+    "v": {
+     "pointer": "/disc/s1|pooled/cpu_s/median",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 66.525780567
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "67"
+  },
+  "x19.disc.s2.cpu": {
+   "args": {
+    "v": {
+     "pointer": "/disc/s2|pooled/cpu_s/median",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 50.79348157399994
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "51"
+  },
+  "x19.fit.cpu": {
+   "args": {
+    "v": {
+     "pointer": "/fit/cpu_s/median",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 368.890729733
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "369"
+  },
+  "x19.log.s1.bytes": {
+   "args": {
+    "v": {
+     "pointer": "/logging/s1_eval/unit_record/compressed_bytes_per_unit",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 74.09344617201339
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "74"
+  },
+  "x19.log.s1.cellh": {
+   "args": {
+    "v": {
+     "pointer": "/logging/s1_eval/rates/units_per_cell_hour",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 44.10590277777778
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "44"
+  },
+  "x19.log.s2.bytes": {
+   "args": {
+    "v": {
+     "pointer": "/logging/s2_disc/unit_record/compressed_bytes_per_unit",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 75.56411438326931
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "76"
+  },
+  "x19.log.s2.cellh": {
+   "args": {
+    "v": {
+     "pointer": "/logging/s2_disc/rates/units_per_cell_hour",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 40.677083333333336
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "41"
+  },
+  "x19.log.series": {
+   "args": {
+    "v": {
+     "pointer": "/logging/series/needed_f32_bytes_per_cell_s",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 20
+    }
+   },
+   "expr": "v",
+   "fmt": "d",
+   "text": "20"
+  },
+  "x19.ref.cs.med": {
+   "args": {
+    "v": {
+     "pointer": "/referee/CS:PMRT/median_us/median",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 11.291
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "11"
+  },
+  "x19.ref.cs.p99": {
+   "args": {
+    "v": {
+     "pointer": "/referee/CS:PMRT/p99_us/median",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 35.947509999999994
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "36"
+  },
+  "x19.ref.mg.med": {
+   "args": {
+    "v": {
+     "pointer": "/referee/MG:PMRT/median_us/median",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 9.815
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "10"
+  },
+  "x19.ref.mg.p99": {
+   "args": {
+    "v": {
+     "pointer": "/referee/MG:PMRT/p99_us/median",
+     "record": "posthoc_x19/x19_cost.json",
+     "sha256": "bc0a3ee8e9e06b93f7129b50d35e4c12b92d9fd6ff1da75b207a5036a5cbb649",
+     "value": 36.708569999999966
+    }
+   },
+   "expr": "v",
+   "fmt": ".0f",
+   "text": "37"
+  },
   "x8.lim.1e3": {
    "args": {
     "v": {

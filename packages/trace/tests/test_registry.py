@@ -57,4 +57,4 @@ def test_invalid_yaml_is_an_error(tmp_path: Path, schema_path: Path) -> None:
 def test_seeded_registry_is_valid(repo_root: Path) -> None:
     registry = load(repo_root)
     assert registry.errors == ()
-    assert len(registry.claims) == 80
+    assert len(registry.claims) == 81

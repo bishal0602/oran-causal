@@ -267,6 +267,19 @@ values = [
   { key = "s2.k0n.fam_max", args = { a = "cd:/K0n/rate05_family/[*]" }, expr = "max(a)", fmt = ".3f|up" },
   { key = "x8.share.1e3", from = "x8:/combos/loadsp_c+wby1s/rate_le_0.001", fmt = ".1e|sci" },
   { key = "x8.share.2e4", from = "x8:/combos/loadsp_c+wby1s/rate_le_0.0002", fmt = ".1e|sci" },
+  # Integration in the near-RT RIC (Section 7.3): compute and logging cost (X19, Kaggle reference host)
+  { key = "x19.disc.s1.cpu", from = "x19:/disc/s1|pooled/cpu_s/median", fmt = ".0f" },
+  { key = "x19.disc.s2.cpu", from = "x19:/disc/s2|pooled/cpu_s/median", fmt = ".0f" },
+  { key = "x19.fit.cpu", from = "x19:/fit/cpu_s/median", fmt = ".0f" },
+  { key = "x19.ref.mg.med", from = "x19:/referee/MG:PMRT/median_us/median", fmt = ".0f" },
+  { key = "x19.ref.mg.p99", from = "x19:/referee/MG:PMRT/p99_us/median", fmt = ".0f" },
+  { key = "x19.ref.cs.med", from = "x19:/referee/CS:PMRT/median_us/median", fmt = ".0f" },
+  { key = "x19.ref.cs.p99", from = "x19:/referee/CS:PMRT/p99_us/median", fmt = ".0f" },
+  { key = "x19.log.s1.cellh", from = "x19:/logging/s1_eval/rates/units_per_cell_hour", fmt = ".0f" },
+  { key = "x19.log.s2.cellh", from = "x19:/logging/s2_disc/rates/units_per_cell_hour", fmt = ".0f" },
+  { key = "x19.log.s1.bytes", from = "x19:/logging/s1_eval/unit_record/compressed_bytes_per_unit", fmt = ".0f" },
+  { key = "x19.log.s2.bytes", from = "x19:/logging/s2_disc/unit_record/compressed_bytes_per_unit", fmt = ".0f" },
+  { key = "x19.log.series", from = "x19:/logging/series/needed_f32_bytes_per_cell_s", fmt = "d" },
   { key = "x8.lim.1e3", from = "x8:/criteria/rate_1e3", fmt = ".0e|sci" },
   { key = "x8.lim.2e4", from = "x8:/criteria/rate_2e4", fmt = ".0e|sci" },
 ]
@@ -283,6 +296,7 @@ x15 = "posthoc_x9_x16/revision/x15_replication.json"
 x13 = "shap_rerun/overlay/posthoc_x9_x16/revision/x13_attribution.json"
 x23 = "posthoc_x2_x3/extras_tables.json"
 x16 = "posthoc_x9_x16/revision/x16_centre.json"
+x19 = "posthoc_x19/x19_cost.json"
 s4r = "study4_eval/eval/csv/recall_vs_n.csv"
 s4 = "study4_eval/eval/report.json"
 br = "bridging/exp_b/exp_b_tables.json"

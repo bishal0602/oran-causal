@@ -49,4 +49,8 @@ exempt:
     literal: "0.8"
     count: 1
     reason: dither-width factor of the controlled condition (design constant)
+  - file: sections/s10_discussion.tex
+    literal: "2.20"
+    count: 1
+    reason: clock rate of the Kaggle reference host CPU (hardware constant, X19)
 unreproduced: []
