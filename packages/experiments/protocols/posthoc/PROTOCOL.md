@@ -694,3 +694,137 @@ reports; it does not re-simulate.
 - Every number is reported.
 
 **Outputs.** data/records/posthoc_x9_x16/revision/x16_centre.{json,csv} and REVISION_SECTIONS_X16.md.
+
+### 2026-11-24: X17, the strict centre becomes the implemented centre of the design slope and the gate bounds (advisor mail 01, point 6)
+
+DECLARED 2026-11-24 by the commit that adds it, after review by the user and before any X17 number is computed
+or any X17 job runs. Post hoc. Added after advisor mail 01 (G. Pau, 2026-11), which asks that the
+outcome-centring implementation be made fully consistent with the predictability assumptions of the theory. User
+decision 2026-11-24: adopt the strict centre of X16 and re-run only the ungated PMRT referee.
+
+**Execution.** Every step, including reproduction checks, signatures and re-scoring, runs on a cloud host (VPS,
+Kaggle, Colab or instabox), never on the local machine (user rule, 2026-11-24).
+
+**Already seen (disclosed).** Every Study 1-3 result; X15 (the two MG:PMRT seed blocks); X16: under the strict centre
+the PMRT map slopes changed by -2.9 % to +6.5 %, no map sign changed, the gate bounds moved by a median 3.5 % of their
+tolerance and no certification changed, so the CS:PMRT signature and every Study 3 gated number are unchanged. The
+MG:PMRT decision signature under the strict slopes has not been computed.
+
+**Scope.** The centre `r_u = y_u - centre_u` of `core.gate.design_slope_se`, which sets (i) the magnitude of every
+MG:PMRT and CS:PMRT map coefficient and (ii) the CS:PMRT gate bounds. Out of scope, unchanged and not re-run: PMRT
+discovery, including the step-5 score centre and the `pred` arm weights. Their validity needs only (A3), which they
+meet under the sharp null because the KPI series under test does not depend on the family's modes; the paper states
+this argument explicitly instead of changing the code. The associational maps (OLS slope) and the GT bounds do not use
+the centre.
+
+**Implementation.**
+- The X16 strict centre moves into `core.ridge` as an option of `predictable_residuals`: unit j enters the running
+  state used for unit u only if `t0_j + H <= t0_u` (H = 90 s; episodes in table order, as X16). A window of 0 is the
+  frozen centre, and a test keeps that identity.
+- `design_slope_se` and `methods.system.referees.design_slope_bound` default to the strict centre with H = 90. The
+  frozen Study 2 and Study 3 reproduction paths pass the frozen setting explicitly, so `reproduce --tier t0` still
+  rebuilds every stored frozen artifact unchanged.
+- New artifacts, beside the frozen ones: `study2_maps_strict.json` (MG:PMRT and CS:PMRT maps with strict
+  coefficients, every other map copied) and `certsafe_bounds_strict.json`.
+
+**Steps.**
+1. Reproduce: the frozen setting gives the stored map coefficients, bounds and uncertified sets (rel. tol 1e-9), and
+   the strict setting gives the X16 strict values exactly. Otherwise stop.
+2. Signatures: `decision_signature` of MG:PMRT and `certsafe_signature` of CS:PMRT under both centres.
+3. Confirmation run (always, about 0.2 CPU-h): MG:PMRT with the strict map on seeds 187000-187003 and 191100-191103.
+   If the signatures of step 2 are equal, each per-seed record must equal the stored frozen record exactly.
+4. Re-simulation, only if the MG:PMRT signature changed: MG:PMRT(strict) on both blocks, 187000-187159 and
+   191100-191259 (320 seeds, about 72 CPU-s per seed, about 6.4 CPU-h, Kaggle), with the plant, arm code and seeds
+   of the frozen runs. The paired comparators (accept-all, never-sleep, MG:GT) are the stored records of the same
+   seeds. Metrics, bootstrap (N_BOOT 10000, `default_rng([6624, 20, n_seeds])`) and the X15 pooling as frozen.
+   If the CS:PMRT signature changed (X16 says it does not), stop and ask before simulating Study 3.
+
+**Reading rule (stated in advance).**
+- Equal signatures: equal signatures give identical policies, so every MG:PMRT and CS:PMRT decision number of
+  Studies 2-3 and X15 is unchanged. The paper defines the slope with the strict centre, reports the strict map
+  coefficients and gate bounds as primary and the frozen ones in the ESM, and drops the "approximately predictable"
+  caveat.
+- Changed MG:PMRT signature: the strict re-run becomes the primary MG:PMRT row of the decision table, the frozen row
+  moves to the ESM, and every changed number is reported. The D1-D3 verdicts of Studies 2-3 are not re-judged; they
+  stay as frozen and are cited as such.
+- Every number is reported.
+
+**Outputs.** data/records/posthoc_x17/{x17_centre.json, study2_maps_strict.json, certsafe_bounds_strict.json},
+the run records if step 4 runs, and REVISION_SECTIONS_X17.md.
+
+### 2026-11-24: X18, sensitivity of the decision study to the guard limit, the energy floor and the gate budget (advisor mail 01, point 2)
+
+DECLARED 2026-11-24 by the commit that adds it, after review by the user and before any X18 number is computed
+or any X18 job runs. Post hoc and descriptive. The frozen constraints (guard limit L = 1.10, energy
+floor E = 0.90, gate rho = 1.05) stay primary, and no Study 2-3 verdict is re-judged. Study 3's protocol states that
+loosening the 1.10 guard was not done; X18 does not change that frozen study, it reports a sweep beside it. User
+decision 2026-11-24: post hoc sweep plus targeted re-simulation. Runs after X17, on its strict bounds.
+
+**Execution.** Every step, including reproduction checks, signatures and re-scoring, runs on a cloud host (VPS,
+Kaggle, Colab or instabox), never on the local machine (user rule, 2026-11-24).
+
+**Already seen (disclosed).** Every Study 2-3 arm value, including the arms' guard ratios and retention at the frozen
+setting; X10: the CS:PMRT ptx-up class is withheld by two unresolved guard edges (ptx -> nbr RLF, ptx -> far service
+violations) whose point estimates of harm exceed their tolerances. The certification status at another rho is
+therefore partly foreseeable from X10's UB/tau ratios. X15 and X16.
+
+**Grid.**
+- Guard limit L in {1.05, 1.10, 1.15, 1.20, 1.25, 1.30}, with the gate budget tied to it as in the paper,
+  rho(L) = 1 + (L - 1) / 2 (half the margin).
+- Energy floor E in {0.80, 0.85, 0.90, 0.95}. E enters eligibility only; neither the referee nor the gate reads it.
+- Gate budget at the frozen L = 1.10: rho in {1.025, 1.05, 1.075, 1.10} (a quarter of the margin to all of it).
+
+**Part A, eligibility (no simulation).** For every stored arm of the Study 3 EVAL block (191100-191259: the Gate A
+anchors, never_sleep, MG:PMRT, CS:PMRT, CS:GT, CS:rand, CS:blanket2, the 13 CS:<b>) and of the Study 2 EVAL block
+(187000-187159), at every (L, E): eligibility on point estimates as frozen (retention >= E, each of the four guard
+ratios <= L), with the 90 % CIs. Per cell: the best eligible static rule, the best eligible arm, and R and dR against
+the best eligible static rule (paired seed bootstrap as frozen).
+
+**Part B, certification (no simulation).** For CS:PMRT (X17 strict bounds), CS:GT (stored CIs) and every CS:<b>
+(stored bounds), at every rho of the grid: `core.gate.tau_table` with the stored G_k and N(f, d) at that rho, then
+`certify_map` and `certsafe_signature`. Reproduce first: rho = 1.05 gives the stored uncertified sets.
+
+**Part C, targeted re-simulation.** A (gated arm, rho) whose certsafe signature equals that of an arm already stored
+on the Study 3 block reuses that arm's per-seed records: equal signatures give identical policies. Every other
+distinct signature is simulated as CertSafeMapGateV2 with that uncertified set on 191100-191259 (160 seeds, about
+2.8 CPU-h each, Kaggle), with the frozen plant and arm code, re-using the Study 3 EVAL seeds so that every
+comparison stays paired by seed. Before launch, the plan lists each new signature and its
+cost; above 8 new signatures (about 22 CPU-h) it stops and asks. Reproduction: the frozen CS:PMRT on 191100-191103
+equals its stored records exactly.
+
+**Reading rule (stated in advance).** Descriptive; every cell is reported. The paper reports:
+- the smallest L in the grid, if any, at which a gated map referee is eligible and beats the best eligible static
+  rule with paired LB90 > 0, with the class whose certification makes the difference; or that none does in the grid;
+- whether the oracle map behaves differently from the PMRT map anywhere in the grid;
+- the energy-floor range over which never_sleep stays the best eligible static rule.
+
+**Outputs.** data/records/posthoc_x18/{x18_eligibility.{json,csv}, x18_certification.json}, the Part C run records,
+REVISION_SECTIONS_X18.md, and a cddfig generator for a figure of R against L (best eligible gated PMRT, CS:GT and the
+best eligible static rule, ineligible points marked).
+
+### 2026-11-24: X19, compute and logging cost of PMRT and the referee (advisor mail 01, point 3)
+
+DECLARED 2026-11-24 by the commit that adds it, after review by the user and before any X19 number is computed.
+Post hoc and descriptive; no simulation of the plant. Input to the
+deployment discussion only. X1 timed the controlled-environment arms, not the simulator PMRT or the referee.
+
+**Execution.** Every step, including reproduction checks, signatures and re-scoring, runs on a cloud host (VPS,
+Kaggle, Colab or instabox), never on the local machine (user rule, 2026-11-24).
+
+**Measurements.**
+1. Discovery: CPU time, wall time and peak RSS of the frozen simulator PMRT on the stored Study 1 (uniform-randomised)
+   and Study 2 (state-dependent) unit tables: training fit (steps 1-8) and evaluation with B = 9999 redraws, over all
+   60 hypotheses. Full 600 episodes and the stored Study 1 subsample sizes. Single thread, 3 repetitions, on the
+   Kaggle reference host (X1's), so the numbers convert with X1's speed factors.
+2. Referee: per-decision latency of MapGateV2 and CertSafeMapGateV2 `decide`, replayed on stored unit contexts
+   (median and 99th percentile), and the time of one gate certification.
+3. Logging: decision units per episode-hour by class and policy, the fields a unit record needs (key, mode,
+   propensity, direction, context) and their size in a compact encoding, and the KPI series volume per cell-second,
+   from stored records. Any per-cell-day figure is arithmetic on these rates and is reported as a projection for the
+   simulated scenario only.
+
+**Reproduction.** The timed discovery run must reproduce the stored PMRT p-values and declarations exactly.
+
+**Cost.** Under 2 CPU-h.
+
+**Outputs.** data/records/posthoc_x19/x19_cost.{json,md}.
