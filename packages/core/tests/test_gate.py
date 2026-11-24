@@ -6,8 +6,10 @@ import pytest
 from oran_causal.core.gate import (
     CERTIFIED,
     DECLARED,
+    FROZEN_WINDOW_S,
     RHO,
     UNRESOLVED,
+    WINDOW_S,
     Z90,
     GateSpace,
     bound_ub,
@@ -16,6 +18,7 @@ from oran_causal.core.gate import (
     design_slope_se,
     tau_table,
 )
+from oran_causal.core.ridge import ResidualConfig, predictable_residuals
 
 SPACE = GateSpace(
     families=("sleep", "ptx"), relations=("own", "nbr", "far"), guard_kpis=("v", "rlf")
@@ -75,10 +78,68 @@ def test_design_slope_recovers_the_effect() -> None:
     episode = np.repeat(np.arange(40), n // 40)
     sgn = np.ones(n)
     y = 3.0 * v + rng.normal(size=n)
-    out = design_slope_se(v, y, None, episode, sgn)
+    t0 = np.tile(np.arange(n // 40) * 15.0, 40)
+    out = design_slope_se(v, y, None, episode, sgn, t0)
     assert out["kind"] == "slope"
     assert out["n"] == n
     assert abs(out["beta"] - 3.0) < 4 * out["se"]
     assert out["z"] > 20
-    assert design_slope_se(v[:1], y[:1], None, episode[:1], sgn[:1])["se"] is None
-    assert design_slope_se(np.zeros(5), y[:5], None, episode[:5], sgn[:5])["beta"] == 0.0
+    assert design_slope_se(v[:1], y[:1], None, episode[:1], sgn[:1], t0[:1])["se"] is None
+    zero = design_slope_se(np.zeros(5), y[:5], None, episode[:5], sgn[:5], t0[:5])
+    assert zero["beta"] == 0.0
+
+
+def _units(n: int = 80, seed: int = 0) -> tuple[np.ndarray, ...]:
+    rng = np.random.default_rng(seed)
+    episode = np.repeat([0, 1], n // 2)
+    t0 = np.concatenate([np.sort(rng.uniform(0, 600, n // 2)) for _ in range(2)])
+    sgn = np.where(rng.random(n) < 0.5, 1.0, -1.0)
+    y = rng.normal(size=n) + 0.5 * sgn
+    pre = rng.normal(size=n)
+    v = rng.choice([-0.5, 0.5], n)
+    return v, y, pre, episode, sgn, t0
+
+
+def test_strict_centre_with_a_zero_window_is_the_frozen_centre() -> None:
+    _, y, pre, episode, sgn, t0 = _units()
+    cfg = ResidualConfig()
+    r0, s0 = predictable_residuals(y, pre, episode, sgn, cfg)
+    r1, s1 = predictable_residuals(y, pre, episode, sgn, cfg, t0=t0, window_s=0.0)
+    assert np.array_equal(r0, r1)
+    assert np.array_equal(s0, s1, equal_nan=True)
+
+
+@pytest.mark.claim("ASM-SLOPE-CENTRE")
+def test_strict_centre_never_uses_an_open_window() -> None:
+    _, y, pre, episode, sgn, t0 = _units()
+    r, _ = predictable_residuals(y, pre, episode, sgn, t0=t0, window_s=WINDOW_S)
+    u = 30
+    open_units = [j for j in range(u) if episode[j] == episode[u] and t0[j] + WINDOW_S > t0[u]]
+    assert open_units
+    y2 = y.copy()
+    y2[open_units] += 1000.0
+    r2, _ = predictable_residuals(y2, pre, episode, sgn, t0=t0, window_s=WINDOW_S)
+    assert r2[u] == r[u]
+    assert (
+        predictable_residuals(y2, pre, episode, sgn)[0][u]
+        != predictable_residuals(y, pre, episode, sgn)[0][u]
+    )
+
+
+def test_strict_centre_rejects_a_negative_window() -> None:
+    _, y, pre, episode, sgn, t0 = _units()
+    with pytest.raises(ValueError, match="window_s"):
+        predictable_residuals(y, pre, episode, sgn, t0=t0, window_s=-1.0)
+
+
+def test_design_slope_defaults_to_the_strict_centre() -> None:
+    v, y, pre, episode, sgn, t0 = _units()
+    assert WINDOW_S == 90.0
+    assert FROZEN_WINDOW_S == 0.0
+    strict = design_slope_se(v, y, pre, episode, sgn, t0)
+    explicit = design_slope_se(v, y, pre, episode, sgn, t0, window_s=WINDOW_S)
+    frozen = design_slope_se(v, y, pre, episode, sgn, t0, window_s=FROZEN_WINDOW_S)
+    r_frozen, _ = predictable_residuals(y, pre, episode, sgn)
+    assert strict == explicit
+    assert frozen["beta"] == float(v @ r_frozen / (v @ v))
+    assert strict["beta"] != frozen["beta"]

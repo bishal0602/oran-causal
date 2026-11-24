@@ -26,9 +26,11 @@ class RefereeTools:
             `(map, bounds, tau) -> {"classes", "uncertified"}`.
         can_defer: Whether MapGateV2 of a map defers class `(family, d)`.
         edge_quality: Map edges against GT cells.
+        decision_signature: Decision signature of MapGateV2 of a map: `(map, theta) -> tuple`.
         certsafe_signature: Decision signature with the uncertified classes accepted.
         signature_key: Stable string of a signature.
-        design_slope: PMRT design slope and standard error of a guard edge on a unit table.
+        design_slope: PMRT design slope and standard error of an edge on a unit table, with
+            the frozen outcome centre that set the stored Study 2 and 3 artifacts.
         guard_kpis: Guard KPIs of the gate.
         relations: Relations of a guard edge.
         levels: Dose of every mode of the Study 2 and 3 design (`LEVEL_V2_ARR`).
@@ -40,6 +42,7 @@ class RefereeTools:
     certify_map: Callable[..., dict[str, Any]]
     can_defer: Callable[[Map, str, int], bool]
     edge_quality: Callable[[Map, Iterable[Mapping[str, Any]]], dict[str, Any]]
+    decision_signature: Callable[..., tuple]
     certsafe_signature: Callable[..., tuple]
     signature_key: Callable[[tuple], str]
     design_slope: Callable[..., dict[str, Any]]

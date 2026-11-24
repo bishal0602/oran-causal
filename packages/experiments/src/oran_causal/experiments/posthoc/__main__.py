@@ -3,8 +3,8 @@
     python -m oran_causal.experiments.posthoc <item> ...
 
 Re-analyses of the frozen records: `x1-runtime`, `x2x3`, `x4`, `x5x6`, `x7`, `x8`, `x9`, `x10`,
-`x11`, `x12`, `x13`, `x14`, `x15`, `x16`, `x19`. Drivers: `x1-timing`, `x4-run`, `x7-run`,
-`x8-run`, `x19-run`.
+`x11`, `x12`, `x13`, `x14`, `x15`, `x16`, `x17`, `x19`. Drivers: `x1-timing`, `x4-run`, `x7-run`,
+`x8-run`, `x17-run`, `x19-run`.
 """
 
 import sys
@@ -31,6 +31,7 @@ from oran_causal.experiments.posthoc import tools, x1_timing
 from oran_causal.experiments.posthoc import x4 as x4_run
 from oran_causal.experiments.posthoc import x7 as x7_run
 from oran_causal.experiments.posthoc import x8 as x8_run
+from oran_causal.experiments.posthoc import x17 as x17_run
 from oran_causal.experiments.posthoc import x19 as x19_run
 
 Main = Callable[[Sequence[str]], int]
@@ -58,11 +59,13 @@ ITEMS: dict[str, Main] = {
     "x14": x14.main,
     "x15": x15.main,
     "x16": _with_tools(x16.main),
+    "x17": x17_run.main_analyse,
     "x19": x19.main,
     "x1-timing": x1_timing.main,
     "x4-run": x4_run.main,
     "x7-run": x7_run.main,
     "x8-run": x8_run.main,
+    "x17-run": x17_run.main_run,
     "x19-run": x19_run.main,
 }
 

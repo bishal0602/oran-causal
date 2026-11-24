@@ -18,6 +18,8 @@ from oran_causal.core.ridge import predictable_residuals
 
 Z90 = 1.2815515655446004
 RHO = 1.05
+WINDOW_S = 90.0
+FROZEN_WINDOW_S = 0.0
 DIRS = (1, -1)
 DECLARED, CERTIFIED, UNRESOLVED = "DECLARED", "CERTIFIED", "UNRESOLVED"
 
@@ -149,13 +151,23 @@ def certify(
 
 
 def design_slope_se(
-    v: np.ndarray, y: np.ndarray, pre: np.ndarray | None, episode: np.ndarray, sgn: np.ndarray
+    v: np.ndarray,
+    y: np.ndarray,
+    pre: np.ndarray | None,
+    episode: np.ndarray,
+    sgn: np.ndarray,
+    t0: np.ndarray,
+    *,
+    window_s: float = WINDOW_S,
 ) -> dict[str, Any]:
     """Design-based slope of a guard edge with its martingale (HC0) standard error.
 
     beta = sum v r / sum v^2 and se = sqrt(sum v^2 (r - beta v)^2) / sum v^2, where v is
-    the assignment score and r the outcome minus its predictable running centre. Arrays in
-    information order; a pre-window with a non-finite value is ignored.
+    the assignment score and r the outcome minus its running centre. The centre is the strict
+    one by default: a unit enters it only once its `window_s` outcome window has closed, so it
+    is fixed before the current unit's mode is drawn. `window_s = FROZEN_WINDOW_S` gives the
+    frozen centre of Studies 2 and 3. Arrays in information order; a pre-window with a
+    non-finite value is ignored.
 
     Returns:
         `{"kind": "slope", "beta", "se", "n", "z"}`.
@@ -164,7 +176,10 @@ def design_slope_se(
     if n < 2:
         return {"kind": "slope", "beta": 0.0, "se": None, "n": n, "z": None}
     pre_used = pre if pre is not None and np.all(np.isfinite(pre)) else None
-    r, _ = predictable_residuals(y, pre_used, episode, sgn)
+    if window_s == FROZEN_WINDOW_S:
+        r, _ = predictable_residuals(y, pre_used, episode, sgn)
+    else:
+        r, _ = predictable_residuals(y, pre_used, episode, sgn, t0=t0, window_s=window_s)
     vv = float(v @ v)
     if vv <= 0:
         return {"kind": "slope", "beta": 0.0, "se": None, "n": n, "z": None}

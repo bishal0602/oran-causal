@@ -239,7 +239,7 @@ def pmrt_map(decl: Decl, ud: UnitTable) -> tuple[dict, list]:
         if not v.get("declared") or int(v.get("sign", 0)) == 0:
             continue
         s = int(v["sign"])
-        b = rf.design_slope_bound(ud, *h)["beta"]
+        b = rf.design_slope_bound(ud, *h, window_s=rf.FROZEN_WINDOW_S)["beta"]
         if b != 0 and int(np.sign(b)) != s:
             dis.append([*h, s, b])
         M[tuple(h)] = float(s * abs(b))

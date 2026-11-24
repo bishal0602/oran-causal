@@ -4,6 +4,8 @@
 recompute a certification take a `RefereeTools` instead, built here.
 """
 
+import functools
+
 from oran_causal.analysis.posthoc.refs import RefereeTools
 from oran_causal.methods.system import maps, mscr_crt, referees
 
@@ -17,9 +19,12 @@ def referee_tools() -> RefereeTools:
         certify_map=referees.certify_map,
         can_defer=referees.can_defer,
         edge_quality=maps.edge_quality,
+        decision_signature=referees.decision_signature,
         certsafe_signature=referees.certsafe_signature,
         signature_key=referees.signature_key,
-        design_slope=referees.design_slope_bound,
+        design_slope=functools.partial(
+            referees.design_slope_bound, window_s=referees.FROZEN_WINDOW_S
+        ),
         guard_kpis=referees.GUARD_KPIS,
         relations=referees.RELS_V2,
         levels=mscr_crt.LEVEL_V2_ARR,
