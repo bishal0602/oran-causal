@@ -36,7 +36,8 @@ edges under a state-dependent policy.
 Our conference work, CDD O-RAN, avoided confounding with an offline exploration phase in which a random policy
 perturbed every control parameter~\cite{dahal2026cddoran}. It kept each edge whose smoothed conditional mutual
 information (CMI) exceeded a threshold, so its graph was unsigned and without error control. The present method
-draws its identification from operational accept-or-reject decisions instead.
+replaces that approach rather than extending it: it draws its identification from operational accept-or-reject
+decisions instead, and each edge it declares is signed and error-controlled.
 
 \subsection{Conflict maps in O-RAN}
 \label{sec:related_maps}
