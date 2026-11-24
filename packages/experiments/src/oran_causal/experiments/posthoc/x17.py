@@ -16,8 +16,16 @@ the frozen maps artifact it was derived from.
     python -m oran_causal.experiments.posthoc x17 confirm --runs F... --x17 D/x17_centre.json
         --out D
     python -m oran_causal.experiments.posthoc x17 rescore --runs F... --out D
-    python -m oran_causal.experiments.posthoc x17-run --maps D/study2_maps_strict.json
+    python -m oran_causal.experiments.posthoc x17-run run --maps D/study2_maps_strict.json
         --maps-sha256 S --stage confirm|full --part i/k --out F.jsonl [--smoke --short S]
+    python -m oran_causal.experiments.posthoc x17-run launch --name NAME --maps-sha256 S
+        --stage confirm|full [--maps M] [--kernel j/m] [--procs 4] [--dry-run]
+
+`launch` stages a Kaggle session (the platform of the stored MG:PMRT records) with the strict
+artifact bundled at `MAPS_REL` and pinned by its sha256 in the session command: kernel j of m
+runs `procs` shards in parallel, shard j * procs + i of m * procs, each into `res_<shard>.jsonl`
+of the session output. The confirm stage runs in one kernel. The session reads no stored records;
+`x17 confirm` and `x17 rescore` compare its records with them afterwards.
 """
 
 import argparse
@@ -25,14 +33,18 @@ import copy
 import json
 import os
 import sys
+import tempfile
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
 from oran_causal.analysis.posthoc import x17 as ax17
 from oran_causal.experiments.campaign.host import PLATFORM_ENV
-from oran_causal.experiments.campaign.provenance import COMMIT_ENV, DIRTY_ENV
+from oran_causal.experiments.campaign.provenance import COMMIT_ENV, DIRTY_ENV, LOCK_ENV, code_info
+from oran_causal.experiments.launch import kaggle
+from oran_causal.experiments.launch.commands import LOCK_REL, THREADS, SetupPlan, setup_cmd
 from oran_causal.experiments.launch.fingerprint import numeric_env
+from oran_causal.experiments.launch.runner import Dirs
 from oran_causal.experiments.posthoc import tools
 from oran_causal.experiments.system import artifacts, study2, study3
 from oran_causal.experiments.system.common import (
@@ -46,7 +58,10 @@ from oran_causal.experiments.system.common import (
 from oran_causal.methods.system import referees as rf
 
 MAPS_STRICT = "study2_maps_strict.json"
+MAPS_REL = f"data/records/posthoc_x17/{MAPS_STRICT}"
 STAGES = ("confirm", "full")
+PROCS = 4
+WORK_DIR = Path(tempfile.gettempdir()) / "oran-causal-launch"
 
 
 def strict_maps_artifact(
@@ -279,20 +294,107 @@ def main_analyse(argv: Sequence[str] | None = None) -> int:
     return 0 if res["ok"] else 1
 
 
-def main_run(argv: Sequence[str] | None = None) -> int:
-    """Command line of steps 3-4: a shard of the strict-map MG:PMRT jobs."""
+def session_command(
+    out_dir: str,
+    code: Mapping[str, Any],
+    stage: str,
+    maps_sha: str,
+    kernel: Part,
+    procs: int = PROCS,
+    maps: str = MAPS_REL,
+) -> str:
+    """The shell command of one cloud session: environment setup, then `procs` shards in parallel.
+
+    Kernel `j/m` runs shards `j * procs` to `j * procs + procs - 1` of `m * procs`, each pinned to
+    the strict artifact's sha256.
+    """
+    env = (
+        f"{PLATFORM_ENV}=kaggle {COMMIT_ENV}={code['commit']} "
+        f"{DIRTY_ENV}={int(bool(code['dirty']))} {LOCK_ENV}={LOCK_REL} {THREADS}"
+    )
+    total = kernel.count * procs
+    runs = "".join(
+        f"({env} python -u -m oran_causal.experiments.posthoc x17-run run --maps {maps} "
+        f"--maps-sha256 {maps_sha} --stage {stage} --part {s}/{total} "
+        f"--out {out_dir}/res_{s}.jsonl > {out_dir}/log_{s}.txt 2>&1) & "
+        for s in range(kernel.index * procs, kernel.index * procs + procs)
+    )
+    return setup_cmd(SetupPlan(out_dir=out_dir)) + runs + "wait"
+
+
+def kaggle_job(
+    name: str,
+    code: Mapping[str, Any],
+    stage: str,
+    maps_sha: str,
+    kernel: Part,
+    procs: int = PROCS,
+    maps: str = MAPS_REL,
+) -> kaggle.KaggleJob:
+    """The Kaggle session of one kernel; the strict artifact travels in the bundle.
+
+    Raises:
+        ValueError: An unknown stage, or the confirm stage over more than one kernel.
+    """
+    if stage not in STAGES:
+        raise ValueError(f"stage in {STAGES}")
+    if stage == "confirm" and kernel.count != 1:
+        raise ValueError("the confirm stage runs in one kernel")
+    cmd = session_command("$JOB_OUT", code, stage, maps_sha, kernel, procs, maps)
+    return kaggle.KaggleJob(name, cmd, (maps,))
+
+
+def _launch(a: argparse.Namespace) -> int:
+    load_strict(Path(a.maps), a.maps_sha256)
+    job = kaggle_job(
+        a.name,
+        code_info(),
+        a.stage,
+        a.maps_sha256,
+        Part.parse(a.kernel),
+        a.procs,
+        Path(a.maps).as_posix(),
+    )
+    print(f"[x17] kaggle {job.name}: extra {list(job.extra)}")
+    print(f"[x17] cmd: {job.cmd}")
+    if a.dry_run:
+        return 0
+    client = kaggle.KaggleClient(owner=a.owner)
+    print(json.dumps(kaggle.launch(job, client, Dirs(WORK_DIR)), indent=1, default=str))
+    return 0
+
+
+def _run_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    ap.add_argument("--maps", required=True)
-    ap.add_argument("--maps-sha256", required=True)
-    ap.add_argument("--stage", choices=STAGES, required=True)
-    ap.add_argument("--part", default="0/1")
-    ap.add_argument("--out", required=True)
-    ap.add_argument("--seeds", default=None)
-    ap.add_argument("--smoke", action="store_true")
-    ap.add_argument("--short", type=float, default=None)
-    a = ap.parse_args(argv)
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    r = sub.add_parser("run")
+    r.add_argument("--maps", required=True)
+    r.add_argument("--maps-sha256", required=True)
+    r.add_argument("--stage", choices=STAGES, required=True)
+    r.add_argument("--part", default="0/1")
+    r.add_argument("--out", required=True)
+    r.add_argument("--seeds", default=None)
+    r.add_argument("--smoke", action="store_true")
+    r.add_argument("--short", type=float, default=None)
+    k = sub.add_parser("launch")
+    k.add_argument("--name", required=True)
+    k.add_argument("--maps", default=MAPS_REL)
+    k.add_argument("--maps-sha256", required=True)
+    k.add_argument("--stage", choices=STAGES, required=True)
+    k.add_argument("--kernel", default="0/1")
+    k.add_argument("--procs", type=int, default=PROCS)
+    k.add_argument("--owner", default=None)
+    k.add_argument("--dry-run", action="store_true")
+    return ap
+
+
+def main_run(argv: Sequence[str] | None = None) -> int:
+    """Command line of steps 3-4: `run` a shard of the strict-map MG:PMRT jobs or `launch` one."""
+    a = _run_parser().parse_args(argv)
+    if a.cmd == "launch":
+        return _launch(a)
     run(
         Part.parse(a.part),
         Path(a.out),
