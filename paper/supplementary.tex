@@ -21,6 +21,8 @@
 \usepackage{claims}%
 \showclaimsfalse
 \input{generated/values}
+\newcommand{\tbd}[1]{\textcolor{red}{[TBD: #1]}}
+
 %%%%
 
 \theoremstyle{thmstyleone}%
@@ -48,15 +50,19 @@
 \title[Online Resource 1]{Online Resource 1\\[6pt]
 \large Supplementary material for: Design-Based Causal Effect Maps for O-RAN xApp Conflicts}
 
-\author*[1]{\fnm{First} \sur{Author}}\email{first.author@example.com}
+\author*[1]{\fnm{Bishal} \sur{Panta} \href{https://orcid.org/0009-0006-5745-3969}{(ORCID: 0009-0006-5745-3969)}}\email{078bct036.bishal@pcampus.edu.np}
 
-\author[1]{\fnm{Second} \sur{Author}}\email{second.author@example.com}
+\author[1]{\fnm{Arbashu} \sur{Dhakal} \href{https://orcid.org/0009-0006-4363-3475}{(ORCID: 0009-0006-4363-3475)}}\email{078bct018.arbashu@pcampus.edu.np}
 
-\author[2]{\fnm{Third} \sur{Author}}\email{third.author@example.com}
+\author[1]{\fnm{Adhyadesh} \sur{Dahal} \href{https://orcid.org/0009-0000-6318-2006}{(ORCID: 0009-0000-6318-2006)}}\email{078bct007.adhyadesh@pcampus.edu.np}
 
-\affil*[1]{\orgdiv{Department}, \orgname{Organization}, \orgaddress{\city{City}, \country{Country}}}
+\author[1]{\fnm{Babu R.} \sur{Dawadi} \href{https://orcid.org/0000-0001-6449-399X}{(ORCID: 0000-0001-6449-399X)}}\email{baburd@ioe.edu.np}
 
-\affil[2]{\orgdiv{Department}, \orgname{Organization}, \orgaddress{\city{City}, \country{Country}}}
+\author[2]{\fnm{Giovanni} \sur{Pau} \href{https://orcid.org/0000-0002-5798-398X}{(ORCID: 0000-0002-5798-398X)}}\email{giovanni.pau@unikore.it}
+
+\affil*[1]{\orgdiv{Department of Electronics and Computer Engineering}, \orgname{Pulchowk Campus, Institute of Engineering, Tribhuvan University}, \orgaddress{\city{Lalitpur}, \country{Nepal}}}
+
+\affil[2]{\orgdiv{Department of Engineering and Architecture}, \orgname{Kore University of Enna}, \orgaddress{\postcode{94100}, \city{Enna}, \country{Italy}}}
 
 \abstract{This Online Resource supplements the article ``Design-Based Causal Effect Maps for O-RAN xApp Conflicts''.
 It contains the weight construction and the declaration rules (Section~\ref{esm:method}), the theorem statements with proof
@@ -140,7 +146,7 @@ Step & What it does & Fitted on \\
 2 Receiver slots & Own 1, neighbour 4, far 2 slots: cells whose load the family moved most get one each, the rest share one & training \\
 3 Adjustment & Ridge prediction from pre-window bins, context and earlier units' centred modes; residual kept & training \\
 4 Matched filter & Score $g_u$: step-3 residuals weighted by $\psi = \Sigma^{-1} \tilde\mu$, favouring bins with more effect and less noise $\Sigma$ (Ledoit--Wolf), where $\tilde\mu$ is the rank-one fit of the effect profile $\mu$: a one-signed profile over slots, taken from the family's effect on load, times a least-squares profile over the four bins; restricted to the bins present & training \\
-5 Score centre & Subtracts $\bar g_u$, the running mean score of earlier units of the same episode and request direction, shrunk towards the mean over earlier units of that direction (20 pseudo-units) and the training mean (50 pseudo-units) & training and earlier units, online \\
+5 Score centre & Subtracts $\bar g_u$, the running mean score of earlier units of the same episode and request direction, shrunk towards the mean over earlier units of that direction (20 pseudo-units) and the training mean (50 pseudo-units); predictable under the sharp null (Section~4.2) & training and earlier units, online \\
 6 Huber clip & Clips at a scale predicted at opening, giving $w_u$ & training \\
 7 Orientation & $o$, see Table~\ref{tab:s_rules}; $z_{\mathrm{train}}$ is the $z$ of the plain 0--90~s total of the step-3 residuals & training \\
 \midrule
@@ -169,7 +175,7 @@ Harm & The request is judged on the first KPI with $\Delta_k \ne 0$ in the order
 Rejection & The request is costly if $\Delta_e > 0$ for energy; its pressure is the largest protected-UE below-floor fraction over the own and neighbour relations through which it is harmful, or zero without such a relation or report; a harmful request is rejected if it is costly or its pressure exceeds 0.05 \\
 Guard conflict & A rejection is guard-conflicted when accepting would help the first nonzero guard KPI among service violations and RLFs; such a unit is rejected only if the previous unit of the same cell and family was accepted \\
 Map coefficient & PMRT: the declaration's sign times the magnitude of the design slope, the declaration's sign kept where the two disagree; associational maps: the method's sign times the magnitude of the least-squares slope of the outcome on the logged mode, oriented by the request's direction \\
-Gate certification & An undeclared guard edge is certified when the one-sided 90~\% upper bound of $h\beta$ is at most $\varepsilon(f, d, k)$; PMRT uses the design slope with its martingale standard error, associational maps the least-squares slope with an independent-error standard error, the oracle map a conservative bound from its stored 95~\% interval; $G_k$ and $N(f, d)$ are measured under accept-all on 40 development episodes \\
+Gate certification & An undeclared guard edge is certified when the one-sided 90~\% upper bound of $h\beta$ is at most $\varepsilon(f, d, k)$; PMRT uses the design slope, with an outcome centre that admits an earlier unit only once its 90~s outcome window has closed, and its martingale standard error, associational maps the least-squares slope with an independent-error standard error, the oracle map a conservative bound from its stored 95~\% interval; $G_k$ and $N(f, d)$ are measured under accept-all on 40 development episodes \\
 \bottomrule
 \end{tabular*}
 \end{table}
@@ -659,7 +665,7 @@ Arm & Rej. & $R$ & [90\,\% CI] & Ret. & SVR & eMBB & LL & RLF & Elig. \\
 \par\smallskip
 {\raggedright\footnotesize
 $h\beta$, PMRT's estimated harm; UB90, its upper 90~\% bound; $\varepsilon$, the tolerance; $h\cdot$GT, the
-ground-truth harm; indet., indeterminate. With a strict outcome centre, which uses only units whose window had closed before the unit opened, all 22 map slopes kept their sign, with relative changes of $-2.9$ to $+6.5$~\%; the gate bounds moved by a median of \val{x16.gate.median_pct}~\% of their tolerance, and no class changed certification status.\par}
+ground-truth harm; indet., indeterminate. The slopes and bounds use the closed-window outcome centre of Section~4.4. The original decision runs used a centre that also admitted earlier units whose windows were still open; relative to it, the closed-window centre changed the 22 map slopes by \val{x16.map.rel_min} to \val{x16.map.rel_max}~\% without changing any sign, moved the gate bounds by a median of \val{x16.gate.median_pct}~\% of their tolerance and changed no certification.\claim{EMP-X16} \tbd{X17: regenerate this table from the closed-window centre and state whether the referee without the gate makes the same decisions.}\par}
 \end{table}
 
 \begin{table}
