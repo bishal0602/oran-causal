@@ -267,6 +267,18 @@ values = [
   { key = "s2.k0n.fam_max", args = { a = "cd:/K0n/rate05_family/[*]" }, expr = "max(a)", fmt = ".3f|up" },
   { key = "x8.share.1e3", from = "x8:/combos/loadsp_c+wby1s/rate_le_0.001", fmt = ".1e|sci" },
   { key = "x8.share.2e4", from = "x8:/combos/loadsp_c+wby1s/rate_le_0.0002", fmt = ".1e|sci" },
+  # Closed-window centre (X17, amendment A2 control in one Kaggle kernel)
+  { key = "x17.ctl.seeds", args = { a = "x17c:/seeds" }, expr = "len(a)", fmt = "d" },
+  { key = "x17.ctl.identical", args = { a = "x17c:/per_seed/[*]/bit_identical" }, expr = "sum(a)", fmt = "d" },
+  { key = "x17.drift.max", args = { a = "x17c:/per_seed/[*]/drift_frozen/max_abs_diff" }, expr = "max(a)", fmt = ".0f" },
+  # Sensitivity to the safety constraints (X18)
+  { key = "x18.l.min", args = { a = "x18e:/grid/L" }, expr = "min(a)", fmt = ".2f" },
+  { key = "x18.l.max", args = { a = "x18e:/grid/L" }, expr = "max(a)", fmt = ".2f" },
+  { key = "x18.e.min", args = { a = "x18e:/grid/E" }, expr = "min(a)", fmt = ".0f|x100" },
+  { key = "x18.e.max", args = { a = "x18e:/grid/E" }, expr = "max(a)", fmt = ".0f|x100" },
+  { key = "x18.budget.factor", args = { a = "x18e:/grid/L", b = "x18e:/frozen/rho" }, expr = "(max(a) - 1) / 2 / (b - 1)", fmt = ".0f" },
+  { key = "x18.r.ns", from = "x18e:/coupled/1.100|0.900|1.050/best_static_R", fmt = ".2f" },
+  { key = "x18.r.gt", from = "x18e:/coupled/1.100|0.900|1.050/arms/CS:GT/R", fmt = ".2f" },
   # Integration in the near-RT RIC (Section 7.3): compute and logging cost (X19, Kaggle reference host)
   { key = "x19.disc.s1.cpu", from = "x19:/disc/s1|pooled/cpu_s/median", fmt = ".0f" },
   { key = "x19.disc.s2.cpu", from = "x19:/disc/s2|pooled/cpu_s/median", fmt = ".0f" },
@@ -297,6 +309,8 @@ x13 = "shap_rerun/overlay/posthoc_x9_x16/revision/x13_attribution.json"
 x23 = "posthoc_x2_x3/extras_tables.json"
 x16 = "posthoc_x9_x16/revision/x16_centre.json"
 x19 = "posthoc_x19/x19_cost.json"
+x17c = "posthoc_x17/x17_control.json"
+x18e = "posthoc_x18/x18_eligibility.json"
 s4r = "study4_eval/eval/csv/recall_vs_n.csv"
 s4 = "study4_eval/eval/report.json"
 br = "bridging/exp_b/exp_b_tables.json"

@@ -150,5 +150,10 @@ point estimates of harm above their tolerances, so that more logging would not h
 certifies this class only because it declares both edges, and its gated referee gained over never-sleep only in energy
 retention (\esm{fig:s_cert}). Rejecting more requests does not
 compensate for this: a referee that rejected requests at random, at the rate of the ungated referee, had negative
-recovery (\esm{tab:s_arms2}). In this scenario,
-therefore, the guards and the objective, rather than the map, limited the benefit of safe decisions.
+recovery (\esm{tab:s_arms2}). Relaxing or tightening the constraints did not change this.\claim{EMP-X18} For guard limits
+of \val{x18.l.min} to \val{x18.l.max} and energy floors of \val{x18.e.min} to \val{x18.e.max}~\%, never-sleep remained
+the best eligible static rule and no gated referee, including the one given the oracle map, exceeded it. The PMRT map's
+certified classes stayed the same for gate budgets up to \val{x18.budget.factor} times the original, so its gated
+referee matched never-sleep, except at the tightest limit, where it also lost the sleep class and fell back to
+accept-all (\esm{esm:x18}). In this scenario, therefore, the guards and the objective, rather than the map, limited the
+benefit of safe decisions.

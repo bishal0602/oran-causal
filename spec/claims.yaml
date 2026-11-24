@@ -661,6 +661,56 @@ claims:
     tests: {min: 1, tier: t0}
     posthoc: true
 
+  - id: EMP-X17
+    kind: empirical
+    statement: "Under the closed-window centre the referee makes the same decisions as under the original centre, with and without the gate; run in one session on the 8 confirmation seeds, the referee without the gate gave bit-identical episodes under the two centres on all 8, and both differed from the stored records by at most one violated UE-second per seed."
+    paper: [sec:slope, esm:repro]
+    spec: spec:asm.centre
+    depends_on: [DEF-SLOPE, DEF-GATE, DEF-REF-RULES]
+    code: [oran_causal.analysis.posthoc.x17:control]
+    tests: {min: 0, tier: t0}
+    posthoc: true
+    evidence:
+      - record: posthoc_x17/x17_centre.json
+        sha256: bba6b41d3b235ea33aec7219cf639739c91ac6ca9b4362790eb7b1b3e20aab76
+        pointer: /check
+        expect: {ok: true, map_beta_reproduces: true, bounds_reproduce: true, uncertified_reproduces: true}
+      - record: posthoc_x17/x17_control.json
+        sha256: b38a3f5661317637a424645dea7095e501f1acb5e636162e06081e08f73a48c0
+        pointer: /per_seed/187002
+        expect: {bit_identical: true, drift_strict: {max_abs_diff: 1.0}, drift_frozen: {max_abs_diff: 1.0}}
+      - record: posthoc_x17/x17_control.json
+        sha256: b38a3f5661317637a424645dea7095e501f1acb5e636162e06081e08f73a48c0
+        pointer: /per_seed/191100
+        expect: {bit_identical: true, drift_strict: {max_abs_diff: 1.0}, drift_frozen: {max_abs_diff: 1.0}}
+
+  - id: EMP-X18
+    kind: empirical
+    statement: "For guard limits of 1.05 to 1.30 and energy floors of 80 to 95 %, never-sleep remained the best eligible static rule and no gated referee, the oracle-map referee included, exceeded it; the PMRT map's certified classes were unchanged for gate budgets up to three times the original, so its gated referee made the decisions of never-sleep, except at half the original budget, where it also lost the sleep class and made the decisions of accept-all."
+    paper: [sec:disc_decision, esm:x18, fig:s_x18]
+    spec: spec:met.decision
+    depends_on: [DEF-GATE, DEF-MET-DEC]
+    code: [oran_causal.analysis.posthoc.x18:run_eligibility]
+    tests: {min: 0, tier: t0}
+    posthoc: true
+    evidence:
+      - record: posthoc_x18/x18_eligibility.json
+        sha256: 6b24ddc657c7ce566e0142c6f26a3b176266303d20a652f0a0b3e0d0bd442192
+        pointer: /summary/first_L_gated_map_beats_best_static/0.900
+        expect: {status: none in grid}
+      - record: posthoc_x18/x18_eligibility.json
+        sha256: 6b24ddc657c7ce566e0142c6f26a3b176266303d20a652f0a0b3e0d0bd442192
+        pointer: /coupled/1.300|0.900|1.150/arms/CS:PMRT
+        expect: {eligible: true, beats: false, R: 0.256, dR: 0.0}
+      - record: posthoc_x18/x18_eligibility.json
+        sha256: 6b24ddc657c7ce566e0142c6f26a3b176266303d20a652f0a0b3e0d0bd442192
+        pointer: /coupled/1.050|0.900|1.025/arms/CS:PMRT
+        expect: {eligible: true, beats: false, R: 0.0}
+      - record: posthoc_x18/x18_eligibility.json
+        sha256: 6b24ddc657c7ce566e0142c6f26a3b176266303d20a652f0a0b3e0d0bd442192
+        pointer: /coupled/1.100|0.900|1.050/arms/CS:GT
+        expect: {eligible: true, beats: false, R: 0.221}
+
   - id: EMP-X19
     kind: empirical
     statement: "On one 2.20 GHz Xeon core, PMRT tested the 60 hypotheses on 600 episodes with 9 999 redraws in 67 CPU-seconds on the randomised and 51 on the confounded logs after a 369 CPU-second training fit; a referee decision took a median of 10 to 11 microseconds (99th percentile 36 to 37); the simulated scenario opened 41 to 44 units per cell-hour of 74 to 76 compressed bytes each, and the five KPIs PMRT reads took 20 bytes per cell-second."

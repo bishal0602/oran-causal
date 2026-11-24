@@ -211,8 +211,8 @@ with $\pi_u = 0.5$, which is the Horvitz--Thompson estimator of $\tau_{\pi}$ and
 (design-slope lemma, \claim{THM-SLOPE}\esm{esm:theory}). Under a state-dependent policy such as the incumbent, it converges to the
 $\pi_u(1 - \pi_u)$-weighted average of $\mathrm{sgn}_u \tau_u^{\pi}$. Because only closed windows enter it, the
 centre is fixed before $u$'s mode is drawn, as the lemma requires. The original decision runs used a centre that also
-admitted open windows; \esm{esm:decision} compares the two. \tbd{X17: state that the referee's decisions are unchanged
-under the closed-window centre, or report the re-run.}
+admitted open windows. Under both centres the referee makes the same decisions, with and without the gate, and in a
+shared numerical environment their episodes were bit-identical (\esm{esm:repro}).\claim{EMP-X17}
 
 A causal effect map $M$ gives each declared edge $(f, r, k)$ a signed coefficient $\beta(f, r, k)$. For PMRT it is the
 declaration's sign times the magnitude of the design slope; an associational map uses the method's sign times the

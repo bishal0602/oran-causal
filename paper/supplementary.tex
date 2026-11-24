@@ -665,7 +665,7 @@ Arm & Rej. & $R$ & [90\,\% CI] & Ret. & SVR & eMBB & LL & RLF & Elig. \\
 \par\smallskip
 {\raggedright\footnotesize
 $h\beta$, PMRT's estimated harm; UB90, its upper 90~\% bound; $\varepsilon$, the tolerance; $h\cdot$GT, the
-ground-truth harm; indet., indeterminate. The slopes and bounds use the closed-window outcome centre of Section~4.4. The original decision runs used a centre that also admitted earlier units whose windows were still open; relative to it, the closed-window centre changed the 22 map slopes by \val{x16.map.rel_min} to \val{x16.map.rel_max}~\% without changing any sign, moved the gate bounds by a median of \val{x16.gate.median_pct}~\% of their tolerance and changed no certification.\claim{EMP-X16} \tbd{X17: regenerate this table from the closed-window centre and state whether the referee without the gate makes the same decisions.}\par}
+ground-truth harm; indet., indeterminate. The slopes and bounds shown use the centre of the original decision runs, which also admitted earlier units whose windows were still open. The closed-window centre of Section~4.4 changed the 22 map slopes by \val{x16.map.rel_min} to \val{x16.map.rel_max}~\% without changing any sign, moved the gate bounds by a median of \val{x16.gate.median_pct}~\% of their tolerance and changed no certification;\claim{EMP-X16} the referee makes the same decisions with and without the gate under both centres (Section~\ref{esm:repro}).\par}
 \end{table}
 
 \begin{table}
@@ -696,6 +696,43 @@ Estimate without the five seeds of largest contribution & $+\val{x15.trim.s2}$ &
 \par\smallskip
 {\raggedright\footnotesize Permutation test of the per-seed violation rate between blocks: $p = \val{x15.p.noarb}$ under accept-all, $p = \val{x15.p.never_sleep}$ under never-sleep. Difference of the block means: \val{x15.block_diff} (permutation $p = \val{x15.perm_p}$).\par}
 \end{table}
+
+\subsection{Sensitivity to the safety constraints}
+\label{esm:x18}
+
+The decision study was repeated, on the seeds of the gated referees, with the guard limit varied from
+\val{x18.l.min} to \val{x18.l.max} and the energy floor from \val{x18.e.min} to \val{x18.e.max}~\%; the gate budget
+followed the guard limit as in Section~4.5, half of the margin above accept-all. Eligibility and the referees'
+certified classes were recomputed from the stored records and bounds, and the gated policies whose certified classes
+differed from every stored arm were simulated anew. Never-sleep remained the best eligible static rule throughout,
+and no gated referee exceeded it with a positive lower 90~\% bound (Figure~\ref{fig:s_x18}).\claim{EMP-X18} The PMRT map
+kept the same uncertified classes, carrier-down, protected-share-down and transmit-power-up, for every budget from the
+original to \val{x18.budget.factor} times it, so its gated referee made the decisions of never-sleep
+($R = \val{x18.r.ns}$). At half the original budget it lost the sleep class as well and made the decisions of
+accept-all. The oracle map's gated referee stayed at $R = \val{x18.r.gt}$ from the original limit upwards. The newly
+simulated policies ran in a newer numerical environment than the stored comparators, so their contrasts carry the
+difference of at most \val{x17.drift.max} violated UE-second per seed reported in Section~\ref{esm:repro}.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{figures/fig_appC_x18_guard.pdf}
+\caption{Recovery against guard limit, referees with the gate; energy floor 90~\%.}
+\label{fig:s_x18}
+\end{figure}
+
+\subsection{Reproduction across numerical environments}
+\label{esm:repro}
+
+The stored decision records were produced with earlier Python and NumPy releases than the code repository now pins,
+and threshold KPIs such as violated UE-seconds can turn last-bit differences between such environments into
+differences of a whole count. We therefore require bit-identical output only within one environment, exact agreement
+of declared edges, decision signatures and certified classes across environments, and statistical equivalence of
+simulated outcomes, as ensemble consistency tests do for climate models (Baker et al.\ 2015,
+doi:10.5194/gmd-8-2829-2015). The design slope and gate bounds under the closed-window centre give the referee the
+same decision signatures, with and without the gate, as under the original centre. Run in one session on the same
+\val{x17.ctl.seeds} seeds, the referee without the gate gave bit-identical episodes under the two centres on
+\val{x17.ctl.identical} of them, and both differed from the stored records by at most \val{x17.drift.max} violated
+UE-second per seed.\claim{EMP-X17}
 
 \FloatBarrier
 \section{Controlled environments}
