@@ -8,6 +8,7 @@ Rules for people and agents working in this workspace.
 | Python | 3.14. Dependency bounds live in the root `constraint-dependencies` |
 | Lint and types | `ruff` (lint and format) and `ty`; `uv run oran-causal check` must pass |
 | Imports | Absolute only (`oran_causal.<member>`); relative imports are banned |
+| Reproduction | Follow docs/REPRODUCIBILITY.md: bit-identical only within one environment; across environments use the D/N/S tiers; never mix environments in a paired comparison |
 | Not now | No Docker, devcontainer, GitHub Actions or release workflows |
 
 ## Layering

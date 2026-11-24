@@ -854,3 +854,39 @@ job. It changes only the reproduction criterion of two checks; no measurement, g
   everywhere; the X17 step-3 and X18 Part C reproductions of simulated per-seed records, which run on Kaggle, the
   platform of the stored records.
 - Both bit-exact outcomes are still computed and reported beside the amended ones.
+
+### 2026-11-24: Amendment A2, the reproduction standard and the X17 within-kernel control
+
+Declared by the user on 2026-11-24, after the X17 step-3 confirmation and the X18 merge, before any further X17 job.
+It adopts the repository's reproduction standard (`docs/REPRODUCIBILITY.md`) for every post hoc item from here on,
+and replaces the X17 step-3 test.
+
+**What was seen.**
+- X17 step 3 (Kaggle kernel x17-confirm-1, commit 54408a1): MG:PMRT with the strict map on the 8 confirmation
+  seeds. 6 seeds equal the stored records exactly; seeds 187002 and 191100 differ by one violated UE-second
+  (embb_viol, nonprot_embb_viol and viol_ue_s by 1, svr by 0.02). policy_counts are equal on all 8.
+- The stored Study 2/3 decision records were made with Python 3.12.13, numpy 2.4.2 and glibc 2.35 (legacy driver);
+  every re-run uses the repo lock (Python 3.14.9, numpy 2.5.4) on glibc 2.39. Step 3 therefore compares two
+  numerical environments and cannot separate the effect of the centre from environment drift.
+- X18 Part C: its CS:PMRT reproduction on 191100-191103 equalled the stored records exactly; its new policies are
+  compared with stored comparators of the older environment.
+
+**Standard.** Tiers E (same environment: bit-identical), D (structural outputs, any environment: exact), N
+(non-simulated numbers across environments: relative 1e-9, amendment A1) and S (simulated outputs across
+environments: equivalence of reported metrics, margin declared in advance). Paired comparisons never mix
+environments without reporting the S-tier bound beside the contrast. Same-environment tests run in one session.
+
+**X17 step 3, replaced (control stage).** One Kaggle kernel runs MG:PMRT on the 8 confirmation seeds twice, with the
+strict map and with the frozen map (`x17-run launch --stage control`); `x17 control` compares them.
+- E tier: per seed, the two records must be equal in every field except timing and the X17 tags.
+- S tier, reported only: each record's numeric drift from the stored frozen record of its seed.
+
+**Reading rule (stated in advance).**
+- All 8 seeds bit-identical: the strict centre changes no MG:PMRT outcome in a shared environment, so the step-2
+  reading stands (every MG:PMRT and CS:PMRT decision number unchanged; no step 4). The step-3 differences are
+  reported as environment drift.
+- Any seed differs: the strict centre changes outcomes. Step 4 is then proposed with every comparator re-run in the
+  same environment, and its cost is put to the user before any launch.
+
+**X18.** Its contrasts are reported with the S-tier bound from the X17 control and step-3 drift beside them. A
+single-environment re-baseline of the Study 2/3 decision arms is an open decision for the team.
