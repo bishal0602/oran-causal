@@ -39,7 +39,7 @@ exempt:
     reason: upper bound of a valid rate in the validity rule of the controlled environments (protocol constant)
   - file: sections/s06_discovery.tex
     literal: "0.05"
-    count: 2
+    count: 1
     reason: nominal level, FDR level q or guard-pressure constant of the method
   - file: sections/s06_discovery.tex
     literal: "1.10"
