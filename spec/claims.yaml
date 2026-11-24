@@ -244,8 +244,8 @@ claims:
 
   - id: ASM-SLOPE-CENTRE
     kind: assumption
-    statement: "The design slope and the gate bounds rest on an approximately predictable outcome centre; the implemented centre also uses earlier outcomes whose windows are still open."
-    paper: [sec:slope, sec:disc_limits, tab:s_gate]
+    statement: "The design slope and the gate bounds use a predictable outcome centre: an earlier unit enters it only once its 90 s outcome window has closed, so the centre is fixed before the unit's mode is drawn."
+    paper: [sec:slope, tab:s_gate]
     spec: spec:asm.centre
     probes: [EMP-X16]
     tests: {min: 1, tier: unit}
@@ -654,7 +654,7 @@ claims:
   - id: EMP-X16
     kind: empirical
     statement: "With a strictly predictable centre all 22 map slopes kept their sign, with relative changes of -2.9 to +6.5 %, the gate bounds moved by a median of 3.5 % of their tolerance and no class changed certification."
-    paper: [sec:disc_limits, tab:s_gate]
+    paper: [tab:s_gate]
     spec: spec:asm.centre
     depends_on: [DEF-SLOPE, DEF-GATE]
     code: [oran_causal.analysis.posthoc.x16:analyse]

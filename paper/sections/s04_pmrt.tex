@@ -4,7 +4,8 @@
 The framework has three components. The referee randomises its accept-or-reject decisions and
 logs their propensities, which turns the controller's logs into an experiment with a known design. The predictable
 matched-filter randomisation test (PMRT) uses this design to test each hypothesis of Section~\ref{sec:estimand} and
-returns a signed causal effect map with asymptotic control of the FDR. A map-driven referee then uses the map to
+returns a signed causal effect map whose edge declarations, though not their signs, have asymptotic control of the
+FDR. A map-driven referee then uses the map to
 reject harmful requests, and an edge-certification gate restricts it to rejections whose side effects on the guard
 KPIs are certified small.
 
@@ -101,6 +102,13 @@ analyst must build each weight from information available when the unit opened, 
 log must contain enough units that none dominates $S$. In the simulator the last condition holds when clipping keeps
 the weights bounded and $\sigma^2/n$ approaches a positive limit.
 
+The centring of the weight meets (A3) although it uses earlier units' scores whose outcome windows may still be open
+when $u$ draws its mode. Each earlier score depends only on the KPI series under test, on that unit's pre-window and
+context, and on parts fitted on training episodes. Under $H_0(f, r, k)$ the KPI series under test is the same for every
+assignment of $f$'s modes, and the existence, pre-window, context and mode of each earlier unit are
+$\mathcal{G}_{u-1}$-measurable by (A1), so the centred weight is $\mathcal{G}_{u-1}$-measurable. Under an alternative,
+the centre may absorb part of the effect of $u$'s mode, which can reduce power but does not affect the level.
+
 \begin{proposition}[Asymptotic validity of PMRT]
 \label{prop:pmrt}\claim{ASM-ORIENT}\claim{THM-PMRT-ASY}
 Assume (A1) to (A3). Then $S = \sum_u v_u w_u$ is a martingale with respect to $(\mathcal{G}_u)$, and its predictable
@@ -159,8 +167,31 @@ A declared edge states that the modes of family $f$ change KPI $k$ somewhere in 
 and the FDR bound covers that claim asymptotically. It does not cover the reported sign, effect magnitude or unique
 spatial attribution: a unit's neighbour and far cells are the own cells of other units of $f$, so an effect of $f$ on
 its own cells also moves the KPI of their neighbour and far cells, and the far hypotheses are no negative control
-(\esm{tab:s_attr}). Table~\ref{tab:terms} summarises these distinctions. The gate similarly screens undeclared guard
-edges but does not certify the resulting policy, whose constraints are evaluated on held-out seeds.
+(\esm{tab:s_attr}). The gate similarly screens undeclared guard edges but does not certify the resulting policy,
+whose constraints are evaluated on held-out seeds. Table~\ref{tab:guarantees} separates what each output of the
+framework is formally guaranteed to satisfy from what the experiments support only empirically.
+
+\begin{table}[tbp]
+\caption{Formal guarantees and empirical evidence by type of claim.}
+\label{tab:guarantees}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}>{\raggedright}p{0.19\textwidth}>{\raggedright}p{0.4\textwidth}>{\raggedright\arraybackslash}p{0.35\textwidth}@{}}
+\toprule
+Claim & Formal guarantee & Empirical evidence \\
+\midrule
+Edge declaration & Asymptotic FDR control at level $q$ over true sharp nulls (Corollary~\ref{cor:fdr}) & No declaration
+on placebo logs or null outcomes \\
+Effect sign & None; a declared edge with the wrong sign is not a false discovery & No wrong-sign declaration against the
+knockout ground truth \\
+Magnitude and relation & None for error rates; the design slope is consistent for $\tau_{\pi}$ under uniform
+randomisation & Agreement with the knockout ground truth \\
+Gate certification & Per-edge first-order budget from a one-sided 90~\% bound, not a bound on the policy & Gate
+diagnosis against the ground truth \\
+Decision-level safety & None & Guard and energy constraints measured on held-out seeds \\
+\bottomrule
+\end{tabular*}
+\end{table}
 
 \subsection{Map-driven referee}
 \label{sec:slope}\claim{ASM-SLOPE-CENTRE}
@@ -168,7 +199,8 @@ edges but does not certify the resulting policy, whose constraints are evaluated
 
 The referee needs the size of each effect, not only its sign, and takes it from the design slope $\hat\beta$, which
 regresses each unit's centred outcome on its assignment score. Let $e_u = y_u - \tilde y_u$ be the outcome minus an
-outcome centre $\tilde y_u$ computed from earlier units' outcomes and $u$'s pre-window. Under the uniform-randomised policy,
+outcome centre $\tilde y_u$ computed from $u$'s pre-window and from the outcomes of earlier units whose 90~s outcome
+windows closed before $u$ opened. Under the uniform-randomised policy,
 \begin{equation}
 \hat\beta = \frac{\sum_u v_u e_u}{\sum_u v_u^2}
           = \frac{1}{N} \sum_u \mathrm{sgn}_u \Bigl( \frac{\mathbf{1}\{W_u = \text{accept}\}\, e_u}{\pi_u}
@@ -177,8 +209,10 @@ outcome centre $\tilde y_u$ computed from earlier units' outcomes and $u$'s pre-
 \end{equation}
 with $\pi_u = 0.5$, which is the Horvitz--Thompson estimator of $\tau_{\pi}$ and converges to it
 (design-slope lemma, \claim{THM-SLOPE}\esm{esm:theory}). Under a state-dependent policy such as the incumbent, it converges to the
-$\pi_u(1 - \pi_u)$-weighted average of $\mathrm{sgn}_u \tau_u^{\pi}$. The lemma assumes an outcome centre fixed before
-$u$'s mode is drawn, which the implemented centre meets only approximately (Section~\ref{sec:disc_limits}).
+$\pi_u(1 - \pi_u)$-weighted average of $\mathrm{sgn}_u \tau_u^{\pi}$. Because only closed windows enter it, the
+centre is fixed before $u$'s mode is drawn, as the lemma requires. The original decision runs used a centre that also
+admitted open windows; \esm{esm:decision} compares the two. \tbd{X17: state that the referee's decisions are unchanged
+under the closed-window centre, or report the re-run.}
 
 A causal effect map $M$ gives each declared edge $(f, r, k)$ a signed coefficient $\beta(f, r, k)$. For PMRT it is the
 declaration's sign times the magnitude of the design slope; an associational map uses the method's sign times the

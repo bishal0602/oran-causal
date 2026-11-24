@@ -1,8 +1,8 @@
 \section{Discussion}
 \label{sec:discussion}
 
-The results support two findings of different strength. The validity of a test that uses the logged design follows from
-its construction and was confirmed on placebo logs, on null outcomes and in controlled environments with known causal
+The results support two findings of different strength. The asymptotic validity of a test that uses the logged design
+follows from its construction and was supported on placebo logs, on null outcomes and in controlled environments with known causal
 graphs. The finding that a valid map did not improve safe conflict mitigation, in contrast, rests on a single simulated
 scenario and a single referee rule.
 
@@ -12,13 +12,21 @@ scenario and a single referee rule.
 The validity of the test derives from the logged design rather than from a model of the network, which makes it the
 property most likely to transfer to other networks. The randomisation distribution is generated from the logged
 propensities alone, whether uniform or state-dependent, so the guarantee holds for any statistic, weighting or prior
-direction fixed before each unit draws its mode. The controlled environments confirm that this guarantee belongs to the
+direction that is fixed, apart from the KPI under test, before each unit draws its mode. The controlled environments confirm that this guarantee belongs to the
 design rather than to PMRT, since partial correlation adjusted for the design variables also retained its nominal rate
 under a logged state-dependent policy.
 
 Statistical power, in contrast, depends on the choice of statistic. Design-adjusted partial correlation had higher recall in the
 latent-confounding environment, whereas PMRT had higher recall on the uniform-randomised simulator logs. PMRT's
 matched filter and weights therefore concern power rather than the source of validity.
+
+Sample size and logging policy act on these two properties differently. On the smallest subsamples of the
+uniform-randomised logs, PMRT matched Granger~+~BY in neighbour-relation F1 on only some subsamples
+(\esm{fig:s_subsamples}), whereas its null checks held at that size (Section~\ref{sec:disc_deploy}), so small logs cost
+power rather than validity. The logging policy decides validity for tests that ignore it: varying the dither width and
+the number of setpoints left correlation invalid and both PMRT variants valid (\esm{tab:s_dose}), the PMRT variants failed when
+the recorded design was misstated (Section~\ref{sec:disc_deploy}), and on the simulator its maps agreed with the ground
+truth under uniform-randomised and state-dependent logging alike (Table~\ref{tab:maps}).
 
 \subsection{Implications for conflict mitigation}
 \label{sec:disc_mitigation}
@@ -27,7 +35,32 @@ In the evaluated scenario, mitigation was limited by the guard constraints and o
 the gate, the PMRT referee made the same decisions as the never-sleep rule, and the oracle map performed no better.
 Further improvements in discovery would therefore not have increased the benefit of safe mitigation here. Conversely,
 the ungated result shows that one missed edge was sufficient for the referee to breach a guard limit. A map should therefore not drive
-mitigation without a step that certifies the effect of each decision on every guard KPI.
+mitigation without a step that bounds the effect of each rejection class on every guard KPI, and the resulting policy
+still has to be checked against its guards, which no per-edge certificate guarantees.
+
+\subsection{Integration in the near-RT RIC}
+\label{sec:disc_integration}
+
+The framework separates a light component on the control path from analyses outside it. The referee belongs to the
+near-RT RIC's conflict-mitigation function, which detects and resolves overlapping or conflicting requests from
+xApps~\cite{ORANRICARCH}. At each unit opening it looks up the map and the certified classes, draws the mode from the
+propensity and holds it for $t_{\mathrm{hold}}$; later requests of the unit only inherit the mode. This adds one lookup
+and one draw per unit to a control loop that the RIC APIs must support at execution times of 10~ms to
+1~s~\cite{ORANRICARCH}. \tbd{X19: per-decision latency of the referee, median and 99th percentile.}
+
+The function must record, for every unit, its key (cell, xApp and opening time), the request direction, the drawn mode,
+the propensity used for the draw and the context of the opening request, next to the per-cell KPI series that the RIC
+already collects. The shared data layer of the near-RT RIC provides the platform and authorised xApps with such read and
+write access, and the platform reports files, traces and metrics to the service management and orchestration (SMO)
+framework over O1~\cite{ORANRICARCH}. \tbd{X19: decision units per cell-hour, bytes per unit record and KPI volume per
+cell-second in the simulated scenario.}
+
+PMRT, the design slopes and the gate certification run offline on logs gathered over hours, for example in the SMO or
+the non-real-time RIC. \tbd{X19: CPU time of PMRT for the 60 hypotheses at 600 episodes and 9\,999 redraws.} The
+resulting map is the kind of dependency information, couplings between RAN parameters, resources and KPIs, that the
+O-RAN conflict-mitigation study proposes to supply to the conflict-mitigation function, for example over
+O1~\cite{ORANConflictMit}. That report studies the exchange without specifying a procedure, and the simulator models
+the referee, its log and the map update directly rather than through these interfaces.
 
 \subsection{Deployment requirements}
 \label{sec:disc_deploy}\claim{EMP-X3}\claim{EMP-S1-STRICT}\claim{EMP-X4}
@@ -53,7 +86,7 @@ affects no KPI. Any edge declared from that column disqualifies the pipeline's d
 the check is not sufficient; positive causal evidence still requires validity derived from the logging design.
 
 \subsection{Limitations}
-\label{sec:disc_limits}\claim{EMP-X15}\claim{EMP-X16}
+\label{sec:disc_limits}\claim{EMP-X15}
 
 The simulator results come from one scenario, one incumbent policy and one referee rule, and none involves a real RIC,
 a testbed or a compliance claim. The controlled environments model no deployed RAN, and no method evaluated in them
@@ -64,9 +97,6 @@ only. Results from one block of seeds also carry seed-level heterogeneity larger
 
 PMRT is asymptotic rather than exact, even on placebo logs. Its FDR guarantee concerns sharp-null declarations, not
 signs, relation attribution or knockout materiality labels. The ground truth
-targets $\tau_{\mathrm{AA}}$ rather than $\tau_{\pi}$, and its labels depend on $\delta_k$. The design slope and gate
-bounds use an approximately predictable outcome centre; replacing it with a strictly predictable centre changed the
-map slopes by \val{x16.map.rel_min} to \val{x16.map.rel_max}~\% without changing any sign, moved the bounds by a
-median \val{x16.gate.median_pct}~\% of their tolerance and altered no certification (\esm{esm:decision}). No guard
+targets $\tau_{\mathrm{AA}}$ rather than $\tau_{\pi}$, and its labels depend on $\delta_k$. No guard
 covers the protected slice, and the associational maps use independent-error bounds that may be too narrow for
 dependent KPI series by an amount not quantified here.

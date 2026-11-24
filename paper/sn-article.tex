@@ -83,7 +83,7 @@ In one simulated scenario, PMRT declared nothing on placebo logs and no wrong-si
 simulated ground truth of \val{s1.map.pmrt.prec} on uniform-randomised and \val{s2.map.pmrt.prec} on state-dependent logs. A
 referee acting on the map alone breached a radio-link-failure guard. Behind an edge-certification gate, the referee
 met every guard and matched the best static rule, which never lets a pico cell sleep, and even the ground-truth map
-did no better. Randomised logging thus supports valid discovery, and the decision study locates the remaining limit
+did no better. Randomised logging thus supports asymptotically valid discovery, and the decision study locates the remaining limit
 of safe mitigation in the guards rather than in the map.}
 
 \keywords{O-RAN, xApp conflict mitigation, causal discovery, randomisation inference, design-based inference, near-RT RIC}
@@ -129,7 +129,7 @@ Not applicable.
 
 \bmhead{Data and code availability}
 
-The code is available at \url{https://github.com/bishal0602/oran-causal}. The simulation records are available from the corresponding author on request.
+The code is available at \url{https://github.com/bishal0602/oran-causal}, together with the frozen experiment protocols, simulator configurations, seed registry and the specification from which every reported value is generated. The simulation records are available from the corresponding author on request.
 
 \bmhead{Use of generative AI}
 
@@ -139,8 +139,8 @@ Generative AI tools (Anthropic Claude and OpenAI GPT-6 Astra) were used to assis
 
 All authors contributed to the study conception and design. B.P., A. Dhakal and A. Dahal
 developed the methods, conducted the experiments and analysed the results. B.R.D. supervised
-the study and provided guidance on the methodology. All authors reviewed and approved the
-final manuscript.
+the study and provided guidance on the methodology. G.P. reviewed the methodology and the manuscript
+\tbd{confirm with G.P.}. All authors reviewed and approved the final manuscript.
 
 \clearpage
 
