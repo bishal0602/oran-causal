@@ -141,6 +141,42 @@ def test_run_shards_and_header(tmp_path, monkeypatch):
     assert x17.run(Part(0, 2), out, "confirm", tmp_path / "m.json", "a" * 64) == 0
 
 
+def test_kaggle_session_pins_the_artifact_and_runs_its_shards_in_parallel():
+    code = {"commit": "abc", "dirty": False}
+    cmd = x17.session_command("$JOB_OUT", code, "full", "a" * 64, Part(1, 2), procs=4)
+    parts = [f"--part {s}/8 --out $JOB_OUT/res_{s}.jsonl" for s in range(4, 8)]
+    assert all(p in cmd for p in parts)
+    assert "--part 3/8" not in cmd
+    pinned = f"x17-run run --maps {x17.MAPS_REL} --maps-sha256 {'a' * 64} --stage full"
+    assert cmd.count(pinned) == 4
+    assert cmd.endswith("wait")
+    job = x17.kaggle_job("x17-confirm-1", code, "confirm", "a" * 64, Part())
+    assert tuple(job.extra) == (x17.MAPS_REL,)
+    assert not job.sources
+    assert job.cmd.count("--stage confirm --part") == x17.PROCS
+
+
+def test_confirm_stage_runs_in_one_kernel():
+    code = {"commit": "abc", "dirty": False}
+    with pytest.raises(ValueError, match="one kernel"):
+        x17.kaggle_job("x17-confirm-1", code, "confirm", "a" * 64, Part(0, 2))
+    with pytest.raises(ValueError, match="stage"):
+        x17.kaggle_job("x17-confirm-1", code, "eval", "a" * 64, Part())
+
+
+def test_launch_dry_run_checks_the_pin(tmp_path, monkeypatch, capsys):
+    frozen = _frozen()
+    path = tmp_path / x17.MAPS_STRICT
+    good = x17.strict_maps_artifact(frozen, _pmrt(frozen), study2.MAPS.want, "e")
+    sha = artifacts.write_artifact(good, path)
+    monkeypatch.setattr(x17, "code_info", lambda: {"commit": "abc", "dirty": False})
+    argv = ["launch", "--name", "x17-confirm-1", "--maps", str(path), "--stage", "confirm"]
+    assert x17.main_run([*argv, "--maps-sha256", sha, "--dry-run"]) == 0
+    assert f"--maps-sha256 {sha}" in capsys.readouterr().out
+    with pytest.raises(ValueError, match="pinned"):
+        x17.main_run([*argv, "--maps-sha256", "1" * 64, "--dry-run"])
+
+
 def test_run_refuses_short_without_smoke_and_non_linux(tmp_path, monkeypatch):
     with pytest.raises(ValueError, match="smoke-only"):
         x17.run(Part(), tmp_path / "r.jsonl", "confirm", Path("m"), "a", short=5.0)
