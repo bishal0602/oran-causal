@@ -33,7 +33,7 @@ LAUNCH_COMMANDS = ("launch", "colab", "kaggle", "vps", "dispatch", "fingerprint"
 DELEGATES: dict[str, str] = {
     "campaign": "Study 4 campaign runner: list, run, merge",
     "bridging": "bridging analysis (Appendix B): prep, counts, list, run, merge, table, costs",
-    "posthoc": "post hoc analyses and drivers X1-X16",
+    "posthoc": "post hoc analyses and drivers X1-X19",
     "launch": "plan and start a session on Kaggle, Colab or the VPS",
     "colab": "Colab session commands",
     "kaggle": "Kaggle kernel commands",
