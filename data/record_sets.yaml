@@ -69,6 +69,11 @@ sets:
     manifest: manifests/posthoc_x9_x16.sha256
     files: 21
     bytes: 1890462
+  - name: posthoc_x19
+    description: "X19 compute and logging cost: Kaggle timing runs and summary"
+    manifest: manifests/posthoc_x19.sha256
+    files: 36
+    bytes: 1061147
   - name: system_artifacts
     description: "System-simulator decision outputs and figures_data.json"
     manifest: manifests/system_artifacts.sha256

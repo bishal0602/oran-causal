@@ -19,6 +19,7 @@ EXPECTED_IDS = [
     "study3",
     "study4",
     "x1",
+    "x19",
     "x2_x3",
     "x4",
     "x5_x6",

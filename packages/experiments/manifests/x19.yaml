@@ -1,0 +1,65 @@
+id: x19
+platform: kaggle
+claims:
+- EMP-X19
+- PRO-POSTHOC
+protocol:
+  path: posthoc/PROTOCOL.md
+  sha256: c974013bab6ea891c10bcff284b70c2e84a312bb671cea223a3e6961cb406f4f
+seeds: []
+stages:
+- name: timing
+  driver: oran_causal.experiments.posthoc.x19:main
+  args:
+    repetitions: 3
+    B: 9999
+  inputs:
+  - artifacts/study1_pmrt.json
+  - artifacts/study2_maps.json
+  - artifacts/study3_certsafe.json
+  - study1_raw/e6p-disc-v4an-pmrt-1
+  - study1_raw/e6p-disc-v4ev-1-a
+  - study2_raw/e6p-conf-discan-2
+  - study2_raw/e6p-conf-disc-1-a
+  - study1_train/disc-bench-1
+  outputs:
+  - posthoc_x19/runs/x19-cost-2/out
+  cost:
+    cpu_h: 0.45
+    basis: M
+- name: summary
+  driver: oran_causal.analysis.posthoc.x19:summarise
+  inputs:
+  - posthoc_x19/runs/x19-cost-2/out
+  outputs:
+  - posthoc_x19/x19_cost.json
+  - posthoc_x19/x19_cost.md
+  cost:
+    cpu_h: 0.0
+    basis: M
+frozen_inputs:
+- path: artifacts/study1_pmrt.json
+  sha256: 6f8e543145ad0e76afca653b17c4ea13b010c70d6b3134b109cd45fa0bcc99eb
+- path: artifacts/study2_maps.json
+  sha256: c3c69db6601da7d8773d6c6f7a359007e419f4f8776898cf2e7d251a8c1e84a1
+- path: artifacts/study3_certsafe.json
+  sha256: 935c00030e325b186b6bae584ea66906487b4fb7e045253093e86d86d9b3cc36
+records:
+- set: posthoc_x19
+  manifest: manifests/posthoc_x19.sha256
+- set: study1_raw
+  manifest: manifests/study1_raw.sha256
+- set: study2_raw
+  manifest: manifests/study2_raw.sha256
+- set: study1_train
+  manifest: manifests/study1_train.sha256
+tiers:
+  t0: null
+  t1: null
+  t2: null
+  t3: null
+equivalence:
+- metric: discovery reproduction
+  rule: hypothesis table within relative tolerance 1e-9 and declarations equal (amendment A1)
+- metric: post hoc status
+  rule: descriptive; changes no verdict (PRO-POSTHOC)
