@@ -183,3 +183,18 @@ def test_run_refuses_short_without_smoke_and_non_linux(tmp_path, monkeypatch):
     monkeypatch.setattr(sys, "platform", "win32")
     with pytest.raises(RuntimeError, match="Linux"):
         x17.run(Part(), tmp_path / "r.jsonl", "confirm", Path("m"), "a")
+
+
+def test_control_stage_runs_both_centres_per_seed_in_one_kernel():
+    assert x17.seeds_of("control") == list(ax17.CONFIRM_SEEDS)
+    js = x17.jobs("control", {"maps": "strict"}, frozen={"maps": "frozen"})
+    assert len(js) == 2 * len(ax17.CONFIRM_SEEDS)
+    assert {j.key[2] for j in js} == {"strict", "frozen"}
+    assert len({j.key for j in js}) == len(js)
+    with pytest.raises(ValueError, match="frozen"):
+        x17.jobs("control", {"maps": "strict"})
+    code = {"commit": "abc", "dirty": False}
+    with pytest.raises(ValueError, match="one kernel"):
+        x17.kaggle_job("x17-control-1", code, "control", "a" * 64, Part(0, 2))
+    job = x17.kaggle_job("x17-control-1", code, "control", "a" * 64, Part())
+    assert "--stage control" in job.cmd

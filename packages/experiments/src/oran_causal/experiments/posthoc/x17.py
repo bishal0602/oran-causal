@@ -39,7 +39,7 @@ from pathlib import Path
 from typing import Any
 
 from oran_causal.analysis.posthoc import x17 as ax17
-from oran_causal.experiments.campaign.host import PLATFORM_ENV
+from oran_causal.experiments.campaign.host import PLATFORM_ENV, host_info
 from oran_causal.experiments.campaign.provenance import COMMIT_ENV, DIRTY_ENV, LOCK_ENV, code_info
 from oran_causal.experiments.launch import kaggle
 from oran_causal.experiments.launch.commands import LOCK_REL, THREADS, SetupPlan, setup_cmd
@@ -59,7 +59,8 @@ from oran_causal.methods.system import referees as rf
 
 MAPS_STRICT = "study2_maps_strict.json"
 MAPS_REL = f"data/records/posthoc_x17/{MAPS_STRICT}"
-STAGES = ("confirm", "full")
+STAGES = ("confirm", "full", "control")
+CENTRES = ("strict", "frozen")
 PROCS = 4
 WORK_DIR = Path(tempfile.gettempdir()) / "oran-causal-launch"
 
@@ -147,7 +148,7 @@ def seeds_of(stage: str) -> list[int]:
     Raises:
         ValueError: Unknown stage.
     """
-    if stage == "confirm":
+    if stage in ("confirm", "control"):
         return list(ax17.CONFIRM_SEEDS)
     if stage == "full":
         return [*study2.stage_seeds("eval"), *study3.stage_seeds("eval")]
@@ -168,8 +169,9 @@ def job(
     *,
     smoke: bool = False,
     short: float | None = None,
+    centre: str = "strict",
 ) -> Record:
-    """One MG:PMRT episode with the strict map, in the frozen EVAL record layout."""
+    """One MG:PMRT episode with the map of `centre`, in the frozen EVAL record layout."""
     check_seed(seed)
 
     def arbiter(a: str, sd: int, w: float) -> Any:
@@ -185,7 +187,7 @@ def job(
         sub=ax17.SUB,
         x17_stage=stage,
         x17_block=ax17.block_of(seed),
-        x17_centre="strict",
+        x17_centre=centre,
     )
 
 
@@ -196,8 +198,29 @@ def jobs(
     *,
     smoke: bool = False,
     short: float | None = None,
+    frozen: Mapping[str, Any] | None = None,
 ) -> list[Job]:
-    """The resumable jobs of a stage in seed order."""
+    """The resumable jobs of a stage in seed order.
+
+    The control stage (amendment A2) runs every seed with the strict and the `frozen` map, so
+    both centres share one session's numerical environment.
+
+    Raises:
+        ValueError: The control stage without the frozen maps.
+    """
+    if stage == "control":
+        if frozen is None:
+            raise ValueError("the control stage needs the frozen maps")
+        by = {"strict": maps, "frozen": frozen}
+        return [
+            Job(
+                (s, ax17.ARM, c),
+                check_seed(s),
+                lambda s=s, c=c: job(s, stage, by[c], smoke=smoke, short=short, centre=c),
+            )
+            for s in (list(seeds) if seeds else seeds_of(stage))
+            for c in CENTRES
+        ]
     return [
         Job(
             (s, ax17.ARM),
@@ -230,6 +253,7 @@ def head(
         **{ax17.STAGE_KEY: stage},
         platform=numeric_env(),
         host=env.get(PLATFORM_ENV),
+        host_info=host_info(),
         code_commit=env.get(COMMIT_ENV),
         code_dirty=env.get(DIRTY_ENV),
         maps_strict={"path": str(maps_path), "sha256": maps_sha},
@@ -267,11 +291,12 @@ def run(
     if not smoke and not sys.platform.startswith("linux"):
         raise RuntimeError(f"X17 runs need Linux numerics; platform {sys.platform}")
     maps = load_strict(maps_path, maps_sha)
-    show = ("seed", "arm", "psvr", "rlf", "cpu_s")
+    frozen = study2.load_maps() if stage == "control" else None
+    show = ("seed", "arm", "x17_centre", "psvr", "rlf", "cpu_s")
     return run_jobs(
         out,
         head(part, stage, maps_path, maps_sha, smoke=smoke, short=short),
-        jobs(stage, maps, seeds, smoke=smoke, short=short),
+        jobs(stage, maps, seeds, smoke=smoke, short=short, frozen=frozen),
         part,
         smoke,
         show,
@@ -334,12 +359,12 @@ def kaggle_job(
     """The Kaggle session of one kernel; the strict artifact travels in the bundle.
 
     Raises:
-        ValueError: An unknown stage, or the confirm stage over more than one kernel.
+        ValueError: An unknown stage, or the confirm or control stage over more than one kernel.
     """
     if stage not in STAGES:
         raise ValueError(f"stage in {STAGES}")
-    if stage == "confirm" and kernel.count != 1:
-        raise ValueError("the confirm stage runs in one kernel")
+    if stage in ("confirm", "control") and kernel.count != 1:
+        raise ValueError(f"the {stage} stage runs in one kernel")
     cmd = session_command("$JOB_OUT", code, stage, maps_sha, kernel, procs, maps)
     return kaggle.KaggleJob(name, cmd, (maps,))
 

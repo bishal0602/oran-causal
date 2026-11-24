@@ -120,3 +120,25 @@ def test_slope_uses_the_window(monkeypatch):
     x17.slope(ud, ("sleep", "own", "pv"), WINDOW_S, np.ones(2))
     x17.slope(ud, ("sleep", "own", "pv"), FROZEN_WINDOW_S, np.ones(2))
     assert calls == [(6, WINDOW_S), (6, FROZEN_WINDOW_S)]
+
+
+def test_control_needs_bit_identical_centres_and_reports_drift(tmp_path):
+    seeds = x17.CONFIRM_SEEDS
+    head = {"kind": "header", "schema": SCHEMA_EVAL, "sub": x17.SUB, x17.STAGE_KEY: "control"}
+    recs = [
+        _job(s, **{x17.STAGE_KEY: "control", "x17_centre": c, "cpu_s": 1.0 + i})
+        for s in seeds
+        for i, c in enumerate(("strict", "frozen"))
+    ]
+    runs = _write(tmp_path / "c.jsonl", [head, *recs])
+    res = x17.control([runs], _stored(seeds, rlf=4))
+    assert res["complete"]
+    assert res["identical"]
+    assert res["per_seed"][187002]["drift_strict"]["max_abs_diff"] == 1.0
+    recs[1]["rlf"] = 5
+    res = x17.control([_write(tmp_path / "d.jsonl", [head, *recs])], _stored(seeds))
+    assert not res["identical"]
+    assert res["per_seed"][seeds[0]]["differing_fields"] == ["rlf"]
+    res = x17.control([_write(tmp_path / "e.jsonl", recs[2:])], _stored(seeds))
+    assert not res["complete"]
+    assert res["per_seed"][seeds[0]] == {"missing": ["frozen", "strict"]}

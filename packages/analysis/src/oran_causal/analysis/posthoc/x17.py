@@ -355,6 +355,66 @@ def confirm(
     }
 
 
+def _outcome(r: Mapping[str, Any]) -> dict[str, Any]:
+    return {k: v for k, v in r.items() if k not in TIMING_FIELDS and not k.startswith("x17_")}
+
+
+def control(
+    run_files: Sequence[Path],
+    stored: Mapping[str, stats.Records],
+    seeds: Sequence[int] = CONFIRM_SEEDS,
+) -> dict[str, Any]:
+    """Amendment A2: the strict and the frozen map on the same seeds in one session.
+
+    E tier: per seed, the two records must be equal in every field but timing and the X17 tags.
+    S tier: each record's numeric drift from the stored frozen record of its seed is reported.
+
+    Args:
+        run_files: The run files of the X17 control stage.
+        stored: `stored_blocks()`.
+        seeds: The confirmation seeds.
+
+    Returns:
+        Per seed the E-tier result and both drifts; `identical` when every seed is bit-identical.
+    """
+    filt = job_filter("control")
+    got: dict[int, dict[str, Mapping[str, Any]]] = {}
+    heads: list[Mapping[str, Any]] = []
+    for path in run_files:
+        for r in stats._read_jsonl(Path(path)):
+            if filt.header(r):
+                heads.append(r)
+            if filt.job(r):
+                got.setdefault(int(r["seed"]), {})[str(r["x17_centre"])] = r
+    rows: dict[int, dict[str, Any]] = {}
+    for s in seeds:
+        pair = got.get(s, {})
+        ref = stored[block_of(s)].get(s, {}).get(ARM)
+        if set(pair) != {"strict", "frozen"}:
+            rows[s] = {"missing": sorted({"strict", "frozen"} - set(pair))}
+            continue
+        a, b = _outcome(pair["strict"]), _outcome(pair["frozen"])
+        rows[s] = {
+            "bit_identical": a == b,
+            "differing_fields": sorted(k for k in set(a) | set(b) if a.get(k) != b.get(k)),
+            "drift_strict": None if ref is None else _diff(pair["strict"], ref),
+            "drift_frozen": None if ref is None else _diff(pair["frozen"], ref),
+        }
+    complete = all("missing" not in r for r in rows.values())
+    hosts = sorted({json.dumps(h.get("host_info"), sort_keys=True) for h in heads})
+    return {
+        "schema": "x17-control/1",
+        "protocol": PROTOCOL + ", amendment A2",
+        "seeds": list(seeds),
+        "per_seed": rows,
+        "complete": complete,
+        "identical": complete and all(r["bit_identical"] for r in rows.values()),
+        "one_environment": len(hosts) == 1,
+        "hosts": [json.loads(h) for h in hosts],
+        "headers": len(heads),
+    }
+
+
 def _summary(st: stats.GateA, arms: Sequence[str]) -> dict[str, Any]:
     P, B = st.point, st.boot
     return {
@@ -402,14 +462,14 @@ def rescore(
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Command line of steps 3 and 4: `confirm` or `rescore` the X17 run records.
+    """Command line of steps 3 and 4: `confirm`, `control` (amendment A2) or `rescore`.
 
     Steps 1 and 2 (`analyse`) also write the strict maps artifact, which needs the referee code:
     `python -m oran_causal.experiments.posthoc x17 analyse`.
     """
     ap = argparse.ArgumentParser(description=__doc__)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("confirm", "rescore"):
+    for name in ("confirm", "control", "rescore"):
         p = sub.add_parser(name)
         p.add_argument("--records", default=str(RECORDS))
         p.add_argument("--runs", nargs="+", required=True)
@@ -423,6 +483,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         res = confirm(runs, stored_blocks(Path(a.records)), x17["signatures"])
         write_text(Path(a.out) / "x17_confirm.json", json.dumps(res, indent=1, default=x16._js))
         print(json.dumps({"ok": res["ok"], "identical": res["identical"]}, indent=1))
+        return 0 if res["complete"] else 1
+    if a.cmd == "control":
+        res = control(runs, stored_blocks(Path(a.records)))
+        write_text(Path(a.out) / "x17_control.json", json.dumps(res, indent=1, default=x16._js))
+        keys = ("identical", "complete", "one_environment")
+        print(json.dumps({k: res[k] for k in keys}, indent=1))
         return 0 if res["complete"] else 1
     res = rescore(runs, Path(a.records))
     write_text(Path(a.out) / "x17_rescore.json", json.dumps(res, indent=1, default=x16._js))
