@@ -68,9 +68,9 @@ The orientation $o$ of the one-sided p-values is fixed before the evaluation dat
 \subsection{Predictable outcome centre}
 \label{spec:asm.centre}
 
-The design slope and the gate bounds (Sections~\ref{spec:ref.slope}, \ref{spec:gate}) are justified for a predictable, bounded centre $\hat m_u$ (Section~\ref{spec:thm.slope}). The implemented centre also uses earlier outcomes whose windows are still open at the opening of $u$, so it is predictable only approximately.\claim{ASM-SLOPE-CENTRE}
+The design slope and the gate bounds (Sections~\ref{spec:ref.slope}, \ref{spec:gate}) are justified for a predictable, bounded centre $\hat m_u$ (Section~\ref{spec:thm.slope}). The implemented centre admits an earlier unit $j$ only once $t_{0,j} + 90 \le t_{0,u}$, so it is fixed before $W_u$ is drawn. The original Study 2 and 3 runs used a centre that also admitted open windows.\claim{ASM-SLOPE-CENTRE}
 
-With a strictly predictable centre all 22 map slopes kept their sign, with relative changes of $-2.9$ to $+6.5$ \%, the gate bounds moved by a median of 3.5 \% of their tolerance and no class changed certification.\claim{EMP-X16}
+Against that original centre, under the closed-window centre all 22 map slopes kept their sign, with relative changes of $-2.9$ to $+6.5$ \%, the gate bounds moved by a median of 3.5 \% of their tolerance and no class changed certification.\claim{EMP-X16}
 
 \subsection{Gate bound coverage}
 \label{spec:asm.gatecov}

@@ -13,7 +13,7 @@ Let $e_u = y_u - \hat m_u$ with $\hat m_u$ the predictable outcome centre. For t
 With fewer than $2$ units or $\sum_u v_u^2 = 0$, $\hat\beta = 0$ and $\mathrm{se}$ is missing.
 \end{definition}
 
-\noindent The centre $\hat m_u$ is the running mean of the (episode, sign) stratum of earlier units, shrunk with $K = 20$ pseudo-units towards the pooled same-sign mean, plus the pooled within-stratum pre-opening slope $b$ times the pre-opening value. The first unit has $e_u = 0$. The centre uses earlier outcomes, including units whose window is still open (Section~\ref{spec:asm.centre}).
+\noindent The centre $\hat m_u$ is the running mean of the (episode, sign) stratum of earlier units, shrunk with $K = 20$ pseudo-units towards the pooled same-sign mean, plus the pooled within-stratum pre-opening slope $b$ times the pre-opening value. The first unit has $e_u = 0$. Only earlier units whose 90~s outcome window has closed before $u$ opens enter the centre (Section~\ref{spec:asm.centre}).
 
 The Horvitz--Thompson estimator
 \begin{equation*}
