@@ -46,9 +46,9 @@ near-RT RIC's conflict-mitigation function, which detects and resolves overlappi
 xApps~\cite{ORANRICARCH}. At each unit opening it looks up the map and the certified classes, draws the mode from the
 propensity and holds it for $t_{\mathrm{hold}}$; later requests of the unit only inherit the mode. This adds one lookup
 and one draw per unit to a control loop that the RIC APIs must support at execution times of 10~ms to
-1~s~\cite{ORANRICARCH}. In our implementation, on one 2.20~GHz Xeon core, a referee decision took a median of
+1~s~\cite{ORANRICARCH}. In our implementation, on a single CPU core, a referee decision took a median of
 \val{x19.ref.mg.med}~$\mu$s (99th percentile \val{x19.ref.mg.p99}~$\mu$s) without the gate and \val{x19.ref.cs.med}~$\mu$s
-(\val{x19.ref.cs.p99}~$\mu$s) with it.
+(\val{x19.ref.cs.p99}~$\mu$s) with it, more than two orders of magnitude below the 10~ms lower end of that range.
 
 The function must record, for every unit, its key (cell, xApp and opening time), the request direction, the drawn mode,
 the propensity used for the draw and the context of the opening request, next to the per-cell KPI series that the RIC
